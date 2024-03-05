@@ -16,9 +16,11 @@ public class ChatHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Id
-    private Long user_id;
-    @Id
-    private Long chat_id;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    @ManyToOne
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
     private Timestamp hidden_before;
 }

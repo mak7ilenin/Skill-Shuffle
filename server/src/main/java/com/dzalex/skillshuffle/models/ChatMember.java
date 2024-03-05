@@ -17,11 +17,14 @@ public class ChatMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Id
-    private Long chat_id;
-    @Id
-    private Long member_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id")
+    private Chat chat;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private User member;
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private MemberRole memberRole;
     private Timestamp joined_at;
     private Boolean notifications;

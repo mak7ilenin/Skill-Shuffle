@@ -10,16 +10,19 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 @Table(name = "messages")
 @Entity
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Id
-    private Long sender_id;
-    @Id
-    private Long chat_id;
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
+    private User sender;
+    @ManyToOne
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
     private String content;
     private Timestamp timestamp;
 }
