@@ -35,6 +35,11 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+apply plugin: 'war'
+war {
+	webAppDirName = 'src/main/java/com.example.springbootarticles/SpringBootArticlesApplication'
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

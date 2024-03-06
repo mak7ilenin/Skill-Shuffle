@@ -1,6 +1,7 @@
 package com.dzalex.skillshuffle.models;
 
 import com.dzalex.skillshuffle.enums.ChatType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 

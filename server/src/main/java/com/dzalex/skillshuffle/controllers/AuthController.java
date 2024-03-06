@@ -1,6 +1,5 @@
 package com.dzalex.skillshuffle.controllers;
 
-import com.dzalex.skillshuffle.enums.Gender;
 import com.dzalex.skillshuffle.models.JwtRequest;
 import com.dzalex.skillshuffle.models.JwtResponse;
 import com.dzalex.skillshuffle.models.User;

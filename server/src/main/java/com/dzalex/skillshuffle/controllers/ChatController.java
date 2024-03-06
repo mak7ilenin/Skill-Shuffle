@@ -1,32 +1,21 @@
 package com.dzalex.skillshuffle.controllers;
 
-import com.dzalex.skillshuffle.models.Message;
-import com.dzalex.skillshuffle.services.MessageService;
-import lombok.extern.slf4j.Slf4j;
+import com.dzalex.skillshuffle.dtos.ChatDTO;
+import com.dzalex.skillshuffle.services.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
-@Slf4j
-@Controller
+@RestController
 public class ChatController {
-    private final Map<String, List<Message>> chats = new HashMap<>();
 
     @Autowired
-    private MessageService messageService;
+    private ChatService chatService;
 
-    @MessageMapping("/chat/{chatId}")
-    @SendTo("/topic/chat/{chatId}")
-    public List<Message> sendMessageWithWebSocket(@DestinationVariable String chatId, @Payload Message message) {
-        List<Message> messages = this.chats.getOrDefault(chatId, new ArrayList<>());
-        messages.add(message);
-        chats.put(chatId, messages);
-        messageService.saveMessage(message, chatId);
-        return messages;
+    @GetMapping("/me")
+    public List<ChatDTO> getChats() {
+        return chatService.getChatListWithLastMessage();
     }
 }
