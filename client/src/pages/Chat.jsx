@@ -29,7 +29,7 @@ function Chat() {
     const newClient = new Client();
     const websocketUrl = 'ws://localhost:8080/ws';
 
-    // Connect to the WebSocket server
+    // Connect to the WebSocket server using SockJS
     newClient.configure({
       brokerURL: websocketUrl,
       onConnect: () => {
@@ -76,8 +76,12 @@ function Chat() {
               <Col>
                 <div className="user" key={chat.id}>
                   <img 
-                    src={chat.avatar_url !== null ? `http://localhost:8080${chat.avatar_url}` : imagePlaceholder}
+                    src={chat.avatar_url !== null ? `http://localhost:8080/${chat.avatar_url}` : imagePlaceholder}
                     alt={chat.name}
+                    width={50}
+                    height={50}
+                    borderRadius={50}
+                    objectFit="cover"
                   />
                   <p>{chat.name}</p>
                 </div>
@@ -102,7 +106,7 @@ function Chat() {
         </div>
       </div>
       <p>
-        <input type='text' aria-label='ChatId' placeholder="Chat ID" onChange={(event) => {
+        <input type='number' aria-label='ChatId' placeholder="Chat ID" onChange={(event) => {
           setChatId(event.target.value);
         }} />
         <input type='text' aria-label='Message' placeholder="Message" onChange={(event) => {

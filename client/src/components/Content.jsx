@@ -3,7 +3,7 @@ import Chat from '../pages/Chat';
 
 function Content() {
     return (
-        <Chat/>
+        <Chat key={'chat-key'}/>
     )
 }
 
