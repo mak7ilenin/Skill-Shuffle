@@ -1,5 +1,7 @@
 package com.dzalex.skillshuffle.models;
 
+import com.dzalex.skillshuffle.enums.MessageStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +13,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Builder
 @ToString
-@Table(name = "messages")
+@Table(name = "chat_messages")
 @Entity
 public class Message {
     @Id
@@ -25,4 +27,6 @@ public class Message {
     private Chat chat;
     private String content;
     private Timestamp timestamp;
+    @Enumerated(EnumType.STRING)
+    private MessageStatus status;
 }

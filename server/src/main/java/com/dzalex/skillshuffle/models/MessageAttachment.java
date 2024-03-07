@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "message_attachments")
+@Table(name = "chat_message_attachments")
 @Entity
 public class MessageAttachment {
     @Id

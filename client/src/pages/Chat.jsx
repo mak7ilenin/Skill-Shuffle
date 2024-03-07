@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Client } from '@stomp/stompjs';
 import { Row, Col, Container } from 'react-bootstrap';
+import { Client } from '@stomp/stompjs';
 import axios from 'axios';
+
 import imagePlaceholder from '../assets/image-placeholder.svg';
 
 function Chat() {
@@ -9,6 +10,7 @@ function Chat() {
   const [client, setClient] = useState(null);
   const [chatId, setChatId] = useState("");
   const [messageContent, setMessageContent] = useState("");
+  const [authToken, setAuthToken] = useState("");
 
   const getChats = async () => {
     try {
@@ -23,20 +25,27 @@ function Chat() {
 
   useEffect(() => {
 
-    // Data fetching
-    getChats();
-
     const newClient = new Client();
-    const websocketUrl = 'ws://localhost:8080/ws';
+    const verifySSL = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const websocketUrl = `${verifySSL}localhost:8080/ws`;
+
+    // Retrieve token from sessionStorage
+    setAuthToken(sessionStorage.getItem('authToken'));
 
     // Connect to the WebSocket server using SockJS
     newClient.configure({
       brokerURL: websocketUrl,
+      connectHeaders: {
+        Authorization: `Bearer ${authToken}`,
+      },
       onConnect: () => {
-        // Perform actions after successful connection
-        const destination = `/topic/chat/${chatId}`; // Specify the destination for the server-side message handler
-        newClient.subscribe(destination, (message) => {
-          console.log('Received message:', JSON.parse(message.body));
+        getChats();
+
+        // Subscribe to a specific chat and receive all messages sent there
+        const destination = `/user/chat/${chatId}`;
+        newClient.subscribe(destination, (receivedMessage) => {
+          console.log('Received message:', JSON.parse(receivedMessage.body));
+
           // Process the received message as needed
         });
       },
@@ -49,7 +58,7 @@ function Chat() {
       newClient.deactivate();
     };
 
-  }, [chatId]);
+  }, [chatId, authToken]);
 
   const sendMessage = () => {
     const destination = `/app/chat/${chatId}`;
@@ -69,27 +78,24 @@ function Chat() {
 
   return (
     <div className="chat-page">
-      <div className="users-list">
-        <Container>
-          <Row>
-            {chats.map(chat => (
-              <Col>
-                <div className="user" key={chat.id}>
-                  <img 
-                    src={chat.avatar_url !== null ? `http://localhost:8080/${chat.avatar_url}` : imagePlaceholder}
-                    alt={chat.name}
-                    width={50}
-                    height={50}
-                    borderRadius={50}
-                    objectFit="cover"
-                  />
-                  <p>{chat.name}</p>
-                </div>
-              </Col>
-            ))}
+      <Container className="users-list">
+        {chats.map(chat => (
+          <Row className='user-container' key={chat.id}>
+            <Col>
+              <img
+                src={chat.avatar_url !== null ? `http://localhost:8080/${chat.avatar_url}` : imagePlaceholder}
+                alt={chat.name}
+                width={50}
+                height={50}
+                style={{ borderRadius: 50, objectFit: 'cover' }}
+              />
+            </Col>
+            <Col>
+              <p>{chat.name}</p>
+            </Col>
           </Row>
-        </Container>
-      </div>
+        ))}
+      </Container>
       <div className="chat-box">
         <div className="chat-messages">
           <div className="message">

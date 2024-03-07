@@ -24,7 +24,7 @@ public class WebSocketController {
     private MessageService messageService;
 
     @MessageMapping("/chat/{chatId}")
-    @SendTo("/topic/chat/{chatId}")
+    @SendTo("/user/chat/{chatId}")
     public List<Message> sendMessageWithWebSocket(@DestinationVariable String chatId, @Payload Message message) {
         List<Message> messages = this.chats.getOrDefault(chatId, new ArrayList<>());
         messages.add(message);
