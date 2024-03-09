@@ -14,7 +14,7 @@ public class ChatController {
     @Autowired
     private ChatService chatService;
 
-    @GetMapping("/me")
+    @GetMapping("/im")
     public List<ChatDTO> getChats() {
         return chatService.getChatListWithLastMessage();
     }

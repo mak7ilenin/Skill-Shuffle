@@ -11,23 +11,23 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@RestController("/uploaded-files")
+@RestController
 public class FileController {
 
-    private final String avatarsDirectory;
-
-    public FileController() {
-        this.avatarsDirectory = getResourceDirectory();
-    }
-
-    @GetMapping("/avatars/{filename:.+}")
-    public ResponseEntity<Resource> serveAvatar(@PathVariable String filename) {
+    @GetMapping("/{category}/{id}/{subCategory}/{filename:.+}")
+    public ResponseEntity<Resource> serveFile(@PathVariable String category,
+                                              @PathVariable String id,
+                                              @PathVariable String subCategory,
+                                              @PathVariable String filename) {
         try {
-            Path avatarPath = Paths.get(avatarsDirectory, filename);
-            Resource avatar = new UrlResource(avatarPath.toUri());
+            // Construct the file path based on the provided parameters
+            String filePath = String.format("%s/%s/%s/%s/%s", getResourceDirectory(), category, id, subCategory, filename);
+            Path file = Paths.get(filePath);
+            Resource resource = new UrlResource(file.toUri());
 
-            if (avatar.exists() || avatar.isReadable()) {
-                return ResponseEntity.ok().body(avatar);
+            // Check if the file exists and is readable
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok().body(resource);
             } else {
                 return ResponseEntity.notFound().build();
             }
@@ -38,6 +38,6 @@ public class FileController {
 
     private String getResourceDirectory() {
         String userDir = System.getProperty("user.dir");
-        return userDir + "/src/main/resources/uploaded-files/avatars/";
+        return userDir + "/src/main/resources/uploads/";
     }
 }

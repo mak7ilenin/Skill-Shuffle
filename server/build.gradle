@@ -26,6 +26,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation group: 'org.springframework', name: 'spring-messaging', version: '6.1.4'
+	implementation group: 'org.springframework.security', name: 'spring-security-messaging', version: '6.2.2'
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
@@ -37,7 +39,8 @@ dependencies {
 
 apply plugin: 'war'
 war {
-	webAppDirName = 'src/main/java/com.example.springbootarticles/SpringBootArticlesApplication'
+	webAppDirName = 'src/main/java/com/dzalex/skillshuffle/SkillShuffleApplication'
+	archiveFileName = 'Skill-Shuffle.war'
 }
 
 tasks.named('test') {

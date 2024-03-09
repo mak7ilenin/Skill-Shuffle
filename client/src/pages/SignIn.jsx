@@ -13,8 +13,12 @@ function SignIn() {
         try {
             await axios.post('http://localhost:8080/api/auth/sign-in', { username, password })
                 .then((response) => {
-                    console.log(response.data.jwtToken);
-                    sessionStorage.setItem('authToken', response.data.jwtToken);
+                    const authUser = {
+                        'username': username,
+                        'password': password,
+                        'jwtToken': response.data.jwtToken
+                    };
+                    sessionStorage.setItem('authUser', JSON.stringify(authUser));
                     navigate('/chat');
                 });
         } catch (error) {
@@ -29,12 +33,12 @@ function SignIn() {
             <Form onSubmit={login}>
                 <Form.Group controlId='formBasicUsername'>
                     <Form.Control type='text' name='username' placeholder='Username' 
-                        onChange={e => setUsername(e.target.value)} />
+                        onChange={e => setUsername(e.target.value)} autoComplete='username' />
                 </Form.Group>
 
                 <Form.Group controlId='formBasicPassword'>
                     <Form.Control type='password' name='password' placeholder='Password' 
-                        onChange={e => setPassword(e.target.value)} />
+                        onChange={e => setPassword(e.target.value)} autoComplete='current-password' />
                 </Form.Group>
 
                 <Button variant='primary' type='submit'>
@@ -42,7 +46,7 @@ function SignIn() {
                 </Button>
 
                 <Form.Text className='text-muted'>
-                    Don't have an account? <Link href='/sign-up'>Sign Up</Link>
+                    Don't have an account? <Link to='/sign-up'>Sign Up</Link>
                 </Form.Text>
             </Form>
         </Container>

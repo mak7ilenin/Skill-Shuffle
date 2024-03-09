@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Container } from 'react-bootstrap';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -7,13 +7,9 @@ import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 
 function Content() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-    useEffect(() => {
-        // Check if the user is authenticated from sessionStorage
-        sessionStorage.getItem('authToken') !== '' || sessionStorage.getItem('authToken') !== null
-            ? setIsAuthenticated(true) : setIsAuthenticated(false);
-    }, []);
+    const [isAuthenticated, setIsAuthenticated] = useState(() => {
+        return sessionStorage.getItem('authUser') !== '' && sessionStorage.getItem('authUser') !== null;
+    });
 
     return (
         <Router>

@@ -39,24 +39,24 @@ function SignUp() {
     return (
         <Container className='d-flex justify-content-center align-items-center'>
             <Form onSubmit={register}>
-                <Form.Group controlId='formBasicEmail'>
+                <Form.Group controlId='formBasicUsername'>
                     <Form.Control type='text' name='username' placeholder='Username' 
-                        onChange={e => setUsername(e.target.value)} />
+                        onChange={e => setUsername(e.target.value)} autoComplete='username' />
                 </Form.Group>
 
                 <Form.Group controlId='formBasicEmail'>
                     <Form.Control type='email' name='email' placeholder='E-mail' 
-                        onChange={e => setEmail(e.target.value)} />
+                        onChange={e => setEmail(e.target.value)} autoComplete='email' />
                 </Form.Group>
 
                 <Form.Group controlId='formBasicNickname'>
                     <Form.Control type='text' name='nickname' placeholder='Nickname' 
-                        onChange={e => setNickname(e.target.value)} />
+                        onChange={e => setNickname(e.target.value)} autoComplete='nickname' />
                 </Form.Group>
 
                 <Form.Group controlId='formBasicPassword'>
                     <Form.Control type='password' name='password' placeholder='Password' 
-                    onChange={e => setPassword(e.target.value)} />
+                    onChange={e => setPassword(e.target.value)} autoComplete='password' />
                 </Form.Group>
 
                 <Button variant='primary' type='submit'>
@@ -64,7 +64,7 @@ function SignUp() {
                 </Button>
 
                 <Form.Text className='text-muted'>
-                    Already have an account? <Link href='/sign-in'>Sign In</Link>
+                    Already have an account? <Link to='/sign-in'>Sign In</Link>
                 </Form.Text>
             </Form>
         </Container>

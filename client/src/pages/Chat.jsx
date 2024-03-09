@@ -10,11 +10,13 @@ function Chat() {
   const [client, setClient] = useState(null);
   const [chatId, setChatId] = useState("");
   const [messageContent, setMessageContent] = useState("");
-  const [authToken, setAuthToken] = useState("");
 
-  const getChats = async () => {
+  const getChats = async (authToken) => {
     try {
-      const response = await axios.get('http://localhost:8080/me');
+      const response = await axios.get('http://localhost:8080/im', { 
+        headers: {
+          "Authorization": `Bearer ${authToken}` }
+      });
       setChats(response.data);
     } catch (error) {
       if (error.response) {
@@ -26,20 +28,20 @@ function Chat() {
   useEffect(() => {
 
     const newClient = new Client();
+    const authUser = JSON.parse(sessionStorage.getItem('authUser'));
+
     const verifySSL = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
     const websocketUrl = `${verifySSL}localhost:8080/ws`;
 
-    // Retrieve token from sessionStorage
-    setAuthToken(sessionStorage.getItem('authToken'));
-
-    // Connect to the WebSocket server using SockJS
+    // Connect to the WebSocket
     newClient.configure({
       brokerURL: websocketUrl,
       connectHeaders: {
-        Authorization: `Bearer ${authToken}`,
+        username: authUser.username,
+        password: authUser.password
       },
       onConnect: () => {
-        getChats();
+        getChats(authUser.jwtToken);
 
         // Subscribe to a specific chat and receive all messages sent there
         const destination = `/user/chat/${chatId}`;
@@ -58,7 +60,7 @@ function Chat() {
       newClient.deactivate();
     };
 
-  }, [chatId, authToken]);
+  }, [chatId]);
 
   const sendMessage = () => {
     const destination = `/app/chat/${chatId}`;

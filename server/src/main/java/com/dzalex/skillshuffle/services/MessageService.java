@@ -1,6 +1,7 @@
 package com.dzalex.skillshuffle.services;
 
 import com.dzalex.skillshuffle.dtos.MessageDTO;
+import com.dzalex.skillshuffle.enums.MessageStatus;
 import com.dzalex.skillshuffle.models.Message;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
@@ -28,6 +29,7 @@ public class MessageService {
         savedMessage.setChat(chatRepository.findChatById(Long.parseLong(chatId)));
         savedMessage.setContent(message.getContent());
         savedMessage.setTimestamp(message.getTimestamp());
+        savedMessage.setStatus(MessageStatus.SENT);
         messageRepository.save(message);
     }
 

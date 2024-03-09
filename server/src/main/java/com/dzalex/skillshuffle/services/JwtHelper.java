@@ -14,7 +14,7 @@ import java.util.function.Function;
 @Component
 public class JwtHelper {
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-    private String secret = "dlfkjghdfkjghlidsfvlksdbkldsvolslsidvhydsfhnvdlkjlidfasousdbihguhvdasuondfhoicfundxfgoiuxdf";
+    private static final String secret = "sdafasgdjhfweriqerwqeiuycvxnzbmxmzvxcnvbdfkstghtukergdrfgpodfgmfdkgdfngndfgjsdhjghdsjgdjfghjasr";
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -52,7 +52,8 @@ public class JwtHelper {
         return Jwts.builder().claims(claims).subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

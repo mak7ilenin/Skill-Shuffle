@@ -22,12 +22,20 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter filter;
 
+    private final String[] allowedUrls = new String[] {
+            "/api/auth/*",
+            "/ws",
+            "/communities/**",
+            "/chats/**",
+            "/users/**",
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/sign-in", "/sign-up").permitAll()
+                                .requestMatchers(allowedUrls).permitAll()
                                 .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(e -> e.authenticationEntryPoint(this.point))
