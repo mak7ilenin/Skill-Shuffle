@@ -3,7 +3,7 @@ import { Container, Form, Button } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
-function SignIn() {
+function SignIn({ setIsAuthenticated }) {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -11,16 +11,16 @@ function SignIn() {
     const login = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:8080/api/auth/sign-in', { username, password })
-                .then((response) => {
-                    const authUser = {
-                        'username': username,
-                        'password': password,
-                        'jwtToken': response.data.jwtToken
-                    };
-                    sessionStorage.setItem('authUser', JSON.stringify(authUser));
-                    navigate('/chat');
-                });
+            const response = await axios.post('http://localhost:8080/api/auth/sign-in', { username, password });
+            const authUser = {
+                'username': username,
+                'password': password,
+                'jwtToken': response.data.jwtToken
+            };
+            sessionStorage.setItem('authUser', JSON.stringify(authUser));
+            setIsAuthenticated(true);
+            navigate('/chat');
+            window.location.reload();
         } catch (error) {
             if (error.response) {
                 console.error(error.response.data.message);

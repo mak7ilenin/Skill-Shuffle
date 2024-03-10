@@ -1,9 +1,12 @@
 import React from 'react';
 import { Container, ListGroup } from 'react-bootstrap';
 
+import { useAuth } from './AuthContext';
 import Logo from '../assets/logo.svg';
 
 function Header() {
+    const { authUser } = useAuth();
+
     return (
         <div className='default-header closed'>
             <Container className='logo-container'>
@@ -16,6 +19,7 @@ function Header() {
                 <ListGroup.Item>Notifif</ListGroup.Item>
                 <ListGroup.Item>Create</ListGroup.Item>
                 <ListGroup.Item>Profile</ListGroup.Item>
+                <ListGroup.Item>Sign-out</ListGroup.Item>
             </ListGroup>
         </div>
     )

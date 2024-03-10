@@ -3,6 +3,7 @@ import { Row, Col, Container } from 'react-bootstrap';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 
+import { useAuth } from '../components/AuthContext';
 import imagePlaceholder from '../assets/image-placeholder.svg';
 
 function Chat() {
@@ -10,35 +11,18 @@ function Chat() {
   const [client, setClient] = useState(null);
   const [chatId, setChatId] = useState("");
   const [messageContent, setMessageContent] = useState("");
-
-  const getChats = async (authToken) => {
-    try {
-      const response = await axios.get('http://localhost:8080/im', { 
-        headers: {
-          "Authorization": `Bearer ${authToken}` }
-      });
-      setChats(response.data);
-    } catch (error) {
-      if (error.response) {
-        console.error(error.response.data.message);
-      }
-    }
-  };
+  const { authUser } = useAuth();
 
   useEffect(() => {
 
     const newClient = new Client();
-    const authUser = JSON.parse(sessionStorage.getItem('authUser'));
-
-    const verifySSL = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    const websocketUrl = `${verifySSL}localhost:8080/ws`;
+    const websocketUrl = 'ws://localhost:8080/ws';
 
     // Connect to the WebSocket
     newClient.configure({
       brokerURL: websocketUrl,
       connectHeaders: {
-        username: authUser.username,
-        password: authUser.password
+        Authorization: `Bearer ${authUser.jwtToken}`
       },
       onConnect: () => {
         getChats(authUser.jwtToken);
@@ -60,12 +44,27 @@ function Chat() {
       newClient.deactivate();
     };
 
-  }, [chatId]);
+  }, [chatId, authUser]);
+
+  const getChats = async (authToken) => {
+    try {
+      const response = await axios.get('http://localhost:8080/im', { 
+        headers: {
+          "Authorization": `Bearer ${authToken}` 
+        }
+      });
+      setChats(response.data);
+    } catch (error) {
+      if (error.response) {
+        console.error(error.response.data.message);
+      }
+    }
+  };
 
   const sendMessage = () => {
     const destination = `/app/chat/${chatId}`;
     const message = {
-      sender: { id: 6 }, // Replace with the sender's ID
+      sender: { username: authUser.username },
       chat: { id: chatId },
       content: messageContent,
       timestamp: new Date().toISOString()

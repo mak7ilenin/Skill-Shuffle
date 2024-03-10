@@ -1,8 +1,14 @@
 package com.dzalex.skillshuffle.services;
 
+import com.dzalex.skillshuffle.models.JwtRequest;
+import com.dzalex.skillshuffle.models.JwtResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +19,13 @@ import java.util.function.Function;
 
 @Component
 public class JwtHelper {
+
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-    private static final String secret = "sdafasgdjhfweriqerwqeiuycvxnzbmxmzvxcnvbdfkstghtukergdrfgpodfgmfdkgdfngndfgjsdhjghdsjgdjfghjasr";
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
+    private static final String JWT_COOKIE_NAME = "jwt";
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -31,7 +42,7 @@ public class JwtHelper {
 
     // For retrieving any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).build().parseSignedClaims(token).getPayload();
+        return Jwts.parser().setSigningKey(SECRET_KEY).build().parseSignedClaims(token).getPayload();
     }
 
     private Boolean isTokenExpired(String token) {
@@ -52,12 +63,47 @@ public class JwtHelper {
         return Jwts.builder().claims(claims).subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public String getTokenFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(JWT_COOKIE_NAME)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public String getTokenFromHeader(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
+        if (authorizationHeader != null && authorizationHeader.startsWith(AUTHORIZATION_HEADER_PREFIX)) {
+            return authorizationHeader.substring(7);
+        }
+        return null;
+    }
+
+    public JwtResponse createJwtCookie(JwtRequest request, HttpServletResponse response, UserDetails userDetails) {
+        String token = generateToken(userDetails);
+        Cookie cookie = new Cookie(JWT_COOKIE_NAME, token);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/"); // Set cookie for the whole application
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+        response.addCookie(cookie);
+
+        return JwtResponse.builder()
+                .jwtToken(token)
+                .username(request.getUsername())
+                .password(request.getPassword())
+                .build();
     }
 }
