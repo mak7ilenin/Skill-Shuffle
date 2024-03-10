@@ -5,6 +5,7 @@ import com.dzalex.skillshuffle.models.JwtResponse;
 import com.dzalex.skillshuffle.models.User;
 import com.dzalex.skillshuffle.services.JwtHelper;
 import com.dzalex.skillshuffle.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
@@ -64,6 +67,20 @@ public class AuthController {
         } catch (Exception e) {
             return new ResponseEntity<>("Exception occurred while registering user:" + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // Request to confirm user's authentication and get jwt token
+    @GetMapping("confirm")
+    public ResponseEntity<?> confirm(HttpServletRequest request) {
+        if (SecurityContextHolder.getContext().getAuthentication() != null &&
+                SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            String jwtToken = helper.getTokenFromCookies(request);
+            if (jwtToken != null) {
+                return new ResponseEntity<>(new JwtResponse(jwtToken, username), HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     private void doAuthenticate(String username, String password) {

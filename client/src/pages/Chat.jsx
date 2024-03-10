@@ -11,9 +11,21 @@ function Chat() {
   const [client, setClient] = useState(null);
   const [chatId, setChatId] = useState("");
   const [messageContent, setMessageContent] = useState("");
-  const { authUser } = useAuth();
+  const [jwtResponse, setJwtResponse] = useState(null);
 
   useEffect(() => {
+
+    // Fetch JWT from /api/auth/confirm endpoint
+    axios.get('http://localhost:8080/api/auth/confirm')
+      .then(response => {
+        console.log(response.data);
+        setJwtResponse(response.data.jwtToken);
+      })
+      .catch(error => {
+        if (error.response) {
+          console.error(error.response.data.message);
+        }
+      });
 
     const newClient = new Client();
     const websocketUrl = 'ws://localhost:8080/ws';
@@ -22,10 +34,10 @@ function Chat() {
     newClient.configure({
       brokerURL: websocketUrl,
       connectHeaders: {
-        Authorization: `Bearer ${authUser.jwtToken}`
+        Authorization: `Bearer ${jwtResponse.jwtToken}`
       },
       onConnect: () => {
-        getChats(authUser.jwtToken);
+        getChats(jwtResponse.jwtToken);
 
         // Subscribe to a specific chat and receive all messages sent there
         const destination = `/user/chat/${chatId}`;
@@ -44,7 +56,7 @@ function Chat() {
       newClient.deactivate();
     };
 
-  }, [chatId, authUser]);
+  }, [chatId, jwtResponse]);
 
   const getChats = async (authToken) => {
     try {
@@ -64,7 +76,7 @@ function Chat() {
   const sendMessage = () => {
     const destination = `/app/chat/${chatId}`;
     const message = {
-      sender: { username: authUser.username },
+      sender: { username: jwtResponse.username },
       chat: { id: chatId },
       content: messageContent,
       timestamp: new Date().toISOString()

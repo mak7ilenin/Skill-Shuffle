@@ -13,8 +13,6 @@ function SignIn({ setIsAuthenticated }) {
         try {
             const response = await axios.post('http://localhost:8080/api/auth/sign-in', { username, password });
             const authUser = {
-                'username': username,
-                'password': password,
                 'jwtToken': response.data.jwtToken
             };
             sessionStorage.setItem('authUser', JSON.stringify(authUser));

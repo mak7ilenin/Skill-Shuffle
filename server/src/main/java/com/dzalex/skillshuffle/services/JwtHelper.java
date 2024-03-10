@@ -97,13 +97,12 @@ public class JwtHelper {
         Cookie cookie = new Cookie(JWT_COOKIE_NAME, token);
         cookie.setHttpOnly(true);
         cookie.setPath("/"); // Set cookie for the whole application
-        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+        cookie.setMaxAge(60 * 60 * 24); // 24 hours
         response.addCookie(cookie);
 
         return JwtResponse.builder()
                 .jwtToken(token)
                 .username(request.getUsername())
-                .password(request.getPassword())
                 .build();
     }
 }

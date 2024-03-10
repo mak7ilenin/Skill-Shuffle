@@ -17,7 +17,6 @@ public class ChatController {
 
     @GetMapping("/im")
     public List<ChatDTO> getChats(HttpServletRequest request) {
-        System.out.println("getChats: " + Arrays.toString(request.getCookies()));
         return chatService.getChatListWithLastMessage();
     }
 }
