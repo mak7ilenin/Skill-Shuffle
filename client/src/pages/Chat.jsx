@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Row, Col, Container } from 'react-bootstrap';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
+import { API_SERVER, WEBSOCKET_URL, SERVER_URL } from '../config';
 
-import { useAuth } from '../components/AuthContext';
 import imagePlaceholder from '../assets/image-placeholder.svg';
 
 function Chat() {
@@ -15,54 +15,47 @@ function Chat() {
 
   useEffect(() => {
 
-    // Fetch JWT from /api/auth/confirm endpoint
-    axios.get('http://localhost:8080/api/auth/confirm')
+    // Confirm the user's authentication and get the JWT token
+    axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
       .then(response => {
-        console.log(response.data);
-        setJwtResponse(response.data.jwtToken);
-      })
-      .catch(error => {
-        if (error.response) {
-          console.error(error.response.data.message);
-        }
+        const jwtResponse = response.data;
+        setJwtResponse(jwtResponse);
+
+        // Create a new WebSocket client
+        const newClient = new Client();
+        const websocketUrl = `ws://${WEBSOCKET_URL}`;
+    
+        // Connect to the WebSocket after receiving the JWT token
+        newClient.configure({
+          brokerURL: websocketUrl,
+          connectHeaders: {
+            Authorization: `Bearer ${jwtResponse.jwtToken}`
+          },
+          onConnect: () => {
+            getChats(jwtResponse.jwtToken);
+            
+            // Subscribe to a specific chat and receive all messages sent there
+            const destination = `/user/chat/${chatId}`;
+            newClient.subscribe(destination, (receivedMessage) => {
+              console.log('Received message:', JSON.parse(receivedMessage.body));
+
+              // Process the received message as needed
+            });
+          }
+        });
+    
+        newClient.activate();
+        setClient(newClient);
       });
 
-    const newClient = new Client();
-    const websocketUrl = 'ws://localhost:8080/ws';
 
-    // Connect to the WebSocket
-    newClient.configure({
-      brokerURL: websocketUrl,
-      connectHeaders: {
-        Authorization: `Bearer ${jwtResponse.jwtToken}`
-      },
-      onConnect: () => {
-        getChats(jwtResponse.jwtToken);
-
-        // Subscribe to a specific chat and receive all messages sent there
-        const destination = `/user/chat/${chatId}`;
-        newClient.subscribe(destination, (receivedMessage) => {
-          console.log('Received message:', JSON.parse(receivedMessage.body));
-
-          // Process the received message as needed
-        });
-      },
-    });
-
-    newClient.activate();
-    setClient(newClient);
-
-    return () => {
-      newClient.deactivate();
-    };
-
-  }, [chatId, jwtResponse]);
+  }, [chatId]);
 
   const getChats = async (authToken) => {
     try {
-      const response = await axios.get('http://localhost:8080/im', { 
+      const response = await axios.get(`${API_SERVER}/im`, {
         headers: {
-          "Authorization": `Bearer ${authToken}` 
+          "Authorization": `Bearer ${authToken}`
         }
       });
       setChats(response.data);
@@ -96,7 +89,7 @@ function Chat() {
           <Row className='user-container' key={chat.id}>
             <Col>
               <img
-                src={chat.avatar_url !== null ? `http://localhost:8080/${chat.avatar_url}` : imagePlaceholder}
+                src={chat.avatar_url !== null ? `${SERVER_URL}/${chat.avatar_url}` : imagePlaceholder}
                 alt={chat.name}
                 width={50}
                 height={50}

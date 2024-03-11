@@ -92,7 +92,7 @@ public class JwtHelper {
         return null;
     }
 
-    public JwtResponse createJwtCookie(JwtRequest request, HttpServletResponse response, UserDetails userDetails) {
+    public JwtResponse createJwtCookie(HttpServletResponse response, UserDetails userDetails) {
         String token = generateToken(userDetails);
         Cookie cookie = new Cookie(JWT_COOKIE_NAME, token);
         cookie.setHttpOnly(true);
@@ -102,7 +102,15 @@ public class JwtHelper {
 
         return JwtResponse.builder()
                 .jwtToken(token)
-                .username(request.getUsername())
+                .username(userDetails.getUsername())
                 .build();
+    }
+
+    public void deleteJwtCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie(JWT_COOKIE_NAME, null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/"); // Set cookie for the whole application
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 }

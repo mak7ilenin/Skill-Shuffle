@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { API_SERVER } from '../config';
 
 function SignIn({ setIsAuthenticated }) {
     const navigate = useNavigate();
@@ -11,14 +12,18 @@ function SignIn({ setIsAuthenticated }) {
     const login = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/sign-in', { username, password });
-            const authUser = {
-                'jwtToken': response.data.jwtToken
-            };
-            sessionStorage.setItem('authUser', JSON.stringify(authUser));
-            setIsAuthenticated(true);
-            navigate('/chat');
-            window.location.reload();
+            await axios.post(`${API_SERVER}/auth/login`, { username, password }, { withCredentials: true })
+                .then(response => {
+                    const resposeData = response.data;
+                    const authUser = {
+                        'nickname': resposeData.nickname,
+                        'first_name': resposeData.first_name,
+                        'avatar': resposeData.avatar_url === '' ? null : resposeData.avatar_url
+                    };
+                    sessionStorage.setItem('auth-user', JSON.stringify(authUser));
+                    setIsAuthenticated(true);
+                    navigate('/chat');
+                });
         } catch (error) {
             if (error.response) {
                 console.error(error.response.data.message);
@@ -30,12 +35,12 @@ function SignIn({ setIsAuthenticated }) {
         <Container className='d-flex justify-content-center align-items-center'>
             <Form onSubmit={login}>
                 <Form.Group controlId='formBasicUsername'>
-                    <Form.Control type='text' name='username' placeholder='Username' 
+                    <Form.Control type='text' name='username' placeholder='Username'
                         onChange={e => setUsername(e.target.value)} autoComplete='username' />
                 </Form.Group>
 
                 <Form.Group controlId='formBasicPassword'>
-                    <Form.Control type='password' name='password' placeholder='Password' 
+                    <Form.Control type='password' name='password' placeholder='Password'
                         onChange={e => setPassword(e.target.value)} autoComplete='current-password' />
                 </Form.Group>
 

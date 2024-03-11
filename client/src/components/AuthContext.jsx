@@ -4,13 +4,13 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [authUser, setAuthUser] = useState(() => {
-        const storedUser = sessionStorage.getItem('authUser');
+        const storedUser = sessionStorage.getItem('auth-user');
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
     useEffect(() => {
         // Store authUser in sessionStorage whenever it changes
-        sessionStorage.setItem('authUser', JSON.stringify(authUser));
+        sessionStorage.setItem('auth-user', JSON.stringify(authUser));
     }, [authUser]);
 
     return (

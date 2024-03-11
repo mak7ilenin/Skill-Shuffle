@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { API_SERVER } from '../config';
 
 function SignUp() {
     const [email, setEmail] = useState('');
@@ -25,7 +26,7 @@ function SignUp() {
             avatar_url: ""
         };
         try {
-            await axios.post('http://localhost:8080/api/auth/sign-up', body)
+            await axios.post(`${API_SERVER}/auth/register`, body)
                 .then(() => {
                     navigate('/sign-in');
                 });
