@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+
+import { useAuth } from '../components/AuthContext';
 import { API_SERVER } from '../config';
 
 function SignIn({ setIsAuthenticated }) {
     const navigate = useNavigate();
+    const { setAuthUser } = useAuth();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -14,13 +17,17 @@ function SignIn({ setIsAuthenticated }) {
         try {
             await axios.post(`${API_SERVER}/auth/login`, { username, password }, { withCredentials: true })
                 .then(response => {
-                    const resposeData = response.data;
+                    const responseData = response.data;
+                    if (typeof responseData === 'string') {
+                        console.error(responseData);
+                        return;
+                    }
                     const authUser = {
-                        'nickname': resposeData.nickname,
-                        'first_name': resposeData.first_name,
-                        'avatar': resposeData.avatar_url === '' ? null : resposeData.avatar_url
+                        nickname: responseData.nickname,
+                        first_name: responseData.first_name,
+                        avatar: responseData.avatar_url === '' ? null : responseData.avatar_url
                     };
-                    sessionStorage.setItem('auth-user', JSON.stringify(authUser));
+                    setAuthUser(authUser);
                     setIsAuthenticated(true);
                     navigate('/chat');
                 });

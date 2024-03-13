@@ -10,7 +10,11 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         // Store authUser in sessionStorage whenever it changes
-        sessionStorage.setItem('auth-user', JSON.stringify(authUser));
+        if (authUser) {
+            sessionStorage.setItem('auth-user', JSON.stringify(authUser));
+        } else {
+            sessionStorage.removeItem('auth-user');
+        }
     }, [authUser]);
 
     return (

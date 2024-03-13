@@ -2,19 +2,21 @@ import React from 'react';
 import { Container, ListGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
 import { API_SERVER, SERVER_URL } from '../config';
 import { useAuth } from './AuthContext';
 
 import Logo from '../assets/logo.svg';
 import imagePlaceholder from '../assets/image-placeholder.svg';
 
-function Header() {
-    const { authUser } = useAuth();
+function Header({ setIsAuthenticated }) {
+    const { setAuthUser, authUser } = useAuth();
     const navigate = useNavigate();
 
     const logout = async () => {
         await axios.post(`${API_SERVER}/auth/logout`, {}, { withCredentials: true });
-        sessionStorage.setItem('auth-user', null);
+        setIsAuthenticated(false);
+        setAuthUser(null);
         navigate('/sign-in');
     };
 

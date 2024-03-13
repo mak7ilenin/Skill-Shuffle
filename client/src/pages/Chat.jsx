@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Row, Col, Container } from 'react-bootstrap';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
+
 import { API_SERVER, WEBSOCKET_URL, SERVER_URL } from '../config';
 
 import imagePlaceholder from '../assets/image-placeholder.svg';
