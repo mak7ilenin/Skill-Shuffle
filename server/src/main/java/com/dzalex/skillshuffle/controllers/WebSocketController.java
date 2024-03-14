@@ -27,9 +27,9 @@ public class WebSocketController {
     @SendTo("/user/chat/{chatId}")
     public List<Message> sendMessageWithWebSocket(@DestinationVariable String chatId, @Payload Message message) {
         List<Message> messages = this.chats.getOrDefault(chatId, new ArrayList<>());
-        messages.add(message);
+        Message savedMessage = messageService.saveMessage(message, chatId);
+        messages.add(savedMessage);
         chats.put(chatId, messages);
-        messageService.saveMessage(message, chatId);
         return messages;
     }
 }

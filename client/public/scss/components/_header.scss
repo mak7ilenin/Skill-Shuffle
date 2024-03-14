@@ -1,0 +1,28 @@
+.default-header {
+    background-color: #ffffff;
+    position: relative;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 244px;
+    border-right: 1px solid #e5e5e5;
+
+    &.closed {
+        width: 69px;
+    }
+
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        
+        img {
+            width: 100%;
+            height: auto;
+        }
+    }
+
+}
+
+

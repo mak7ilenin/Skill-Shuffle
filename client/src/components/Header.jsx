@@ -6,8 +6,8 @@ import axios from 'axios';
 import { API_SERVER, SERVER_URL } from '../config';
 import { useAuth } from './AuthContext';
 
-import Logo from '../assets/logo.svg';
-import imagePlaceholder from '../assets/image-placeholder.svg';
+import Logo from '../assets/icons/logo.svg';
+import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function Header({ setIsAuthenticated }) {
     const { setAuthUser, authUser } = useAuth();

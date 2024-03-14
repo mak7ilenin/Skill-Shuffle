@@ -1,7 +1,6 @@
 package com.dzalex.skillshuffle.models;
 
 import com.dzalex.skillshuffle.enums.MessageStatus;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 

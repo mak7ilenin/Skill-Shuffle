@@ -92,7 +92,7 @@ public class JwtHelper {
         return null;
     }
 
-    public JwtResponse createJwtCookie(HttpServletResponse response, UserDetails userDetails) {
+    public String createJwtCookie(HttpServletResponse response, UserDetails userDetails) {
         String token = generateToken(userDetails);
         Cookie cookie = new Cookie(JWT_COOKIE_NAME, token);
         cookie.setHttpOnly(true);
@@ -100,10 +100,7 @@ public class JwtHelper {
         cookie.setMaxAge(60 * 60 * 24); // 24 hours
         response.addCookie(cookie);
 
-        return JwtResponse.builder()
-                .jwtToken(token)
-                .username(userDetails.getUsername())
-                .build();
+        return token;
     }
 
     public void deleteJwtCookie(HttpServletResponse response) {

@@ -80,7 +80,7 @@ public class AuthController {
     }
 
     @GetMapping("confirm")
-    public ResponseEntity<JwtResponse> authorize(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<String> authorize(HttpServletRequest request, HttpServletResponse response) {
         // Check if the user is authenticated
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -90,8 +90,8 @@ public class AuthController {
         String jwtCookie = helper.getTokenFromCookies(request);
         if (jwtCookie != null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
-            JwtResponse jwtResponse = helper.createJwtCookie(response, userDetails);
-            return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
+            String jwtToken = helper.createJwtCookie(response, userDetails);
+            return new ResponseEntity<>(jwtToken, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
