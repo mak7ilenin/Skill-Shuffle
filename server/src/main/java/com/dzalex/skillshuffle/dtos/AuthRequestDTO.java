@@ -1,14 +1,12 @@
-package com.dzalex.skillshuffle.models;
+package com.dzalex.skillshuffle.dtos;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString
-public class JwtRequest {
+public class AuthRequestDTO {
     private String username;
     private String password;
 }

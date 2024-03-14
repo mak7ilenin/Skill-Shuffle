@@ -3,24 +3,23 @@ package com.dzalex.skillshuffle.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "chat_history")
+@ToString
+@Table(name = "refresh_token")
 @Entity
-public class ChatHistory {
+public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String token;
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToOne
-    @JoinColumn(name = "chat_id")
-    private Chat chat;
-    private Timestamp hidden_before;
+    private Instant expires_at;
 }

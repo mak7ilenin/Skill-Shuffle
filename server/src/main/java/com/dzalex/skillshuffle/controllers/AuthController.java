@@ -1,34 +1,31 @@
 package com.dzalex.skillshuffle.controllers;
 
-import com.dzalex.skillshuffle.models.JwtRequest;
-import com.dzalex.skillshuffle.models.JwtResponse;
+import com.dzalex.skillshuffle.dtos.AuthRequestDTO;
+import com.dzalex.skillshuffle.dtos.JwtResponseDTO;
+import com.dzalex.skillshuffle.dtos.UserSessionDTO;
+import com.dzalex.skillshuffle.models.RefreshToken;
 import com.dzalex.skillshuffle.models.User;
+import com.dzalex.skillshuffle.repositories.RefreshTokenRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import com.dzalex.skillshuffle.services.JwtHelper;
+import com.dzalex.skillshuffle.services.RefreshTokenService;
 import com.dzalex.skillshuffle.services.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.WebUtils;
-
-import java.util.Arrays;
+import org.springframework.web.client.HttpClientErrorException;
 
 @RestController
 @RequestMapping("api/auth")
@@ -41,6 +38,12 @@ public class AuthController {
     private UserService userService;
 
     @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -50,19 +53,34 @@ public class AuthController {
     private JwtHelper helper;
 
     @PostMapping("login")
-    public ResponseEntity<User> login(@RequestBody JwtRequest request, HttpServletResponse response) {
+    public ResponseEntity<JwtResponseDTO> login(@RequestBody AuthRequestDTO request, HttpServletResponse response) {
 
         // Authenticate user in the spring security context
         doAuthenticate(request.getUsername(), request.getPassword());
 
-        // Create cookie with jwt token and set it in the response
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         if (userDetails != null) {
-            helper.createJwtCookie(response, userDetails);
+            // Create refresh token and save it in the database and in the cookie
+            RefreshToken refreshToken = refreshTokenService.generateRefreshToken(request.getUsername());
+            helper.createRefreshTokenCookie(response, refreshToken);
+
+            // Create access token and save it in the cookie
+            helper.createAccessTokenCookie(response, userDetails);
+
             User user = userRepository.findByUsername(request.getUsername());
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            JwtResponseDTO jwtResponse = JwtResponseDTO.builder()
+                    .username(request.getUsername())
+                    .access_token(helper.createAccessTokenCookie(response, userDetails))
+                    .user(new UserSessionDTO(
+                            user.getFirst_name(),
+                            user.getLast_name(),
+                            user.getNickname(),
+                            user.getAvatar_url()))
+                    .build();
+            return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
+        } else {
+            throw new UsernameNotFoundException("User not found!");
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping("register")
@@ -80,30 +98,62 @@ public class AuthController {
     }
 
     @GetMapping("confirm")
-    public ResponseEntity<String> authorize(HttpServletRequest request, HttpServletResponse response) {
-        // Check if the user is authenticated
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
-        String jwtCookie = helper.getTokenFromCookies(request);
-        if (jwtCookie != null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
-            String jwtToken = helper.createJwtCookie(response, userDetails);
-            return new ResponseEntity<>(jwtToken, HttpStatus.OK);
+    // Confirm user authentication and return the access token
+    public ResponseEntity<JwtResponseDTO> confirm(HttpServletRequest request) {
+        String token = helper.getAccessTokenFromCookies(request);
+        if (token != null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(helper.getUsernameFromToken(token));
+            if (helper.validateToken(token, userDetails)) {
+                return new ResponseEntity<>(JwtResponseDTO.builder()
+                        .access_token(token)
+                        .username(userDetails.getUsername())
+                        .user(null)
+                        .build(), HttpStatus.OK);
+            }
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
+    @PostMapping("refresh")
+    // Refresh the access token using the refresh token
+    public ResponseEntity<JwtResponseDTO> refresh(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = helper.getRefreshTokenFromCookies(request);
+        if (refreshToken != null) {
+            RefreshToken token = refreshTokenService.findByToken(refreshToken);
+            if (token != null) {
+                token = refreshTokenService.verifyExpiration(token, response);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(token.getUser().getUsername());
+                JwtResponseDTO jwtResponse = JwtResponseDTO.builder()
+                        .access_token(helper.createAccessTokenCookie(response, userDetails))
+                        .username(token.getUser().getUsername())
+                        .user(new UserSessionDTO(
+                                token.getUser().getFirst_name(),
+                                token.getUser().getLast_name(),
+                                token.getUser().getNickname(),
+                                token.getUser().getAvatar_url()))
+                        .build();
+                return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
+            }
+        }
+        throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Refresh token is empty!");
+    }
+
     @PostMapping("logout")
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         // Invalidate session
         request.getSession().invalidate();
         // Clear authentication
         SecurityContextHolder.clearContext();
-        // Clear jwt cookie
-        helper.deleteJwtCookie(response);
+        // Clear access token from the cookies
+        helper.deleteAccessTokenCookie(response);
+        // Clear refresh token from the cookies and database
+        String refreshToken = helper.getRefreshTokenFromCookies(request);
+        if (refreshToken != null) {
+            refreshTokenService.deleteByToken(refreshToken);
+            helper.deleteRefreshTokenCookie(response);
+            return new ResponseEntity<>("Logout successful!", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Logout failed!", HttpStatus.BAD_REQUEST);
     }
 
     private void doAuthenticate(String username, String password) {
@@ -111,7 +161,7 @@ public class AuthController {
         try {
             manager.authenticate(authentication);
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException(" Invalid Username or Password!");
+            throw new BadCredentialsException("Invalid Username or Password!");
         }
     }
 

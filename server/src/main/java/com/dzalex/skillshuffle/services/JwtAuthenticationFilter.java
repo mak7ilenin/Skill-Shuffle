@@ -1,5 +1,7 @@
 package com.dzalex.skillshuffle.services;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,22 +38,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Get token from the header
         token = jwtHelper.getTokenFromHeader(request);
         if (token != null) {
-            try {
-                username = jwtHelper.getUsernameFromToken(token);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Token is invalid!");
-            }
+            username = tryToGetUsernameFromToken(token);
         }
 
         // Get token from cookies
         if (token == null) {
-            token = jwtHelper.getTokenFromCookies(request);
+            token = jwtHelper.getAccessTokenFromCookies(request);
             if (token != null) {
-                try {
-                    username = jwtHelper.getUsernameFromToken(token);
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Token is invalid!");
-                }
+                username = tryToGetUsernameFromToken(token);
             }
         }
 
@@ -71,5 +65,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         chain.doFilter(request, response);
+    }
+
+    private String tryToGetUsernameFromToken(String token) {
+        try {
+            return jwtHelper.getUsernameFromToken(token);
+        } catch (IllegalArgumentException e) {
+            logger.info("Illegal Argument while fetching the username!");
+        } catch (ExpiredJwtException e) {
+            logger.info("Given jwt token is expired!");
+        } catch (MalformedJwtException e) {
+            logger.info("Some changed has done in token! Invalid Token");
+        }
+        return null;
     }
 }
