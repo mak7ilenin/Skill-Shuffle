@@ -42,7 +42,7 @@ function Header({ setIsAuthenticated }) {
                                 className='avatar' 
                                 alt='Avatar' 
                             />
-                            <span>{authUser.nickname}</span>
+                            <span>Profile</span>
                         </div>
                     </ListGroup.Item>
                 ) : null}

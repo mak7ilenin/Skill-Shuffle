@@ -17,6 +17,7 @@ function Chat() {
   const [choosenChat, setChoosenChat] = useState({});
   const [messageContent, setMessageContent] = useState("");
   const messagesListRef = useRef(null);
+  const subscriptionRef = useRef(null);
 
   useLayoutEffect(() => {
     // Scroll to the bottom of the messages list after the component renders
@@ -102,7 +103,10 @@ function Chat() {
 
   const subscribeToChatMessages = (chat) => {
     const destination = `/user/chat/${chat.id}`;
-    client.subscribe(destination, (receivedMessage) => {
+    if (subscriptionRef.current) {
+      subscriptionRef.current.unsubscribe(); // Unsubscribe from previous chat
+    }
+    const newSubscription = client.subscribe(destination, (receivedMessage) => {
       // Process the received message
       const message = JSON.parse(receivedMessage.body);
 
@@ -111,6 +115,7 @@ function Chat() {
         messages: [...prevChat.messages, ...message],
       }));
     });
+    subscriptionRef.current = newSubscription; // Store the new subscription
   };
 
   const formatTimestampForMessage = (timestamp) => {
@@ -149,7 +154,7 @@ function Chat() {
         {chats.map(chat => (
           <Row className='chat-container' key={chat.id} onClick={() => {
             getChatMessages(chat.id);
-            subscribeToChatMessages(chat);          
+            subscribeToChatMessages(chat);
           }}>
             <Col lg={2} className='chat-avatar d-flex justify-content-center'>
               <img
@@ -216,14 +221,14 @@ function Chat() {
             </Stack>
           </Row>
           <Row className="message-input p-0">
-            <input 
-                type='text' 
-                aria-label='Message'
-                placeholder="Message"
-                value={messageContent}
-                onChange={(event) => { setMessageContent(event.target.value); }}
-                onKeyDown={handleKeyPress}
-              />
+            <input
+              type='text'
+              aria-label='Message'
+              placeholder="Message"
+              value={messageContent}
+              onChange={(event) => { setMessageContent(event.target.value); }}
+              onKeyDown={handleKeyPress}
+            />
             <button className='btn btn-outline-primary' onClick={sendMessage}>Send</button>
           </Row>
         </Col>
