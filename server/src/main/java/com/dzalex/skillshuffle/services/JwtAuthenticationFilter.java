@@ -1,5 +1,6 @@
 package com.dzalex.skillshuffle.services;
 
+import com.dzalex.skillshuffle.models.RefreshToken;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
@@ -27,31 +28,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
     @Override
     public void doFilterInternal(@NonNull HttpServletRequest request,
                                  @NonNull HttpServletResponse response,
                                  @NonNull FilterChain chain) throws IOException, ServletException
     {
         String username = null;
-        String token;
 
-        // Get token from the header
-        token = jwtHelper.getTokenFromHeader(request);
+//        Get access token from the header
+//        token = jwtHelper.getTokenFromHeader(request);
+//        if (token != null) {
+//            username = tryToGetUsernameFromToken(token, response);
+//        }
+
+        // Get access token from cookies
+        String token = jwtHelper.getAccessTokenFromCookies(request);
         if (token != null) {
-            username = tryToGetUsernameFromToken(token);
-        }
-
-        // Get token from cookies
-        if (token == null) {
-            token = jwtHelper.getAccessTokenFromCookies(request);
-            if (token != null) {
-                username = tryToGetUsernameFromToken(token);
+            username = tryToGetUsernameFromToken(token, response);
+        } else {
+            // REFRESH TOKEN FUNCTIONALITY
+            String refreshTokenString = jwtHelper.getRefreshTokenFromCookies(request);
+            if (refreshTokenString != null) {
+                RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenString);
+                if (refreshTokenService.verifyExpiration(refreshToken, response) != null) {
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(refreshToken.getUser().getUsername());
+                    String newAccessToken = jwtHelper.createAccessTokenCookie(response, userDetails);
+                    username = jwtHelper.getUsernameFromToken(newAccessToken);
+                }
             }
         }
 
-        // Validate token and set the authentication
+        // Validate access token and set the authentication
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Fetch user detail from username
+            // Fetch user details by username
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             Boolean validateToken = jwtHelper.validateToken(token, userDetails);
             if (validateToken) {
@@ -67,15 +79,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
-    private String tryToGetUsernameFromToken(String token) {
+    private String tryToGetUsernameFromToken(String token, HttpServletResponse response) {
         try {
             return jwtHelper.getUsernameFromToken(token);
-        } catch (IllegalArgumentException e) {
-            logger.info("Illegal Argument while fetching the username!");
         } catch (ExpiredJwtException e) {
-            logger.info("Given jwt token is expired!");
+            logger.error("Given JWT token is expired!");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Expired token status code
         } catch (MalformedJwtException e) {
-            logger.info("Some changed has done in token! Invalid Token");
+            logger.error("Invalid JWT token!");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Invalid token status code
+        } catch (Exception e) {
+            logger.error("Error occurred while parsing JWT token!");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Other error status code
         }
         return null;
     }

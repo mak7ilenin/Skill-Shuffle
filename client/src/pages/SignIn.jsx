@@ -22,11 +22,7 @@ function SignIn({ setIsAuthenticated }) {
                         console.error(responseData);
                         return;
                     }
-                    const authUser = {
-                        nickname: responseData.nickname,
-                        first_name: responseData.first_name,
-                        avatar: responseData.avatar_url === '' ? null : responseData.avatar_url
-                    };
+                    const authUser = responseData.user
                     setAuthUser(authUser);
                     setIsAuthenticated(true);
                     navigate('/chat');

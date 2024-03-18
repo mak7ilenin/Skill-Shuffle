@@ -8,6 +8,8 @@ import { useAuth } from '../components/AuthContext';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
+// TODO: CHAT HISTORY CHANGES TO PREVIOUS CHAT IF USER SUBSCIRBES TO BOTH CHATS AND SOMEONE SENDS A MESSAGE
+
 function Chat() {
   const { authUser } = useAuth();
   const [chats, setChats] = useState([]);
@@ -26,8 +28,6 @@ function Chat() {
     // Confirm the user's authentication and get the JWT token
     axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
       .then(response => {
-        const jwt = response.data;
-
         // Create a new WebSocket client
         const newClient = new Client();
         const websocketUrl = `ws://${WEBSOCKET_URL}`;
@@ -36,7 +36,7 @@ function Chat() {
         newClient.configure({
           brokerURL: websocketUrl,
           connectHeaders: {
-            Authorization: `Bearer ${jwt}`
+            Authorization: `Bearer ${response.data.access_token}`
           },
           onConnect: () => {
             getChats();
@@ -46,8 +46,6 @@ function Chat() {
         newClient.activate();
         setClient(newClient);
       });
-
-      console.log(choosenChat);
 
   }, [choosenChat]);
 
@@ -80,7 +78,8 @@ function Chat() {
       sender: {
         nickname: authUser.nickname,
         first_name: authUser.first_name,
-        avatar_url: authUser.avatar
+        last_name: authUser.last_name,
+        avatar_url: authUser.avatar_url
       },
       chat: { id: choosenChat.id },
       content: messageContent,

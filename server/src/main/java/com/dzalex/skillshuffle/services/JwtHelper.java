@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +22,7 @@ import java.util.function.Function;
 @Component
 public class JwtHelper {
 
-    public static final long ACCESS_TOKEN_VALIDITY = 2 * 60 * 60; // 2 hour
+    public static final long ACCESS_TOKEN_VALIDITY = 2 * 60 * 60; // 2 hours
     public static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60; // 7 days
     @Value("${jwt.secret}")
     private String SECRET_KEY;

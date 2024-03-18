@@ -35,7 +35,7 @@ function Header({ setIsAuthenticated }) {
                     <ListGroup.Item>
                         <div className='avatar-container'>
                             <img 
-                                src={authUser.avatar !== null ? `${SERVER_URL}/${authUser.avatar}` : imagePlaceholder} 
+                                src={authUser.avatar_url !== null ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder} 
                                 width={30}
                                 height={30}
                                 style={{ borderRadius: '50%', objectFit: 'cover' }}

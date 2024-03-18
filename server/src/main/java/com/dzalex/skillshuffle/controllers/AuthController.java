@@ -41,9 +41,6 @@ public class AuthController {
     private RefreshTokenService refreshTokenService;
 
     @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
