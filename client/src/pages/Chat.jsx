@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { Row, Col, Stack } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import cryptoJs from 'crypto-js';
+import { AESEncrypt, AESDecrypt } from '../crypto';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 
-import { API_SERVER, WEBSOCKET_URL, SERVER_URL, ENCRYPTION_KEY } from '../config';
+import { API_SERVER, WEBSOCKET_URL, SERVER_URL } from '../config';
 import { useAuth } from '../components/AuthContext';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
@@ -30,17 +30,17 @@ function Chat() {
     const encryptedChatId = new URLSearchParams(location.search).get('c');
     if (encryptedChatId) {
       try {
-        const decryptedChatId = cryptoJs.AES.decrypt(encryptedChatId, ENCRYPTION_KEY).toString(cryptoJs.enc.Utf8);
+        const decryptedChatId = AESDecrypt(encryptedChatId);
         if (decryptedChatId === '' || isNaN(decryptedChatId)) {
           console.error('Invalid decrypted chat ID');
           return;
         }
-        console.log("Decrypted Chat ID:", decryptedChatId);
         getChatMessages(decryptedChatId);
       } catch (error) {
-        console.error("Error decrypting chat ID:", error);
+        console.error("Error decrypting chat ID: ", error);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
   useEffect(() => {
@@ -66,6 +66,7 @@ function Chat() {
   useEffect(() => {
     axios.get(`${API_SERVER}/chats`, { withCredentials: true })
       .then(response => {
+        response.data.map(chat => { return chat.id = AESEncrypt(chat.id.toString()); });
         setChats(response.data);
       })
       .catch(error => {
@@ -74,17 +75,6 @@ function Chat() {
         }
       });
   }, []);
-
-  const getChats = async () => {
-    try {
-      const response = await axios.get(`${API_SERVER}/chats`, { withCredentials: true });
-      setChats(response.data);
-    } catch (error) {
-      if (error.response) {
-        console.error(error.response.data.message);
-      }
-    }
-  };
 
   const getChatMessages = async (chatId) => {
     try {
@@ -180,10 +170,7 @@ function Chat() {
     <Row className="chat-page">
       <Col className="chat-list" lg={3}>
         {chats.map(chat => (
-          <Row className='chat-container' key={chat.id} onClick={() => {
-            const encryptedChatId = cryptoJs.AES.encrypt(chat.id.toString(), ENCRYPTION_KEY).toString();
-            navigate(`/messenger?c=${encryptedChatId}`);
-          }}>
+          <Row className='chat-container' key={chat.id} onClick={() => { navigate(`/messenger?c=${chat.id}`); }}>
             <Col lg={2} className='chat-avatar d-flex justify-content-center'>
               <img
                 src={chat.avatar_url !== null ? `${SERVER_URL}/${chat.avatar_url}` : imagePlaceholder}
