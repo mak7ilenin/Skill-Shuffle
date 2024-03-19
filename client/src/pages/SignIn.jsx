@@ -25,7 +25,7 @@ function SignIn({ setIsAuthenticated }) {
                     const authUser = responseData.user
                     setAuthUser(authUser);
                     setIsAuthenticated(true);
-                    navigate('/chat');
+                    navigate('/messenger');
                 });
         } catch (error) {
             if (error.response) {

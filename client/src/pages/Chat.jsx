@@ -1,32 +1,49 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { Row, Col, Stack } from 'react-bootstrap';
+import { useNavigate, useLocation } from 'react-router-dom';
+import cryptoJs from 'crypto-js';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 
-import { API_SERVER, WEBSOCKET_URL, SERVER_URL } from '../config';
+import { API_SERVER, WEBSOCKET_URL, SERVER_URL, ENCRYPTION_KEY } from '../config';
 import { useAuth } from '../components/AuthContext';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-// TODO: CHAT HISTORY CHANGES TO PREVIOUS CHAT IF USER SUBSCIRBES TO BOTH CHATS AND SOMEONE SENDS A MESSAGE
-
 function Chat() {
   const { authUser } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [chats, setChats] = useState([]);
-  const [client, setClient] = useState(null);
+  const clientRef = useRef(null);
   const [choosenChat, setChoosenChat] = useState({});
   const [messageContent, setMessageContent] = useState("");
   const messagesListRef = useRef(null);
   const subscriptionRef = useRef(null);
 
+  // Scroll to the bottom of the current chat
   useLayoutEffect(() => {
-    // Scroll to the bottom of the messages list after the component renders
     scrollToBottom();
   }, [choosenChat]);
 
   useEffect(() => {
+    const encryptedChatId = new URLSearchParams(location.search).get('c');
+    if (encryptedChatId) {
+      try {
+        const decryptedChatId = cryptoJs.AES.decrypt(encryptedChatId, ENCRYPTION_KEY).toString(cryptoJs.enc.Utf8);
+        if (decryptedChatId === '' || isNaN(decryptedChatId)) {
+          console.error('Invalid decrypted chat ID');
+          return;
+        }
+        console.log("Decrypted Chat ID:", decryptedChatId);
+        getChatMessages(decryptedChatId);
+      } catch (error) {
+        console.error("Error decrypting chat ID:", error);
+      }
+    }
+  }, [location.search]);
 
-    // Confirm the user's authentication and get the JWT token
+  useEffect(() => {
     axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
       .then(response => {
         // Create a new WebSocket client
@@ -39,16 +56,24 @@ function Chat() {
           connectHeaders: {
             Authorization: `Bearer ${response.data.access_token}`
           },
-          onConnect: () => {
-            getChats();
-          }
         });
 
         newClient.activate();
-        setClient(newClient);
+        clientRef.current = newClient;
       });
+  }, []);
 
-  }, [choosenChat]);
+  useEffect(() => {
+    axios.get(`${API_SERVER}/chats`, { withCredentials: true })
+      .then(response => {
+        setChats(response.data);
+      })
+      .catch(error => {
+        if (error.response) {
+          console.error(error.response.data.message);
+        }
+      });
+  }, []);
 
   const getChats = async () => {
     try {
@@ -65,6 +90,7 @@ function Chat() {
     try {
       const response = await axios.get(`${API_SERVER}/chats/${chatId}`, { withCredentials: true });
       setChoosenChat(response.data);
+      subscribeToChatMessages(response.data);
     } catch (error) {
       if (error.response) {
         console.error(error.response.data.message);
@@ -86,8 +112,9 @@ function Chat() {
       content: messageContent,
       timestamp: new Date().toISOString()
     };
-    if (client != null) {
-      client.publish({
+    if (clientRef.current != null) {
+      // Send the message to the server
+      clientRef.current.publish({
         destination,
         body: JSON.stringify(message),
       });
@@ -106,10 +133,11 @@ function Chat() {
     if (subscriptionRef.current) {
       subscriptionRef.current.unsubscribe(); // Unsubscribe from previous chat
     }
-    const newSubscription = client.subscribe(destination, (receivedMessage) => {
+    const newSubscription = clientRef.current.subscribe(destination, (receivedMessage) => {
       // Process the received message
       const message = JSON.parse(receivedMessage.body);
 
+      // Update the chat history with the new message
       setChoosenChat((prevChat) => ({
         ...prevChat,
         messages: [...prevChat.messages, ...message],
@@ -153,8 +181,8 @@ function Chat() {
       <Col className="chat-list" lg={3}>
         {chats.map(chat => (
           <Row className='chat-container' key={chat.id} onClick={() => {
-            getChatMessages(chat.id);
-            subscribeToChatMessages(chat);
+            const encryptedChatId = cryptoJs.AES.encrypt(chat.id.toString(), ENCRYPTION_KEY).toString();
+            navigate(`/messenger?c=${encryptedChatId}`);
           }}>
             <Col lg={2} className='chat-avatar d-flex justify-content-center'>
               <img

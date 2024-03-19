@@ -10,7 +10,7 @@ function Content({ isAuthenticated, setIsAuthenticated }) {
     return (
         <Container className='wrapper'>
             <Routes>
-                <Route path="/chat" element={isAuthenticated ? <Chat /> : <Navigate to="/sign-in" />} />
+                <Route path="/messenger" element={isAuthenticated ? <Chat /> : <Navigate to="/sign-in" />} />
 
                 {/* Authentication routes */}
                 <Route path="/sign-in" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />

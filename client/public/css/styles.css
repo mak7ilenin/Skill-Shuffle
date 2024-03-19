@@ -1,3 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Russo+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&display=swap");
 #root {
   display: flex;
 }
@@ -13,20 +17,49 @@ p {
   top: 0;
   height: 100vh;
   width: 244px;
-  border-right: 1px solid #e5e5e5;
+  border-right: 1px solid #8f8f8f;
 }
 .default-header.closed {
   width: 69px;
 }
 .default-header .logo-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+  margin-top: 45px;
 }
-.default-header .logo-container img {
+.default-header .list-group {
+  border: none;
+  margin-top: 35px;
+}
+.default-header .list-group .list-group-item {
+  height: 56px;
+  border: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.default-header .list-group .list-group-item:hover {
+  background-color: #f4f4f4;
+}
+.default-header .list-group .list-group-item.dropdown-container {
+  margin-top: auto;
+  margin-bottom: 35px;
+}
+.default-header .list-group .list-group-item.dropdown-container button {
   width: 100%;
-  height: auto;
+  height: 100%;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+.default-header .list-group .list-group-item.dropdown-container button::after {
+  display: none;
+}
+.default-header .list-group .list-group-item span {
+  display: block;
 }
 
 .chat-page {

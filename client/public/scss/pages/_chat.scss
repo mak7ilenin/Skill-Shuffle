@@ -104,7 +104,6 @@
                 margin-bottom: 16px;
                 flex-wrap: nowrap;
                 position: relative;
-                // If the message is sent by the current user, move image to the right and message content to the left and the message time to the left as well
 
                 &.own-message {
                     justify-content: flex-start;
