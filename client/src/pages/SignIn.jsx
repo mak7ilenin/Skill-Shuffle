@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useAuth } from '../components/AuthContext';
 import { API_SERVER } from '../config';
 
-function SignIn({ setIsAuthenticated }) {
+function SignIn() {
     const navigate = useNavigate();
     const { setAuthUser } = useAuth();
     const [username, setUsername] = useState('');
@@ -24,7 +24,6 @@ function SignIn({ setIsAuthenticated }) {
                     }
                     const authUser = responseData.user
                     setAuthUser(authUser);
-                    setIsAuthenticated(true);
                     navigate('/messenger');
                 });
         } catch (error) {

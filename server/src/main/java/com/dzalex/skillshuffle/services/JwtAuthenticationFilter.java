@@ -45,9 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //        }
 
         // Get access token from cookies
-        String token = jwtHelper.getAccessTokenFromCookies(request);
-        if (token != null) {
-            username = tryToGetUsernameFromToken(token, response);
+        String accessToken = jwtHelper.getAccessTokenFromCookies(request);
+        if (accessToken != null) {
+            username = tryToGetUsernameFromToken(accessToken, response);
         } else {
             // REFRESH TOKEN FUNCTIONALITY
             String refreshTokenString = jwtHelper.getRefreshTokenFromCookies(request);
@@ -55,9 +55,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenString);
                 if (refreshTokenService.verifyExpiration(refreshToken, response) != null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(refreshToken.getUser().getUsername());
-                    String newAccessToken = jwtHelper.createAccessTokenCookie(response, userDetails);
-                    username = jwtHelper.getUsernameFromToken(newAccessToken);
+                    accessToken = jwtHelper.createAccessTokenCookie(response, userDetails);
+                    username = jwtHelper.getUsernameFromToken(accessToken);
                 }
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         }
 
@@ -65,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // Fetch user details by username
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            Boolean validateToken = jwtHelper.validateToken(token, userDetails);
+            Boolean validateToken = jwtHelper.validateToken(accessToken, userDetails);
             if (validateToken) {
                 // Set the authentication
                 UsernamePasswordAuthenticationToken authentication =

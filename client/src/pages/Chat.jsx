@@ -11,7 +11,7 @@ import { useAuth } from '../components/AuthContext';
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function Chat() {
-  const { authUser } = useAuth();
+  const { authUser, setAuthUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [chats, setChats] = useState([]);
@@ -31,11 +31,9 @@ function Chat() {
     if (encryptedChatId) {
       try {
         const decryptedChatId = AESDecrypt(encryptedChatId);
-        if (decryptedChatId === '' || isNaN(decryptedChatId)) {
-          console.error('Invalid decrypted chat ID');
-          return;
+        if (decryptedChatId !== '' && !isNaN(decryptedChatId)) {
+          getChatMessages(decryptedChatId);
         }
-        getChatMessages(decryptedChatId);
       } catch (error) {
         console.error("Error decrypting chat ID: ", error);
       }
@@ -60,8 +58,12 @@ function Chat() {
 
         newClient.activate();
         clientRef.current = newClient;
+      })
+      .catch(() => {
+        setAuthUser(null);
+        navigate('/sign-in');
       });
-  }, []);
+  }, [clientRef, navigate, setAuthUser]);
 
   useEffect(() => {
     axios.get(`${API_SERVER}/chats`, { withCredentials: true })

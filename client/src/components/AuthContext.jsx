@@ -1,12 +1,28 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { API_SERVER } from '../config';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [authUser, setAuthUser] = useState(() => {
-        const storedUser = sessionStorage.getItem('auth-user');
-        return storedUser ? JSON.parse(storedUser) : null;
+        return JSON.parse(sessionStorage.getItem('auth-user'));
     });
+
+    useEffect(() => {
+        // Check user's authentication status with refresh token
+        if (!authUser) {
+            axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
+                .then(response => {
+                    if (response.status === 200) {
+                        setAuthUser(response.data.user);
+                    }
+                })
+                .catch(() => {
+                    setAuthUser(null);
+                });
+        }
+    }, [authUser]);
 
     useEffect(() => {
         // Store authUser in sessionStorage whenever it changes

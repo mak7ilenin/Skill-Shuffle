@@ -5,19 +5,39 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Chat from '../pages/Chat';
 import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
+import { useAuth } from './AuthContext';
 
-function Content({ isAuthenticated, setIsAuthenticated }) {
+function Content() {
+    const { authUser } = useAuth();
+
     return (
         <Container className='wrapper'>
             <Routes>
-                <Route path="/messenger" element={isAuthenticated ? <Chat /> : <Navigate to="/sign-in" />} />
+                {authUser ? (
+                    <Route path="/messenger" element={<Chat />} />
+                ) : (
+                    <Route path="/messenger" element={<Navigate to="/sign-in" />} />
+                )}
 
-                {/* Authentication routes */}
-                <Route path="/sign-in" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />
-                <Route path="/sign-up" element={<SignUp setIsAuthenticated={setIsAuthenticated} />} />
+                <Route path="/sign-in"
+                    element={
+                        // If user is authenticated, redirect to the Chat page
+                        authUser ? <Navigate to="/messenger" /> : <SignIn />
+                    }
+                />
+                <Route path="/sign-up"
+                    element={
+                        // If user is authenticated, redirect to the Chat page
+                        authUser ? <Navigate to="/messenger" /> : <SignUp />
+                    }
+                />
 
-                {/* Redirect to sign-in page if no route matches */}
-                <Route path="/" element={<Navigate to="/sign-in" />} />
+                <Route path="/"
+                    element={
+                        // If user is authenticated, redirect to the Chat page otherwise redirect to the sign-in page
+                        authUser ? <Navigate to="/messenger" /> : <Navigate to="/sign-in" />
+                    }
+                />
             </Routes>
         </Container>
     )

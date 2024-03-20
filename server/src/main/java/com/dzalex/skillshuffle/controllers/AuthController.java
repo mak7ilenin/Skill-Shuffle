@@ -99,40 +99,23 @@ public class AuthController {
     public ResponseEntity<JwtResponseDTO> confirm(HttpServletRequest request) {
         String token = helper.getAccessTokenFromCookies(request);
         if (token != null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(helper.getUsernameFromToken(token));
+            String username = helper.getUsernameFromToken(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (helper.validateToken(token, userDetails)) {
+                User user = userRepository.findByUsername(username);
                 return new ResponseEntity<>(JwtResponseDTO.builder()
-                        .access_token(token)
                         .username(userDetails.getUsername())
-                        .user(null)
+                        .access_token(token)
+                        .user(new UserSessionDTO(
+                                user.getFirst_name(),
+                                user.getLast_name(),
+                                user.getNickname(),
+                                user.getAvatar_url()))
                         .build(), HttpStatus.OK);
             }
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    }
-
-    @PostMapping("refresh")
-    // Refresh the access token using the refresh token
-    public ResponseEntity<JwtResponseDTO> refresh(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = helper.getRefreshTokenFromCookies(request);
-        if (refreshToken != null) {
-            RefreshToken token = refreshTokenService.findByToken(refreshToken);
-            if (token != null) {
-                token = refreshTokenService.verifyExpiration(token, response);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(token.getUser().getUsername());
-                JwtResponseDTO jwtResponse = JwtResponseDTO.builder()
-                        .access_token(helper.createAccessTokenCookie(response, userDetails))
-                        .username(token.getUser().getUsername())
-                        .user(new UserSessionDTO(
-                                token.getUser().getFirst_name(),
-                                token.getUser().getLast_name(),
-                                token.getUser().getNickname(),
-                                token.getUser().getAvatar_url()))
-                        .build();
-                return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
-            }
-        }
-        throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Refresh token is empty!");
+//        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return null;
     }
 
     @PostMapping("logout")
