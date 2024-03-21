@@ -23,13 +23,13 @@ public class WebSocketController {
     @Autowired
     private MessageService messageService;
 
-    @MessageMapping("/chat/{chatId}")
-    @SendTo("/user/chat/{chatId}")
-    public List<Message> sendMessageWithWebSocket(@DestinationVariable String chatId, @Payload Message message) {
-        List<Message> messages = this.chats.getOrDefault(chatId, new ArrayList<>());
-        Message savedMessage = messageService.saveMessage(message, chatId);
+    @MessageMapping("/chat/{id}")
+    @SendTo("/user/chat/{id}")
+    public List<Message> sendMessageWithWebSocket(@DestinationVariable String id, @Payload Message message) {
+        List<Message> messages = this.chats.getOrDefault(id, new ArrayList<>());
+        Message savedMessage = messageService.saveMessage(message, id);
         messages.add(savedMessage);
-        chats.put(chatId, messages);
+        chats.put(id, messages);
         return messages;
     }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
 import { Row, Col, Stack } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AESEncrypt, AESDecrypt } from '../crypto';
@@ -15,9 +15,9 @@ function Chat() {
   const navigate = useNavigate();
   const location = useLocation();
   const [chats, setChats] = useState([]);
-  const clientRef = useRef(null);
   const [choosenChat, setChoosenChat] = useState({});
-  const [messageContent, setMessageContent] = useState("");
+  const [stompClient, setStompClient] = useState(null);
+  const [messageContent, setMessageContent] = useState('');
   const messagesListRef = useRef(null);
   const subscriptionRef = useRef(null);
 
@@ -25,21 +25,6 @@ function Chat() {
   useLayoutEffect(() => {
     scrollToBottom();
   }, [choosenChat]);
-
-  useEffect(() => {
-    const encryptedChatId = new URLSearchParams(location.search).get('c');
-    if (encryptedChatId) {
-      try {
-        const decryptedChatId = AESDecrypt(encryptedChatId);
-        if (decryptedChatId !== '' && !isNaN(decryptedChatId)) {
-          getChatMessages(decryptedChatId);
-        }
-      } catch (error) {
-        console.error("Error decrypting chat ID: ", error);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.search]);
 
   useEffect(() => {
     axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
@@ -57,14 +42,32 @@ function Chat() {
         });
 
         newClient.activate();
-        clientRef.current = newClient;
+        setStompClient(newClient);
+
       })
       .catch(() => {
         setAuthUser(null);
         navigate('/sign-in');
       });
-  }, [clientRef, navigate, setAuthUser]);
+  }, [setStompClient, setAuthUser, navigate]);
 
+  // Get the current chat via the encrypted chat ID in the URL
+  useEffect(() => {
+    const encryptedChatId = new URLSearchParams(location.search).get('c');
+    if (encryptedChatId) {
+      try {
+        const decryptedChatId = AESDecrypt(encryptedChatId);
+        if (decryptedChatId !== '' && !isNaN(decryptedChatId)) {
+          getChatMessages(decryptedChatId);
+        }
+      } catch (error) {
+        console.error("Error decrypting chat: ", error);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
+
+  // Get the list of chats
   useEffect(() => {
     axios.get(`${API_SERVER}/chats`, { withCredentials: true })
       .then(response => {
@@ -77,6 +80,39 @@ function Chat() {
         }
       });
   }, []);
+
+  const subscribeToChatMessages = useCallback((chat) => {
+    const destination = `/user/chat/${chat.id}`;
+    if (subscriptionRef.current) {
+      subscriptionRef.current.unsubscribe(); // Unsubscribe from previous chat
+    }
+    const newSubscription = stompClient.subscribe(destination, (receivedMessage) => {
+      // Process the received message
+      const message = JSON.parse(receivedMessage.body);
+
+      // Update the chat history with the new message
+      setChoosenChat((prevChat) => ({
+        ...prevChat,
+        messages: [...prevChat.messages, ...message],
+      }));
+    });
+    subscriptionRef.current = newSubscription; // Store the new subscription
+  }, [stompClient]);
+
+  useEffect(() => {
+    if (stompClient != null && choosenChat.id) {
+      const onConnectCallback = () => {
+        subscribeToChatMessages(choosenChat);
+      };
+
+      stompClient.onConnect = onConnectCallback; // Set the onConnect callback
+
+      // If the client is already connected, invoke the callback immediately
+      if (stompClient.connected) {
+        onConnectCallback();
+      }
+    }
+  }, [stompClient, choosenChat, subscribeToChatMessages]);
 
   const getChatMessages = async (chatId) => {
     try {
@@ -104,38 +140,20 @@ function Chat() {
       content: messageContent,
       timestamp: new Date().toISOString()
     };
-    if (clientRef.current != null) {
-      // Send the message to the server
-      clientRef.current.publish({
+    if (stompClient != null) {
+      // Send the message to the server to handle
+      stompClient.publish({
         destination,
         body: JSON.stringify(message),
       });
     }
   };
 
-  // Function to handle Enter key press
+  // Send message by pressing Enter
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       sendMessage();
     }
-  };
-
-  const subscribeToChatMessages = (chat) => {
-    const destination = `/user/chat/${chat.id}`;
-    if (subscriptionRef.current) {
-      subscriptionRef.current.unsubscribe(); // Unsubscribe from previous chat
-    }
-    const newSubscription = clientRef.current.subscribe(destination, (receivedMessage) => {
-      // Process the received message
-      const message = JSON.parse(receivedMessage.body);
-
-      // Update the chat history with the new message
-      setChoosenChat((prevChat) => ({
-        ...prevChat,
-        messages: [...prevChat.messages, ...message],
-      }));
-    });
-    subscriptionRef.current = newSubscription; // Store the new subscription
   };
 
   const formatTimestampForMessage = (timestamp) => {

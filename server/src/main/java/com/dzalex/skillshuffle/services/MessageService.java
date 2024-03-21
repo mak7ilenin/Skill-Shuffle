@@ -31,8 +31,7 @@ public class MessageService {
         User sender = userRepository.findByNickname(message.getSender().getNickname());
 
         if (sender == null) {
-            System.out.println("Sender not found for nickname: " + message.getSender().getNickname());
-            throw new IllegalArgumentException("Sender not found");
+            throw new IllegalArgumentException("Sender not found!");
         }
 
         // Create a new message and set its attributes
