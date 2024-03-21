@@ -107,6 +107,10 @@ public class JwtHelper {
         cookie.setHttpOnly(true);
         cookie.setPath("/"); // Set cookie for the whole application
         cookie.setMaxAge(maxAge);
+        // CHANGES FOR LOCAL NETWORK TESTING
+//        cookie.setAttribute("SameSite", "None");
+//        cookie.setSecure(true);
+        // END CHANGES
         response.addCookie(cookie);
         return value;
     }
@@ -116,6 +120,10 @@ public class JwtHelper {
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(0);
+        // CHANGES FOR LOCAL NETWORK TESTING
+//        cookie.setAttribute("SameSite", "None");
+//        cookie.setSecure(true);
+        // END CHANGES
         response.addCookie(cookie);
     }
 
