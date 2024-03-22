@@ -5,6 +5,7 @@ import com.dzalex.skillshuffle.dtos.ChatPreviewDTO;
 import com.dzalex.skillshuffle.dtos.MessageDTO;
 import com.dzalex.skillshuffle.models.Chat;
 import com.dzalex.skillshuffle.models.Message;
+import com.dzalex.skillshuffle.models.User;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;

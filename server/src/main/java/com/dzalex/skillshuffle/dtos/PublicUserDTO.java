@@ -7,8 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MessageSender {
-    private Long id;
+public class PublicUserDTO {
     private String first_name;
     private String last_name;
     private String nickname;

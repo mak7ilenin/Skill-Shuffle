@@ -86,6 +86,7 @@ function Chat() {
     if (subscriptionRef.current) {
       subscriptionRef.current.unsubscribe(); // Unsubscribe from previous chat
     }
+
     const newSubscription = stompClient.subscribe(destination, (receivedMessage) => {
       // Process the received message
       const message = JSON.parse(receivedMessage.body);
@@ -103,6 +104,19 @@ function Chat() {
     if (stompClient != null && choosenChat.id) {
       const onConnectCallback = () => {
         subscribeToChatMessages(choosenChat);
+
+        // Subscribe to notifications
+        stompClient.subscribe(`/user/${authUser.nickname}/notifications`, (receivedNotification) => {
+          console.log("Received notification: " + receivedNotification.body);
+          const notification = JSON.parse(receivedNotification.body);
+          if (notification.type === 'CHAT_MESSAGE') {
+            const chatId = notification.chat.id;
+            if (chatId !== choosenChat.id) {
+              // Show a notification for the new message
+              console.log(notification.message);
+            }
+          }
+        });
       };
 
       stompClient.onConnect = onConnectCallback; // Set the onConnect callback
@@ -112,7 +126,7 @@ function Chat() {
         onConnectCallback();
       }
     }
-  }, [stompClient, choosenChat, subscribeToChatMessages]);
+  }, [stompClient, authUser, choosenChat, subscribeToChatMessages]);
 
   const getChatMessages = async (chatId) => {
     try {
@@ -127,18 +141,17 @@ function Chat() {
   };
 
   const sendMessage = () => {
+    if (messageContent === '') {
+      return;
+    }
     setMessageContent('');
     const destination = `/app/chat/${choosenChat.id}`;
     const message = {
-      sender: {
-        nickname: authUser.nickname,
-        first_name: authUser.first_name,
-        last_name: authUser.last_name,
-        avatar_url: authUser.avatar_url
-      },
+      sender: authUser,
       chat: { id: choosenChat.id },
       content: messageContent,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      type: 'CHAT_MESSAGE',
     };
     if (stompClient != null) {
       // Send the message to the server to handle

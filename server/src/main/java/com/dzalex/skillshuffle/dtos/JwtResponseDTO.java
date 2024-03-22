@@ -9,5 +9,5 @@ import lombok.*;
 public class JwtResponseDTO {
     private String access_token;
     private String username;
-    private UserSessionDTO user;
+    private PublicUserDTO user;
 }

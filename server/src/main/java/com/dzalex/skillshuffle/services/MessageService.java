@@ -1,7 +1,7 @@
 package com.dzalex.skillshuffle.services;
 
 import com.dzalex.skillshuffle.dtos.MessageDTO;
-import com.dzalex.skillshuffle.dtos.MessageSender;
+import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.enums.MessageStatus;
 import com.dzalex.skillshuffle.models.Message;
 import com.dzalex.skillshuffle.models.User;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MessageService {
@@ -56,8 +55,7 @@ public class MessageService {
             Message lastMessage = messages.get(0);
             return new MessageDTO(
                     lastMessage.getId(),
-                    new MessageSender(
-                            lastMessage.getSender().getId(),
+                    new PublicUserDTO(
                             lastMessage.getSender().getFirst_name(),
                             lastMessage.getSender().getLast_name(),
                             lastMessage.getSender().getNickname(),
@@ -73,8 +71,7 @@ public class MessageService {
     public MessageDTO convertToDTO(Message message) {
         return new MessageDTO(
                 message.getId(),
-                new MessageSender(
-                        message.getSender().getId(),
+                new PublicUserDTO(
                         message.getSender().getFirst_name(),
                         message.getSender().getLast_name(),
                         message.getSender().getNickname(),

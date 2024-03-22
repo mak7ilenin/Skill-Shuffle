@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @Builder
 public class MessageDTO {
     private Long id;
-    private MessageSender sender;
+    private PublicUserDTO sender;
     private String content;
     private Timestamp timestamp;
     private MessageStatus status;

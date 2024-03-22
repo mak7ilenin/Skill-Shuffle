@@ -2,30 +2,26 @@ package com.dzalex.skillshuffle.controllers;
 
 import com.dzalex.skillshuffle.dtos.AuthRequestDTO;
 import com.dzalex.skillshuffle.dtos.JwtResponseDTO;
-import com.dzalex.skillshuffle.dtos.UserSessionDTO;
+import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.models.RefreshToken;
 import com.dzalex.skillshuffle.models.User;
-import com.dzalex.skillshuffle.repositories.RefreshTokenRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import com.dzalex.skillshuffle.services.JwtHelper;
 import com.dzalex.skillshuffle.services.RefreshTokenService;
 import com.dzalex.skillshuffle.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 @RestController
 @RequestMapping("api/auth")
@@ -68,7 +64,7 @@ public class AuthController {
             JwtResponseDTO jwtResponse = JwtResponseDTO.builder()
                     .username(request.getUsername())
                     .access_token(helper.createAccessTokenCookie(response, userDetails))
-                    .user(new UserSessionDTO(
+                    .user(new PublicUserDTO(
                             user.getFirst_name(),
                             user.getLast_name(),
                             user.getNickname(),
@@ -106,7 +102,7 @@ public class AuthController {
                 return new ResponseEntity<>(JwtResponseDTO.builder()
                         .username(userDetails.getUsername())
                         .access_token(token)
-                        .user(new UserSessionDTO(
+                        .user(new PublicUserDTO(
                                 user.getFirst_name(),
                                 user.getLast_name(),
                                 user.getNickname(),
