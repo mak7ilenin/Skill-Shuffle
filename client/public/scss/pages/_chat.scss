@@ -4,55 +4,94 @@
 
     .alert-notification {
         width: 220px;
-        min-height: 85px;
-        background-color: #fff;
+        height: fit-content;
         border-radius: 10px;
         box-shadow: 0 0 5px #ccc;
         position: fixed;
         bottom: 20px;
         right: 20px;
-        display: flex;
-        align-items: center;
         padding: 10px;
         z-index: 1000;
+        cursor: pointer;
+        margin-bottom: 0;
 
         transition: opacity .3s ease-in-out;
         opacity: 1;
 
+        hr {
+            width: 100%;
+            margin: 3px 0;
+            border: 0;
+            border-top: 1px solid #ccc;
+        }
+
+        &:hover {
+            background-color: #f7f7f7;
+        }
+
+        .btn-close {
+            width: 8px;
+            height: 8px;
+            padding: 0;
+            top: 13px;
+            right: 10px;
+        }
+
         .alert-heading {
             width: 100%;
-            font-weight: 600;
+            height: fit-content;
+            font-weight: 400;
             margin-bottom: 5px;
-            font-size: 16px;
+            font-size: 14px;
+            position: relative;
+            padding-right: 20px;
+            color: #434343;
         }
 
         .alert-message {
             width: 100%;
-            font-size: 14px;
-            
+            margin-top: 5px;
+
+            div {
+                margin-left: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+
             h5 {
-                font-weight: 600;
-                margin-bottom: 5px;
+                width: 100%;
+                padding-bottom: 2px;
+                font-size: 14px;
+                font-weight: 500;
                 color: #4f4f4f;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             span {
+                width: 100%;
+                font-size: 13px;
                 font-weight: 400;
-                color: #b2b2b2;
+                color: #848484;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
     }
 
     .chat-list {
         // width: 300px;
+        width: 25%;
         height: 100vh;
         background-color: #f4f4f4;
         border-right: 1px solid #ccc;
+        flex: 0 0 auto;
 
         .chat-container {
-            display: flex;
-            align-items: center;
-            padding: 10px;
+            padding: 10px 15px;
             cursor: pointer;
 
             &:hover {
@@ -61,7 +100,7 @@
 
             .chat-avatar {
                 position: relative;
-                margin-right: 16px;
+                margin-right: 12px;
 
                 img {
                     position: relative;
@@ -91,22 +130,34 @@
                 }
             }
 
-            .chat-name {
-                margin-left: 10px;
-                font-weight: 600;
+            .chat-info {
+                width: calc(100% - 62px);
 
-                span {
-                    font-size: 14px;
-                    font-weight: 400;
-                    color: #b2b2b2;
+                .chat-name {
+                    font-weight: 600;
+
+                    span {
+                        font-size: 14px;
+                        font-weight: 400;
+                        color: #b2b2b2;
+                    }
+                }
+
+                .last-message {
+                    width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
         }
     }
 
     .chat-box {
+        width: 75%;
         height: 100vh;
         padding-right: 0;
+        flex: 1;
 
         &.non-selected {
             display: flex;
@@ -142,7 +193,6 @@
             margin-right: 0;
 
             .message {
-                margin-bottom: 16px;
                 flex-wrap: nowrap;
                 position: relative;
 
@@ -191,7 +241,6 @@
                     border-radius: 10px;
                     box-shadow: 0 0 5px #ccc;
                     max-width: 70%;
-                    width: fit-content;
                     word-wrap: break-word;
                     position: relative;
                 }
@@ -211,6 +260,21 @@
 
         .message-input {
             margin-right: 0;
+            position: relative;
+
+            .length-counter {
+                width: fit-content;
+                font-size: 14px;
+                color: #b2b2b2;
+                height: 100%;
+                position: absolute;
+                right: 60px;
+                top: 0;
+
+                &.over-limit {
+                    color: #ff0000;
+                }
+            }
 
             input[type="text"] {
                 border: 1px solid #ccc;
@@ -220,6 +284,7 @@
                 width: calc(100% - 60px);
                 border-radius: 0;
                 padding-left: 25px;
+                padding-right: 85px;
 
                 &::placeholder {
                     color: #b2b2b2;

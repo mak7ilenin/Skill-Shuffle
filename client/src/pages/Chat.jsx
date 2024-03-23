@@ -23,6 +23,7 @@ function Chat() {
   const messagesListRef = useRef(null);
   const subscriptionRef = useRef(null);
   const timeoutRef = useRef(null);
+  const debounceTimeout = useRef(null);
 
   // Scroll to the bottom of the current chat
   useLayoutEffect(() => {
@@ -119,45 +120,67 @@ function Chat() {
     subscriptionRef.current = newSubscription; // Store the new subscription
   }, [choosenChat.id, stompClient, setChoosenChat, updateChatLastMessage]);
 
+  const showNotification = useCallback((notification) => {
+    setMessageNotification({ visible: true, notification: notification });
+
+    // Clear the previous timeout (if any)
+    clearTimeout(timeoutRef.current);
+
+    // Set a new timeout to hide the notification after 5 seconds
+    timeoutRef.current = setTimeout(() => {
+      setMessageNotification(prevState => ({
+        ...prevState,
+        visible: false,
+      }));
+    }, 5000);
+  }, []);
+
   const subscribeToNotifications = useCallback(() => {
-    stompClient.subscribe(`/user/notification`, (receivedNotification) => {
+    return stompClient.subscribe(`/user/notification`, (receivedNotification) => {
       // Process the received notification
       const notification = JSON.parse(receivedNotification.body);
       if (notification.type === 'CHAT_MESSAGE') {
+        ;
         if (notification.chat.id !== choosenChat.id) {
-
           // Update the last message of the chat
           updateChatLastMessage(notification);
 
-          // Show a bootstrap notification alert
-          showNotification(notification);
-          // showNotification(
-          //   `New message from ${notification.chat.name}`,
-          //   notification,
-          //   `/messenger?c=${AESEncrypt(notification.chat.id.toString())}`
-          // );
+          // Clear previous debounce timeout if exists
+          if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current);
+          }
+
+          // Set a new debounce timeout to trigger the notification
+          debounceTimeout.current = setTimeout(() => {
+            showNotification(notification);
+            debounceTimeout.current = null; // Reset debounce timeout after notification is shown
+          }, 1000);
         }
       }
     });
-  }, [choosenChat.id, stompClient, updateChatLastMessage]);
+  }, [choosenChat.id, stompClient, updateChatLastMessage, showNotification]);
 
+  // Handle the WebSocket connection
   useEffect(() => {
+    let notificationSubscription = null;
     if (stompClient != null && choosenChat.id) {
       const onConnectCallback = () => {
-
         // Subscribe to the current chat messages
         subscribeToChatMessages();
-
         // Subscribe to notifications
-        subscribeToNotifications();
+        notificationSubscription = subscribeToNotifications();
       };
-
       stompClient.onConnect = onConnectCallback;
-
       if (stompClient.connected) {
         onConnectCallback();
       }
     }
+    // Cleanup function to unsubscribe from notifications when the component unmounts
+    return () => {
+      if (notificationSubscription) {
+        notificationSubscription.unsubscribe();
+      }
+    };
   }, [stompClient, choosenChat, subscribeToChatMessages, subscribeToNotifications]);
 
   const getChatMessages = async (chatId) => {
@@ -224,21 +247,6 @@ function Chat() {
     }
   }
 
-  const showNotification = (notification) => {
-    setMessageNotification({ visible: true, notification: notification });
-
-    // Clear the previous timeout (if any)
-    clearTimeout(timeoutRef.current);
-
-    // Set a new timeout to hide the notification after 5 seconds
-    timeoutRef.current = setTimeout(() => {
-      setMessageNotification(prevState => ({
-        ...prevState,
-        visible: false,
-      }));
-    }, 5000);
-  }
-
   const scrollToBottom = () => {
     if (messagesListRef.current) {
       messagesListRef.current.scrollTop = messagesListRef.current.scrollHeight;
@@ -246,14 +254,14 @@ function Chat() {
   };
 
   return (
-    <Row className="chat-page">
+    <Row className="chat-page flex-nowrap">
       {messageNotification.visible && (
         <MessageNotification {...messageNotification} />
       )}
 
-      <Col className="chat-list" lg={3}>
+      <Col className="chat-list">
         {chats.map(chat => (
-          <Row className='chat-container' key={chat.id} onClick={() => { navigate(`/messenger?c=${chat.id}`); }}>
+          <Row className='chat-container d-flex align-items-center flex-nowrap' key={chat.id} onClick={() => { navigate(`/messenger?c=${chat.id}`); }}>
             <Col lg={2} className='chat-avatar d-flex justify-content-center'>
               <img
                 src={chat.avatar_url !== null ? `${SERVER_URL}/${chat.avatar_url}` : imagePlaceholder}
@@ -293,8 +301,8 @@ function Chat() {
               <p className='chat-name'>{choosenChat.name}</p>
             </Col>
           </Row>
-          <Row className='messages-list p-0' ref={messagesListRef}>
-            <Stack direction='vertical' gap={2}>
+          <Row className='messages-list p-0 py-3' ref={messagesListRef}>
+            <Stack direction='vertical' gap={3}>
               {choosenChat.messages && choosenChat.messages.map((message, index) => (
                 <div
                   className={`message d-flex ${message.sender && message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'}`}
@@ -308,7 +316,7 @@ function Chat() {
                     style={{ borderRadius: 50, objectFit: 'cover' }}
                   />
                   <div className="message-content">
-                    <p><strong>{message.sender && message.sender.first_name}</strong></p>
+                    <p><strong>{message.sender && message.sender.nickname === authUser.nickname ? 'You' : message.sender.nickname}</strong></p>
                     <p>{message.content}</p>
                   </div>
                   <div className="message-time-container">
@@ -326,7 +334,9 @@ function Chat() {
               value={messageContent}
               onChange={(event) => { setMessageContent(event.target.value); }}
               onKeyDown={handleKeyPress}
+              maxLength={1024}
             />
+            <span className={`length-counter d-flex align-items-center ${messageContent.length === 1024 ? 'over-limit' : ''}`}>{messageContent.length}/1024</span>
             <button className='btn btn-outline-primary' onClick={sendMessage}>Send</button>
           </Row>
         </Col>

@@ -22,30 +22,30 @@ function MessageNotification({ visible, notification }) {
 
     return (
         <Alert
-            variant="info"
+            variant="light"
             show={show}
             onClose={() => setShow(false)}
+            onClick={() => {
+                setShow(false);
+                navigate(`/messenger?c=${AESEncrypt(notification.chat.id.toString())}`);
+            }}
             dismissible
-            className='alert-notification d-flex flex-column justify-content-center align-items-center'
+            className='alert-notification d-flex flex-column align-items-center'
         >
             <Alert.Heading>{notification.message}</Alert.Heading>
             <hr />
-            <div className="alert-message d-flex flex-column flex-md-row align-items-center justify-content-between"
-                onClick={() => {
-                    setShow(false);
-                    navigate(`/messenger?c=${AESEncrypt(notification.chat.id.toString())}`);
-                }}
-            >
+            <div className="alert-message d-flex flex-column flex-md-row align-items-center">
                 <Image
                     src={notification.chat.avatar_url ? `${SERVER_URL}/${notification.chat.avatar_url}` : imagePlaceholder}
                     width={35}
                     height={35}
                     alt={notification.chat.name}
+                    style={{ objectFit: 'cover' }}
                     roundedCircle
                 />
                 <div>
-                    <h5>{notification.content}</h5>
-                    <span>A few seconds ago</span>
+                    <h5>{notification.sender.first_name}</h5>
+                    <span>{notification.content}</span>
                 </div>
             </div>
         </Alert>
