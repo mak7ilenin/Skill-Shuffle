@@ -11,5 +11,6 @@ public class ChatNotification {
     private Chat chat;
     private PublicUserDTO sender;
     private String message;
+    private String content;
     private NotificationType type;
 }

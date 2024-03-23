@@ -40,33 +40,78 @@ public class WebSocketController {
     private ChatRepository chatRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+//    @MessageMapping("/chat/{chatId}")
+//    @SendTo("/user/chat/{chatId}")
+//    public List<Message> sendMessageWithWebSocket(@DestinationVariable String chatId, @Payload Message message) {
+//        List<Message> messages = this.chats.getOrDefault(chatId, new ArrayList<>());
+//        Message savedMessage = messageService.saveMessage(message, chatId);
+//        messages.add(savedMessage);
+//        chats.put(chatId, messages);
+//
+//        // Get all users in this chat that connected to the websocket and send them the notification
+//        List<String> usernames = userService.getUsersInChat(Long.parseLong(chatId));
+//        usernames.remove(message.getSender().getUsername());
+//        ChatNotification notification = new ChatNotification(
+//                chatRepository.findChatById(Long.parseLong(chatId)),
+//                new PublicUserDTO(
+//                        message.getSender().getFirst_name(),
+//                        message.getSender().getLast_name(),
+//                        message.getSender().getNickname(),
+//                        message.getSender().getAvatar_url()
+//                ),
+//                "New message from " + message.getSender().getFirst_name() + " " + message.getSender().getLast_name(),
+//                NotificationType.CHAT_MESSAGE
+//        );
+//        for (String username : usernames) {
+//            messagingTemplate.convertAndSendToUser(username, "/user/notification", notification);
+//        }
+//        return messages;
+//    }
+
+    // When user sent a message in chat, the message will be sent to all users in the chat, if user doesn't subscribed to the chat, the message will be sent to the user's notification
     @MessageMapping("/chat/{chatId}")
-    @SendTo("/user/chat/{chatId}")
-    public List<Message> sendMessageWithWebSocket(@DestinationVariable String chatId, @Payload Message message) {
+    public void sendMessage(@DestinationVariable String chatId, @Payload Message message) {
         List<Message> messages = this.chats.getOrDefault(chatId, new ArrayList<>());
         Message savedMessage = messageService.saveMessage(message, chatId);
         messages.add(savedMessage);
         chats.put(chatId, messages);
 
-        // Get all users in this chat that connected to the websocket and send them the notification
-        List<String> users = userService.getUsersInChat(Long.parseLong(chatId));
-        users.remove(message.getSender().getNickname());
+        // Get all users in this chat
+        List<String> usernames = userService.getUsersInChat(Long.parseLong(chatId));
+        User sender = userRepository.findByNickname(message.getSender().getNickname());
+        String senderUsername = sender.getUsername();
+
+        // Send the message to all users who subscribed to chat
+        for (String username : usernames) {
+            messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, messages);
+        }
+
+        usernames.remove(senderUsername); // Remove sender from the list of usernames
+
+        // Create notification object
+        Chat chat = chatRepository.findChatById(Long.parseLong(chatId));
         ChatNotification notification = new ChatNotification(
-                chatRepository.findChatById(Long.parseLong(chatId)),
+                chat,
                 new PublicUserDTO(
                         message.getSender().getFirst_name(),
                         message.getSender().getLast_name(),
                         message.getSender().getNickname(),
                         message.getSender().getAvatar_url()
                 ),
-                "New message from " + message.getSender().getFirst_name() + " " + message.getSender().getLast_name(),
+                "New message in " + chat.getName(),
+                message.getContent(),
                 NotificationType.CHAT_MESSAGE
         );
-        for (String nickname : users) {
-            messagingTemplate.convertAndSend("/user/" + nickname + "/notifications", notification);
+
+        // Send notifications to users who are not currently subscribed to the chat
+        for (String username : usernames) {
+            messagingTemplate.convertAndSendToUser(username, "/notification", notification);
         }
-        return messages;
     }
+
 }

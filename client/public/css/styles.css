@@ -71,6 +71,41 @@ p {
   width: 100%;
   background-color: #f7f7f7;
 }
+.chat-page .alert-notification {
+  width: 220px;
+  min-height: 85px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 5px #ccc;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  z-index: 1000;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 1;
+}
+.chat-page .alert-notification .alert-heading {
+  width: 100%;
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+.chat-page .alert-notification .alert-message {
+  width: 100%;
+  font-size: 14px;
+}
+.chat-page .alert-notification .alert-message h5 {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #4f4f4f;
+}
+.chat-page .alert-notification .alert-message span {
+  font-weight: 400;
+  color: #b2b2b2;
+}
 .chat-page .chat-list {
   height: 100vh;
   background-color: #f4f4f4;

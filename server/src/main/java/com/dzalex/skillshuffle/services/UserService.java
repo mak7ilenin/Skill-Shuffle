@@ -38,11 +38,10 @@ public class UserService {
 
     public List<String> getUsersInChat(Long chatId) {
         List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);
-        List<String> userIds = new ArrayList<>();
-        // chatMember.getMember().getId()
+        List<String> usernames = new ArrayList<>();
         for (ChatMember chatMember : chatMembers) {
-            userIds.add(chatMember.getMember().getNickname());
+            usernames.add(chatMember.getMember().getUsername());
         }
-        return userIds;
+        return usernames;
     }
 }

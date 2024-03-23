@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import { API_SERVER, WEBSOCKET_URL, SERVER_URL } from '../config';
 import { useAuth } from '../components/AuthContext';
+import MessageNotification from '../components/MessageNotification';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
@@ -18,8 +19,10 @@ function Chat() {
   const [choosenChat, setChoosenChat] = useState({});
   const [stompClient, setStompClient] = useState(null);
   const [messageContent, setMessageContent] = useState('');
+  const [messageNotification, setMessageNotification] = useState({ visible: false, heading: '', message: {}, to: '' });
   const messagesListRef = useRef(null);
   const subscriptionRef = useRef(null);
+  const timeoutRef = useRef(null);
 
   // Scroll to the bottom of the current chat
   useLayoutEffect(() => {
@@ -81,8 +84,21 @@ function Chat() {
       });
   }, []);
 
-  const subscribeToChatMessages = useCallback((chat) => {
-    const destination = `/user/chat/${chat.id}`;
+  const updateChatLastMessage = useCallback((message) => {
+    message = message.content === undefined ? message[message.length - 1] : message;
+    const chatIndex = chats.findIndex(chat => AESDecrypt(chat.id) === message.chat.id.toString());
+    const chat = chats[chatIndex];
+
+    chat.last_message.content = message.content;
+    setChats((prevChats) => {
+      const newChats = [...prevChats];
+      newChats[chatIndex] = chat;
+      return newChats;
+    });
+  }, [chats, setChats]);
+
+  const subscribeToChatMessages = useCallback(() => {
+    const destination = `/user/chat/${choosenChat.id}`;
     if (subscriptionRef.current) {
       subscriptionRef.current.unsubscribe(); // Unsubscribe from previous chat
     }
@@ -91,6 +107,9 @@ function Chat() {
       // Process the received message
       const message = JSON.parse(receivedMessage.body);
 
+      // Update the last message of the chat
+      updateChatLastMessage(message);
+
       // Update the chat history with the new message
       setChoosenChat((prevChat) => ({
         ...prevChat,
@@ -98,35 +117,48 @@ function Chat() {
       }));
     });
     subscriptionRef.current = newSubscription; // Store the new subscription
-  }, [stompClient]);
+  }, [choosenChat.id, stompClient, setChoosenChat, updateChatLastMessage]);
+
+  const subscribeToNotifications = useCallback(() => {
+    stompClient.subscribe(`/user/notification`, (receivedNotification) => {
+      // Process the received notification
+      const notification = JSON.parse(receivedNotification.body);
+      if (notification.type === 'CHAT_MESSAGE') {
+        if (notification.chat.id !== choosenChat.id) {
+
+          // Update the last message of the chat
+          updateChatLastMessage(notification);
+
+          // Show a bootstrap notification alert
+          showNotification(notification);
+          // showNotification(
+          //   `New message from ${notification.chat.name}`,
+          //   notification,
+          //   `/messenger?c=${AESEncrypt(notification.chat.id.toString())}`
+          // );
+        }
+      }
+    });
+  }, [choosenChat.id, stompClient, updateChatLastMessage]);
 
   useEffect(() => {
     if (stompClient != null && choosenChat.id) {
       const onConnectCallback = () => {
-        subscribeToChatMessages(choosenChat);
+
+        // Subscribe to the current chat messages
+        subscribeToChatMessages();
 
         // Subscribe to notifications
-        stompClient.subscribe(`/user/${authUser.nickname}/notifications`, (receivedNotification) => {
-          console.log("Received notification: " + receivedNotification.body);
-          const notification = JSON.parse(receivedNotification.body);
-          if (notification.type === 'CHAT_MESSAGE') {
-            const chatId = notification.chat.id;
-            if (chatId !== choosenChat.id) {
-              // Show a notification for the new message
-              console.log(notification.message);
-            }
-          }
-        });
+        subscribeToNotifications();
       };
 
-      stompClient.onConnect = onConnectCallback; // Set the onConnect callback
+      stompClient.onConnect = onConnectCallback;
 
-      // If the client is already connected, invoke the callback immediately
       if (stompClient.connected) {
         onConnectCallback();
       }
     }
-  }, [stompClient, authUser, choosenChat, subscribeToChatMessages]);
+  }, [stompClient, choosenChat, subscribeToChatMessages, subscribeToNotifications]);
 
   const getChatMessages = async (chatId) => {
     try {
@@ -151,7 +183,6 @@ function Chat() {
       chat: { id: choosenChat.id },
       content: messageContent,
       timestamp: new Date().toISOString(),
-      type: 'CHAT_MESSAGE',
     };
     if (stompClient != null) {
       // Send the message to the server to handle
@@ -193,6 +224,21 @@ function Chat() {
     }
   }
 
+  const showNotification = (notification) => {
+    setMessageNotification({ visible: true, notification: notification });
+
+    // Clear the previous timeout (if any)
+    clearTimeout(timeoutRef.current);
+
+    // Set a new timeout to hide the notification after 5 seconds
+    timeoutRef.current = setTimeout(() => {
+      setMessageNotification(prevState => ({
+        ...prevState,
+        visible: false,
+      }));
+    }, 5000);
+  }
+
   const scrollToBottom = () => {
     if (messagesListRef.current) {
       messagesListRef.current.scrollTop = messagesListRef.current.scrollHeight;
@@ -201,6 +247,10 @@ function Chat() {
 
   return (
     <Row className="chat-page">
+      {messageNotification.visible && (
+        <MessageNotification {...messageNotification} />
+      )}
+
       <Col className="chat-list" lg={3}>
         {chats.map(chat => (
           <Row className='chat-container' key={chat.id} onClick={() => { navigate(`/messenger?c=${chat.id}`); }}>
