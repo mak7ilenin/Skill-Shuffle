@@ -1,15 +1,19 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
-import { Row, Col, Stack } from 'react-bootstrap';
+import { Row, Col, Stack, Image } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { AESEncrypt, AESDecrypt } from '../crypto';
+import GifPicker from 'gif-picker-react';
+import EmojiPicker from 'emoji-picker-react';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 
-import { API_SERVER, WEBSOCKET_URL, SERVER_URL } from '../config';
+import { AESEncrypt, AESDecrypt } from '../crypto';
+import { API_SERVER, WEBSOCKET_URL, SERVER_URL, TENOR_API_KEY } from '../config';
 import { useAuth } from '../components/AuthContext';
 import MessageNotification from '../components/MessageNotification';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
+import { ReactComponent as GifIcon } from '../assets/icons/gif.svg';
+import { ReactComponent as EmojiIcon } from '../assets/icons/emoji.svg';
 
 function Chat() {
   const { authUser, setAuthUser } = useAuth();
@@ -18,6 +22,8 @@ function Chat() {
   const [chats, setChats] = useState([]);
   const [choosenChat, setChoosenChat] = useState({});
   const [stompClient, setStompClient] = useState(null);
+  const [showGifs, setShowGifs] = useState(false);
+  const [showEmojis, setShowEmojis] = useState(false);
   const [messageContent, setMessageContent] = useState('');
   const [messageNotification, setMessageNotification] = useState({ visible: false, heading: '', message: {}, to: '' });
   const messagesListRef = useRef(null);
@@ -206,6 +212,7 @@ function Chat() {
       chat: { id: choosenChat.id },
       content: messageContent,
       timestamp: new Date().toISOString(),
+      type: 'text',
     };
     if (stompClient != null) {
       // Send the message to the server to handle
@@ -216,10 +223,24 @@ function Chat() {
     }
   };
 
-  // Send message by pressing Enter
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      sendMessage();
+  const sendGif = (gif) => {
+    if (gif === undefined) {
+      return;
+    }
+    const destination = `/app/chat/${choosenChat.id}`;
+    const message = {
+      sender: authUser,
+      chat: { id: choosenChat.id },
+      content: gif.url,
+      timestamp: new Date().toISOString(),
+      type: 'gif',
+    };
+    if (stompClient != null) {
+      stompClient.publish({
+        destination,
+        body: JSON.stringify(message),
+      });
+      setShowGifs(false);
     }
   };
 
@@ -263,12 +284,13 @@ function Chat() {
         {chats.map(chat => (
           <Row className='chat-container d-flex align-items-center flex-nowrap' key={chat.id} onClick={() => { navigate(`/messenger?c=${chat.id}`); }}>
             <Col lg={2} className='chat-avatar d-flex justify-content-center'>
-              <img
+              <Image
                 src={chat.avatar_url !== null ? `${SERVER_URL}/${chat.avatar_url}` : imagePlaceholder}
                 alt={chat.name}
                 width={50}
                 height={50}
-                style={{ borderRadius: 50, objectFit: 'cover' }}
+                style={{ objectFit: 'cover' }}
+                roundedCircle
               />
             </Col>
             <Col className='chat-info p-0'>
@@ -289,12 +311,13 @@ function Chat() {
         <Col className='chat-box d-flex flex-nowrap flex-column' key={choosenChat.id}>
           <Row className='chat-header'>
             <Col lg={1}>
-              <img
+              <Image
                 src={choosenChat.avatar_url !== null ? `${SERVER_URL}/${choosenChat.avatar_url}` : imagePlaceholder}
                 alt={choosenChat.name}
                 width={50}
                 height={50}
-                style={{ borderRadius: 50, objectFit: 'cover' }}
+                style={{ objectFit: 'cover' }}
+                roundedCircle
               />
             </Col>
             <Col>
@@ -308,16 +331,26 @@ function Chat() {
                   className={`message d-flex ${message.sender && message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'}`}
                   key={index}
                 >
-                  <img
+                  <Image
                     src={message.sender && message.sender.avatar_url ? `${SERVER_URL}/${message.sender.avatar_url}` : imagePlaceholder}
                     alt={message.sender && message.sender.first_name}
                     width={30}
                     height={30}
-                    style={{ borderRadius: 50, objectFit: 'cover' }}
+                    style={{ objectFit: 'cover' }}
+                    roundedCircle
                   />
                   <div className="message-content">
-                    <p><strong>{message.sender && message.sender.nickname === authUser.nickname ? 'You' : message.sender.nickname}</strong></p>
-                    <p>{message.content}</p>
+                    {/* Show only gif without nickname if type is gif */}
+                    {message.type === 'gif' ? (
+                      <p>
+                        <Image src={message.content} onLoad={scrollToBottom} alt='GIF' />
+                      </p>
+                    ) : (
+                      <>
+                        <p><strong>{message.sender && message.sender.nickname === authUser.nickname ? 'You' : message.sender.nickname}</strong></p>
+                        <p>{message.content}</p>
+                      </>
+                    )}
                   </div>
                   <div className="message-time-container">
                     <p className='message-time'>{formatTimestampForMessage(message.timestamp)}</p>
@@ -327,17 +360,98 @@ function Chat() {
             </Stack>
           </Row>
           <Row className="message-input p-0">
-            <input
-              type='text'
-              aria-label='Message'
-              placeholder="Message"
-              value={messageContent}
-              onChange={(event) => { setMessageContent(event.target.value); }}
-              onKeyDown={handleKeyPress}
-              maxLength={1024}
-            />
-            <span className={`length-counter d-flex align-items-center ${messageContent.length === 1024 ? 'over-limit' : ''}`}>{messageContent.length}/1024</span>
-            <button className='btn btn-outline-primary' onClick={sendMessage}>Send</button>
+            <div className="input-container">
+              <input
+                type='text'
+                name='message'
+                className='w-100 h-100'
+                placeholder='Type a message...'
+                value={messageContent}
+                onChange={(event) => setMessageContent(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    sendMessage();
+                  }
+                }}
+                maxLength={1024}
+              />
+              <label
+                htmlFor="message"
+                className={`length-counter d-flex align-items-center ${messageContent.length === 1024 ? 'over-limit' : ''}`}
+              >
+                {messageContent.length}/1024
+              </label>
+            </div>
+            <div className="icons-container">
+              <div className="emoji-icon message-icon">
+                <EmojiIcon
+                  width={25}
+                  height={25}
+                  onClick={(e) => {
+                    if (showEmojis) {
+                      setShowEmojis(false);
+                      e.target.classList.remove('active');
+                    } else {
+                      setShowEmojis(true);
+                      e.target.classList.add('active');
+
+                      setShowGifs(false);
+                      e.target.classList.remove('active');
+                    }
+                  }}
+                />
+              </div>
+
+              <div className="gif-icon message-icon">
+                <GifIcon
+                  width={30}
+                  height={30}
+                  onClick={(e) => {
+                    if (showGifs) {
+                      setShowGifs(false);
+                      e.target.classList.remove('active');
+                    } else {
+                      setShowGifs(true);
+                      e.target.classList.add('active');
+
+                      setShowEmojis(false);
+                      e.target.classList.remove('active');
+                    }
+                  }}
+                />
+              </div>
+
+              <div className={`emoji-picker ${!showEmojis ? 'closed' : ''}`}>
+                <EmojiPicker
+                  theme='light'
+                  emojiStyle='apple'
+                  suggestedEmojisMode='frequent'
+                  emojiVersion='4.0'
+                  autoFocusSearch={true}
+                  onEmojiClick={(emoji) => {
+                    // Render the emoji in the message input
+                    setMessageContent((prevContent) => prevContent + emoji.emoji);
+                  }}
+                />
+              </div>
+
+              <div className={`gif-picker ${!showGifs ? 'closed' : ''}`}>
+                <GifPicker
+                  tenorApiKey={TENOR_API_KEY}
+                  autoFocusSearch={true}
+                  theme='light'
+                  contentFilter='off'
+                  categoryHeight={115}
+                  width={500}
+                  height={520}
+                  onGifClick={(gif) => {
+                    // Render the gif preview in the message input
+                    sendGif(gif);
+                  }}
+                />
+              </div>
+            </div>
+            <button className='btn btn-outline-primary btn-send' onClick={sendMessage}>Send</button>
           </Row>
         </Col>
       }
