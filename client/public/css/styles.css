@@ -277,12 +277,21 @@ h1, h2, h3, h4, h5, h6, p {
   border-radius: 10px;
   box-shadow: 0 0 5px #ccc;
   max-width: 70%;
-  word-wrap: break-word;
   position: relative;
 }
-.chat-page .chat-box .messages-list .message .message-content p > img {
-  margin-top: 5px;
-  border-radius: 3px;
+.chat-page .chat-box .messages-list .message .message-content .message-text {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.chat-page .chat-box .messages-list .message .message-content .message-text > * {
+  word-break: break-all;
+}
+.chat-page .chat-box .messages-list .message .message-content .message-text img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 5px 0;
 }
 .chat-page .chat-box .messages-list .message .message-time-container {
   display: flex;
@@ -401,7 +410,4 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .gif-picker .gpr-category-list {
   grid-template-columns: repeat(2, 1fr) !important;
-}
-.gif-picker .gpr-gif-list-column {
-  grid-template-columns: 1fr 1fr !important;
 }/*# sourceMappingURL=styles.css.map */

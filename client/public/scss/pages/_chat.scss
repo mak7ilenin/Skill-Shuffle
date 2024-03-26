@@ -241,12 +241,23 @@
                     border-radius: 10px;
                     box-shadow: 0 0 5px #ccc;
                     max-width: 70%;
-                    word-wrap: break-word;
                     position: relative;
 
-                    p>img {
-                        margin-top: 5px;
-                        border-radius: 3px;
+                    .message-text {
+                        display: flex;
+                        flex-wrap: wrap;
+                        align-items: center;
+
+                        &>* {
+                            word-break: break-all;
+                        }
+
+                        img {
+                            width: 100%;
+                            height: auto;
+                            border-radius: 10px;
+                            margin: 5px 0;
+                        }
                     }
                 }
 
@@ -398,6 +409,6 @@
     }
 
     .gpr-gif-list-column {
-        grid-template-columns: 1fr 1fr !important;
+        // grid-template-columns: 1fr 1fr !important;
     }
 }

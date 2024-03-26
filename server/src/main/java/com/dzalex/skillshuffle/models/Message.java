@@ -1,7 +1,6 @@
 package com.dzalex.skillshuffle.models;
 
 import com.dzalex.skillshuffle.enums.MessageStatus;
-import com.dzalex.skillshuffle.enums.MessageType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,8 +26,6 @@ public class Message {
     private Chat chat;
     private String content;
     private Timestamp timestamp;
-    @Enumerated(EnumType.STRING)
-    private MessageType type;
     @Enumerated(EnumType.STRING)
     private MessageStatus status;
 }

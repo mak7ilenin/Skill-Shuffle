@@ -1,19 +1,17 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
 import { Row, Col, Stack, Image } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import GifPicker from 'gif-picker-react';
-import EmojiPicker from 'emoji-picker-react';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 
 import { AESEncrypt, AESDecrypt } from '../crypto';
-import { API_SERVER, WEBSOCKET_URL, SERVER_URL, TENOR_API_KEY } from '../config';
+import { API_SERVER, WEBSOCKET_URL, SERVER_URL } from '../config';
 import { useAuth } from '../components/AuthContext';
 import MessageNotification from '../components/MessageNotification';
+import MessageRenderer from '../components/MessageRenderer';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
-import { ReactComponent as GifIcon } from '../assets/icons/gif.svg';
-import { ReactComponent as EmojiIcon } from '../assets/icons/emoji.svg';
+import EmojiGifPicker from '../components/EmojiGifPicker';
 
 function Chat() {
   const { authUser, setAuthUser } = useAuth();
@@ -22,8 +20,6 @@ function Chat() {
   const [chats, setChats] = useState([]);
   const [choosenChat, setChoosenChat] = useState({});
   const [stompClient, setStompClient] = useState(null);
-  const [showGifs, setShowGifs] = useState(false);
-  const [showEmojis, setShowEmojis] = useState(false);
   const [messageContent, setMessageContent] = useState('');
   const [messageNotification, setMessageNotification] = useState({ visible: false, heading: '', message: {}, to: '' });
   const messagesListRef = useRef(null);
@@ -201,18 +197,18 @@ function Chat() {
     }
   };
 
+  // Function to send message
   const sendMessage = () => {
-    if (messageContent === '') {
-      return;
-    }
+    console.log(messageContent);
+    if (messageContent === '') return;
     setMessageContent('');
+
     const destination = `/app/chat/${choosenChat.id}`;
     const message = {
       sender: authUser,
       chat: { id: choosenChat.id },
       content: messageContent,
       timestamp: new Date().toISOString(),
-      type: 'text',
     };
     if (stompClient != null) {
       // Send the message to the server to handle
@@ -220,27 +216,6 @@ function Chat() {
         destination,
         body: JSON.stringify(message),
       });
-    }
-  };
-
-  const sendGif = (gif) => {
-    if (gif === undefined) {
-      return;
-    }
-    const destination = `/app/chat/${choosenChat.id}`;
-    const message = {
-      sender: authUser,
-      chat: { id: choosenChat.id },
-      content: gif.url,
-      timestamp: new Date().toISOString(),
-      type: 'gif',
-    };
-    if (stompClient != null) {
-      stompClient.publish({
-        destination,
-        body: JSON.stringify(message),
-      });
-      setShowGifs(false);
     }
   };
 
@@ -340,17 +315,8 @@ function Chat() {
                     roundedCircle
                   />
                   <div className="message-content">
-                    {/* Show only gif without nickname if type is gif */}
-                    {message.type === 'gif' ? (
-                      <p>
-                        <Image src={message.content} onLoad={scrollToBottom} alt='GIF' />
-                      </p>
-                    ) : (
-                      <>
-                        <p><strong>{message.sender && message.sender.nickname === authUser.nickname ? 'You' : message.sender.nickname}</strong></p>
-                        <p>{message.content}</p>
-                      </>
-                    )}
+                    <p className='sender-name'><strong>{message.sender && message.sender.nickname === authUser.nickname ? 'You' : message.sender.nickname}</strong></p>
+                    <MessageRenderer content={message.content} />
                   </div>
                   <div className="message-time-container">
                     <p className='message-time'>{formatTimestampForMessage(message.timestamp)}</p>
@@ -382,75 +348,9 @@ function Chat() {
                 {messageContent.length}/1024
               </label>
             </div>
-            <div className="icons-container">
-              <div className="emoji-icon message-icon">
-                <EmojiIcon
-                  width={25}
-                  height={25}
-                  onClick={(e) => {
-                    if (showEmojis) {
-                      setShowEmojis(false);
-                      e.target.classList.remove('active');
-                    } else {
-                      setShowEmojis(true);
-                      e.target.classList.add('active');
 
-                      setShowGifs(false);
-                      e.target.classList.remove('active');
-                    }
-                  }}
-                />
-              </div>
+            <EmojiGifPicker setMessageContent={setMessageContent} sendMessage={sendMessage} />
 
-              <div className="gif-icon message-icon">
-                <GifIcon
-                  width={30}
-                  height={30}
-                  onClick={(e) => {
-                    if (showGifs) {
-                      setShowGifs(false);
-                      e.target.classList.remove('active');
-                    } else {
-                      setShowGifs(true);
-                      e.target.classList.add('active');
-
-                      setShowEmojis(false);
-                      e.target.classList.remove('active');
-                    }
-                  }}
-                />
-              </div>
-
-              <div className={`emoji-picker ${!showEmojis ? 'closed' : ''}`}>
-                <EmojiPicker
-                  theme='light'
-                  emojiStyle='apple'
-                  suggestedEmojisMode='frequent'
-                  emojiVersion='4.0'
-                  autoFocusSearch={true}
-                  onEmojiClick={(emoji) => {
-                    // Render the emoji in the message input
-                    setMessageContent((prevContent) => prevContent + emoji.emoji);
-                  }}
-                />
-              </div>
-
-              <div className={`gif-picker ${!showGifs ? 'closed' : ''}`}>
-                <GifPicker
-                  tenorApiKey={TENOR_API_KEY}
-                  autoFocusSearch={true}
-                  theme='light'
-                  contentFilter='off'
-                  categoryHeight={115}
-                  width={500}
-                  height={520}
-                  onGifClick={(gif) => {
-                    // Render the gif preview in the message input
-                    sendGif(gif);
-                  }}
-                />
-              </div>
-            </div>
             <button className='btn btn-outline-primary btn-send' onClick={sendMessage}>Send</button>
           </Row>
         </Col>

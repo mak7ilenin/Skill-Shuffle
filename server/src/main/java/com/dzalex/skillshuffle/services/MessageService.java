@@ -39,7 +39,6 @@ public class MessageService {
         savedMessage.setChat(chatRepository.findChatById(Long.parseLong(chatId)));
         savedMessage.setContent(message.getContent());
         savedMessage.setTimestamp(message.getTimestamp());
-        savedMessage.setType(message.getType());
         savedMessage.setStatus(MessageStatus.SENT);
 
         // Save the message to the database
@@ -62,7 +61,6 @@ public class MessageService {
                             lastMessage.getSender().getNickname(),
                             lastMessage.getSender().getAvatar_url()),
                     lastMessage.getContent(),
-                    lastMessage.getType(),
                     lastMessage.getTimestamp(),
                     lastMessage.getStatus());
         } else {
@@ -79,7 +77,6 @@ public class MessageService {
                         message.getSender().getNickname(),
                         message.getSender().getAvatar_url()),
                 message.getContent(),
-                message.getType(),
                 message.getTimestamp(),
                 message.getStatus());
     }
