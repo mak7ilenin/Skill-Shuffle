@@ -74,6 +74,9 @@ public class ChatService {
             messageDTOs.add(messageService.convertToDTO(messages.get(i)));
         }
 
+        // Sort messages by timestamp in ascending order
+        messageDTOs.sort(Comparator.comparing(MessageDTO::getTimestamp));
+
         return messageDTOs;
     }
 }

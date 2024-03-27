@@ -48,10 +48,10 @@ public class WebSocketController {
 
     @MessageMapping("/chat/{chatId}")
     public void sendMessage(@DestinationVariable String chatId, @Payload Message message) {
-        List<Message> messages = this.chats.getOrDefault(chatId, new ArrayList<>());
+//        List<Message> messages = this.chats.getOrDefault(chatId, new ArrayList<>());
         Message savedMessage = messageService.saveMessage(message, chatId);
-        messages.add(savedMessage);
-        chats.put(chatId, messages);
+//        messages.add(savedMessage);
+//        chats.put(chatId, messages);
 
         // Get all users in this chat
         List<String> usernames = userService.getUsersInChat(Long.parseLong(chatId));
@@ -60,7 +60,7 @@ public class WebSocketController {
 
         // Send the message to all users who subscribed to chat
         for (String username : usernames) {
-            messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, messages);
+            messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, savedMessage);
         }
 
         usernames.remove(senderUsername); // Remove sender from the list of usernames
