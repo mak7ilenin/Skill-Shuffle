@@ -55,17 +55,25 @@ public class ChatService {
         chatDTO.setChatType(chat.getChatType());
         chatDTO.setAvatar_url(chat.getAvatar_url());
 
-        List<Message> messages = messageRepository.findMessagesByChatId(chat.getId());
-        for (Message message : messages) {
-            MessageDTO messageDTO = messageService.convertToDTO(message);
-            if (chatDTO.getMessages() == null) {
-                chatDTO.setMessages(new ArrayList<>());
-            }
-            chatDTO.getMessages().add(messageDTO);
-        }
-        // Sort messages by timestamp in ascending order
-        chatDTO.getMessages().sort(Comparator.comparing(MessageDTO::getTimestamp));
+        // Load only 30 last messages
+        chatDTO.setMessages(getChatMessages(chat.getId(), 30, 0));
 
         return chatDTO;
+    }
+
+    // Get chat messages with limit and offset parameters
+    public List<MessageDTO> getChatMessages(Long chatId, int limit, int offset) {
+        List<Message> messages = messageRepository.findMessagesByChatId(chatId);
+        List<MessageDTO> messageDTOs = new ArrayList<>();
+
+        // Sort messages by latest timestamp
+        messages.sort(Comparator.comparing(Message::getTimestamp).reversed());
+
+        // Add messages to the list with limit and offset
+        for (int i = offset; i < messages.size() && i < offset + limit; i++) {
+            messageDTOs.add(messageService.convertToDTO(messages.get(i)));
+        }
+
+        return messageDTOs;
     }
 }

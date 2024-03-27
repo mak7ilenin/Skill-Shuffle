@@ -22,15 +22,19 @@ function Chat() {
   const [stompClient, setStompClient] = useState(null);
   const [messageContent, setMessageContent] = useState('');
   const [messageNotification, setMessageNotification] = useState({ visible: false, heading: '', message: {}, to: '' });
+  const [loading, setLoading] = useState(false);
   const messagesListRef = useRef(null);
   const subscriptionRef = useRef(null);
   const timeoutRef = useRef(null);
   const debounceTimeout = useRef(null);
+  const firstMessageRef = useRef(null);
+  const offsetRef = useRef(0);
+  const limit = 30;
 
   // Scroll to the bottom of the current chat
-  useLayoutEffect(() => {
-    scrollToBottom();
-  }, [choosenChat]);
+  // useLayoutEffect(() => {
+  //   scrollToBottom();
+  // }, [choosenChat]);
 
   useEffect(() => {
     axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
@@ -199,7 +203,6 @@ function Chat() {
 
   // Function to send message
   const sendMessage = () => {
-    console.log(messageContent);
     if (messageContent === '') return;
     setMessageContent('');
 
@@ -221,9 +224,7 @@ function Chat() {
 
   const formatTimestampForMessage = (timestamp) => {
     const date = new Date(timestamp);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    return `${hours}:${minutes}`;
+    return date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' });
   }
 
   const formatTimestampForChatContainer = (timestamp) => {
@@ -243,9 +244,35 @@ function Chat() {
     }
   }
 
-  const scrollToBottom = () => {
-    if (messagesListRef.current) {
-      messagesListRef.current.scrollTop = messagesListRef.current.scrollHeight;
+  const handleScroll = () => {
+    if (messagesListRef.current.scrollTop === 0 && !loading) {
+      loadMoreMessages();
+    }
+  };
+
+  const loadMoreMessages = async () => {
+    setLoading(true);
+    const prevScrollHeight = messagesListRef.current.scrollHeight;
+    const prevScrollTop = messagesListRef.current.scrollTop;
+    offsetRef.current += limit;
+    try {
+      const response = await axios.get(`${API_SERVER}/chats/${choosenChat.id}/messages?offset=${offsetRef.current}&limit=${limit}`, { withCredentials: true });
+      const newMessages = response.data;
+      setChoosenChat(prevChat => ({
+        ...prevChat,
+        messages: [...newMessages, ...prevChat.messages],
+      }));
+
+      // Calculate the difference in scroll height
+      const newScrollHeight = messagesListRef.current.scrollHeight;
+      const scrollHeightDifference = newScrollHeight - prevScrollHeight;
+
+      // Adjust scroll position to maintain the relative position of the first visible message
+      messagesListRef.current.scrollTop = prevScrollTop + scrollHeightDifference;
+    } catch (error) {
+      console.error('Error loading more messages:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -299,12 +326,13 @@ function Chat() {
               <p className='chat-name'>{choosenChat.name}</p>
             </Col>
           </Row>
-          <Row className='messages-list p-0 py-3' ref={messagesListRef}>
+          <Row className='messages-list p-0 py-3' ref={messagesListRef} onScroll={handleScroll}>
             <Stack direction='vertical' gap={3}>
               {choosenChat.messages && choosenChat.messages.map((message, index) => (
                 <div
                   className={`message d-flex ${message.sender && message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'}`}
                   key={index}
+                  ref={index === 0 ? firstMessageRef : null}
                 >
                   <Image
                     src={message.sender && message.sender.avatar_url ? `${SERVER_URL}/${message.sender.avatar_url}` : imagePlaceholder}
