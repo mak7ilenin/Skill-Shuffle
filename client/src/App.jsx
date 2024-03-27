@@ -7,12 +7,12 @@ import { AuthProvider } from './components/AuthContext';
 
 function App() {
     return (
-        <Router>
-            <AuthProvider>
+        <AuthProvider>
+            <Router>
                 <Header />
                 <Content />
-            </AuthProvider>
-        </Router>
+            </Router>
+        </AuthProvider>
     )
 }
 

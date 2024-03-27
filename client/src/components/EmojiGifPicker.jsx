@@ -78,8 +78,7 @@ const EmojiGifPicker = ({ setMessageContent, sendMessage }) => {
                         width={500}
                         height={520}
                         onGifClick={(gif) => {
-                            setMessageContent(gif.url);
-                            sendMessage();
+                            sendMessage(gif);
                             setShowGifs(false);
                         }}
                     />
