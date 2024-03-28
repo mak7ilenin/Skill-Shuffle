@@ -1,5 +1,4 @@
 import React from 'react';
-import { Container } from 'react-bootstrap';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Chat from '../pages/Chat';
@@ -11,7 +10,7 @@ function Content() {
     const { authUser } = useAuth();
 
     return (
-        <Container className='wrapper'>
+        <div className='wrapper'>
             <Routes>
                 {authUser ? (
                     <Route path="/messenger" element={<Chat />} />
@@ -39,7 +38,7 @@ function Content() {
                     }
                 />
             </Routes>
-        </Container>
+        </div>
     )
 }
 

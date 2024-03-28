@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
-import { Row, Col, Stack, Image, Button } from 'react-bootstrap';
+import { Row, Col, Stack, Image, Button, Container } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
@@ -180,7 +180,7 @@ function Chat() {
         key={chat.id}
         onClick={() => { navigate(`/messenger?c=${chat.id}`); }}
       >
-        <Col lg={2} className='chat-avatar d-flex justify-content-center'>
+        <Col className='chat-avatar d-flex justify-content-center'>
           {createImage(chat.avatar_url, chat.name, 50, 50)}
         </Col>
         <Col className='chat-info p-0'>
@@ -300,21 +300,21 @@ function Chat() {
   }, []);
 
   return (
-    <Row className="chat-page flex-nowrap">
+    <div className="chat-page w-100 d-flex flex-nowrap">
       {messageNotification.visible && (
         <MessageNotification {...messageNotification} />
       )}
 
-      <Col className="chat-list">
+      <Container className="chat-list">
         {chats.map(chat => renderChatPreview(chat))}
-      </Col>
+      </Container>
 
       {choosenChat.id === undefined ? (
-        <Col className='chat-box non-selected' key={choosenChat.id} style={{ backgroundImage: `url(${ChatBackground})` }}>
+        <Container className='chat-box non-selected' key={choosenChat.id} style={{ backgroundImage: `url(${ChatBackground})` }}>
           <p className='no-chat-selected'>Select a chat to start messaging</p>
-        </Col>
+        </Container>
       ) :
-        <Col className='chat-box d-flex flex-nowrap flex-column' key={choosenChat.id}>
+        <Container className='chat-box d-flex flex-nowrap flex-column' key={choosenChat.id}>
           <Row className='chat-header'>
             <Col lg={1}>
               {createImage(choosenChat.avatar_url, choosenChat.name, 50, 50)}
@@ -324,23 +324,24 @@ function Chat() {
             </Col>
           </Row>
           <Row className='messages-list p-0 py-3' ref={messagesListRef} onScroll={handleScroll}>
-            <Stack direction='vertical' gap={3}>
+            <Stack direction='vertical' gap={2}>
               {choosenChat.messages && choosenChat.messages.map((message, index) => (
-                <div
-                  className={`message d-flex flex-wrap ${message.sender && message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'}`}
-                  key={index}
-                  ref={index === 0 ? firstMessageRef : null}
-                >
-                  <MessageRenderer
-                    message={message}
-                    index={index}
-                    authUser={authUser}
-                    chat={choosenChat}
-                    createImage={createImage}
-                    formatTimestamp={formatTimestampForMessage}
-                  />
-                </div>
-              ))}
+                  <div
+                    className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'} ${index > 0 && message.sender.nickname === choosenChat.messages[index - 1].sender.nickname ? '' : 'mt-2'}`}
+                    key={index}
+                    ref={index === 0 ? firstMessageRef : null}
+                  >
+                    <MessageRenderer
+                      message={message}
+                      index={index}
+                      authUser={authUser}
+                      chat={choosenChat}
+                      createImage={createImage}
+                      formatTimestamp={formatTimestampForMessage}
+                    />
+                  </div>
+                )
+              )}
             </Stack>
           </Row>
           <Row className="message-input p-0 d-flex">
@@ -373,9 +374,9 @@ function Chat() {
               Send
             </Button>
           </Row>
-        </Col>
+        </Container>
       }
-    </Row>
+    </div>
   );
 }
 

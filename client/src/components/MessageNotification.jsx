@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Alert, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 

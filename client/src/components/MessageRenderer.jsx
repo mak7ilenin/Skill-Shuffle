@@ -26,14 +26,12 @@ const MessageRenderer = ({ message, index, authUser, chat, createImage, formatTi
                 if (part.match(/\.(jpeg|jpg|gif|png)$/i)) {
                     // Render the URL as an image or GIF
                     return (
-                        <>
-                            <Image
-                                key={index}
-                                src={part}
-                                alt={part.match(/\.gif$/i) ? 'gif' : 'image'}
-                                onLoad={scrollToBottom}
-                            />
-                        </>
+                        <Image
+                            key={index}
+                            src={part}
+                            alt={part.match(/\.gif$/i) ? 'gif' : 'image'}
+                            onLoad={scrollToBottom}
+                        />
                     );
                 } else {
                     // Render the URL as a regular link
@@ -41,6 +39,9 @@ const MessageRenderer = ({ message, index, authUser, chat, createImage, formatTi
                 }
             } else {
                 // Render the regular text content
+                if (part !== '') {
+                    return <span key={index}>{part}</span>;
+                }
                 return part;
             }
         });
@@ -80,17 +81,5 @@ const MessageRenderer = ({ message, index, authUser, chat, createImage, formatTi
         </>
     );
 };
-
-{/* {createImage(
-    message.sender && message.sender.avatar_url,
-    message.sender && message.sender.first_name,
-    30,
-    30
-)}
-
-<div className="message-content">
-    <p className='sender-name'><strong>{message.sender && message.sender.nickname === authUser.nickname ? 'You' : message.sender.nickname}</strong></p>
-    <div className='message-text'>{detectUrls(message.content)}</div>
-</div> */}
 
 export default MessageRenderer;

@@ -1,12 +1,10 @@
 .chat-page {
-    width: 100%;
-    background-color: #f7f7f7;
+    background-color: #EFEBFF;
 
     .chat-list {
-        // width: 300px;
-        width: 25%;
+        width: 27.61%;
         height: 100vh;
-        background-color: #f4f4f4;
+        background-color: #fff;
         border-right: 1px solid #ccc;
         flex: 0 0 auto;
 
@@ -19,8 +17,8 @@
             }
 
             .chat-avatar {
+                width: 15%;
                 position: relative;
-                margin-right: 12px;
 
                 img {
                     position: relative;
@@ -51,7 +49,7 @@
             }
 
             .chat-info {
-                width: calc(100% - 62px);
+                width: 85%;
 
                 .chat-name {
                     font-weight: 600;
@@ -74,7 +72,7 @@
     }
 
     .chat-box {
-        width: 75%;
+        width: 72.39%;
         height: 100vh;
         padding-right: 0;
         flex: 1;
@@ -92,6 +90,7 @@
             align-items: center;
             padding: 10px;
             border-bottom: 1px solid #ccc;
+            background-color: #fff;
             margin-right: 0;
 
             img {
@@ -125,7 +124,7 @@
                     }
 
                     .message-content {
-                        background-color: #dcf8c6;
+                        background-color: #E7DFFF;
                     }
 
                     .message-content-container {
@@ -181,9 +180,10 @@
                 }
 
                 .message-content {
-                    padding: 10px;
-                    border-radius: 10px;
-                    box-shadow: 0 0 5px #ccc;
+                    padding: 10px 14px;
+                    border-radius: 5px;
+                    border: 1px solid #8f8f8f25;
+                    box-shadow: 0 0 2px #ccc;
                     position: relative;
 
                     display: flex;
@@ -194,8 +194,25 @@
                     img {
                         width: 100%;
                         height: auto;
-                        border-radius: 10px;
-                        margin: 5px 0;
+                        border-radius: 5px;
+                    }
+
+                    // Check if .message-content has a child img
+                    &:has(>img) {
+                        padding: 0;
+                        border: none;
+                        box-shadow: none;
+                    }
+
+                    // Check if .message-content has text and img
+                    &:has(>span) {
+                        &:has(>img) {
+                            padding: 10px 14px;
+
+                            img {
+                                margin: 5px 0;
+                            }
+                        }
                     }
                 }
 

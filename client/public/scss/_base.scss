@@ -5,3 +5,13 @@
 h1, h2, h3, h4, h5, h6, p {
     margin: 0 !important;
 }
+
+.container {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.row, .col {
+    margin: auto 0 !important;
+    padding: auto 0 !important;
+}
