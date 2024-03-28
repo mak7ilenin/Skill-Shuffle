@@ -29,7 +29,7 @@ const EmojiGifPicker = ({ setMessageContent, sendMessage }) => {
     }, [showEmojis, showGifs]);
 
     return (
-        <div className="icons-container">
+        <div className="icons-container h-100 p-0 me-3 d-flex justify-content-around align-items-center">
             <div className="emoji-icon message-icon">
                 <EmojiIcon
                     width={25}

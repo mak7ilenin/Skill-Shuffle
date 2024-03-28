@@ -67,64 +67,49 @@ h1, h2, h3, h4, h5, h6, p {
   display: block;
 }
 
-.chat-page {
-  width: 100%;
-  background-color: #f7f7f7;
-}
-.chat-page .alert-notification {
-  width: 220px;
-  height: -moz-fit-content;
-  height: fit-content;
-  border-radius: 10px;
+.alert-notification {
+  width: 255px !important;
   box-shadow: 0 0 5px #ccc;
-  position: fixed;
+  position: fixed !important;
   bottom: 20px;
   right: 20px;
-  padding: 10px;
+  padding: 10px !important;
   z-index: 1000;
   cursor: pointer;
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
   transition: opacity 0.3s ease-in-out;
   opacity: 1;
 }
-.chat-page .alert-notification hr {
+.alert-notification hr {
   width: 100%;
   margin: 3px 0;
+  margin-top: 7px;
   border: 0;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #b8b8b8;
 }
-.chat-page .alert-notification:hover {
+.alert-notification:hover {
   background-color: #f7f7f7;
 }
-.chat-page .alert-notification .btn-close {
-  width: 8px;
-  height: 8px;
-  padding: 0;
-  top: 13px;
-  right: 10px;
+.alert-notification .btn-close {
+  padding: 5px !important;
+  top: 13.5px !important;
+  right: 10px !important;
+  width: 5px;
+  height: 5px;
 }
-.chat-page .alert-notification .alert-heading {
-  width: 100%;
+.alert-notification .alert-heading {
   height: -moz-fit-content;
   height: fit-content;
   font-weight: 400;
-  margin-bottom: 5px;
   font-size: 14px;
   position: relative;
   padding-right: 20px;
   color: #434343;
 }
-.chat-page .alert-notification .alert-message {
-  width: 100%;
-  margin-top: 5px;
+.alert-notification .alert-message > div {
+  max-width: calc(100% - 40px);
 }
-.chat-page .alert-notification .alert-message div {
-  margin-left: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.chat-page .alert-notification .alert-message h5 {
+.alert-notification .alert-message h5 {
   width: 100%;
   padding-bottom: 2px;
   font-size: 14px;
@@ -134,14 +119,19 @@ h1, h2, h3, h4, h5, h6, p {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.chat-page .alert-notification .alert-message span {
-  width: 100%;
+.alert-notification .alert-message span {
   font-size: 13px;
   font-weight: 400;
   color: #848484;
+  padding-right: 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.chat-page {
+  width: 100%;
+  background-color: #f7f7f7;
 }
 .chat-page .chat-list {
   width: 25%;
@@ -238,7 +228,7 @@ h1, h2, h3, h4, h5, h6, p {
   margin-right: 0;
 }
 .chat-page .chat-box .messages-list .message {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   position: relative;
 }
 .chat-page .chat-box .messages-list .message.own-message {
@@ -251,9 +241,15 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-box .messages-list .message.own-message .message-content {
   background-color: #dcf8c6;
 }
+.chat-page .chat-box .messages-list .message.own-message .message-content-container {
+  flex-direction: row-reverse;
+}
 .chat-page .chat-box .messages-list .message.own-message .message-time-container {
   margin-left: 0 !important;
   margin-right: 14px !important;
+}
+.chat-page .chat-box .messages-list .message.own-message .sender-info {
+  flex-direction: row-reverse;
 }
 .chat-page .chat-box .messages-list .message.other-message {
   justify-content: flex-start;
@@ -267,27 +263,33 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-box .messages-list .message.other-message .message-time-container {
   margin-left: 14px !important;
 }
-.chat-page .chat-box .messages-list .message > img {
+.chat-page .chat-box .messages-list .message.other-message .sender-avatar {
+  flex-direction: row-reverse;
+}
+.chat-page .chat-box .messages-list .message .sender-info > img {
   width: 35px;
   height: 35px;
   border-radius: 50%;
+}
+.chat-page .chat-box .messages-list .message .sender-info .nav-link {
+  color: #3D00FF;
+  text-decoration: underline;
+}
+.chat-page .chat-box .messages-list .message .message-content-container,
+.chat-page .chat-box .messages-list .message .sender-avatar {
+  max-width: 70%;
 }
 .chat-page .chat-box .messages-list .message .message-content {
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0 0 5px #ccc;
-  max-width: 70%;
   position: relative;
-}
-.chat-page .chat-box .messages-list .message .message-content .message-text {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-}
-.chat-page .chat-box .messages-list .message .message-content .message-text > * {
   word-break: break-all;
 }
-.chat-page .chat-box .messages-list .message .message-content .message-text img {
+.chat-page .chat-box .messages-list .message .message-content img {
   width: 100%;
   height: auto;
   border-radius: 10px;
@@ -304,18 +306,12 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-box .message-input {
   margin-right: 0;
   position: relative;
+  background-color: #fff;
+  border-top: 1px solid #ccc;
 }
 .chat-page .chat-box .message-input .icons-container {
   width: -moz-fit-content;
   width: fit-content;
-  height: 100%;
-  position: absolute;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  right: 70px;
-  top: 0;
-  padding: 0;
 }
 .chat-page .chat-box .message-input .icons-container .message-icon {
   width: 35px;
@@ -337,15 +333,13 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .chat-page .chat-box .message-input .input-container {
   height: 60px;
-  width: calc(100% - 60px);
-  padding: 0;
+  width: auto;
+  flex-grow: 1;
 }
 .chat-page .chat-box .message-input .input-container input[type=text] {
   border: none;
-  border-top: 1px solid #ccc;
   border-radius: 0;
   padding-left: 25px;
-  position: relative;
   transition: ease all 0.3s;
 }
 .chat-page .chat-box .message-input .input-container input[type=text]::-moz-placeholder {
@@ -357,7 +351,6 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-box .message-input .input-container input[type=text]:focus-visible {
   outline: none;
   padding-left: 25px;
-  border-color: #3D00FF;
 }
 .chat-page .chat-box .message-input .input-container input[type=text]:focus-visible ~ .length-counter {
   top: -11px;
@@ -384,7 +377,7 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-box .message-input .input-container .length-counter.over-limit {
   color: #ff0000;
 }
-.chat-page .chat-box .message-input button.btn-send {
+.chat-page .chat-box .message-input .btn-send {
   width: 60px;
   height: 60px;
   border-radius: 0;

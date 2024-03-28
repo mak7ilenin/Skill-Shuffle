@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
-import { Row, Col, Stack, Image } from 'react-bootstrap';
+import { Row, Col, Stack, Image, Button } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
@@ -12,6 +12,7 @@ import MessageRenderer from '../components/MessageRenderer';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 import EmojiGifPicker from '../components/EmojiGifPicker';
+import ChatBackground from '../assets/images/chat-background.jpg'
 
 function Chat() {
   const { authUser, setAuthUser } = useAuth();
@@ -173,7 +174,7 @@ function Chat() {
     />
   );
 
-  const renderChat = (chat) => {
+  const renderChatPreview = (chat) => {
     return (
       <Row className='chat-container d-flex align-items-center flex-nowrap'
         key={chat.id}
@@ -305,11 +306,11 @@ function Chat() {
       )}
 
       <Col className="chat-list">
-        {chats.map(chat => renderChat(chat))}
+        {chats.map(chat => renderChatPreview(chat))}
       </Col>
 
       {choosenChat.id === undefined ? (
-        <Col className='chat-box non-selected' key={choosenChat.id}>
+        <Col className='chat-box non-selected' key={choosenChat.id} style={{ backgroundImage: `url(${ChatBackground})` }}>
           <p className='no-chat-selected'>Select a chat to start messaging</p>
         </Col>
       ) :
@@ -326,29 +327,24 @@ function Chat() {
             <Stack direction='vertical' gap={3}>
               {choosenChat.messages && choosenChat.messages.map((message, index) => (
                 <div
-                  className={`message d-flex ${message.sender && message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'}`}
+                  className={`message d-flex flex-wrap ${message.sender && message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'}`}
                   key={index}
                   ref={index === 0 ? firstMessageRef : null}
                 >
-                  {createImage(message.sender && message.sender.avatar_url, message.sender && message.sender.first_name, 30, 30)}
-
-                  <div className="message-content">
-                    <p className='sender-name'><strong>{message.sender && message.sender.nickname === authUser.nickname ? 'You' : message.sender.nickname}</strong></p>
-                    <MessageRenderer
-                      content={message.content}
-                      messagesLength={[choosenChat.messages.length - 1, index]}
-                      ownMessage={message.sender && message.sender.nickname === authUser.nickname}
-                    />
-                  </div>
-                  <div className="message-time-container">
-                    <p className='message-time'>{formatTimestampForMessage(message.timestamp)}</p>
-                  </div>
+                  <MessageRenderer
+                    message={message}
+                    index={index}
+                    authUser={authUser}
+                    chat={choosenChat}
+                    createImage={createImage}
+                    formatTimestamp={formatTimestampForMessage}
+                  />
                 </div>
               ))}
             </Stack>
           </Row>
-          <Row className="message-input p-0">
-            <div className="input-container">
+          <Row className="message-input p-0 d-flex">
+            <div className="input-container p-0">
               <input
                 type='text'
                 name='message'
@@ -373,7 +369,9 @@ function Chat() {
 
             <EmojiGifPicker setMessageContent={setMessageContent} sendMessage={sendMessage} />
 
-            <button className='btn btn-outline-primary btn-send' onClick={() => { sendMessage(undefined) }}>Send</button>
+            <Button variant='outline-primary' className='btn-send' onClick={() => sendMessage(undefined)}>
+              Send
+            </Button>
           </Row>
         </Col>
       }

@@ -2,86 +2,6 @@
     width: 100%;
     background-color: #f7f7f7;
 
-    .alert-notification {
-        width: 220px;
-        height: fit-content;
-        border-radius: 10px;
-        box-shadow: 0 0 5px #ccc;
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        padding: 10px;
-        z-index: 1000;
-        cursor: pointer;
-        margin-bottom: 0;
-
-        transition: opacity .3s ease-in-out;
-        opacity: 1;
-
-        hr {
-            width: 100%;
-            margin: 3px 0;
-            border: 0;
-            border-top: 1px solid #ccc;
-        }
-
-        &:hover {
-            background-color: #f7f7f7;
-        }
-
-        .btn-close {
-            width: 8px;
-            height: 8px;
-            padding: 0;
-            top: 13px;
-            right: 10px;
-        }
-
-        .alert-heading {
-            width: 100%;
-            height: fit-content;
-            font-weight: 400;
-            margin-bottom: 5px;
-            font-size: 14px;
-            position: relative;
-            padding-right: 20px;
-            color: #434343;
-        }
-
-        .alert-message {
-            width: 100%;
-            margin-top: 5px;
-
-            div {
-                margin-left: 10px;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-            }
-
-            h5 {
-                width: 100%;
-                padding-bottom: 2px;
-                font-size: 14px;
-                font-weight: 500;
-                color: #4f4f4f;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            span {
-                width: 100%;
-                font-size: 13px;
-                font-weight: 400;
-                color: #848484;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        }
-    }
-
     .chat-list {
         // width: 300px;
         width: 25%;
@@ -193,7 +113,7 @@
             margin-right: 0;
 
             .message {
-                flex-wrap: nowrap;
+                flex-wrap: wrap;
                 position: relative;
 
                 &.own-message {
@@ -208,9 +128,17 @@
                         background-color: #dcf8c6;
                     }
 
+                    .message-content-container {
+                        flex-direction: row-reverse;
+                    }
+
                     .message-time-container {
                         margin-left: 0 !important;
                         margin-right: 14px !important;
+                    }
+
+                    .sender-info {
+                        flex-direction: row-reverse;
                     }
                 }
 
@@ -228,36 +156,46 @@
                     .message-time-container {
                         margin-left: 14px !important;
                     }
+
+                    .sender-avatar {
+                        flex-direction: row-reverse;
+                    }
                 }
 
-                &>img {
-                    width: 35px;
-                    height: 35px;
-                    border-radius: 50%;
+                .sender-info {
+                    &>img {
+                        width: 35px;
+                        height: 35px;
+                        border-radius: 50%;
+                    }
+
+                    .nav-link {
+                        color: $primary-color;
+                        text-decoration: underline;
+                    }
+                }
+
+                .message-content-container,
+                .sender-avatar {
+                    max-width: 70%;
                 }
 
                 .message-content {
                     padding: 10px;
                     border-radius: 10px;
                     box-shadow: 0 0 5px #ccc;
-                    max-width: 70%;
                     position: relative;
 
-                    .message-text {
-                        display: flex;
-                        flex-wrap: wrap;
-                        align-items: center;
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    word-break: break-all;
 
-                        &>* {
-                            word-break: break-all;
-                        }
-
-                        img {
-                            width: 100%;
-                            height: auto;
-                            border-radius: 10px;
-                            margin: 5px 0;
-                        }
+                    img {
+                        width: 100%;
+                        height: auto;
+                        border-radius: 10px;
+                        margin: 5px 0;
                     }
                 }
 
@@ -277,17 +215,11 @@
         .message-input {
             margin-right: 0;
             position: relative;
+            background-color: #fff;
+            border-top: 1px solid #ccc;
 
             .icons-container {
                 width: fit-content;
-                height: 100%;
-                position: absolute;
-                display: flex;
-                justify-content: space-around;
-                align-items: center;
-                right: 70px;
-                top: 0;
-                padding: 0;
 
                 .message-icon {
                     width: 35px;
@@ -320,16 +252,14 @@
 
             .input-container {
                 height: 60px;
-                width: calc(100% - 60px);
-                padding: 0;
+                width: auto;
+                flex-grow: 1;
 
                 input[type="text"] {
                     border: none;
-                    border-top: 1px solid #ccc;
+                    // border-top: 1px solid #ccc;
                     border-radius: 0;
                     padding-left: 25px;
-                    // padding-right: 85px;
-                    position: relative;
                     transition: ease all .3s;
 
                     &::placeholder {
@@ -339,7 +269,7 @@
                     &:focus-visible {
                         outline: none;
                         padding-left: 25px;
-                        border-color: $primary-color;
+                        // border-color: $primary-color;
 
                         &~.length-counter {
                             top: -11px;
@@ -374,7 +304,7 @@
                 }
             }
 
-            button.btn-send {
+            .btn-send {
                 width: 60px;
                 height: 60px;
                 border-radius: 0;

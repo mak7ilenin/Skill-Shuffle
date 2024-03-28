@@ -10,16 +10,6 @@ function MessageNotification({ visible, notification }) {
     const [show, setShow] = useState(visible);
     const navigate = useNavigate();
 
-    // Hide the alert after 5 seconds
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            setShow(false);
-        }, 5000);
-
-        // Clear the timeout when component unmounts or when show is false
-        return () => clearTimeout(timeout);
-    }, [show]);
-
     return (
         <Alert
             variant="light"
@@ -32,21 +22,22 @@ function MessageNotification({ visible, notification }) {
             dismissible
             className='alert-notification d-flex flex-column align-items-center'
         >
-            <Alert.Heading>{notification.message}</Alert.Heading>
+            <Alert.Heading className='w-100 mb-1'>{notification.message}</Alert.Heading>
             <hr />
-            <div className="alert-message d-flex flex-column flex-md-row align-items-center">
+            <div className="alert-message w-100 mt-2 d-flex flex-column flex-md-row align-items-center">
                 <Image
                     src={notification.chat.avatar_url ? `${SERVER_URL}/${notification.chat.avatar_url}` : imagePlaceholder}
                     width={35}
                     height={35}
                     alt={notification.chat.name}
-                    style={{ objectFit: 'cover' }}
+                    style={{ objectFit: 'cover', marginRight: '10px' }}
                     roundedCircle
                 />
-                <div>
+                <div className='flex-grow-1 d-flex align-items-center flex-wrap flex-shrink-1'>
                     <h5>{notification.sender.first_name}</h5>
                     <span>{notification.content}</span>
                 </div>
+                <div className="flex-grow-1"></div>
             </div>
         </Alert>
     );
