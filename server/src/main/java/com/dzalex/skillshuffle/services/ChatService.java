@@ -5,7 +5,6 @@ import com.dzalex.skillshuffle.dtos.ChatPreviewDTO;
 import com.dzalex.skillshuffle.dtos.MessageDTO;
 import com.dzalex.skillshuffle.models.Chat;
 import com.dzalex.skillshuffle.models.Message;
-import com.dzalex.skillshuffle.models.User;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ public class ChatService {
             // Populate the DTO with chat information and last message
             chatPreviewDTO.setId(chat.getId());
             chatPreviewDTO.setName(chat.getName());
-            chatPreviewDTO.setChatType(chat.getChatType());
+            chatPreviewDTO.setType(chat.getType());
             chatPreviewDTO.setAvatar_url(chat.getAvatar_url());
             chatPreviewDTO.setLast_message(lastMessage);
 
@@ -52,7 +51,7 @@ public class ChatService {
         ChatDTO chatDTO = new ChatDTO();
         chatDTO.setId(chat.getId());
         chatDTO.setName(chat.getName());
-        chatDTO.setChatType(chat.getChatType());
+        chatDTO.setType(chat.getType());
         chatDTO.setAvatar_url(chat.getAvatar_url());
 
         // Load only 30 last messages

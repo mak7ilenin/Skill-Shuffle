@@ -87,7 +87,7 @@ function Header() {
                 )}
             </ListGroup>
         </div>
-    )
+    );
 }
 
 export default Header;

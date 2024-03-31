@@ -6,6 +6,15 @@ h1, h2, h3, h4, h5, h6, p {
     margin: 0 !important;
 }
 
+.wrapper {
+    width: 1324px;
+    margin: 0 auto;
+
+    &:has(.chat-page) {
+        width: 100%;
+    }
+}
+
 .container {
     margin: 0 !important;
     padding: 0 !important;
@@ -13,5 +22,5 @@ h1, h2, h3, h4, h5, h6, p {
 
 .row, .col {
     margin: auto 0 !important;
-    padding: auto 0 !important;
+    padding: 0 !important;
 }

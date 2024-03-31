@@ -18,7 +18,6 @@ public class Chat {
     private Long id;
     private String name;
     @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private ChatType chatType;
+    private ChatType type;
     private String avatar_url;
 }

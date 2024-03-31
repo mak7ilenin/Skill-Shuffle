@@ -21,6 +21,7 @@ function Chat() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [loading, setLoading] = useState(false);
   const [chats, setChats] = useState([]);
+  const [filteredChats, setFilteredChats] = useState([]);
   const [choosenChat, setChoosenChat] = useState({});
   const [stompClient, setStompClient] = useState(null);
   const [messageContent, setMessageContent] = useState('');
@@ -142,6 +143,7 @@ function Chat() {
 
       // Adjust scroll position to maintain the relative position of the first visible message
       messagesListRef.current.scrollTop = prevScrollTop + scrollHeightDifference;
+      setLoading(false);
     } catch (error) {
       console.error('Error loading more messages:', error);
     } finally {
@@ -174,6 +176,19 @@ function Chat() {
     />
   );
 
+  const filterChatsByType = (type, e) => {
+    const chatTypes = document.querySelectorAll('.chat-type');
+    chatTypes.forEach(chatType => chatType.classList.remove('active'));
+    e.target.parentElement.classList.add('active');
+
+    if (type === 'all') {
+      setFilteredChats(chats);
+    } else {
+      const filteredChats = chats.filter(chat => chat.type === type);
+      setFilteredChats(filteredChats);
+    }
+  };
+
   const renderChatPreview = (chat) => {
     return (
       <Row className='chat-container d-flex align-items-center flex-nowrap'
@@ -181,9 +196,9 @@ function Chat() {
         onClick={() => { navigate(`/messenger?c=${chat.id}`); }}
       >
         <Col className='chat-avatar d-flex justify-content-center'>
-          {createImage(chat.avatar_url, chat.name, 50, 50)}
+          {createImage(chat.avatar_url, chat.name, 55, 55)}
         </Col>
-        <Col className='chat-info p-0'>
+        <Col className='chat-info w-75 ps-3'>
           <p className='chat-name d-flex justify-content-between'>
             {chat.name}
             <span>{formatTimestampForChatContainer(chat.last_message.timestamp)}</span>
@@ -293,6 +308,7 @@ function Chat() {
           chat.id = AESEncrypt(chat.id.toString());
         });
         setChats(response.data);
+        setFilteredChats(response.data);
       })
       .catch(error => {
         console.error(error.response?.data.message || error.message);
@@ -300,24 +316,31 @@ function Chat() {
   }, []);
 
   return (
-    <div className="chat-page w-100 d-flex flex-nowrap">
+    <div className="chat-page w-100 d-flex">
       {messageNotification.visible && (
         <MessageNotification {...messageNotification} />
       )}
 
       <Container className="chat-list">
-        {chats.map(chat => renderChatPreview(chat))}
+        <Row className='chat-types d-flex'>
+          <Col className='chat-type active'><p onClick={(e) => { filterChatsByType('all', e) }}>All</p></Col>
+          <Col className='chat-type'><p onClick={(e) => { filterChatsByType('private', e) }}>Contacts</p></Col>
+          <Col className='chat-type'><p onClick={(e) => { filterChatsByType('group', e) }}>Groups</p></Col>
+          <Col className='chat-type'><p onClick={(e) => { filterChatsByType('community', e) }}>Communities</p></Col>
+        </Row>
+
+        {filteredChats.map(chat => renderChatPreview(chat))}
       </Container>
 
       {choosenChat.id === undefined ? (
-        <Container className='chat-box non-selected' key={choosenChat.id} style={{ backgroundImage: `url(${ChatBackground})` }}>
+        <div className='chat-box non-selected' key={choosenChat.id} style={{ backgroundImage: `url(${ChatBackground})` }}>
           <p className='no-chat-selected'>Select a chat to start messaging</p>
-        </Container>
+        </div>
       ) :
-        <Container className='chat-box d-flex flex-nowrap flex-column' key={choosenChat.id}>
+        <div className='chat-box d-flex flex-nowrap flex-column' key={choosenChat.id}>
           <Row className='chat-header'>
-            <Col lg={1}>
-              {createImage(choosenChat.avatar_url, choosenChat.name, 50, 50)}
+            <Col className='chat-avatar me-3'>
+              {createImage(choosenChat.avatar_url, choosenChat.name, 55, 55)}
             </Col>
             <Col>
               <p className='chat-name'>{choosenChat.name}</p>
@@ -326,21 +349,21 @@ function Chat() {
           <Row className='messages-list p-0 py-3' ref={messagesListRef} onScroll={handleScroll}>
             <Stack direction='vertical' gap={2}>
               {choosenChat.messages && choosenChat.messages.map((message, index) => (
-                  <div
-                    className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'} ${index > 0 && message.sender.nickname === choosenChat.messages[index - 1].sender.nickname ? '' : 'mt-2'}`}
-                    key={index}
-                    ref={index === 0 ? firstMessageRef : null}
-                  >
-                    <MessageRenderer
-                      message={message}
-                      index={index}
-                      authUser={authUser}
-                      chat={choosenChat}
-                      createImage={createImage}
-                      formatTimestamp={formatTimestampForMessage}
-                    />
-                  </div>
-                )
+                <div
+                  className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'} ${index > 0 && message.sender.nickname === choosenChat.messages[index - 1].sender.nickname ? '' : 'mt-2'}`}
+                  key={index}
+                  ref={index === 0 ? firstMessageRef : null}
+                >
+                  <MessageRenderer
+                    message={message}
+                    index={index}
+                    authUser={authUser}
+                    chat={choosenChat}
+                    createImage={createImage}
+                    formatTimestamp={formatTimestampForMessage}
+                  />
+                </div>
+              )
               )}
             </Stack>
           </Row>
@@ -374,7 +397,7 @@ function Chat() {
               Send
             </Button>
           </Row>
-        </Container>
+        </div>
       }
     </div>
   );

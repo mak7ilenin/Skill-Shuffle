@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, NavLink } from 'react-bootstrap';
 
-const MessageRenderer = ({ message, index, authUser, chat, createImage, formatTimestamp }) => {
+function MessageRenderer({ message, index, authUser, chat, createImage, formatTimestamp }) {
     // Regular expression to match URLs
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
@@ -16,7 +16,7 @@ const MessageRenderer = ({ message, index, authUser, chat, createImage, formatTi
                 messagesList.scrollTop = messagesList.scrollHeight;
             }
         }
-    }
+    };
 
     // Function to detect URLs in the message content
     const detectUrls = (content) => {
@@ -49,10 +49,9 @@ const MessageRenderer = ({ message, index, authUser, chat, createImage, formatTi
 
     return (
         <>
-            {/* Check if previous messages sent by particular user and message after that previos message is his message again - display all messages after first one without sender name and image, just text */}
             {index > 0 && message.sender.nickname === chat.messages[index - 1].sender.nickname ? (
                 <div className='message-content-container d-flex'>
-                    <div className='message-content message-series'>{detectUrls(message.content)}</div>
+                    <div className='message-content message-series flex-column'>{detectUrls(message.content)}</div>
                     <div className="message-time-container">
                         <p className='message-time'>{formatTimestamp(message.timestamp)}</p>
                     </div>
@@ -70,7 +69,7 @@ const MessageRenderer = ({ message, index, authUser, chat, createImage, formatTi
                             <NavLink href={`/users?${message.sender.nickname}`}>{message.sender.first_name}</NavLink>
                         </span>
                     </div>
-                    <div className='message-content-container d-flex'>
+                    <div className='message-content-container d-flex flex-column'>
                         <div className='message-content'>{detectUrls(message.content)}</div>
                         <div className="message-time-container">
                             <p className='message-time'>{formatTimestamp(message.timestamp)}</p>
@@ -80,6 +79,6 @@ const MessageRenderer = ({ message, index, authUser, chat, createImage, formatTi
             )}
         </>
     );
-};
+}
 
 export default MessageRenderer;

@@ -10,6 +10,14 @@ h1, h2, h3, h4, h5, h6, p {
   margin: 0 !important;
 }
 
+.wrapper {
+  width: 1324px;
+  margin: 0 auto;
+}
+.wrapper:has(.chat-page) {
+  width: 100%;
+}
+
 .container {
   margin: 0 !important;
   padding: 0 !important;
@@ -17,7 +25,7 @@ h1, h2, h3, h4, h5, h6, p {
 
 .row, .col {
   margin: auto 0 !important;
-  padding: auto 0 !important;
+  padding: 0 !important;
 }
 
 .default-header {
@@ -34,7 +42,7 @@ h1, h2, h3, h4, h5, h6, p {
   width: 69px;
 }
 .default-header .logo-container {
-  margin-top: 45px;
+  margin-top: 45px !important;
 }
 .default-header .list-group {
   border: none;
@@ -149,16 +157,50 @@ h1, h2, h3, h4, h5, h6, p {
   border-right: 1px solid #ccc;
   flex: 0 0 auto;
 }
-.chat-page .chat-list .chat-container {
-  padding: 10px 15px;
+.chat-page .chat-list .chat-types {
+  height: 58px;
+  padding: 0 25px !important;
+  gap: 15px;
+}
+.chat-page .chat-list .chat-types .chat-type {
+  height: 28px;
+  background-color: #F0F0FF;
+  border-radius: 15px;
+  flex: 0;
   cursor: pointer;
+}
+.chat-page .chat-list .chat-types .chat-type.active {
+  background-color: #D5D5FF;
+}
+.chat-page .chat-list .chat-types .chat-type.active > p {
+  font-weight: 600;
+}
+.chat-page .chat-list .chat-types .chat-type p {
+  width: -moz-fit-content !important;
+  width: fit-content !important;
+  padding: 3px 20px;
+  font-family: "Manrope", sans-serif;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+.chat-page .chat-list .chat-container {
+  padding: 13px 14px !important;
+  border-top: 1px solid rgba(143, 143, 143, 0.1450980392);
+  border-bottom: 1px solid rgba(143, 143, 143, 0.1450980392);
+  cursor: pointer;
+}
+.chat-page .chat-list .chat-container > * {
+  font-family: "Manrope", sans-serif;
 }
 .chat-page .chat-list .chat-container:hover {
   background-color: #e5e5e5;
 }
 .chat-page .chat-list .chat-container .chat-avatar {
-  width: 15%;
-  position: relative;
+  width: -moz-fit-content;
+  width: fit-content;
+  flex: 0 !important;
 }
 .chat-page .chat-list .chat-container .chat-avatar img {
   position: relative;
@@ -185,26 +227,28 @@ h1, h2, h3, h4, h5, h6, p {
   right: 0;
 }
 .chat-page .chat-list .chat-container .chat-info {
-  width: 85%;
+  flex: auto;
 }
 .chat-page .chat-list .chat-container .chat-info .chat-name {
   font-weight: 600;
+  font-size: 18px;
 }
 .chat-page .chat-list .chat-container .chat-info .chat-name span {
-  font-size: 14px;
-  font-weight: 400;
-  color: #b2b2b2;
+  color: #8F8F8F;
+  font-size: 16px;
+  font-weight: 500;
 }
 .chat-page .chat-list .chat-container .chat-info .last-message {
-  width: 100%;
+  width: calc(100% - 60px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 16px;
+  font-weight: 500;
 }
 .chat-page .chat-box {
   width: 72.39%;
   height: 100vh;
-  padding-right: 0;
   flex: 1;
 }
 .chat-page .chat-box.non-selected {
@@ -215,21 +259,19 @@ h1, h2, h3, h4, h5, h6, p {
   color: #b2b2b2;
 }
 .chat-page .chat-box .chat-header {
+  height: 80px;
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 12.5px 14px !important;
   border-bottom: 1px solid #ccc;
   background-color: #fff;
-  margin-right: 0;
 }
-.chat-page .chat-box .chat-header img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
+.chat-page .chat-box .chat-header .chat-avatar {
+  flex: 0;
 }
 .chat-page .chat-box .chat-header .chat-name {
   font-weight: 600;
+  font-size: 18px;
 }
 .chat-page .chat-box .messages-list {
   position: relative;
@@ -293,22 +335,17 @@ h1, h2, h3, h4, h5, h6, p {
   padding: 10px 14px;
   border-radius: 5px;
   border: 1px solid rgba(143, 143, 143, 0.1450980392);
-  box-shadow: 0 0 2px #ccc;
-  position: relative;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   word-break: break-all;
 }
 .chat-page .chat-box .messages-list .message .message-content img {
-  width: 100%;
   height: auto;
   border-radius: 5px;
 }
 .chat-page .chat-box .messages-list .message .message-content:has(> img) {
   padding: 0;
   border: none;
-  box-shadow: none;
 }
 .chat-page .chat-box .messages-list .message .message-content:has(> span):has(> img) {
   padding: 10px 14px;

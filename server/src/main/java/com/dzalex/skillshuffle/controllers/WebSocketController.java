@@ -68,9 +68,9 @@ public class WebSocketController {
         // Create notification message based on chat type
         String notificationMessage = "";
         Chat chat = chatRepository.findChatById(Long.parseLong(chatId));
-        if (chat.getChatType() == ChatType.PRIVATE) {
+        if (chat.getType() == ChatType.PRIVATE) {
             notificationMessage = sender.getFirst_name() + " sent you a message";
-        } else if (chat.getChatType() == ChatType.GROUP) {
+        } else if (chat.getType() == ChatType.GROUP) {
             notificationMessage = "New message in " + chat.getName();
         }
 

@@ -8,17 +8,55 @@
         border-right: 1px solid #ccc;
         flex: 0 0 auto;
 
+        .chat-types {
+            height: 58px;
+            padding: 0 25px !important;
+            gap: 15px;
+
+            .chat-type {
+                height: 28px;
+                background-color: #F0F0FF;
+                border-radius: 15px;
+                flex: 0;
+                cursor: pointer;
+
+                &.active {
+                    background-color: #D5D5FF;
+
+                    &>p {
+                        font-weight: 600;
+                    }
+                }
+
+                p {
+                    width: fit-content !important;
+                    padding: 3px 20px;
+                    font-family: $main-font;
+                    text-align: center;
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 22px;
+                }
+            }
+        }
+
         .chat-container {
-            padding: 10px 15px;
+            padding: 13px 14px !important;
+            border-top: 1px solid #8f8f8f25;
+            border-bottom: 1px solid #8f8f8f25;
             cursor: pointer;
+
+            &>* {
+                font-family: $main-font;
+            }
 
             &:hover {
                 background-color: #e5e5e5;
             }
 
             .chat-avatar {
-                width: 15%;
-                position: relative;
+                width: fit-content;
+                flex: 0 !important;
 
                 img {
                     position: relative;
@@ -49,23 +87,26 @@
             }
 
             .chat-info {
-                width: 85%;
+                flex: auto;
 
                 .chat-name {
                     font-weight: 600;
+                    font-size: 18px;
 
                     span {
-                        font-size: 14px;
-                        font-weight: 400;
-                        color: #b2b2b2;
+                        color: #8F8F8F;
+                        font-size: 16px;
+                        font-weight: 500;
                     }
                 }
 
                 .last-message {
-                    width: 100%;
+                    width: calc(100% - 60px);
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    font-size: 16px;
+                    font-weight: 500;
                 }
             }
         }
@@ -74,7 +115,6 @@
     .chat-box {
         width: 72.39%;
         height: 100vh;
-        padding-right: 0;
         flex: 1;
 
         &.non-selected {
@@ -86,22 +126,20 @@
         }
 
         .chat-header {
+            height: 80px;
             display: flex;
             align-items: center;
-            padding: 10px;
+            padding: 12.5px 14px !important;
             border-bottom: 1px solid #ccc;
             background-color: #fff;
-            margin-right: 0;
 
-            img {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                margin-right: 10px;
+            .chat-avatar {
+                flex: 0;
             }
 
             .chat-name {
                 font-weight: 600;
+                font-size: 18px;
             }
         }
 
@@ -183,28 +221,21 @@
                     padding: 10px 14px;
                     border-radius: 5px;
                     border: 1px solid #8f8f8f25;
-                    box-shadow: 0 0 2px #ccc;
-                    position: relative;
 
                     display: flex;
                     flex-wrap: wrap;
-                    align-items: center;
                     word-break: break-all;
 
                     img {
-                        width: 100%;
                         height: auto;
                         border-radius: 5px;
                     }
 
-                    // Check if .message-content has a child img
                     &:has(>img) {
                         padding: 0;
                         border: none;
-                        box-shadow: none;
                     }
 
-                    // Check if .message-content has text and img
                     &:has(>span) {
                         &:has(>img) {
                             padding: 10px 14px;
