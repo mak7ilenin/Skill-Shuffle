@@ -56,7 +56,7 @@ function Header() {
                 </ListGroup.Item>
                 {authUser && (
                     <>
-                        <ListGroup.Item>
+                        <ListGroup.Item action href='/my-profile'>
                             <div className='avatar-container d-flex justify-content-center align-items-center flex-column'>
                                 <Image
                                     src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
