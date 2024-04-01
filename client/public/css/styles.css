@@ -25,6 +25,16 @@ h1, h2, h3, h4, h5, h6, p {
   padding: 0 !important;
 }
 
+.fade-enter {
+  opacity: 0;
+  z-index: 1;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 2s ease-in;
+}
+
 .default-header {
   background-color: #ffffff;
   position: relative;
@@ -53,8 +63,13 @@ h1, h2, h3, h4, h5, h6, p {
   border-radius: 0;
   cursor: pointer;
   display: flex;
+  padding-left: 21px;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+}
+.default-header .list-group .list-group-item.opened {
+  justify-content: flex-start;
+  padding-left: 21px;
 }
 .default-header .list-group .list-group-item:hover {
   background-color: #f4f4f4;
@@ -80,6 +95,12 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .default-header .list-group .list-group-item span {
   display: block;
+}
+.default-header .list-group .list-group-item p, .default-header .list-group .dropdown-container p {
+  font-weight: 500;
+  font-size: 16px;
+  display: none;
+  padding-left: 16px;
 }
 
 .alert-notification {
@@ -476,6 +497,7 @@ h1, h2, h3, h4, h5, h6, p {
 .profile-header-list {
   width: 100%;
   list-style: none;
+  height: 84px;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -486,7 +508,8 @@ h1, h2, h3, h4, h5, h6, p {
 .profile-header-list li {
   font-family: "Lexend";
   width: 115px;
-  margin: 0 5px;
+  height: 84px;
+  margin: auto 5px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -494,6 +517,10 @@ h1, h2, h3, h4, h5, h6, p {
   font-size: 18px;
   color: #646464;
   font-weight: 500;
+}
+.profile-header-list li:hover {
+  cursor: pointer;
+  background-color: #f4f4f4;
 }
 
 .profile-header-list li b {

@@ -14,6 +14,7 @@ import { ReactComponent as Search } from '../assets/icons/search.svg';
 import { ReactComponent as Chats } from '../assets/icons/chats.svg';
 import { ReactComponent as Notifications } from '../assets/icons/notification-bell.svg';
 import { ReactComponent as Create } from '../assets/icons/create.svg';
+import { useEffect } from 'react';
 
 function Header() {
     const { setAuthUser, authUser } = useAuth();
@@ -24,7 +25,20 @@ function Header() {
         setAuthUser(null);
         navigate('/sign-in');
     };
+    useEffect(() => {
+        const currentUrl = window.location.href;
+        if (currentUrl.indexOf('my-profile') > -1) {
+            document.querySelector('div.default-header').classList.remove('closed');
+            document.querySelectorAll('.list-group-item').forEach(div => {
+                div.classList.add("opened");
+                div.querySelector('p').style.display = 'block';
 
+            });
+        }
+        // document.querySelector('.dropdown-container').addEventListener('click', function() {
+        //     document.querySelector('#secondElement').click();
+        // });
+    }, []);
     return (
         <div className='default-header d-flex flex-column closed'>
             <Container className='logo-container w-100 d-flex justify-content-center align-items-center'>
@@ -40,19 +54,19 @@ function Header() {
             </Container>
             <ListGroup className='flex-grow-1'>
                 <ListGroup.Item>
-                    <Home className='home-icon' />
+                    <Home className='home-icon' /><p>Home</p>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <Search className='search-icon' />
+                    <Search className='search-icon' /><p>Search</p>
                 </ListGroup.Item>
                 <ListGroup.Item action href='/messenger'>
-                    <Chats className='chats-icon' />
+                    <Chats className='chats-icon' /><p>Messages</p>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <Notifications className='notifications-icon' />
+                    <Notifications className='notifications-icon' /><p>Notifications</p>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <Create className='create-icon' />
+                    <Create className='create-icon' /><p>Create</p>
                 </ListGroup.Item>
                 {authUser && (
                     <>
@@ -68,9 +82,10 @@ function Header() {
                                     roundedCircle
                                 />
                             </div>
+                            <p>Profile</p>
                         </ListGroup.Item>
                         <ListGroup.Item className='dropdown-container'>
-                            <Dropdown className='w-100 h-100 d-flex justify-content-center align-items-center' drop='end'>
+                            <Dropdown className='d-flex justify-content-center align-items-center' drop='end'>
                                 <Dropdown.Toggle title='More' >
                                     <More className='more-icon' />
                                 </Dropdown.Toggle>
@@ -82,6 +97,7 @@ function Header() {
                                     <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
+                            <p>More</p>
                         </ListGroup.Item>
                     </>
                 )}

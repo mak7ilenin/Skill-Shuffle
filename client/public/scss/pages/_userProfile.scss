@@ -12,6 +12,7 @@
 .profile-header-list {
     width: 100%;
     list-style: none;
+    height: 84px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -21,7 +22,8 @@
 .profile-header-list li {
     font-family: "Lexend";
     width: 115px;
-    margin: 0 5px;
+    height: 84px;
+    margin: auto 5px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -29,6 +31,10 @@
     font-size: 18px;
     color: #646464;
     font-weight: 500;
+    &:hover {
+        cursor: pointer;
+        background-color: #f4f4f4;
+    }
 }
 .profile-header-list li b {
     font-size: 20px;
