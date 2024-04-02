@@ -9,6 +9,7 @@ import { API_SERVER, WEBSOCKET_URL, SERVER_URL } from '../config';
 import { useAuth } from '../components/AuthContext';
 import MessageNotification from '../components/MessageNotification';
 import MessageRenderer from '../components/MessageRenderer';
+import ChatDashboard from '../components/ChatDashboard';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 import EmojiGifPicker from '../components/EmojiGifPicker';
@@ -203,7 +204,7 @@ function Chat() {
             {chat.name}
             <span>{formatTimestampForChatContainer(chat.last_message.timestamp)}</span>
           </p>
-          <p className='last-message'>{chat.last_message.content}</p>
+          <p className='last-message text-truncate'>{chat.last_message.content}</p>
         </Col>
       </Row>
     );
@@ -338,14 +339,9 @@ function Chat() {
         </div>
       ) :
         <div className='chat-box d-flex flex-nowrap flex-column' key={choosenChat.id}>
-          <Row className='chat-header'>
-            <Col className='chat-avatar me-3'>
-              {createImage(choosenChat.avatar_url, choosenChat.name, 55, 55)}
-            </Col>
-            <Col>
-              <p className='chat-name'>{choosenChat.name}</p>
-            </Col>
-          </Row>
+          {/* Chat Header */}
+          <ChatDashboard chat={choosenChat} createImage={createImage} />
+
           <Row className='messages-list p-0 py-3' ref={messagesListRef} onScroll={handleScroll}>
             <Stack direction='vertical' gap={2}>
               {choosenChat.messages && choosenChat.messages.map((message, index) => (

@@ -242,7 +242,6 @@ h1, h2, h3, h4, h5, h6, p {
   width: calc(100% - 60px);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
   font-size: 16px;
   font-weight: 500;
 }
@@ -270,8 +269,14 @@ h1, h2, h3, h4, h5, h6, p {
   flex: 0;
 }
 .chat-page .chat-box .chat-header .chat-name {
+  width: -moz-fit-content;
+  width: fit-content;
   font-weight: 600;
   font-size: 18px;
+}
+.chat-page .chat-box .chat-header span {
+  width: -moz-fit-content;
+  width: fit-content;
 }
 .chat-page .chat-box .messages-list {
   position: relative;

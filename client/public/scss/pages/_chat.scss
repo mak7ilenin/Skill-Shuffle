@@ -104,7 +104,6 @@
                     width: calc(100% - 60px);
                     white-space: nowrap;
                     overflow: hidden;
-                    text-overflow: ellipsis;
                     font-size: 16px;
                     font-weight: 500;
                 }
@@ -138,8 +137,13 @@
             }
 
             .chat-name {
+                width: fit-content;
                 font-weight: 600;
                 font-size: 18px;
+            }
+
+            span {
+                width: fit-content;
             }
         }
 
