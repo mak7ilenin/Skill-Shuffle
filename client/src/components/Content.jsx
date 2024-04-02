@@ -11,6 +11,7 @@ function Content() {
 
     return (
         <div className='wrapper'>
+
             <Routes>
                 {authUser ? (
                     <Route path="/messenger" element={<Chat />} />

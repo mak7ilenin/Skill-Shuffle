@@ -1,7 +1,9 @@
 import React from 'react';
 import { Image, NavLink } from 'react-bootstrap';
 
-function MessageRenderer({ message, index, authUser, chat, createImage, formatTimestamp }) {
+import CreateImage from './CreateImage';
+
+function MessageRenderer({ message, index, authUser, chat, formatTimestamp }) {
     // Regular expression to match URLs
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
@@ -59,12 +61,13 @@ function MessageRenderer({ message, index, authUser, chat, createImage, formatTi
             ) : (
                 <>
                     <div className='sender-info w-100 d-flex align-items-center mb-2'>
-                        {createImage(
-                            message.sender && message.sender.avatar_url,
-                            message.sender && message.sender.first_name,
-                            30,
-                            30
-                        )}
+                        <CreateImage
+                            url={message.sender.avatar_url}
+                            alt={message.sender.nickname}
+                            width={30}
+                            height={30}
+                            rounded={true}
+                        />
                         <span className={`sender-name ${message.sender.nickname === authUser.nickname ? 'me-3' : 'ms-3'}`}>
                             <NavLink href={`/users?${message.sender.nickname}`}>{message.sender.first_name}</NavLink>
                         </span>

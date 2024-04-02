@@ -1,22 +1,23 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
-import { Row, Col, Stack, Image, Button, Container } from 'react-bootstrap';
+import { Row, Stack, Button, Container } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 
 import { AESEncrypt, AESDecrypt } from '../crypto';
-import { API_SERVER, WEBSOCKET_URL, SERVER_URL } from '../config';
+import { API_SERVER } from '../config';
 import { useAuth } from '../components/AuthContext';
-import MessageNotification from '../components/MessageNotification';
 import MessageRenderer from '../components/MessageRenderer';
-import ChatDashboard from '../components/ChatDashboard';
+import ChatPreview from '../components/ChatPreview';
+import ChatMenu from '../components/ChatMenu';
+import ChatTypeFilter from '../components/ChatTypeFilter';
+import ChatHeader from '../components/ChatHeader';
 
-import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 import EmojiGifPicker from '../components/EmojiGifPicker';
 import ChatBackground from '../assets/images/chat-background.jpg'
 
 function Chat() {
-  const { authUser, setAuthUser } = useAuth();
+  const { authUser, stompClient } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -24,13 +25,13 @@ function Chat() {
   const [chats, setChats] = useState([]);
   const [filteredChats, setFilteredChats] = useState([]);
   const [choosenChat, setChoosenChat] = useState({});
-  const [stompClient, setStompClient] = useState(null);
+  // const [stompClient, setStompClient] = useState(null);
   const [messageContent, setMessageContent] = useState('');
-  const [messageNotification, setMessageNotification] = useState({ visible: false, heading: '', message: {}, to: '' });
+  // const [messageNotification, setMessageNotification] = useState({ visible: false, heading: '', message: {}, to: '' });
   const messagesListRef = useRef(null);
   const subscriptionRef = useRef(null);
-  const timeoutRef = useRef(null);
-  const debounceTimeout = useRef(null);
+  // const timeoutRef = useRef(null);
+  // const debounceTimeout = useRef(null);
   const firstMessageRef = useRef(null);
   const offsetRef = useRef(0);
   const limit = 30;
@@ -69,30 +70,30 @@ function Chat() {
     }
   }, [stompClient, choosenChat.id, updateChatLastMessage]);
 
-  const showNotification = useCallback((notification) => {
-    setMessageNotification({ visible: true, notification: notification });
-    clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      setMessageNotification(prevState => ({
-        ...prevState,
-        visible: false,
-      }));
-    }, 5000);
-  }, []);
+  // const showNotification = useCallback((notification) => {
+  //   setMessageNotification({ visible: true, notification: notification });
+  //   clearTimeout(timeoutRef.current);
+  //   timeoutRef.current = setTimeout(() => {
+  //     setMessageNotification(prevState => ({
+  //       ...prevState,
+  //       visible: false,
+  //     }));
+  //   }, 5000);
+  // }, []);
 
-  const subscribeToNotifications = useCallback(() => {
-    return stompClient.subscribe(`/user/notification`, receivedNotification => {
-      const notification = JSON.parse(receivedNotification.body);
-      if (notification.type === 'CHAT_MESSAGE' && notification.chat.id !== choosenChat.id) {
-        updateChatLastMessage(notification);
-        clearTimeout(debounceTimeout.current);
-        debounceTimeout.current = setTimeout(() => {
-          showNotification(notification);
-          debounceTimeout.current = null;
-        }, 1000);
-      }
-    });
-  }, [stompClient, choosenChat.id, updateChatLastMessage, showNotification]);
+  // const subscribeToNotifications = useCallback(() => {
+  //   return stompClient.subscribe(`/user/notification`, receivedNotification => {
+  //     const notification = JSON.parse(receivedNotification.body);
+  //     if (notification.type === 'CHAT_MESSAGE' && notification.chat.id !== choosenChat.id) {
+  //       updateChatLastMessage(notification);
+  //       clearTimeout(debounceTimeout.current);
+  //       debounceTimeout.current = setTimeout(() => {
+  //         showNotification(notification);
+  //         debounceTimeout.current = null;
+  //       }, 1000);
+  //     }
+  //   });
+  // }, [stompClient, choosenChat.id, updateChatLastMessage, showNotification]);
 
   const getChatMessages = useCallback((chatId) => {
     axios.get(`${API_SERVER}/chats/${chatId}`, { withCredentials: true })
@@ -166,71 +167,14 @@ function Chat() {
     }
   };
 
-  const createImage = (url, alt, width, height) => (
-    <Image
-      src={url !== null ? `${SERVER_URL}/${url}` : imagePlaceholder}
-      alt={alt}
-      width={width}
-      height={height}
-      style={{ objectFit: 'cover' }}
-      roundedCircle
-    />
-  );
-
-  const filterChatsByType = (type, e) => {
-    const chatTypes = document.querySelectorAll('.chat-type');
-    chatTypes.forEach(chatType => chatType.classList.remove('active'));
-    e.target.parentElement.classList.add('active');
-
-    if (type === 'all') {
-      setFilteredChats(chats);
-    } else {
-      const filteredChats = chats.filter(chat => chat.type === type);
-      setFilteredChats(filteredChats);
-    }
-  };
-
-  const renderChatPreview = (chat) => {
-    return (
-      <Row className='chat-container d-flex align-items-center flex-nowrap'
-        key={chat.id}
-        onClick={() => { navigate(`/messenger?c=${chat.id}`); }}
-      >
-        <Col className='chat-avatar d-flex justify-content-center'>
-          {createImage(chat.avatar_url, chat.name, 55, 55)}
-        </Col>
-        <Col className='chat-info w-75 ps-3'>
-          <p className='chat-name d-flex justify-content-between'>
-            {chat.name}
-            <span>{formatTimestampForChatContainer(chat.last_message.timestamp)}</span>
-          </p>
-          <p className='last-message text-truncate'>{chat.last_message.content}</p>
-        </Col>
-      </Row>
-    );
+  const openChatMenu = () => {
+    // 
   };
 
   const formatTimestampForMessage = (timestamp) => {
     const date = new Date(timestamp);
     // hh:mm for the time of the message
     return date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' });
-  }
-
-  const formatTimestampForChatContainer = (timestamp) => {
-    const date = new Date(timestamp);
-    const currentDate = new Date();
-    const difference = currentDate - date;
-
-    if (difference > 31536000000) {
-      // dd/mmm/yyyy if the message was sent more than a year ago
-      return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-    } else if (difference > 86400000) {
-      // dd/mmm if the message was sent less than a year ago but more than a day ago
-      return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-    } else {
-      // hh:mm if the message was sent less than a day ago
-      return date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' });
-    }
   }
 
   // ---------------------------- //
@@ -245,47 +189,38 @@ function Chat() {
     scrollToPosition(scrollPosition);
   }, [choosenChat, scrollPosition]);
 
-  useEffect(() => {
-    axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
-      .then(response => {
-        const newClient = new Client();
-        newClient.configure({
-          brokerURL: `ws://${WEBSOCKET_URL}`,
-          connectHeaders: {
-            Authorization: `Bearer ${response.data.access_token}`
-          },
-        });
-        newClient.activate();
-        setStompClient(newClient);
-      })
-      .catch(() => {
-        setAuthUser(null);
-        navigate('/sign-in');
-      });
-  }, [setStompClient, setAuthUser, navigate]);
+  // useEffect(() => {
+  //   axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
+  //     .then(response => {
+  //       const newClient = new Client();
+  //       newClient.configure({
+  //         brokerURL: `ws://${WEBSOCKET_URL}`,
+  //         connectHeaders: {
+  //           Authorization: `Bearer ${response.data.access_token}`
+  //         },
+  //       });
+  //       newClient.activate();
+  //       setStompClient(newClient);
+  //     })
+  //     .catch(() => {
+  //       setAuthUser(null);
+  //       navigate('/sign-in');
+  //     });
+  // }, [setStompClient, setAuthUser, navigate]);
 
   // Handle the WebSocket connection
   useEffect(() => {
-    let notificationSubscription = null;
     if (stompClient != null && choosenChat.id) {
       const onConnectCallback = () => {
         // Subscribe to the current chat messages
         subscribeToChatMessages();
-        // Subscribe to notifications
-        notificationSubscription = subscribeToNotifications();
       };
       stompClient.onConnect = onConnectCallback;
       if (stompClient.connected) {
         onConnectCallback();
       }
     }
-
-    return () => {
-      if (notificationSubscription) {
-        notificationSubscription.unsubscribe();
-      }
-    };
-  }, [stompClient, choosenChat, subscribeToChatMessages, subscribeToNotifications]);
+  }, [stompClient, choosenChat, subscribeToChatMessages]);
 
   // Get the current chat via the encrypted chat ID in the URL
   useEffect(() => {
@@ -318,29 +253,32 @@ function Chat() {
 
   return (
     <div className="chat-page w-100 d-flex">
-      {messageNotification.visible && (
-        <MessageNotification {...messageNotification} />
-      )}
+      <Container className="chat-menu">
 
-      <Container className="chat-list">
-        <Row className='chat-types d-flex'>
-          <Col className='chat-type active'><p onClick={(e) => { filterChatsByType('all', e) }}>All</p></Col>
-          <Col className='chat-type'><p onClick={(e) => { filterChatsByType('private', e) }}>Contacts</p></Col>
-          <Col className='chat-type'><p onClick={(e) => { filterChatsByType('group', e) }}>Groups</p></Col>
-          <Col className='chat-type'><p onClick={(e) => { filterChatsByType('community', e) }}>Communities</p></Col>
-        </Row>
+        <ChatTypeFilter setChats={setFilteredChats} chats={chats} />
 
-        {filteredChats.map(chat => renderChatPreview(chat))}
+        <Stack direction='vertical'>
+          {filteredChats.map(chat => (
+            <ChatPreview
+              chat={chat}
+              navigate={navigate}
+              key={chat.id}
+            />
+          ))}
+        </Stack>
+
       </Container>
 
       {choosenChat.id === undefined ? (
+        // If no chat is selected, display:
         <div className='chat-box non-selected' key={choosenChat.id} style={{ backgroundImage: `url(${ChatBackground})` }}>
           <p className='no-chat-selected'>Select a chat to start messaging</p>
         </div>
       ) :
+        // If a chat is selected, display:
         <div className='chat-box d-flex flex-nowrap flex-column' key={choosenChat.id}>
-          {/* Chat Header */}
-          <ChatDashboard chat={choosenChat} createImage={createImage} />
+
+          <ChatHeader chat={choosenChat} openChatMenu={openChatMenu} />
 
           <Row className='messages-list p-0 py-3' ref={messagesListRef} onScroll={handleScroll}>
             <Stack direction='vertical' gap={2}>
@@ -355,7 +293,6 @@ function Chat() {
                     index={index}
                     authUser={authUser}
                     chat={choosenChat}
-                    createImage={createImage}
                     formatTimestamp={formatTimestampForMessage}
                   />
                 </div>
@@ -363,6 +300,7 @@ function Chat() {
               )}
             </Stack>
           </Row>
+
           <Row className="message-input p-0 d-flex">
             <div className="input-container p-0">
               <input
