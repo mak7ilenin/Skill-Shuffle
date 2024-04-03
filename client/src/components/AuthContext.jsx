@@ -16,7 +16,6 @@ export const AuthProvider = ({ children }) => {
         return JSON.parse(sessionStorage.getItem('auth-user'));
     });
 
-    //     clearTimeout(timeoutRef.current);
     const subscribeToNotifications = useCallback(() => {
         return stompClient.subscribe(`/user/notification`, receivedNotification => {
             const notification = JSON.parse(receivedNotification.body);
@@ -24,27 +23,26 @@ export const AuthProvider = ({ children }) => {
         });
     }, [stompClient, setMessageNotification]);
 
+    const subscribeToChat = useCallback((chatId, callback) => {
+        const chatEndpoint = `/user/chat/${chatId}`;
+        return stompClient.subscribe(chatEndpoint, receivedMessage => {
+            const message = JSON.parse(receivedMessage.body);
+            callback(message);
+        });
+    }, [stompClient]);
+
     // Handle the WebSocket connection
     useEffect(() => {
-        let notificationSubscription = null;
         if (stompClient != null) {
             const onConnectCallback = () => {
-                // Subscribe to notifications
-                notificationSubscription = subscribeToNotifications();
+                subscribeToNotifications();
             };
             stompClient.onConnect = onConnectCallback;
             if (stompClient.connected) {
                 onConnectCallback();
             }
         }
-
-        return () => {
-            if (notificationSubscription) {
-                notificationSubscription.unsubscribe();
-            }
-        };
     }, [stompClient, subscribeToNotifications]);
-
 
     useEffect(() => {
         // Check user's authentication status with refresh token
@@ -91,7 +89,7 @@ export const AuthProvider = ({ children }) => {
     }, [authUser]);
 
     return (
-        <AuthContext.Provider value={{ authUser, setAuthUser, stompClient, messageNotification }}>
+        <AuthContext.Provider value={{ authUser, setAuthUser, stompClient, messageNotification, subscribeToChat }}>
             {/* Show MessageNotification if there is a new message */}
             {messageNotification.visible && (
                 <MessageNotification

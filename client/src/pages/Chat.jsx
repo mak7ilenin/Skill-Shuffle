@@ -16,7 +16,7 @@ import EmojiGifPicker from '../components/EmojiGifPicker';
 import ChatBackground from '../assets/images/chat-background.jpg'
 
 function Chat() {
-  const { authUser, stompClient } = useAuth();
+  const { authUser, stompClient, subscribeToChat } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -25,8 +25,8 @@ function Chat() {
   const [filteredChats, setFilteredChats] = useState([]);
   const [choosenChat, setChoosenChat] = useState({});
   const [messageContent, setMessageContent] = useState('');
+  const [currentSubscription, setCurrentSubscription] = useState(null);
   const messagesListRef = useRef(null);
-  const subscriptionRef = useRef(null);
   const firstMessageRef = useRef(null);
   const offsetRef = useRef(0);
   const limit = 30;
@@ -46,41 +46,39 @@ function Chat() {
     });
   }, []);
 
-  const subscribeToChatMessages = useCallback(() => {
-    // DOESN'T REACH THIS FUNC
-    if (stompClient && choosenChat.id) {
-      const destination = `/user/chat/${choosenChat.id}`;
-      if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe(); // Unsubscribe from previous chat
-      }
-      const newSubscription = stompClient.subscribe(destination, receivedMessage => {
-        const message = JSON.parse(receivedMessage.body);
-        updateChatLastMessage(message);
-        setChoosenChat(prevChat => ({
-          ...prevChat,
-          messages: [...prevChat.messages, message]
-        }));
-      });
-      subscriptionRef.current = newSubscription; // Store the new subscription
-    }
-  }, [stompClient, choosenChat.id, updateChatLastMessage]);
-
   const getChatMessages = useCallback((chatId) => {
+    if (currentSubscription) {
+      currentSubscription.unsubscribe(); // Unsubscribe from previous chat
+    }
+
     axios.get(`${API_SERVER}/chats/${chatId}`, { withCredentials: true })
       .then(response => {
         setChoosenChat(response.data);
         offsetRef.current = 0;
+
+        if (stompClient) {
+          const newSubscription = subscribeToChat(chatId, (message) => {
+            updateChatLastMessage(message);
+            setChoosenChat(prevChat => ({
+              ...prevChat,
+              messages: [...prevChat.messages, message]
+            }));
+          });
+
+          setCurrentSubscription(newSubscription); // Store the new subscription
+        }
+
       })
       .catch(error => {
         console.error(error.response?.data.message || error.message);
       });
-  }, []);
+  }, [stompClient, subscribeToChat, updateChatLastMessage, currentSubscription, setCurrentSubscription]);
 
   const sendMessage = (gif) => {
     if (messageContent === '' && !gif) return;
     setMessageContent('');
 
-    const destination = `/app/chat/${choosenChat.id}`;
+    const destination = `/app/chat`;
     const message = {
       sender: authUser,
       chat: { id: choosenChat.id },
@@ -159,22 +157,6 @@ function Chat() {
     scrollToPosition(scrollPosition);
   }, [choosenChat, scrollPosition]);
 
-  // Handle the WebSocket connection
-  useEffect(() => {
-    console.log('stompClient:', stompClient);
-    console.log('choosenChat:', choosenChat);
-    if (stompClient != null && choosenChat.id) {
-      const onConnectCallback = () => {
-        // Subscribe to the current chat messages
-        subscribeToChatMessages();
-      };
-      stompClient.onConnect = onConnectCallback;
-      if (stompClient.connected) {
-        onConnectCallback();
-      }
-    }
-  }, [stompClient, choosenChat, subscribeToChatMessages]);
-
   // Get the current chat via the encrypted chat ID in the URL
   useEffect(() => {
     const encryptedChatId = new URLSearchParams(location.search).get('c');
@@ -188,7 +170,7 @@ function Chat() {
         console.error("Error decrypting chat: ", error);
       }
     }
-  }, [location.search, getChatMessages]);
+  }, [location.search, getChatMessages, updateChatLastMessage, subscribeToChat]);
 
   useEffect(() => {
     axios.get(`${API_SERVER}/chats`, { withCredentials: true })

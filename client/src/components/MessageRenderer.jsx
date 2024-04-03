@@ -72,8 +72,8 @@ function MessageRenderer({ message, index, authUser, chat, formatTimestamp }) {
                             <NavLink href={`/users?${message.sender.nickname}`}>{message.sender.first_name}</NavLink>
                         </span>
                     </div>
-                    <div className='message-content-container d-flex flex-column'>
-                        <div className='message-content'>{detectUrls(message.content)}</div>
+                    <div className='message-content-container d-flex'>
+                        <div className='message-content flex-column'>{detectUrls(message.content)}</div>
                         <div className="message-time-container">
                             <p className='message-time'>{formatTimestamp(message.timestamp)}</p>
                         </div>
