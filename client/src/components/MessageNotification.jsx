@@ -1,26 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Alert, Image } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { SERVER_URL } from '../config';
-import { AESEncrypt } from '../crypto';
+import { AESEncrypt, AESDecrypt } from '../crypto';
 import { useAuth } from './AuthContext';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function MessageNotification({ messageNotification, onDismiss }) {
-    // const { notification } = useAuth();
-    // const [show, setShow] = useState(notification.visible);
-
+function MessageNotification({ onDismiss }) {
     const navigate = useNavigate();
+    const location = useLocation();
+    const { messageNotification } = useAuth();
+
     const [visible, setVisible] = useState(false);
     const [notification, setNotification] = useState(null);
+    const debounceTimeout = useRef(null);
+
+    const getCurrentChat = useCallback(() => {
+        const encryptedChatId = new URLSearchParams(location.search).get('c');
+        if (encryptedChatId) {
+            try {
+                const decryptedChatId = AESDecrypt(encryptedChatId);
+                if (decryptedChatId !== '' && !isNaN(decryptedChatId)) {
+                    return parseInt(decryptedChatId);
+                }
+            } catch (error) {
+                console.error("Error decrypting chat: ", error);
+            }
+        }
+        return null;
+    }, [location.search]);
+
+    const handleNotification = useCallback(() => {
+        const chatId = getCurrentChat();
+        if (notification && notification.type === 'CHAT_MESSAGE') {
+            if (chatId && notification.chat.id !== chatId) {
+                // updateChatLastMessage(notification);
+                clearTimeout(debounceTimeout.current);
+                debounceTimeout.current = setTimeout(() => {
+                    setVisible(true);
+                    debounceTimeout.current = null;
+                }, 1000);
+            }
+        }
+    }, [getCurrentChat, notification]);
 
     useEffect(() => {
-        console.log("MessageNotification useEffect - messageNotification:", messageNotification);
         if (messageNotification && messageNotification.visible) {
-            setVisible(true);
             setNotification(messageNotification.notification);
+            handleNotification();
             const timeoutId = setTimeout(() => {
                 setVisible(false);
                 onDismiss();
@@ -30,16 +59,7 @@ function MessageNotification({ messageNotification, onDismiss }) {
                 clearTimeout(timeoutId);
             };
         }
-    }, [onDismiss, messageNotification]);
-
-    // if (notification.type === 'CHAT_MESSAGE' && notification.chat.id !== choosenChat.id) {
-    //     updateChatLastMessage(notification);
-    //     clearTimeout(debounceTimeout.current);
-    //     debounceTimeout.current = setTimeout(() => {
-    //         showNotification(notification);
-    //         debounceTimeout.current = null;
-    //     }, 1000);
-    // }
+    }, [onDismiss, handleNotification, messageNotification]);
 
     return (
         // Show the notification if the notification is visible

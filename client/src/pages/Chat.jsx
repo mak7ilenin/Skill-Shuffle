@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
 import { Row, Stack, Button, Container } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 
 import { AESEncrypt, AESDecrypt } from '../crypto';
@@ -25,17 +24,12 @@ function Chat() {
   const [chats, setChats] = useState([]);
   const [filteredChats, setFilteredChats] = useState([]);
   const [choosenChat, setChoosenChat] = useState({});
-  // const [stompClient, setStompClient] = useState(null);
   const [messageContent, setMessageContent] = useState('');
-  // const [messageNotification, setMessageNotification] = useState({ visible: false, heading: '', message: {}, to: '' });
   const messagesListRef = useRef(null);
   const subscriptionRef = useRef(null);
-  // const timeoutRef = useRef(null);
-  // const debounceTimeout = useRef(null);
   const firstMessageRef = useRef(null);
   const offsetRef = useRef(0);
   const limit = 30;
-
 
   const updateChatLastMessage = useCallback((message) => {
     message = message.content === undefined ? message[message.length - 1] : message;
@@ -53,6 +47,7 @@ function Chat() {
   }, []);
 
   const subscribeToChatMessages = useCallback(() => {
+    // DOESN'T REACH THIS FUNC
     if (stompClient && choosenChat.id) {
       const destination = `/user/chat/${choosenChat.id}`;
       if (subscriptionRef.current) {
@@ -69,31 +64,6 @@ function Chat() {
       subscriptionRef.current = newSubscription; // Store the new subscription
     }
   }, [stompClient, choosenChat.id, updateChatLastMessage]);
-
-  // const showNotification = useCallback((notification) => {
-  //   setMessageNotification({ visible: true, notification: notification });
-  //   clearTimeout(timeoutRef.current);
-  //   timeoutRef.current = setTimeout(() => {
-  //     setMessageNotification(prevState => ({
-  //       ...prevState,
-  //       visible: false,
-  //     }));
-  //   }, 5000);
-  // }, []);
-
-  // const subscribeToNotifications = useCallback(() => {
-  //   return stompClient.subscribe(`/user/notification`, receivedNotification => {
-  //     const notification = JSON.parse(receivedNotification.body);
-  //     if (notification.type === 'CHAT_MESSAGE' && notification.chat.id !== choosenChat.id) {
-  //       updateChatLastMessage(notification);
-  //       clearTimeout(debounceTimeout.current);
-  //       debounceTimeout.current = setTimeout(() => {
-  //         showNotification(notification);
-  //         debounceTimeout.current = null;
-  //       }, 1000);
-  //     }
-  //   });
-  // }, [stompClient, choosenChat.id, updateChatLastMessage, showNotification]);
 
   const getChatMessages = useCallback((chatId) => {
     axios.get(`${API_SERVER}/chats/${chatId}`, { withCredentials: true })
@@ -189,27 +159,10 @@ function Chat() {
     scrollToPosition(scrollPosition);
   }, [choosenChat, scrollPosition]);
 
-  // useEffect(() => {
-  //   axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
-  //     .then(response => {
-  //       const newClient = new Client();
-  //       newClient.configure({
-  //         brokerURL: `ws://${WEBSOCKET_URL}`,
-  //         connectHeaders: {
-  //           Authorization: `Bearer ${response.data.access_token}`
-  //         },
-  //       });
-  //       newClient.activate();
-  //       setStompClient(newClient);
-  //     })
-  //     .catch(() => {
-  //       setAuthUser(null);
-  //       navigate('/sign-in');
-  //     });
-  // }, [setStompClient, setAuthUser, navigate]);
-
   // Handle the WebSocket connection
   useEffect(() => {
+    console.log('stompClient:', stompClient);
+    console.log('choosenChat:', choosenChat);
     if (stompClient != null && choosenChat.id) {
       const onConnectCallback = () => {
         // Subscribe to the current chat messages
