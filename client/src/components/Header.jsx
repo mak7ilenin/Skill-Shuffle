@@ -54,19 +54,24 @@ function Header() {
             </Container>
             <ListGroup className='flex-grow-1'>
                 <ListGroup.Item>
-                    <Home className='home-icon' /><p>Home</p>
+                    <Home className='home-icon' />
+                    <p>Home</p>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <Search className='search-icon' /><p>Search</p>
+                    <Search className='search-icon' />
+                    <p>Search</p>
                 </ListGroup.Item>
                 <ListGroup.Item action href='/messenger'>
-                    <Chats className='chats-icon' /><p>Messages</p>
+                    <Chats className='chats-icon' />
+                    <p>Messages</p>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <Notifications className='notifications-icon' /><p>Notifications</p>
+                    <Notifications className='notifications-icon' />
+                    <p>Notifications</p>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <Create className='create-icon' /><p>Create</p>
+                    <Create className='create-icon' />
+                    <p>Create</p>
                 </ListGroup.Item>
                 {authUser && (
                     <>
