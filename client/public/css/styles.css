@@ -28,6 +28,13 @@ h1, h2, h3, h4, h5, h6, p {
   padding: 0 !important;
 }
 
+.nav-link {
+  color: #8AB4F8 !important;
+}
+.nav-link:hover {
+  color: #488eff !important;
+}
+
 .default-header {
   background-color: #ffffff;
   position: relative;
@@ -150,32 +157,33 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page {
   background-color: #EFEBFF;
 }
-.chat-page .chat-list {
+.chat-page .chat-menu {
   width: 27.61%;
   height: 100vh;
   background-color: #fff;
   border-right: 1px solid #ccc;
   flex: 0 0 auto;
 }
-.chat-page .chat-list .chat-types {
+.chat-page .chat-menu .chat-types {
   height: 58px;
   padding: 0 25px !important;
   gap: 15px;
+  border-bottom: 1px solid rgba(143, 143, 143, 0.1450980392);
 }
-.chat-page .chat-list .chat-types .chat-type {
+.chat-page .chat-menu .chat-types .chat-type {
   height: 28px;
   background-color: #F0F0FF;
   border-radius: 15px;
   flex: 0;
   cursor: pointer;
 }
-.chat-page .chat-list .chat-types .chat-type.active {
+.chat-page .chat-menu .chat-types .chat-type.active {
   background-color: #D5D5FF;
 }
-.chat-page .chat-list .chat-types .chat-type.active > p {
+.chat-page .chat-menu .chat-types .chat-type.active > p {
   font-weight: 600;
 }
-.chat-page .chat-list .chat-types .chat-type p {
+.chat-page .chat-menu .chat-types .chat-type p {
   width: -moz-fit-content !important;
   width: fit-content !important;
   padding: 3px 20px;
@@ -185,27 +193,25 @@ h1, h2, h3, h4, h5, h6, p {
   font-weight: 500;
   line-height: 22px;
 }
-.chat-page .chat-list .chat-container {
+.chat-page .chat-menu .chat-preview {
   padding: 13px 14px !important;
-  border-top: 1px solid rgba(143, 143, 143, 0.1450980392);
   border-bottom: 1px solid rgba(143, 143, 143, 0.1450980392);
-  cursor: pointer;
 }
-.chat-page .chat-list .chat-container > * {
+.chat-page .chat-menu .chat-preview > * {
   font-family: "Manrope", sans-serif;
 }
-.chat-page .chat-list .chat-container:hover {
+.chat-page .chat-menu .chat-preview:hover {
   background-color: #e5e5e5;
 }
-.chat-page .chat-list .chat-container .chat-avatar {
+.chat-page .chat-menu .chat-preview .chat-avatar {
   width: -moz-fit-content;
   width: fit-content;
   flex: 0 !important;
 }
-.chat-page .chat-list .chat-container .chat-avatar img {
+.chat-page .chat-menu .chat-preview .chat-avatar img {
   position: relative;
 }
-.chat-page .chat-list .chat-container .chat-avatar img.online::after {
+.chat-page .chat-menu .chat-preview .chat-avatar img.online::after {
   content: "";
   position: absolute;
   width: 10px;
@@ -215,7 +221,7 @@ h1, h2, h3, h4, h5, h6, p {
   bottom: 0;
   right: 0;
 }
-.chat-page .chat-list .chat-container .chat-avatar img.offline::after {
+.chat-page .chat-menu .chat-preview .chat-avatar img.offline::after {
   content: "";
   position: absolute;
   width: 10px;
@@ -226,19 +232,19 @@ h1, h2, h3, h4, h5, h6, p {
   bottom: 0;
   right: 0;
 }
-.chat-page .chat-list .chat-container .chat-info {
+.chat-page .chat-menu .chat-preview .chat-info {
   flex: auto;
 }
-.chat-page .chat-list .chat-container .chat-info .chat-name {
+.chat-page .chat-menu .chat-preview .chat-info .chat-name {
   font-weight: 600;
   font-size: 18px;
 }
-.chat-page .chat-list .chat-container .chat-info .chat-name span {
+.chat-page .chat-menu .chat-preview .chat-info .chat-name span {
   color: #8F8F8F;
   font-size: 16px;
   font-weight: 500;
 }
-.chat-page .chat-list .chat-container .chat-info .last-message {
+.chat-page .chat-menu .chat-preview .chat-info .last-message {
   width: calc(100% - 60px);
   white-space: nowrap;
   overflow: hidden;
@@ -264,6 +270,7 @@ h1, h2, h3, h4, h5, h6, p {
   padding: 12.5px 14px !important;
   border-bottom: 1px solid #ccc;
   background-color: #fff;
+  font-family: "Manrope", sans-serif;
 }
 .chat-page .chat-box .chat-header .chat-avatar {
   flex: 0;
@@ -274,7 +281,22 @@ h1, h2, h3, h4, h5, h6, p {
   font-weight: 600;
   font-size: 18px;
 }
-.chat-page .chat-box .chat-header span {
+.chat-page .chat-box .chat-header .user-activity {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+.chat-page .chat-box .chat-header .user-activity .network-icon {
+  width: 14px;
+  height: 14px;
+  margin-bottom: 1px;
+}
+.chat-page .chat-box .chat-header .user-activity span {
+  font-size: 14px;
+  font-weight: 500;
+}
+.chat-page .chat-box .chat-header span,
+.chat-page .chat-box .chat-header p {
   width: -moz-fit-content;
   width: fit-content;
 }

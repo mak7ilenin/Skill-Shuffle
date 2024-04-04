@@ -46,12 +46,10 @@ public class WebSocketController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping("/chat/{chatId}")
-    public void sendMessage(@DestinationVariable String chatId, @Payload Message message) {
-//        List<Message> messages = this.chats.getOrDefault(chatId, new ArrayList<>());
+    @MessageMapping("/chat")
+    public void sendMessage(@Payload Message message) {
+        String chatId = message.getChat().getId().toString();
         Message savedMessage = messageService.saveMessage(message, chatId);
-//        messages.add(savedMessage);
-//        chats.put(chatId, messages);
 
         // Get all users in this chat
         List<String> usernames = userService.getUsersInChat(Long.parseLong(chatId));
@@ -64,7 +62,10 @@ public class WebSocketController {
         }
 
         usernames.remove(senderUsername); // Remove sender from the list of usernames
+        sendNotification(chatId, savedMessage, usernames, sender);
+    }
 
+    public void sendNotification(String chatId, Message message, List<String> usernames, User sender) {
         // Create notification message based on chat type
         String notificationMessage = "";
         Chat chat = chatRepository.findChatById(Long.parseLong(chatId));

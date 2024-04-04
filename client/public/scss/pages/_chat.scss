@@ -1,7 +1,7 @@
 .chat-page {
     background-color: #EFEBFF;
 
-    .chat-list {
+    .chat-menu {
         width: 27.61%;
         height: 100vh;
         background-color: #fff;
@@ -12,6 +12,7 @@
             height: 58px;
             padding: 0 25px !important;
             gap: 15px;
+            border-bottom: 1px solid #8f8f8f25;
 
             .chat-type {
                 height: 28px;
@@ -40,11 +41,9 @@
             }
         }
 
-        .chat-container {
+        .chat-preview {
             padding: 13px 14px !important;
-            border-top: 1px solid #8f8f8f25;
             border-bottom: 1px solid #8f8f8f25;
-            cursor: pointer;
 
             &>* {
                 font-family: $main-font;
@@ -131,6 +130,7 @@
             padding: 12.5px 14px !important;
             border-bottom: 1px solid #ccc;
             background-color: #fff;
+            font-family: $main-font;
 
             .chat-avatar {
                 flex: 0;
@@ -142,7 +142,25 @@
                 font-size: 18px;
             }
 
-            span {
+            .user-activity {
+                display: flex;
+                gap: 7px;
+                align-items: center;
+
+                .network-icon {
+                    width: 14px;
+                    height: 14px;
+                    margin-bottom: 1px;
+                }
+
+                span {
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+            }
+
+            span,
+            p {
                 width: fit-content;
             }
         }
