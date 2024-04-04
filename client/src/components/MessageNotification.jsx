@@ -4,14 +4,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 import { SERVER_URL } from '../config';
 import { AESEncrypt, AESDecrypt } from '../crypto';
-import { useAuth } from './AuthContext';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function MessageNotification({ onDismiss }) {
+function MessageNotification({ messageNotification, onDismiss }) {
     const navigate = useNavigate();
     const location = useLocation();
-    const { messageNotification } = useAuth();
 
     const [visible, setVisible] = useState(false);
     const [notification, setNotification] = useState(null);
@@ -62,7 +60,6 @@ function MessageNotification({ onDismiss }) {
     }, [onDismiss, handleNotification, messageNotification]);
 
     return (
-        // Show the notification if the notification is visible
         visible && (
             <Alert
                 variant="light"

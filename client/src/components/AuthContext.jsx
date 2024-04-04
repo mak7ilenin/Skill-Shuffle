@@ -8,44 +8,34 @@ import MessageNotification from './MessageNotification';
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-    const [stompClient, setStompClient] = useState(null);
-    const [messageNotification, setMessageNotification] = useState({ visible: false, notification: {} });
+const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
+    const [stompClient, setStompClient] = useState(null);
+    const [isStompClientInitialized, setIsStompClientInitialized] = useState(false);
+    const [messageNotification, setMessageNotification] = useState({ visible: false, notification: {} });
     const [authUser, setAuthUser] = useState(() => {
         return JSON.parse(sessionStorage.getItem('auth-user'));
     });
 
     const subscribeToNotifications = useCallback(() => {
-        return stompClient.subscribe(`/user/notification`, receivedNotification => {
+        if (!isStompClientInitialized) {
+            console.log('STOMP client is not yet initialized.');
+            return;
+        }
+        stompClient.subscribe('/user/notification', receivedNotification => {
+            // Process the received message
             const notification = JSON.parse(receivedNotification.body);
             setMessageNotification({ visible: true, notification: notification });
         });
-    }, [stompClient, setMessageNotification]);
+    }, [isStompClientInitialized, stompClient, setMessageNotification]);
 
-    const subscribeToChat = useCallback((chatId, callback) => {
-        const chatEndpoint = `/user/chat/${chatId}`;
-        return stompClient.subscribe(chatEndpoint, receivedMessage => {
-            const message = JSON.parse(receivedMessage.body);
-            callback(message);
-        });
-    }, [stompClient]);
-
-    // Handle the WebSocket connection
-    useEffect(() => {
-        if (stompClient != null) {
-            const onConnectCallback = () => {
-                subscribeToNotifications();
-            };
-            stompClient.onConnect = onConnectCallback;
-            if (stompClient.connected) {
-                onConnectCallback();
-            }
+    const initializeStompClient = useCallback(() => {
+        if (stompClient) {
+            console.log('STOMP client is already initialized.');
+            subscribeToNotifications();
+            return;
         }
-    }, [stompClient, subscribeToNotifications]);
 
-    useEffect(() => {
-        // Check user's authentication status with refresh token
         if (!authUser) {
             axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
                 .then(response => {
@@ -59,6 +49,7 @@ export const AuthProvider = ({ children }) => {
                 });
         } else {
             if (!stompClient) {
+                console.log('Initializing STOMP client...');
                 axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
                     .then(response => {
                         // Create a new WebSocket connection
@@ -67,17 +58,27 @@ export const AuthProvider = ({ children }) => {
                             connectHeaders: {
                                 Authorization: `Bearer ${response.data.access_token}`,
                             },
+                            onConnect: function (frame) {
+                                console.log('Connected: ' + frame);
+                                setStompClient(client);
+                                setIsStompClientInitialized(true);
+                            }
                         });
                         client.activate();
                         setStompClient(client);
                     })
-                    .catch(() => {
+                    .catch(error => {
+                        console.error('Error while initializing STOMP client:', error);
                         setAuthUser(null);
                         navigate('/sign-in');
                     });
             }
         }
-    }, [authUser, stompClient, setStompClient, navigate]);
+    }, [navigate, stompClient, authUser, subscribeToNotifications]);
+
+    useEffect(() => {
+        initializeStompClient();
+    }, [initializeStompClient]);
 
     useEffect(() => {
         // Store authUser in sessionStorage whenever it changes
@@ -89,11 +90,10 @@ export const AuthProvider = ({ children }) => {
     }, [authUser]);
 
     return (
-        <AuthContext.Provider value={{ authUser, setAuthUser, stompClient, messageNotification, subscribeToChat }}>
-            {/* Show MessageNotification if there is a new message */}
+        <AuthContext.Provider value={{ authUser, stompClient, isStompClientInitialized }}>
             {messageNotification.visible && (
                 <MessageNotification
-                    notification={messageNotification}
+                    messageNotification={messageNotification}
                     onDismiss={() => setMessageNotification({ visible: false, notification: {} })}
                 />
             )}
@@ -102,4 +102,6 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-export const useAuth = () => useContext(AuthContext);
+const useAuth = () => useContext(AuthContext);
+
+export { AuthContext, AuthProvider, useAuth };

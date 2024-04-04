@@ -28,6 +28,13 @@ h1, h2, h3, h4, h5, h6, p {
   padding: 0 !important;
 }
 
+.nav-link {
+  color: #8AB4F8 !important;
+}
+.nav-link:hover {
+  color: #488eff !important;
+}
+
 .default-header {
   background-color: #ffffff;
   position: relative;

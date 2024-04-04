@@ -16,7 +16,7 @@ import EmojiGifPicker from '../components/EmojiGifPicker';
 import ChatBackground from '../assets/images/chat-background.jpg'
 
 function Chat() {
-  const { authUser, stompClient, subscribeToChat } = useAuth();
+  const { authUser, stompClient, isStompClientInitialized } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -25,11 +25,12 @@ function Chat() {
   const [filteredChats, setFilteredChats] = useState([]);
   const [choosenChat, setChoosenChat] = useState({});
   const [messageContent, setMessageContent] = useState('');
-  const [currentSubscription, setCurrentSubscription] = useState(null);
+  const currentSubscriptionRef = useRef(null);
   const messagesListRef = useRef(null);
   const firstMessageRef = useRef(null);
   const offsetRef = useRef(0);
   const limit = 30;
+
 
   const updateChatLastMessage = useCallback((message) => {
     message = message.content === undefined ? message[message.length - 1] : message;
@@ -46,33 +47,58 @@ function Chat() {
     });
   }, []);
 
-  const getChatMessages = useCallback((chatId) => {
-    if (currentSubscription) {
-      currentSubscription.unsubscribe(); // Unsubscribe from previous chat
-    }
 
+  const getChatMessages = useCallback((chatId) => {
     axios.get(`${API_SERVER}/chats/${chatId}`, { withCredentials: true })
       .then(response => {
         setChoosenChat(response.data);
         offsetRef.current = 0;
-
-        if (stompClient) {
-          const newSubscription = subscribeToChat(chatId, (message) => {
-            updateChatLastMessage(message);
-            setChoosenChat(prevChat => ({
-              ...prevChat,
-              messages: [...prevChat.messages, message]
-            }));
-          });
-
-          setCurrentSubscription(newSubscription); // Store the new subscription
-        }
-
       })
       .catch(error => {
         console.error(error.response?.data.message || error.message);
       });
-  }, [stompClient, subscribeToChat, updateChatLastMessage, currentSubscription, setCurrentSubscription]);
+  }, []);
+
+
+  const subscribeToChat = useCallback((chatId) => {
+    // Ensure stompClient is initialized before attempting to subscribe
+    if (isStompClientInitialized && stompClient) {
+
+      // Unsubscribe from the previous chat messages
+      if (currentSubscriptionRef.current) {
+        currentSubscriptionRef.current.unsubscribe();
+      }
+
+      // Subscribe to chat messages
+      const chatEndpoint = `/user/chat/${chatId}`;
+      const newSubscription = stompClient.subscribe(chatEndpoint, receivedMessage => {
+        const message = JSON.parse(receivedMessage.body);
+        updateChatLastMessage(message);
+        setChoosenChat(prevChat => ({
+          ...prevChat,
+          messages: [...prevChat.messages, message]
+        }));
+      });
+
+      // Update current subscription
+      currentSubscriptionRef.current = newSubscription;
+
+      return () => {
+        // Unsubscribe from chat messages when component unmounts
+        newSubscription.unsubscribe();
+      };
+    } else {
+      console.error('STOMP client is not initialized.');
+    }
+  }, [stompClient, updateChatLastMessage, isStompClientInitialized]);
+
+
+  useEffect(() => {
+    if (choosenChat.id !== undefined) {
+      subscribeToChat(choosenChat.id);
+    }
+  }, [choosenChat.id, subscribeToChat]);
+
 
   const sendMessage = (gif) => {
     if (messageContent === '' && !gif) return;
@@ -93,6 +119,7 @@ function Chat() {
       });
     }
   };
+
 
   const loadMoreMessages = async () => {
     setLoading(true);
@@ -120,6 +147,7 @@ function Chat() {
       setLoading(false);
     }
   };
+
 
   const handleScroll = () => {
     const { scrollTop } = messagesListRef.current;
@@ -153,9 +181,11 @@ function Chat() {
     }
   }, [choosenChat]);
 
+
   useLayoutEffect(() => {
     scrollToPosition(scrollPosition);
   }, [choosenChat, scrollPosition]);
+
 
   // Get the current chat via the encrypted chat ID in the URL
   useEffect(() => {
@@ -172,6 +202,7 @@ function Chat() {
     }
   }, [location.search, getChatMessages, updateChatLastMessage, subscribeToChat]);
 
+
   useEffect(() => {
     axios.get(`${API_SERVER}/chats`, { withCredentials: true })
       .then(response => {
@@ -185,6 +216,7 @@ function Chat() {
         console.error(error.response?.data.message || error.message);
       });
   }, []);
+
 
   return (
     <div className="chat-page w-100 d-flex">
