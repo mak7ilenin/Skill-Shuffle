@@ -19,6 +19,8 @@ SET time_zone = "+00:00";
 
 --
 -- Database: `skill_shuffle`
+CREATE DATABASE IF NOT EXISTS `skill_shuffle` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+USE `skill_shuffle`;
 --
 
 -- --------------------------------------------------------

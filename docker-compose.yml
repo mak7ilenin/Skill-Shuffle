@@ -1,0 +1,41 @@
+version: "3"
+
+# Database: Maria Db (localhost:3306)
+# Backend: Spring Boot (localhost:8080)
+# Frontend: React (localhost:3000)
+
+services:
+  database:
+    image: mysql
+    container_name: database
+    volumes:
+      - ./database/skill_shuffle.sql:/docker-entrypoint-initdb.d/skill_shuffle.sql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: skill_shuffle
+    ports:
+      - "3306:3306"
+
+  server:
+    image: server
+    container_name: server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+
+  client:
+    image: client
+    container_name: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
