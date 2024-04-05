@@ -1,0 +1,94 @@
+.profile-banner {
+    background-color: #00B3DB;
+    width: 100%;
+    height: 389px;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+.profile-header-list {
+    width: 100%;
+    list-style: none;
+    display: flex;
+    border: unset !important;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+.profile-header-list li {
+    font-family: "Lexend";
+    width: 115px;
+    height: 84px;
+    padding: auto 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 18px;
+    color: #646464 !important;
+    font-weight: 500;
+    &:hover {
+        cursor: pointer;
+        background-color: #f4f4f4;
+        border: unset !important;
+    }
+    button {
+        border-top: unset !important;
+        border-left: unset !important;
+        border-right: unset !important;
+        width: 100%;
+        height: 100%;
+        display: flex !important;
+        justify-content: center;
+        border-radius: unset !important;
+        align-items: center !important;
+        border-bottom-width: 5px !important;
+        color: #646464 !important;
+        &:hover {
+            border-bottom-width: 5px !important;
+            color: rgb(72, 72, 72) !important;
+            border-bottom-color: rgb(72, 72, 72) !important;
+        }
+        &.active {
+            color: black !important;
+            background-color: unset !important;
+            border-bottom-color: black !important;
+        }
+        &:disabled {
+            color: #f4f4f4 !important;
+            background-color: rgb(214, 214, 214) !important;
+        }
+    }
+    b {
+        font-size: 20px;
+        font-weight: 600;
+        color: black;   
+    }
+}
+.profile-btn {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    --bs-btn-bg: rgba(255,255,255,0) !important;
+    --bs-btn-hover-bg: rgba(255,255,255,0.37) !important;
+    --bs-btn-active-bg: rgba(42, 42, 42, 0.37) !important;
+    border: none !important;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    padding: unset !important;
+}
+.profile-avatar {
+    width: 280px !important;
+    height: 280px !important;
+    border-radius: 50% !important;
+    background-position: 50% 50%;
+    --bs-btn-bg: rgba(255,255,255,0) !important;
+    --bs-btn-hover-bg: rgba(255,255,255,0.37) !important;
+    --bs-btn-active-bg: rgba(42, 42, 42, 0.37) !important;
+    border: none !important;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    padding: unset !important;
+}

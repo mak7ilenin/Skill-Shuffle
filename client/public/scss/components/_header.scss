@@ -11,7 +11,6 @@
     &.closed {
         width: 69px;
     }
-
     .logo-container {
         margin-top: 45px !important;
     }
@@ -28,17 +27,20 @@
             border-radius: 0;
             cursor: pointer;
             display: flex;
+            padding-left: 21px;
             align-items: center;
-            justify-content: center;
-
+            justify-content: flex-start;
+            &.opened {
+                justify-content: flex-start;
+                padding-left: 21px;
+            }
             &:hover {
                 background-color: #f4f4f4;
             }
-            
+
             &.dropdown-container {
                 margin-top: auto;
                 margin-bottom: 35px;
-
                 button {
                     width: 100%;
                     height: 100%;
@@ -59,10 +61,15 @@
                     }
                 }
             }
-
             span {
                 display: block;
             }
+        }
+        .list-group-item p, .dropdown-container p {
+            font-weight: 500;
+            font-size: 16px;
+            display: none;
+            padding-left: 16px;
         }
     }
 }
