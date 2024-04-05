@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 26, 2024 at 10:07 PM
+-- Generation Time: Apr 05, 2024 at 04:53 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.0
 
@@ -19,9 +19,9 @@ SET time_zone = "+00:00";
 
 --
 -- Database: `skill_shuffle`
+--
 CREATE DATABASE IF NOT EXISTS `skill_shuffle` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 USE `skill_shuffle`;
---
 
 -- --------------------------------------------------------
 
@@ -63,7 +63,7 @@ INSERT INTO `chats` (`id`, `name`, `type`, `avatar_url`) VALUES
 --
 
 CREATE TABLE `chat_history` (
-  `id` int(11) NOT NULL,
+  `id` bigint(20) NOT NULL,
   `user_id` int(11) NOT NULL,
   `chat_id` int(11) NOT NULL,
   `hidden_before` timestamp NOT NULL DEFAULT current_timestamp()
@@ -76,12 +76,12 @@ CREATE TABLE `chat_history` (
 --
 
 CREATE TABLE `chat_members` (
-  `id` int(11) NOT NULL,
+  `id` bigint(20) NOT NULL,
   `chat_id` int(11) NOT NULL,
   `member_id` int(11) NOT NULL,
   `role` enum('CREATOR','ADMIN','MEMBER') COLLATE utf8mb4_bin NOT NULL,
   `joined_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `notifications` tinyint(4) NOT NULL DEFAULT 1
+  `notifications` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
@@ -89,10 +89,10 @@ CREATE TABLE `chat_members` (
 --
 
 INSERT INTO `chat_members` (`id`, `chat_id`, `member_id`, `role`, `joined_at`, `notifications`) VALUES
-(1, 1, 7, 'MEMBER', '2024-03-22 23:34:12', 1),
-(2, 1, 8, 'MEMBER', '2024-03-22 23:34:12', 1),
-(3, 2, 7, 'MEMBER', '2024-03-22 23:34:44', 1),
-(4, 2, 8, 'MEMBER', '2024-03-22 23:34:44', 1);
+(1, 1, 7, 'MEMBER', '2024-03-22 23:34:12', b'1'),
+(2, 1, 8, 'MEMBER', '2024-03-22 23:34:12', b'1'),
+(3, 2, 7, 'MEMBER', '2024-03-22 23:34:44', b'1'),
+(4, 2, 8, 'MEMBER', '2024-03-22 23:34:44', b'1');
 
 -- --------------------------------------------------------
 
@@ -835,7 +835,200 @@ INSERT INTO `chat_messages` (`id`, `sender_id`, `chat_id`, `content`, `timestamp
 (742, 7, 1, 'https://media.tenor.com/eL7FTWTPNzIAAAAC/trying-not-to-say-the-nword-spongebob.gif', '2024-03-26 20:45:34.000', 'SENT'),
 (743, 7, 1, 'https://media.tenor.com/MLhutFZkS7EAAAAC/hyperventilate-cant-breathe.gif', '2024-03-26 20:58:18.000', 'SENT'),
 (744, 7, 1, 'https://media.tenor.com/qy_WcGdRzfgAAAAC/xluna-high-five.gif', '2024-03-26 20:58:24.000', 'SENT'),
-(745, 7, 1, 'dfgsdfdslfslfksdlk https://media.tenor.com/MLhutFZkS7EAAAAC/hyperventilate-cant-breathe.gif', '2024-03-26 20:58:39.000', 'SENT');
+(745, 7, 1, 'dfgsdfdslfslfksdlk https://media.tenor.com/MLhutFZkS7EAAAAC/hyperventilate-cant-breathe.gif', '2024-03-26 20:58:39.000', 'SENT'),
+(746, 8, 2, 'cvbcxcbv', '2024-03-26 21:10:18.000', 'SENT'),
+(747, 8, 1, 'cxbvvbcvb', '2024-03-26 21:10:29.000', 'SENT'),
+(748, 8, 1, 'https://media.tenor.com/nkAY5GFUw5UAAAAC/good-morning.gif', '2024-03-26 21:10:31.000', 'SENT'),
+(749, 8, 1, 'https://media.tenor.com/zhqnRnUO5LwAAAAC/sending-prayers-vibes.gif', '2024-03-26 21:11:03.000', 'SENT'),
+(750, 7, 1, 'https://media.tenor.com/ZaEZVqSQ9jEAAAAC/i-am-here-to-wish-you-happy-tuesday.gif', '2024-03-26 21:12:35.000', 'SENT'),
+(751, 8, 1, 'fghgfh https://media.tenor.com/nkAY5GFUw5UAAAAC/good-morning.gif hgfhgfhf', '2024-03-26 21:17:45.000', 'SENT'),
+(752, 8, 1, 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fpixabay.com%2Fimages%2Fsearch%2Fnature%2F&psig=AOvVaw0voAbRZYPClRBy4GyzAKSp&ust=1711574310452000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCOjOr6jtkoUDFQAAAAAdAAAAABAE', '2024-03-26 21:18:38.000', 'SENT'),
+(753, 8, 1, 'mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm tofhgfh estfghfgh tfghgfhi nahfghfghui fghfghfghgi', '2024-03-26 21:22:01.000', 'SENT'),
+(754, 8, 1, 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg', '2024-03-26 21:22:28.000', 'SENT'),
+(755, 8, 1, 'look https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg great?', '2024-03-26 21:22:38.000', 'SENT'),
+(756, 8, 1, 'dsgdfgd', '2024-03-26 21:25:00.000', 'SENT'),
+(757, 8, 1, 'dfgdfg', '2024-03-26 21:25:25.000', 'SENT'),
+(758, 8, 1, 'dfdfsgdfg', '2024-03-26 21:25:58.000', 'SENT'),
+(759, 8, 1, 'https://media.tenor.com/nkAY5GFUw5UAAAAC/good-morning.gif', '2024-03-26 21:39:58.000', 'SENT'),
+(760, 8, 1, 'a', '2024-03-26 21:40:00.000', 'SENT'),
+(761, 8, 1, 's', '2024-03-26 21:40:00.000', 'SENT'),
+(762, 8, 1, 'd', '2024-03-26 21:40:00.000', 'SENT'),
+(763, 8, 1, 'a', '2024-03-26 21:40:00.000', 'SENT'),
+(764, 8, 1, 'd', '2024-03-26 21:40:01.000', 'SENT'),
+(765, 8, 1, 's', '2024-03-26 21:40:01.000', 'SENT'),
+(766, 7, 1, 'sadfsfds[fsd[f', '2024-03-26 21:43:31.000', 'SENT'),
+(767, 7, 1, 'dfgggfsgs', '2024-03-26 21:43:42.000', 'SENT'),
+(768, 7, 1, 'dfgdfgfdg', '2024-03-26 21:43:50.000', 'SENT'),
+(769, 7, 1, 'dsds', '2024-03-26 21:43:55.000', 'SENT'),
+(770, 7, 1, 'asdd', '2024-03-26 21:44:07.000', 'SENT'),
+(771, 7, 1, 'https://media.tenor.com/nkAY5GFUw5UAAAAC/good-morning.gif', '2024-03-26 21:45:07.000', 'SENT'),
+(772, 7, 1, 'fdgfdg', '2024-03-26 21:46:59.000', 'SENT'),
+(773, 7, 1, 'hjgkhjk', '2024-03-26 21:47:02.000', 'SENT'),
+(774, 7, 1, 'dsfgdfg', '2024-03-26 21:47:19.000', 'SENT'),
+(775, 7, 2, 'hey', '2024-03-27 17:02:46.000', 'SENT'),
+(776, 7, 2, 'https://media.tenor.com/0KZbghSyUp4AAAAC/cardi-b-cardi.gif', '2024-03-27 17:02:53.000', 'SENT'),
+(777, 7, 1, 'https://media.tenor.com/ckaWfGyUI-AAAAAC/morning-goodmorning.gif', '2024-03-27 17:03:08.000', 'SENT'),
+(778, 7, 2, 'https://media.tenor.com/XYPSFvI2MaIAAAAC/hahahahah-gahahahaha.gif', '2024-03-27 17:09:01.000', 'SENT'),
+(779, 7, 2, 'https://media.tenor.com/34lZk_C7eG4AAAAC/happy-good-friday-easter-egg.gif', '2024-03-27 17:45:49.000', 'SENT'),
+(780, 7, 2, 'h', '2024-03-27 17:49:24.000', 'SENT'),
+(781, 7, 2, 'h', '2024-03-27 17:49:24.000', 'SENT'),
+(782, 7, 2, 'g', '2024-03-27 17:49:24.000', 'SENT'),
+(783, 7, 2, 'g', '2024-03-27 17:49:24.000', 'SENT'),
+(784, 7, 2, 'j', '2024-03-27 17:49:24.000', 'SENT'),
+(785, 7, 2, 'j', '2024-03-27 17:49:24.000', 'SENT'),
+(786, 7, 2, 'f', '2024-03-27 17:49:24.000', 'SENT'),
+(787, 7, 2, 'f', '2024-03-27 17:49:24.000', 'SENT'),
+(788, 7, 2, 'g', '2024-03-27 17:49:24.000', 'SENT'),
+(789, 7, 2, 'g', '2024-03-27 17:49:24.000', 'SENT'),
+(790, 7, 2, 'h', '2024-03-27 17:49:24.000', 'SENT'),
+(791, 7, 2, 'h', '2024-03-27 17:49:24.000', 'SENT');
+INSERT INTO `chat_messages` (`id`, `sender_id`, `chat_id`, `content`, `timestamp`, `status`) VALUES
+(792, 7, 2, 'j', '2024-03-27 17:49:24.000', 'SENT'),
+(793, 7, 2, 'j', '2024-03-27 17:49:24.000', 'SENT'),
+(794, 7, 2, 'fghdfghdfghfgh', '2024-03-27 17:50:57.000', 'SENT'),
+(795, 7, 2, 'dfghgfh', '2024-03-27 17:51:14.000', 'SENT'),
+(796, 7, 2, 'https://media.tenor.com/34lZk_C7eG4AAAAC/happy-good-friday-easter-egg.gif', '2024-03-27 17:56:36.000', 'SENT'),
+(797, 7, 2, 'https://media.tenor.com/Fy0hkZaMgakAAAAC/nah-im-just-kidding-jk.gif', '2024-03-27 17:56:42.000', 'SENT'),
+(798, 7, 2, 'sdfgsdfgdfgdfg', '2024-03-27 17:57:38.000', 'SENT'),
+(799, 7, 2, 'dfgdfg', '2024-03-27 17:57:40.000', 'SENT'),
+(800, 7, 2, 'dsfgdfgdfglkkldfsgkdlfslkgfd', '2024-03-27 17:57:42.000', 'SENT'),
+(801, 7, 2, 'https://media.tenor.com/0FAowMLCp2oAAAAC/good-fine.gif', '2024-03-27 17:57:46.000', 'SENT'),
+(802, 7, 2, 'https://media.tenor.com/ckaWfGyUI-AAAAAC/morning-goodmorning.gif', '2024-03-27 18:00:19.000', 'SENT'),
+(803, 7, 2, 'https://media.tenor.com/qy_WcGdRzfgAAAAC/xluna-high-five.gif', '2024-03-27 18:00:22.000', 'SENT'),
+(804, 7, 2, 'sdfgsgdf;ldfgl;dgfldgf', '2024-03-27 18:00:24.000', 'SENT'),
+(805, 8, 2, 'https://media.tenor.com/34lZk_C7eG4AAAAC/happy-good-friday-easter-egg.gif', '2024-03-27 18:00:43.000', 'SENT'),
+(806, 7, 2, 'https://media.tenor.com/JkMGlrjiG_cAAAAC/awesome-youre-awesome.gif', '2024-03-27 18:01:50.000', 'SENT'),
+(807, 7, 2, 'https://media.tenor.com/34lZk_C7eG4AAAAC/happy-good-friday-easter-egg.gif', '2024-03-27 18:04:23.000', 'SENT'),
+(808, 8, 2, 'https://media.tenor.com/Fy0hkZaMgakAAAAC/nah-im-just-kidding-jk.gif', '2024-03-27 18:04:29.000', 'SENT'),
+(809, 7, 2, 'sdfgsdfg', '2024-03-27 18:04:46.000', 'SENT'),
+(810, 7, 2, 'dfgdfgdfgdfg', '2024-03-27 18:05:06.000', 'SENT'),
+(811, 8, 2, 'https://media.tenor.com/ckaWfGyUI-AAAAAC/morning-goodmorning.gif', '2024-03-27 18:40:55.000', 'SENT'),
+(812, 8, 2, 'https://media.tenor.com/Q_nnoR5sdYUAAAAC/wink-puppy.gif', '2024-03-27 18:41:55.000', 'SENT'),
+(813, 7, 2, 'https://media.tenor.com/0KZbghSyUp4AAAAC/cardi-b-cardi.gif', '2024-03-27 18:43:11.000', 'SENT'),
+(814, 7, 2, 'https://media.tenor.com/34lZk_C7eG4AAAAC/happy-good-friday-easter-egg.gif', '2024-03-27 18:48:14.000', 'SENT'),
+(815, 7, 2, 'https://media.tenor.com/ckaWfGyUI-AAAAAC/morning-goodmorning.gif', '2024-03-27 18:48:48.000', 'SENT'),
+(816, 7, 2, 'fghfgh', '2024-03-27 18:49:25.000', 'SENT'),
+(817, 7, 2, 'https://media.tenor.com/YA_K69BSr8YAAAAC/peach-goma.gif', '2024-03-27 18:49:31.000', 'SENT'),
+(818, 7, 2, 'fghdfgh', '2024-03-27 18:50:44.000', 'SENT'),
+(819, 7, 2, 'dfgh', '2024-03-27 18:50:48.000', 'SENT'),
+(820, 7, 2, 'https://media.tenor.com/ckaWfGyUI-AAAAAC/morning-goodmorning.gif', '2024-03-27 18:51:55.000', 'SENT'),
+(821, 7, 2, 'fghdfgh', '2024-03-27 18:52:22.000', 'SENT'),
+(822, 7, 2, 'https://media.tenor.com/34lZk_C7eG4AAAAC/happy-good-friday-easter-egg.gif', '2024-03-27 18:52:26.000', 'SENT'),
+(823, 7, 2, 'sdfgdsfsdf', '2024-03-27 18:52:46.000', 'SENT'),
+(824, 7, 2, 'dfgdfg', '2024-03-27 18:52:50.000', 'SENT'),
+(825, 7, 2, 'dfghdfgh', '2024-03-27 18:54:20.000', 'SENT'),
+(826, 7, 2, 'dfghdfgh', '2024-03-27 18:57:25.000', 'SENT'),
+(827, 7, 2, 'fgdhfgh', '2024-03-27 18:57:27.000', 'SENT'),
+(828, 7, 2, 'https://github.com/mak7ilenin/Skill-Shuffle/commit/8a172ea2d96f83e8b6ad890670b35d1c4cca11ba', '2024-03-27 18:57:42.000', 'SENT'),
+(829, 7, 2, 'https://github.com/mak7ilenin/Skill-Shuffle/commit/8a172ea2d96f83e8b6ad890670b35d1c4cca11ba', '2024-03-27 18:58:02.000', 'SENT'),
+(830, 7, 2, 'https://github.com/mak7ilenin/Skill-Shuffle/commit/8a172ea2d96f83e8b6ad890670b35d1c4cca11ba', '2024-03-27 18:59:00.000', 'SENT'),
+(831, 7, 2, 'https://media.tenor.com/ckaWfGyUI-AAAAAC/morning-goodmorning.gif', '2024-03-27 19:00:48.000', 'SENT'),
+(832, 7, 2, 'https://media.tenor.com/nNt9uv0uq1QAAAAC/animated-text.gif', '2024-03-27 19:00:52.000', 'SENT'),
+(833, 7, 2, 'https://media.tenor.com/Fy0hkZaMgakAAAAC/nah-im-just-kidding-jk.gif', '2024-03-27 19:01:07.000', 'SENT'),
+(834, 7, 2, 'gfhfgh', '2024-03-27 19:03:20.000', 'SENT'),
+(835, 7, 2, 'ghjfghj', '2024-03-27 19:03:24.000', 'SENT'),
+(836, 7, 2, 'gfhjfghj', '2024-03-27 19:03:26.000', 'SENT'),
+(837, 7, 2, 'sdf[adsf[afd[fsd[', '2024-03-27 19:03:29.000', 'SENT'),
+(838, 7, 2, 'sdfgsdfg', '2024-03-27 19:03:49.000', 'SENT'),
+(839, 7, 2, 'sdfgdfsg', '2024-03-27 19:03:51.000', 'SENT'),
+(840, 7, 2, 'https://media.tenor.com/34lZk_C7eG4AAAAC/happy-good-friday-easter-egg.gif', '2024-03-27 19:03:54.000', 'SENT'),
+(841, 7, 2, 'sfd[adsf[sfd[fsd[', '2024-03-27 19:04:43.000', 'SENT'),
+(842, 7, 2, 'https://media.tenor.com/ckaWfGyUI-AAAAAC/morning-goodmorning.gif', '2024-03-27 19:04:50.000', 'SENT'),
+(843, 7, 2, 'fdsgdfg', '2024-03-27 19:10:33.000', 'SENT'),
+(844, 7, 2, 'fffffffffffffffffff', '2024-03-27 19:10:48.000', 'SENT'),
+(845, 7, 2, 'ffffffffffffffffffffffff', '2024-03-27 19:10:50.000', 'SENT'),
+(846, 7, 2, 'adfsfsdsdf', '2024-03-27 19:30:51.000', 'SENT'),
+(847, 7, 2, 'fghdfgh', '2024-03-27 19:32:42.000', 'SENT'),
+(848, 7, 2, 'https://media.tenor.com/ckaWfGyUI-AAAAAC/morning-goodmorning.gif', '2024-03-27 20:59:19.000', 'SENT'),
+(849, 7, 2, 'sd[f[fsadasdf[', '2024-03-27 20:59:36.000', 'SENT'),
+(850, 7, 2, 'https://media.tenor.com/34lZk_C7eG4AAAAC/happy-good-friday-easter-egg.gif', '2024-03-27 20:59:42.000', 'SENT'),
+(851, 7, 2, 'https://media.tenor.com/5EIEPqvzwtAAAAAC/high-five-patrick-star.gif', '2024-03-27 21:00:01.000', 'SENT'),
+(852, 7, 2, 'https://media.tenor.com/34lZk_C7eG4AAAAC/happy-good-friday-easter-egg.gif', '2024-03-27 21:00:05.000', 'SENT'),
+(853, 7, 2, 'https://media.tenor.com/6UlL-1vxueYAAAAC/high-five.gif', '2024-03-27 21:00:12.000', 'SENT'),
+(854, 7, 2, 'https://media.tenor.com/43s33wGTNo0AAAAC/sweating-nervous.gif', '2024-03-27 21:01:05.000', 'SENT'),
+(855, 7, 2, 'heyyy', '2024-03-27 21:08:38.000', 'SENT'),
+(856, 7, 2, 'https://media.tenor.com/34lZk_C7eG4AAAAC/happy-good-friday-easter-egg.gif', '2024-03-27 21:08:44.000', 'SENT'),
+(857, 7, 1, 'sdfgdfggdfgdfgsdf', '2024-03-27 21:09:51.000', 'SENT'),
+(858, 8, 1, 'https://media.tenor.com/ckaWfGyUI-AAAAAC/morning-goodmorning.gif', '2024-03-27 21:09:59.000', 'SENT'),
+(859, 7, 1, 'https://media.tenor.com/JkMGlrjiG_cAAAAC/awesome-youre-awesome.gif', '2024-03-27 21:10:08.000', 'SENT'),
+(860, 7, 1, 'https://media.tenor.com/43s33wGTNo0AAAAC/sweating-nervous.gif', '2024-03-27 21:10:14.000', 'SENT'),
+(861, 7, 1, 'https://media.tenor.com/34lZk_C7eG4AAAAC/happy-good-friday-easter-egg.gif', '2024-03-27 21:10:28.000', 'SENT'),
+(862, 8, 1, 'https://media.tenor.com/ckaWfGyUI-AAAAAC/morning-goodmorning.gif', '2024-03-27 21:12:19.000', 'SENT'),
+(863, 7, 1, 'https://media.tenor.com/nNt9uv0uq1QAAAAC/animated-text.gif', '2024-03-27 21:12:26.000', 'SENT'),
+(864, 8, 2, 'https://media.tenor.com/ckaWfGyUI-AAAAAC/morning-goodmorning.gif', '2024-03-27 21:39:14.000', 'SENT'),
+(865, 8, 1, 'https://media.tenor.com/1Ba_NplQ1KUAAAAC/smh-cigarette.gif', '2024-03-28 22:37:49.000', 'SENT'),
+(866, 8, 1, 'https://media.tenor.com/nkAY5GFUw5UAAAAC/good-morning.gif', '2024-03-28 22:46:35.000', 'SENT'),
+(867, 8, 1, 'https://media.tenor.com/nkAY5GFUw5UAAAAC/good-morning.gif dfsfsfsf', '2024-03-28 22:46:40.000', 'SENT'),
+(868, 8, 1, 'dfgdfgdf https://media.tenor.com/nkAY5GFUw5UAAAAC/good-morning.gif', '2024-03-28 22:46:46.000', 'SENT'),
+(869, 8, 1, 'dfgdgdg', '2024-03-28 22:47:50.000', 'SENT'),
+(870, 8, 2, '[df[df[fd[', '2024-04-02 22:12:57.000', 'SENT'),
+(871, 8, 2, 'sdsssssssssssss', '2024-04-02 22:13:27.000', 'SENT'),
+(872, 8, 2, 'gggggggggggggggg', '2024-04-02 22:15:19.000', 'SENT'),
+(873, 8, 2, 'dfghdhdfghfh', '2024-04-02 22:15:23.000', 'SENT'),
+(874, 8, 2, 'dfgh', '2024-04-02 22:15:25.000', 'SENT'),
+(875, 8, 2, 'ggggggggggggggggg', '2024-04-02 22:15:28.000', 'SENT'),
+(876, 8, 2, 'dgf[[g', '2024-04-02 22:15:39.000', 'SENT'),
+(877, 8, 2, 'dfgsfgdf', '2024-04-02 22:15:44.000', 'SENT'),
+(878, 8, 2, 'gdfgdfg', '2024-04-02 22:15:45.000', 'SENT'),
+(879, 7, 1, 'fghfghfghfgh', '2024-04-02 22:16:15.000', 'SENT'),
+(880, 7, 1, 'dfgdfgdfg', '2024-04-02 22:20:12.000', 'SENT'),
+(881, 7, 1, 'fdghfdghfghfg', '2024-04-02 22:20:27.000', 'SENT'),
+(882, 7, 1, 'dsfgdfgdgdfg', '2024-04-02 22:21:34.000', 'SENT'),
+(883, 7, 1, 'ddddddddddddddd', '2024-04-02 22:21:43.000', 'SENT'),
+(884, 7, 1, 'dddddddddddddddddddddddddddddddd', '2024-04-02 22:21:45.000', 'SENT'),
+(885, 7, 1, 'bcvxbxvb', '2024-04-02 22:21:46.000', 'SENT'),
+(886, 7, 1, 'dsfgfg[df[gd[fg', '2024-04-02 22:23:34.000', 'SENT'),
+(887, 7, 1, '[[[f[fd[f', '2024-04-02 22:23:45.000', 'SENT'),
+(888, 7, 1, 'ccccccccccccc', '2024-04-02 22:23:47.000', 'SENT'),
+(889, 7, 1, 'ccccccccccvxvcvxcvcxv', '2024-04-02 22:23:51.000', 'SENT'),
+(890, 7, 1, 'FP[P[FP[F[FP[FP[FP[FDP[FP[D', '2024-04-02 22:23:56.000', 'SENT'),
+(891, 7, 1, 'dfgdfgsgffg', '2024-04-02 22:26:12.000', 'SENT'),
+(892, 7, 1, 'dfgdsfgdfg', '2024-04-02 22:27:46.000', 'SENT'),
+(893, 7, 1, 'dfgdfgg', '2024-04-02 22:28:24.000', 'SENT'),
+(894, 7, 1, 'asdfsadfsdf', '2024-04-02 22:29:16.000', 'SENT'),
+(895, 7, 1, 'sdfasdfsdf', '2024-04-02 22:29:34.000', 'SENT'),
+(896, 7, 1, 'dgsgfsg', '2024-04-02 22:33:18.000', 'SENT'),
+(897, 7, 1, 'sdfsdfsdf', '2024-04-02 22:35:15.000', 'SENT'),
+(898, 7, 1, 'ddddddddddd', '2024-04-02 22:35:51.000', 'SENT'),
+(899, 7, 1, 'dgfdgdfg', '2024-04-02 22:36:02.000', 'SENT'),
+(900, 7, 1, 'dfgdfgdfg', '2024-04-02 22:36:56.000', 'SENT'),
+(901, 7, 1, 'asdfsdf[', '2024-04-02 22:37:07.000', 'SENT'),
+(902, 7, 1, 'gdfgg', '2024-04-02 22:37:27.000', 'SENT'),
+(903, 8, 1, 'sdfgsdfgdfg', '2024-04-03 14:25:41.000', 'SENT'),
+(904, 8, 1, 'fffffffffff', '2024-04-03 14:26:35.000', 'SENT'),
+(905, 8, 1, 'df[s[sfd[sdf[df[', '2024-04-03 14:58:14.000', 'SENT'),
+(906, 8, 1, 'sdf[[dfs[dfssdf[', '2024-04-03 15:03:34.000', 'SENT'),
+(907, 8, 1, 'heyyy', '2024-04-03 15:59:11.000', 'SENT'),
+(908, 8, 1, '[dfs[dsf[f', '2024-04-03 15:59:25.000', 'SENT'),
+(909, 7, 1, 'sssssssssssssssssssssssssss', '2024-04-03 15:59:34.000', 'SENT'),
+(910, 7, 1, 'dddddddddddddddd', '2024-04-03 15:59:39.000', 'SENT'),
+(911, 7, 1, 'fsdfsdfasdfasdf', '2024-04-03 15:59:42.000', 'SENT'),
+(912, 8, 1, 'fsd[fsd[fsd', '2024-04-03 17:18:55.000', 'SENT'),
+(913, 8, 1, 'dfgsdfgdfg', '2024-04-03 17:20:23.000', 'SENT'),
+(914, 8, 1, 'heyyyyyyyyyy', '2024-04-03 17:24:39.000', 'SENT'),
+(915, 8, 1, 'heeeeeeeee', '2024-04-03 17:24:50.000', 'SENT'),
+(916, 8, 1, '????????', '2024-04-03 17:25:01.000', 'SENT'),
+(917, 8, 1, 'dsf[[fds[sdf[fsd', '2024-04-03 17:25:03.000', 'SENT'),
+(918, 7, 2, 'aleee', '2024-04-03 17:25:11.000', 'SENT'),
+(919, 7, 1, 'sdfa[fsd[dfs[sdf[sdf[fds[', '2024-04-03 17:25:18.000', 'SENT'),
+(920, 7, 1, 'xczvz;fbm n,fgcvnbfg', '2024-04-03 17:25:20.000', 'SENT'),
+(921, 8, 1, 'fdgdfg', '2024-04-03 17:25:41.000', 'SENT'),
+(922, 8, 1, 'https://media.tenor.com/pv8XMHa1iioAAAAC/dance-wiggle.gif', '2024-04-03 17:26:14.000', 'SENT'),
+(923, 7, 1, 'dfas[dsf[sdf[dsf[sdf[dsfa', '2024-04-03 17:27:13.000', 'SENT'),
+(924, 7, 1, 'sadfsdfsdf', '2024-04-03 17:27:25.000', 'SENT'),
+(925, 7, 1, 'sdfasdfsdfsdfa[sdf[', '2024-04-03 17:27:33.000', 'SENT'),
+(926, 7, 1, 'aaaaaaaaaaaaaaaaaaaaaaaaa', '2024-04-03 17:27:44.000', 'SENT'),
+(927, 7, 1, 'asdasdasd', '2024-04-03 17:27:47.000', 'SENT'),
+(928, 7, 1, 'dfgsdfgdfgdfg', '2024-04-03 17:32:08.000', 'SENT'),
+(929, 7, 1, 'safsdfsdfsdf', '2024-04-03 17:32:14.000', 'SENT'),
+(930, 7, 1, 'dfgdfg', '2024-04-03 17:32:18.000', 'SENT'),
+(931, 7, 1, 'dfgdfg', '2024-04-03 17:32:21.000', 'SENT'),
+(932, 7, 1, 'asaaaaaaaaaaaaaaaaaa', '2024-04-03 17:32:26.000', 'SENT'),
+(933, 7, 1, 'dfgdfsgdfg', '2024-04-03 17:32:29.000', 'SENT'),
+(934, 8, 1, 'hhhhhhhhhh', '2024-04-03 21:00:27.000', 'SENT'),
+(935, 8, 2, 'gggggggggggggg', '2024-04-03 21:00:45.000', 'SENT'),
+(936, 8, 2, 'fghfgh', '2024-04-03 21:05:55.000', 'SENT'),
+(937, 8, 1, 'heyyy', '2024-04-05 14:02:29.599', 'SENT');
 
 -- --------------------------------------------------------
 
@@ -844,7 +1037,7 @@ INSERT INTO `chat_messages` (`id`, `sender_id`, `chat_id`, `content`, `timestamp
 --
 
 CREATE TABLE `chat_message_attachments` (
-  `id` int(11) NOT NULL,
+  `id` bigint(20) NOT NULL,
   `message_id` int(11) NOT NULL,
   `photo_id` int(11) DEFAULT NULL,
   `file_id` int(11) DEFAULT NULL,
@@ -1028,7 +1221,8 @@ CREATE TABLE `files` (
   `data` mediumblob NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_bin NOT NULL,
   `type` varchar(50) COLLATE utf8mb4_bin NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `file_path` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- --------------------------------------------------------
@@ -1083,7 +1277,7 @@ CREATE TABLE `photos` (
   `file_path` varchar(255) COLLATE utf8mb4_bin NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_bin NOT NULL,
   `type` varchar(50) COLLATE utf8mb4_bin NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- --------------------------------------------------------
@@ -1124,7 +1318,7 @@ CREATE TABLE `post_attachments` (
 --
 
 CREATE TABLE `refresh_token` (
-  `id` int(11) NOT NULL,
+  `id` bigint(20) NOT NULL,
   `token` varchar(255) COLLATE utf8mb4_bin NOT NULL,
   `expires_at` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3),
   `user_id` int(11) NOT NULL
@@ -1164,7 +1358,9 @@ INSERT INTO `refresh_token` (`id`, `token`, `expires_at`, `user_id`) VALUES
 (60, '822a2649-bc15-4c1c-b7ad-80dfa47116bd', '2024-03-26 22:47:24.000', 8),
 (62, 'f81a17d2-a008-4c58-b185-edc7c18f3f10', '2024-03-27 11:23:17.000', 7),
 (66, 'e81c7e51-dc8e-4a56-aa63-1ac9d6312497', '2024-03-28 16:43:04.000', 7),
-(67, '6b9fb3f0-fa62-4b81-a9ce-abd7ebcf1249', '2024-03-28 16:44:48.000', 8);
+(67, '6b9fb3f0-fa62-4b81-a9ce-abd7ebcf1249', '2024-03-28 16:44:48.000', 8),
+(69, 'c9eb7071-14c4-4db5-b957-c13af88d7338', '2024-04-09 18:21:40.000', 8),
+(70, '8e423a55-6f92-4b47-8787-755ed2b507b2', '2024-04-09 19:13:21.000', 7);
 
 -- --------------------------------------------------------
 
@@ -1181,14 +1377,14 @@ CREATE TABLE `users` (
   `nickname` varchar(40) COLLATE utf8mb4_bin NOT NULL,
   `email` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
   `gender` enum('MALE','FEMALE','OTHER') COLLATE utf8mb4_bin NOT NULL,
-  `birth_date` date NOT NULL,
+  `birth_date` datetime(6) DEFAULT NULL,
   `bio` varchar(275) COLLATE utf8mb4_bin DEFAULT NULL,
   `points` int(7) NOT NULL DEFAULT 0,
   `avatar_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
   `banner_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `banner_color` char(7) COLLATE utf8mb4_bin NOT NULL DEFAULT '#bdbdbd',
-  `is_public` tinyint(4) NOT NULL DEFAULT 1,
-  `auto_follow` tinyint(4) NOT NULL DEFAULT 0,
+  `banner_color` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `is_public` bit(1) DEFAULT NULL,
+  `auto_follow` bit(1) DEFAULT NULL,
   `last_seen` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -1200,10 +1396,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `password`, `nickname`, `email`, `gender`, `birth_date`, `bio`, `points`, `avatar_url`, `banner_url`, `banner_color`, `is_public`, `auto_follow`, `last_seen`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(6, 'Maksim', 'Dzjubenko', 'dzalex72', '$2a$10$Q66TOqRq0TVmbKyEPP5kmOD1De4S9qfjp9BKeFySwWyJd00svLI0m', 'mak7ilenin', 'maksondzjubenko@gmail.com', 'MALE', '2004-12-22', 'First PERSON ON THE WEBSITE!!', 0, NULL, NULL, '#bdbdbd', 1, 0, '2024-03-14 00:49:45', '2024-03-04 22:18:49', '2024-03-14 00:49:45', NULL),
-(7, 'Maksim', 'Dzjubenko', 'mak22', '$2a$10$Lod8/Dr.Gnej19nXRcor1ujvJ6IH/YTXNoHHzmRG.YQZ1rkOGL1u6', 'makssss233', 'maskss@gmail.com', 'OTHER', '2004-12-22', 'First PERSON ON THE WEBSITE!!', 0, NULL, NULL, '#bdbdbd', 1, 0, '2024-03-14 00:49:42', '2024-03-05 12:43:04', '2024-03-14 00:49:42', NULL),
-(8, 'Test test1', 'The test1', 'test1', '$2a$10$XUeq9ln02Yjlsl6fy/E0nesvOZs45riPOTcNESKgLXp7iJztwdoNG', 'test1', 'test1@ee.com', 'OTHER', '2004-12-22', 'Test test1', 0, 'users/user-8/avatar/1f635-1f4ab.png', NULL, '#bdbdbd', 1, 0, '2024-03-14 00:50:07', '2024-03-07 00:08:43', '2024-03-14 00:50:07', NULL),
-(9, 'Test nigger', 'The nigger19', 'nigger', '$2a$10$iCg8KnjKxgIzUQtFIQphQu75LiZjyFbWRTnajb6h56nBFCVoFYFfy', 'nigger19', 'nigger@test.ee', 'OTHER', '2004-12-22', 'Test nigger', 0, NULL, NULL, '#bdbdbd', 1, 0, '2024-03-14 00:49:47', '2024-03-08 23:57:19', '2024-03-14 00:49:47', NULL);
+(6, 'Maksim', 'Dzjubenko', 'dzalex72', '$2a$10$Q66TOqRq0TVmbKyEPP5kmOD1De4S9qfjp9BKeFySwWyJd00svLI0m', 'mak7ilenin', 'maksondzjubenko@gmail.com', 'MALE', '2004-12-22 00:00:00.000000', 'First PERSON ON THE WEBSITE!!', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-03-14 00:49:45', '2024-03-04 22:18:49', '2024-03-14 00:49:45', NULL),
+(7, 'Maksim', 'Dzjubenko', 'mak22', '$2a$10$Lod8/Dr.Gnej19nXRcor1ujvJ6IH/YTXNoHHzmRG.YQZ1rkOGL1u6', 'makssss233', 'maskss@gmail.com', 'OTHER', '2004-12-22 00:00:00.000000', 'First PERSON ON THE WEBSITE!!', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-03-14 00:49:42', '2024-03-05 12:43:04', '2024-03-14 00:49:42', NULL),
+(8, 'Test test1', 'The test1', 'test1', '$2a$10$XUeq9ln02Yjlsl6fy/E0nesvOZs45riPOTcNESKgLXp7iJztwdoNG', 'test1', 'test1@ee.com', 'OTHER', '2004-12-22 00:00:00.000000', 'Test test1', 0, 'users/user-8/avatar/1f635-1f4ab.png', NULL, '#bdbdbd', b'1', b'0', '2024-03-14 00:50:07', '2024-03-07 00:08:43', '2024-03-14 00:50:07', NULL),
+(9, 'Test nigger', 'The nigger19', 'nigger', '$2a$10$iCg8KnjKxgIzUQtFIQphQu75LiZjyFbWRTnajb6h56nBFCVoFYFfy', 'nigger19', 'nigger@test.ee', 'OTHER', '2004-12-22 00:00:00.000000', 'Test nigger', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-03-14 00:49:47', '2024-03-08 23:57:19', '2024-03-14 00:49:47', NULL);
 
 -- --------------------------------------------------------
 
@@ -1332,7 +1528,9 @@ CREATE TABLE `videos` (
   `description` mediumtext COLLATE utf8mb4_bin DEFAULT NULL,
   `thumbnail_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
   `views` int(11) NOT NULL DEFAULT 0,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `type` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
@@ -1621,25 +1819,25 @@ ALTER TABLE `chats`
 -- AUTO_INCREMENT for table `chat_history`
 --
 ALTER TABLE `chat_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `chat_members`
 --
 ALTER TABLE `chat_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `chat_messages`
 --
 ALTER TABLE `chat_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=746;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=938;
 
 --
 -- AUTO_INCREMENT for table `chat_message_attachments`
 --
 ALTER TABLE `chat_message_attachments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `comments`
@@ -1753,7 +1951,7 @@ ALTER TABLE `post_attachments`
 -- AUTO_INCREMENT for table `refresh_token`
 --
 ALTER TABLE `refresh_token`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT for table `users`
