@@ -37,7 +37,8 @@ public class FileController {
     }
 
     private String getResourceDirectory() {
-        String userDir = System.getProperty("user.dir");
-        return userDir + "/src/main/resources/uploads/";
+//        String userDir = System.getProperty("user.dir");
+//        return userDir + "/src/main/resources/uploads/";
+        return "/app/uploads/";
     }
 }

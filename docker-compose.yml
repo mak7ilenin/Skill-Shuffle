@@ -18,10 +18,10 @@ services:
   server:
     image: server
     container_name: server
+    restart: always
     build:
       context: ./server
       dockerfile: Dockerfile
-    restart: always
     ports:
       - "8080:8080"
     depends_on:
