@@ -8,7 +8,7 @@ import { API_SERVER } from '../config';
 import { useAuth } from '../components/AuthContext';
 import MessageRenderer from '../components/MessageRenderer';
 import ChatPreview from '../components/ChatPreview';
-import ChatMenu from '../components/ChatMenu';
+import ChatMenuHeader from '../components/ChatMenuHeader';
 import ChatTypeFilter from '../components/ChatTypeFilter';
 import ChatHeader from '../components/ChatHeader';
 
@@ -221,6 +221,8 @@ function Chat() {
   return (
     <div className="chat-page w-100 d-flex">
       <Container className="chat-menu">
+
+        <ChatMenuHeader />
 
         <ChatTypeFilter setChats={setFilteredChats} chats={chats} />
 
