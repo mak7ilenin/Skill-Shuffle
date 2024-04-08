@@ -27,7 +27,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker (MessageBrokerRegistry config) {
-        config.enableSimpleBroker( "/notification", "/chat");
+        config.enableSimpleBroker("/notification", "/chat");
         config.setApplicationDestinationPrefixes("/app");
         config.setUserDestinationPrefix("/user");
     }
@@ -35,10 +35,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints (StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                // FOR LOCAL NETWORK TESTING
-//                .setAllowedOrigins("http://localhost:3000", "http://192.168.2.1:3000");
+                // FOR LOCAL TESTING
+//                .setAllowedOrigins("http://localhost:3000");
                 // END CHANGES
-                .setAllowedOrigins("http://localhost:3000");
+                .setAllowedOrigins("http://skillshuffle.ddns.net");
                 // .withSockJS(); // For older browsers
     }
 

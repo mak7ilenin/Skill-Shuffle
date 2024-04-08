@@ -5,6 +5,9 @@ services:
     image: mariadb
     container_name: database
     restart: always
+    build:
+      context: ./database
+      dockerfile: Dockerfile
     environment:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
       MARIADB_DATABASE: skill_shuffle
@@ -12,8 +15,6 @@ services:
       MARIADB_PASSWORD: darkeden333
     ports:
       - "3306:3306"
-    volumes:
-      - ./database/skill_shuffle.sql:/docker-entrypoint-initdb.d/skill_shuffle.sql
 
   server:
     image: server

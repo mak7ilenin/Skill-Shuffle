@@ -35,7 +35,7 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers(allowedUrls).permitAll()
+                                .requestMatchers("/api/auth/login").permitAll()
                                 .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(e -> e.authenticationEntryPoint(this.point))

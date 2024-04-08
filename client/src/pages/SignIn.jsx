@@ -15,7 +15,7 @@ function SignIn() {
     const login = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${API_SERVER}/auth/login`, { username, password }, { withCredentials: true })
+            await axios.post(`${API_SERVER}/auth/login`, { username, password })
                 .then(response => {
                     const responseData = response.data;
                     if (typeof responseData === 'string') {

@@ -36,45 +36,48 @@ const AuthProvider = ({ children }) => {
             return;
         }
 
-        if (!authUser) {
+        // if (!authUser) {
+        //     axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
+        //         .then(response => {
+        //             if (response.status === 200) {
+        //                 setAuthUser(response.data.user);
+        //             }
+        //         })
+        //         .catch(() => {
+        //             setAuthUser(null);
+        //             navigate('/sign-in');
+        //         });
+        // } else {
+        // }
+        if (!stompClient) {
             axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
                 .then(response => {
-                    if (response.status === 200) {
-                        setAuthUser(response.data.user);
+                    if (response.status !== 200) {
+                        throw new Error('Invalid response status:', response.status);
                     }
+                    // Create a new WebSocket connection
+                    const client = new Client({
+                        brokerURL: WEBSOCKET_URL,
+                        connectHeaders: {
+                            Authorization: `Bearer ${response.data.access_token}`,
+                        },
+                        onConnect: function (frame) {
+                            console.log('Connected: ' + frame);
+                            setStompClient(client);
+                            setIsStompClientInitialized(true);
+                            setAuthUser(response.data.user);
+                        }
+                    });
+                    client.activate();
+                    setStompClient(client);
                 })
-                .catch(() => {
+                .catch(error => {
+                    console.error('Error while initializing STOMP client:', error);
                     setAuthUser(null);
                     navigate('/sign-in');
                 });
-        } else {
-            if (!stompClient) {
-                console.log('Initializing STOMP client...');
-                axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
-                    .then(response => {
-                        // Create a new WebSocket connection
-                        const client = new Client({
-                            brokerURL: WEBSOCKET_URL,
-                            connectHeaders: {
-                                Authorization: `Bearer ${response.data.access_token}`,
-                            },
-                            onConnect: function (frame) {
-                                console.log('Connected: ' + frame);
-                                setStompClient(client);
-                                setIsStompClientInitialized(true);
-                            }
-                        });
-                        client.activate();
-                        setStompClient(client);
-                    })
-                    .catch(error => {
-                        console.error('Error while initializing STOMP client:', error);
-                        setAuthUser(null);
-                        navigate('/sign-in');
-                    });
-            }
         }
-    }, [navigate, stompClient, authUser, subscribeToNotifications]);
+    }, [navigate, stompClient, subscribeToNotifications]);
 
     useEffect(() => {
         initializeStompClient();

@@ -15,10 +15,10 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        // CHANGES FOR LOCAL NETWORK TESTING
-//        config.addAllowedOrigin("http://192.168.2.1:3000");
+        // CHANGES FOR LOCAL TESTING
+//        config.addAllowedOrigin("http://localhost:3000");
         // END CHANGES
-        config.addAllowedOrigin("http://localhost:3000"); // Allow requests from this origin
+        config.addAllowedOrigin("http://skillshuffle.ddns.net");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
