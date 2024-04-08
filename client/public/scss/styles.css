@@ -13,7 +13,6 @@ h1, h2, h3, h4, h5, h6, p {
 .wrapper {
   width: 100%;
   margin: 0 auto;
-  background-color: #E8ECEE;
 }
 
 .container {
@@ -45,7 +44,7 @@ h1, h2, h3, h4, h5, h6, p {
 
 .default-header {
   background-color: #ffffff;
-  position: sticky;
+  position: relative;
   left: 0;
   top: 0;
   height: 100vh;
@@ -58,7 +57,6 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .default-header .logo-container {
   margin-top: 45px !important;
-  margin-left: 13px !important;
 }
 .default-header .list-group {
   border: none;
@@ -520,7 +518,6 @@ h1, h2, h3, h4, h5, h6, p {
 
 .profile-header-list {
   width: 100%;
-  background-color: white;
   list-style: none;
   display: flex;
   border: unset !important;
@@ -541,7 +538,6 @@ h1, h2, h3, h4, h5, h6, p {
   font-size: 18px;
   color: #646464 !important;
   font-weight: 500;
-  transition-duration: 0.1s !important;
 }
 .profile-header-list li:hover {
   cursor: pointer;
@@ -600,72 +596,14 @@ h1, h2, h3, h4, h5, h6, p {
 .profile-avatar {
   width: 280px !important;
   height: 280px !important;
-  border-radius: 50% 50% !important;
-  -o-object-fit: contain !important;
-     object-fit: contain !important;
-  --bs-btn-bg: rgba(255,255,255,0) !important;
-  --bs-btn-hover-bg: rgba(255,255,255,0.37) !important;
-  --bs-btn-active-bg: rgba(42, 42, 42, 0.37) !important;
+  border-radius: 50% !important;
+  background-position: 50% 50%;
   cursor: pointer !important;
   border: 6px solid white !important;
 }
 
 .info-profile {
-  position: relative !important;
-  margin-left: 54px !important;
-  margin-top: -236px !important;
-  width: 310px !important;
-  display: flex !important;
-  justify-content: flex-start !important;
-}
-.info-profile div {
-  width: -moz-fit-content;
-  width: fit-content;
-  flex-direction: column;
-}
-.info-profile hr {
-  margin-top: 5px !important;
-}
-
-.nickname {
-  padding: unset !important;
-  width: -moz-fit-content;
-  width: fit-content;
-  font-size: 32px;
-  font-weight: 700;
-}
-
-.marginTopDates {
-  margin-top: 23px !important;
-}
-.marginTopDates div {
-  margin-bottom: 8px !important;
-}
-
-.profile-links {
-  margin-top: 10px !important;
-  color: #757575;
-}
-.profile-links span {
-  color: black;
-}
-
-.profile-links a {
-  color: #757575;
-  transition-duration: 0.1s !important;
-}
-.profile-links a:hover {
-  color: #9f9e9e !important;
-}
-
-.photos-videos-block {
-  gap: 5px;
-  flex: 0 0 auto !important;
-  flex-wrap: wrap;
-}
-
-.photos-videos-block img {
-  width: 100px;
-  height: 100px;
-  border-radius: 2px;
+  margin-left: 54px;
+  margin-top: -236px;
+  width: 310px;
 }/*# sourceMappingURL=styles.css.map */

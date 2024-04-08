@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, ListGroup, Image, Dropdown } from 'react-bootstrap';
+import { Container, ListGroup, Image, Dropdown, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -34,6 +34,12 @@ function Header() {
                 div.querySelector('p').style.display = 'block';
 
             });
+        }else{
+            document.querySelectorAll('.logo-container').forEach(div => {
+                div.querySelector('.row').querySelectorAll('p').forEach(div => {
+                    div.style.display = 'none';
+                });
+            });
         }
         // document.querySelector('.dropdown-container').addEventListener('click', function() {
         //     document.querySelector('#secondElement').click();
@@ -41,8 +47,8 @@ function Header() {
     }, []);
     return (
         <div className='default-header d-flex flex-column closed'>
-            <Container className='logo-container w-100 d-flex justify-content-center align-items-center'>
-                <a href="/">
+            <Container className='logo-container w-100 d-flex align-items-center'>
+                <a className='d-flex flex-row' href="/" style={{textDecoration: 'none', fontFamily: 'Russo One', color: 'black'}}>
                     <Image
                         src={Logo}
                         className='logo'
@@ -50,6 +56,10 @@ function Header() {
                         width={37.5}
                         height={51}
                     />
+                    <Row>
+                        <p style={{fontSize: '28px', height: '28px', letterSpacing: '4px', display: 'flex', alignItems: 'center'}}>SKILL</p>
+                        <p style={{height: '19px', display: 'flex', display: 'flex', alignItems: 'center'}}>SHUFFLE</p>
+                    </Row>
                 </a>
             </Container>
             <ListGroup className='flex-grow-1'>
