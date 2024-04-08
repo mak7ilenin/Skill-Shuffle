@@ -1,23 +1,7 @@
 version: "3"
 
 services:
-  database:
-    image: mariadb
-    container_name: database
-    restart: always
-    environment:
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
-      MARIADB_DATABASE: skill_shuffle
-      MARIADB_USER: mak7ilenin
-      MARIADB_PASSWORD: darkeden333
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./database/skill_shuffle.sql:/docker-entrypoint-initdb.d/skill_shuffle.sql
-
   server:
-    image: server
-    container_name: server
     restart: always
     build:
       context: ./server
@@ -28,8 +12,6 @@ services:
       - database
 
   client:
-    image: client
-    container_name: client
     build:
       context: ./client
       dockerfile: Dockerfile
@@ -41,7 +23,6 @@ services:
 
   nginx:
     image: nginx
-    container_name: nginx
     restart: always
     ports:
       - "80:80"

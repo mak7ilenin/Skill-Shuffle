@@ -3,6 +3,7 @@ package com.dzalex.skillshuffle.config;
 import com.dzalex.skillshuffle.services.JwtHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
@@ -25,6 +26,9 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    @Value("${allowed.origins}")
+    private String[] ALLOWED_ORIGINS;
+
     @Override
     public void configureMessageBroker (MessageBrokerRegistry config) {
         config.enableSimpleBroker( "/notification", "/chat");
@@ -35,10 +39,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints (StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                // FOR LOCAL TESTING
-                .setAllowedOrigins("http://localhost:3000");
-                // END CHANGES
-                // .setAllowedOrigins("http://skillshuffle.ddns.net");
+                .setAllowedOrigins(ALLOWED_ORIGINS);
                 // .withSockJS(); // For older browsers
     }
 
