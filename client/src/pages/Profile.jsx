@@ -1,4 +1,4 @@
-import { Row, Col, Tab, Tabs, Button, Image  } from 'react-bootstrap';
+import { Row, Col, Tab, Tabs, Button, Image, Container  } from 'react-bootstrap';
 import { ReactComponent as EditBanner } from '../assets/icons/edit_Banner.svg';
 import { API_SERVER, SERVER_URL } from '../config';
 import { useAuth } from '../components/AuthContext';
@@ -17,7 +17,7 @@ import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 function Profile() {
     const { setAuthUser, authUser } = useAuth();
     return (
-        <>
+        <Col className='wrapper-profile'>
             <Row className="profile-banner">
                 <Button className='profile-btn'>
                     <EditBanner />
@@ -25,8 +25,6 @@ function Profile() {
             </Row>
             <Tabs defaultActiveKey="Posts" className="profile-header-list">
                 <Tab eventKey="Posts" title={<Col><p>Posts</p><p><b>13</b></p></Col>}>
-                    {/* <p>Posts</p>
-                    <p><b>21</b></p> */}
                 </Tab>
                 <Tab eventKey="Likes" title={<Col><p>Likes</p><p><b>13</b></p></Col>}>
                     {/* <p>Likes</p>
@@ -45,7 +43,7 @@ function Profile() {
                     <p><b>2</b></p> */}
                 </Tab>
             </Tabs>
-            <Row className='d-flex' style={{fontFamily: 'Manrope', fontWeight: '600'}}>
+            <Row className='d-flex' style={{fontFamily: 'Manrope', fontWeight: '600', width: 'fit-content'}}>
                 <Row className='d-flex flex-column info-profile'>
                     <Row>
                         <Image
@@ -139,8 +137,15 @@ function Profile() {
                         </Col>
                     </Row>
                 </Row>
+                <Row className="main-block-profile tab-content">
+                            <Row style={{width: '100%', height: '500px', backgroundColor: 'white', borderRadius: '5px'}}></Row>
+                            <Row style={{width: '100%', height: '500px', backgroundColor: 'white', borderRadius: '5px'}}></Row>
+                            <Row style={{width: '100%', height: '500px', backgroundColor: 'white', borderRadius: '5px'}}></Row>
+                            <Row style={{width: '100%', height: '500px', backgroundColor: 'white', borderRadius: '5px'}}></Row>
+                            <Row style={{width: '100%', height: '500px', backgroundColor: 'white', borderRadius: '5px'}}></Row>
+                </Row>
             </Row>
-        </>
+        </Col>
     );
 }
 
