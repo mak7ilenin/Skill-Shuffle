@@ -1,6 +1,6 @@
 .default-header {
     background-color: #ffffff;
-    position: relative;
+    position: sticky;
     left: 0;
     top: 0;
     height: 100vh;
@@ -13,6 +13,7 @@
     }
     .logo-container {
         margin-top: 45px !important;
+        margin-left: 13px !important;
     }
 
     .list-group {

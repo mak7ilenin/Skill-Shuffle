@@ -1,3 +1,6 @@
+.wrapper-profile {
+    position: sticky !important;
+}
 .profile-banner {
     background-color: #00B3DB;
     width: 100%;
@@ -7,6 +10,7 @@
 }
 .profile-header-list {
     width: 100%;
+    background-color: white;
     list-style: none;
     display: flex;
     border: unset !important;
@@ -14,6 +18,8 @@
     justify-content: center;
     align-items: center;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    position: sticky !important;
+    top: 0px !important;
 }
 .profile-header-list li {
     font-family: "Lexend";
@@ -26,6 +32,7 @@
     font-size: 18px;
     color: #646464 !important;
     font-weight: 500;
+    transition-duration: 0.1s !important;
     &:hover {
         cursor: pointer;
         background-color: #f4f4f4;
@@ -82,13 +89,69 @@
 .profile-avatar {
     width: 280px !important;
     height: 280px !important;
-    border-radius: 50% !important;
-    background-position: 50% 50%;
+    border-radius: 50% 50% !important;
+    object-fit: contain !important;
     --bs-btn-bg: rgba(255,255,255,0) !important;
     --bs-btn-hover-bg: rgba(255,255,255,0.37) !important;
     --bs-btn-active-bg: rgba(42, 42, 42, 0.37) !important;
-    border: none !important;
-    margin-right: 12px;
-    margin-bottom: 12px;
+    cursor: pointer !important;
+    outline: 6px solid white;
+    outline-offset: -6px;
+}
+.info-profile {
+    position: sticky !important;
+    bottom: 5px !important;
+    margin-left: 54px !important;
+    margin-top: -236px !important;
+    width: 310px !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    div {
+        width: fit-content;
+        flex-direction: column;
+    }
+    hr {
+        margin-top: 5px !important;
+    }
+}
+.nickname {
     padding: unset !important;
+    width: fit-content;
+    font-size: 32px;
+    font-weight: 700;
+}
+.marginTopDates {
+    margin-top: 23px !important;
+    div {
+        margin-bottom: 8px !important;
+    }
+}
+.profile-links {
+    margin-top: 10px !important;
+    color: #757575;
+    span {
+        color: black;
+    }
+}
+.profile-links a {
+    color: #757575;
+    transition-duration: 0.1s !important;
+    &:hover {
+        color: #9f9e9e !important;
+    }
+}
+.photos-videos-block {
+    gap: 5px;
+    flex: 0 0 auto !important;
+    flex-wrap: wrap;
+}
+.photos-videos-block img {
+    width: 100px;
+    height: 100px;
+    border-radius: 2px;
+}
+.main-block-profile {
+    width: 624px !important;
+    margin-left: 20px !important;
+    margin-top: 20px !important;
 }
