@@ -62,6 +62,7 @@ const AuthProvider = ({ children }) => {
                                 console.log('Connected: ' + frame);
                                 setStompClient(client);
                                 setIsStompClientInitialized(true);
+                                setAuthUser(response.data.user);
                             }
                         });
                         client.activate();

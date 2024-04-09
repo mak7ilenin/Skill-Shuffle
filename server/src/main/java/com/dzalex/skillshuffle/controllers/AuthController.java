@@ -24,7 +24,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
@@ -45,7 +45,7 @@ public class AuthController {
     @Autowired
     private JwtHelper helper;
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<JwtResponseDTO> login(@RequestBody AuthRequestDTO request, HttpServletResponse response) {
 
         // Authenticate user in the spring security context
@@ -76,7 +76,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User registrationUser) {
         try {
             if (userService.checkUserDuplicate(registrationUser.getUsername(), registrationUser.getEmail())) {
@@ -90,7 +90,7 @@ public class AuthController {
         }
     }
 
-    @GetMapping("confirm")
+    @GetMapping("/confirm")
     // Confirm user authentication and return the access token
     public ResponseEntity<JwtResponseDTO> confirm(HttpServletRequest request) {
         String token = helper.getAccessTokenFromCookies(request);
@@ -110,11 +110,11 @@ public class AuthController {
                         .build(), HttpStatus.OK);
             }
         }
-//        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        return null;
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        return null;
     }
 
-    @PostMapping("logout")
+    @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         // Invalidate session
         request.getSession().invalidate();

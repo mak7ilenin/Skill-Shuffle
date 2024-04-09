@@ -8,28 +8,21 @@ import com.dzalex.skillshuffle.models.Message;
 import com.dzalex.skillshuffle.models.ChatNotification;
 import com.dzalex.skillshuffle.models.User;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
-import com.dzalex.skillshuffle.repositories.MessageRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import com.dzalex.skillshuffle.services.MessageService;
 import com.dzalex.skillshuffle.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Controller
 public class WebSocketController {
-    private final Map<String, List<Message>> chats = new HashMap<>();
 
     @Autowired
     private MessageService messageService;
