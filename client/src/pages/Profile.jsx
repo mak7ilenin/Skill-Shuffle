@@ -1,4 +1,4 @@
-import { Row, Col, Tab, Tabs, Button, Image, Container  } from 'react-bootstrap';
+import { Row, Col, Tab, Tabs, Button, Image, Carousel  } from 'react-bootstrap';
 import { ReactComponent as EditBanner } from '../assets/icons/edit_Banner.svg';
 import { API_SERVER, SERVER_URL } from '../config';
 import { useAuth } from '../components/AuthContext';
@@ -23,26 +23,28 @@ function Profile() {
                     <EditBanner />
                 </Button>
             </Row>
-            <Tabs defaultActiveKey="Posts" className="profile-header-list">
-                <Tab eventKey="Posts" title={<Col><p>Posts</p><p><b>13</b></p></Col>}>
-                </Tab>
-                <Tab eventKey="Likes" title={<Col><p>Likes</p><p><b>13</b></p></Col>}>
-                    {/* <p>Likes</p>
-                    <p><b>255</b></p> */}
-                </Tab>
-                {/* <Tab eventKey="Answers" title={<Col><p>Answers</p><p><b>13</b></p></Col>}>
-                    <p>Answers</p>
-                    <p><b>13</b></p>
-                </Tab>
-                <Tab eventKey="Questions" title={<Col><p>Questions</p><p><b>13</b></p></Col>}>
-                    <p>Questions</p>
-                    <p><b>13</b></p>
-                </Tab> */}
-                <Tab eventKey="Bookmarks" title={<Col><p>Bookmarks</p><p><b>13</b></p></Col>}>
-                    {/* <p>Bookmarks</p>
-                    <p><b>2</b></p> */}
-                </Tab>
-            </Tabs>
+            <Col className='profile-header-list-container'>
+                <Tabs defaultActiveKey="Posts" className="profile-header-list">
+                    <Tab eventKey="Posts" title={<Col><p>Posts</p><p><b>13</b></p></Col>}>
+                    </Tab>
+                    <Tab eventKey="Likes" title={<Col><p>Likes</p><p><b>13</b></p></Col>}>
+                        {/* <p>Likes</p>
+                        <p><b>255</b></p> */}
+                    </Tab>
+                    {/* <Tab eventKey="Answers" title={<Col><p>Answers</p><p><b>13</b></p></Col>}>
+                        <p>Answers</p>
+                        <p><b>13</b></p>
+                    </Tab>
+                    <Tab eventKey="Questions" title={<Col><p>Questions</p><p><b>13</b></p></Col>}>
+                        <p>Questions</p>
+                        <p><b>13</b></p>
+                    </Tab> */}
+                    <Tab eventKey="Bookmarks" title={<Col><p>Bookmarks</p><p><b>13</b></p></Col>}>
+                        {/* <p>Bookmarks</p>
+                        <p><b>2</b></p> */}
+                    </Tab>
+                </Tabs>
+            </Col>
             <Row className='d-flex' style={{fontFamily: 'Manrope', fontWeight: '600', width: 'fit-content'}}>
                 <Row className='d-flex flex-column info-profile'>
                     <Row>
@@ -116,33 +118,72 @@ function Profile() {
                             <p style={{ fontWeight: '500'}}><span>7</span> • <a href="/">photos and videos</a></p>
                         </Col>
                         <Col className='d-flex flex-row mt-1 photos-videos-block'>
-                            <Image
-                                src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
-                            />
-                            <Image
-                                src={imagePlaceholder}
-                            />
-                            <Image
-                                src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
-                            />
-                            <Image
-                                src={imagePlaceholder}
-                            />
-                            <Image
-                                src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
-                            />
-                            <Image
-                                src={imagePlaceholder}
-                            />
+                            <Col>
+                                <Image
+                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                />
+                            </Col>
+                            <Col>
+                                <Image
+                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                />
+                            </Col>
+                            <Col>
+                                <Image
+                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                />
+                            </Col>
+                            <Col>
+                                <Image
+                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                />
+                            </Col>
+                            <Col>
+                                <Image
+                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                />
+                            </Col>
+                            <Col>
+                                <Image
+                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                />
+                            </Col>
+                            <Col>
+                                <Image
+                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                />
+                            </Col>
+                            <Col>
+                                <Image
+                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                />
+                            </Col>
                         </Col>
                     </Row>
                 </Row>
                 <Row className="main-block-profile tab-content">
-                            <Row style={{width: '100%', height: '500px', backgroundColor: 'white', borderRadius: '5px'}}></Row>
-                            <Row style={{width: '100%', height: '500px', backgroundColor: 'white', borderRadius: '5px'}}></Row>
-                            <Row style={{width: '100%', height: '500px', backgroundColor: 'white', borderRadius: '5px'}}></Row>
-                            <Row style={{width: '100%', height: '500px', backgroundColor: 'white', borderRadius: '5px'}}></Row>
-                            <Row style={{width: '100%', height: '500px', backgroundColor: 'white', borderRadius: '5px'}}></Row>
+                    <Row className='post-block'>
+                        <Col className='post-user'>
+                            <Row className='post-user-img'>
+                                <Image
+                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                />
+                            </Row>
+                            <Row>
+                                <p><span style={{color: 'black', fontWeight: 'bold'}}>Durgesh Kirillovich</span> • <span>@durgesh</span></p>
+                                <span>
+                                    <Image
+                                        src={Calendar}
+                                        style={{ padding: 'unset', paddingRight: '7px'}}
+                                    />
+                                    20 september
+                                </span>
+                            </Row>
+                        </Col>
+                        <Col className='post-main-block'>
+                            <p>♥ Such a beautiful  day ♥ <br></br>Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!</p>
+                        </Col>
+                    </Row>
                 </Row>
             </Row>
         </Col>
