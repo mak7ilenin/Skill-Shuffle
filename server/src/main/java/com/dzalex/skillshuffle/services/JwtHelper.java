@@ -3,7 +3,6 @@ package com.dzalex.skillshuffle.services;
 import com.dzalex.skillshuffle.models.RefreshToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
@@ -108,8 +107,8 @@ public class JwtHelper {
         cookie.setPath("/"); // Set cookie for the whole application
         cookie.setMaxAge(maxAge);
         // CHANGES FOR LOCAL NETWORK TESTING
-//        cookie.setAttribute("SameSite", "None");
-//        cookie.setSecure(true);
+        // cookie.setAttribute("SameSite", "None");
+        // cookie.setSecure(true);
         // END CHANGES
         response.addCookie(cookie);
         return value;
@@ -121,8 +120,8 @@ public class JwtHelper {
         cookie.setPath("/");
         cookie.setMaxAge(0);
         // CHANGES FOR LOCAL NETWORK TESTING
-//        cookie.setAttribute("SameSite", "None");
-//        cookie.setSecure(true);
+        // cookie.setAttribute("SameSite", "None");
+        // cookie.setSecure(true);
         // END CHANGES
         response.addCookie(cookie);
     }

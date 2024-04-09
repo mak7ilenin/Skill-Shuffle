@@ -90,7 +90,7 @@ const AuthProvider = ({ children }) => {
     }, [authUser]);
 
     return (
-        <AuthContext.Provider value={{ authUser, stompClient, isStompClientInitialized }}>
+        <AuthContext.Provider value={{ authUser, setAuthUser, stompClient, isStompClientInitialized }}>
             {messageNotification.visible && (
                 <MessageNotification
                     messageNotification={messageNotification}
