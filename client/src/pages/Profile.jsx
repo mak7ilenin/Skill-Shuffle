@@ -1,4 +1,4 @@
-import { Row, Col, Tab, Tabs, Button, Image, Carousel  } from 'react-bootstrap';
+import { Row, Col, Tab, Tabs, Button, Image  } from 'react-bootstrap';
 import { ReactComponent as EditBanner } from '../assets/icons/edit_Banner.svg';
 import { API_SERVER, SERVER_URL } from '../config';
 import { useAuth } from '../components/AuthContext';
@@ -11,6 +11,10 @@ import Subscriptions from '../assets/icons/subscriptionsIcon.svg';
 import Photos from '../assets/icons/photosIcon.svg';
 import Favorite from '../assets/icons/favorite.svg';
 import Calendar from '../assets/icons/calendar.svg';
+import PostMenu from '../assets/icons/post-menu.svg';
+import like from '../assets/icons/like.svg';
+import comment from '../assets/icons/comment.svg';
+import share from '../assets/icons/share.svg';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
@@ -94,28 +98,28 @@ function Profile() {
                                 src={Friends}
                                 style={{ padding: 'unset', paddingRight: '8px'}}
                             />
-                            <p style={{ fontWeight: '500'}}><span>24</span> • <a href="/">friends</a></p>
+                            <p><span>24</span> • <a href="/">friends</a></p>
                         </Col>
                         <Col className='d-flex flex-row my-1'>
                             <Image
                                 src={Favorite}
                                 style={{ padding: 'unset', paddingRight: '8px'}}
                             />
-                            <p style={{ fontWeight: '500'}}><span>15</span> • <a href="/">followers</a></p>
+                            <p><span>15</span> • <a href="/">followers</a></p>
                         </Col>
                         <Col className='d-flex flex-row my-1'>
                             <Image
                                 src={Subscriptions}
                                 style={{ padding: 'unset', paddingRight: '8px'}}
                             />
-                            <p style={{ fontWeight: '500'}}><span>34</span> • <a href="/">subscriptions</a></p>
+                            <p><span>34</span> • <a href="/">subscriptions</a></p>
                         </Col>
                         <Col className='d-flex flex-row my-1'>
                             <Image
                                 src={Photos}
                                 style={{ padding: 'unset', paddingRight: '8px'}}
                             />
-                            <p style={{ fontWeight: '500'}}><span>7</span> • <a href="/">photos and videos</a></p>
+                            <p><span>7</span> • <a href="/">photos and videos</a></p>
                         </Col>
                         <Col className='d-flex flex-row mt-1 photos-videos-block'>
                             <Col>
@@ -163,6 +167,10 @@ function Profile() {
                 </Row>
                 <Row className="main-block-profile tab-content">
                     <Row className='post-block'>
+                        <Image
+                            src={PostMenu}
+                            style={{ padding: 'unset', position:'absolute', width:'19px', right:'19px', top:'25px'}}
+                        /> 
                         <Col className='post-user'>
                             <Row className='post-user-img'>
                                 <Image
@@ -171,7 +179,7 @@ function Profile() {
                             </Row>
                             <Row>
                                 <p><span style={{color: 'black', fontWeight: 'bold'}}>Durgesh Kirillovich</span> • <span>@durgesh</span></p>
-                                <span>
+                                <span style={{ display: 'flex', alignItems: 'center'}}>
                                     <Image
                                         src={Calendar}
                                         style={{ padding: 'unset', paddingRight: '7px'}}
@@ -182,6 +190,20 @@ function Profile() {
                         </Col>
                         <Col className='post-main-block'>
                             <p>♥ Such a beautiful  day ♥ <br></br>Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!Explorer of art, nature, and cultures. Travel enthusiast, book lover, and social good advocate. Let's connect and share experiences!</p>
+                        </Col>
+                        <Col>
+                            <Image
+                                src={like}
+                                // style={{ padding: 'unset', paddingRight: '7px'}}
+                            />
+                            <Image
+                                src={comment}
+                                // style={{ padding: 'unset', paddingRight: '7px'}}
+                            />
+                            <Image
+                                src={share}
+                                // style={{ padding: 'unset', paddingRight: '7px'}}
+                            />
                         </Col>
                     </Row>
                 </Row>
