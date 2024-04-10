@@ -25,11 +25,8 @@ FROM nginx:alpine
 # Copy the build output to replace the default nginx contents
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Remove the default nginx configuration file
-RUN rm /etc/nginx/conf.d/default.conf
-
 # Copy the nginx.conf file to the container
-COPY ./nginx.conf /etc/nginx/conf.d
+COPY nginx.conf /etc/nginx/conf.d
 
 # Expose the port and run the app on it
 EXPOSE 3000
