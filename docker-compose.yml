@@ -2,13 +2,13 @@ version: "3"
 
 services:
   server:
-    build: ./server
+    image: public.ecr.aws/i2t4w1a3/skill-shuffle:server
     container_name: server
     ports:
       - "8080:8080"
 
   client:
-    build: ./client
+    image: public.ecr.aws/i2t4w1a3/skill-shuffle:client
     container_name: client
     ports:
       - "3000:3000"
@@ -16,7 +16,7 @@ services:
       - server
 
   proxy:
-    build: ./nginx
+    image: public.ecr.aws/i2t4w1a3/skill-shuffle:proxy
     container_name: proxy
     restart: always
     ports:
