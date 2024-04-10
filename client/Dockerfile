@@ -26,7 +26,8 @@ FROM nginx:alpine
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Copy the nginx.conf file to the container
-COPY nginx.conf /etc/nginx/conf.d
+# COPY nginx.conf /etc/nginx/conf.d
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose the port and run the app on it
 EXPOSE 3000
