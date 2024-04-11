@@ -1,0 +1,10 @@
+version: "3"
+services:
+  letsencrypt:
+    image: certbot/certbot
+    container_name: certbot
+    command: sh -c "certbot certonly --webroot -w /tmp/acme_challenge -d skillshuffle.ddns.net --text --agree-tos --email maksondzjubenko@gmail.com --rsa-key-size 4096 --verbose --keep-until-expiring --preferred-challenges=http"
+    entrypoint: ""
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /tmp/acme_challenge:/tmp/acme_challenge

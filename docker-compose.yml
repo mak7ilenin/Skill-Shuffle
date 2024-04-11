@@ -2,15 +2,15 @@ version: "3"
 
 services:
   server:
-    image: public.ecr.aws/i2t4w1a3/skill-shuffle:server
-    # build: ./server
+    # image: public.ecr.aws/i2t4w1a3/skill-shuffle:server
+    build: ./server
     container_name: server
     ports:
       - "8080:8080"
 
   client:
-    image: public.ecr.aws/i2t4w1a3/skill-shuffle:client
-    # build: ./client
+    # image: public.ecr.aws/i2t4w1a3/skill-shuffle:client
+    build: ./client
     container_name: client
     ports:
       - "3000:3000"
@@ -18,9 +18,13 @@ services:
       - server
 
   proxy:
-    image: public.ecr.aws/i2t4w1a3/skill-shuffle:proxy
-    # build: ./nginx
+    # image: public.ecr.aws/i2t4w1a3/skill-shuffle:proxy
+    build: ./nginx
     container_name: proxy
     restart: always
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /tmp/acme_challenge:/tmp/acme_challenge
