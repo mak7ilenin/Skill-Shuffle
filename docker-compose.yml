@@ -2,8 +2,8 @@ version: "3"
 
 services:
   server:
-    # image: public.ecr.aws/i2t4w1a3/skill-shuffle:server
-    build: ./server
+    image: public.ecr.aws/i2t4w1a3/skill-shuffle:server
+    # build: ./server
     container_name: server
     ports:
       - "8080:8080"
