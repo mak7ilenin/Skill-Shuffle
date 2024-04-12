@@ -205,19 +205,28 @@ h1, h2, h3, h4, h5, h6, p {
   max-width: 215px;
   position: relative;
 }
+.chat-page .chat-menu .chat-menu-header .search-bar-container .search-bar.active input {
+  padding-left: 15px;
+}
+.chat-page .chat-menu .chat-menu-header .search-bar-container .search-bar.active .search-icon {
+  display: none;
+}
+.chat-page .chat-menu .chat-menu-header .search-bar-container .search-bar.active .cross-icon {
+  display: block;
+}
 .chat-page .chat-menu .chat-menu-header .search-bar-container input {
   width: 100%;
-  height: 32px;
-  border: 1px solid #fff;
+  height: 35px;
+  border: 1.5px solid #fff;
   border-radius: 10px;
-  padding-right: 15px;
+  padding-right: 32px;
   padding-left: 40px;
   font-family: "Manrope", sans-serif;
   font-size: 16px;
   font-weight: 500;
   color: #fff;
   background-color: transparent;
-  transition: ease all 0.3s;
+  transition: ease all 0.1s;
 }
 .chat-page .chat-menu .chat-menu-header .search-bar-container input::-moz-placeholder {
   font-weight: 300;
@@ -233,6 +242,17 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-menu .chat-menu-header .search-bar-container .search-icon {
   position: absolute;
   left: 15px;
+}
+.chat-page .chat-menu .chat-menu-header .search-bar-container .cross-icon {
+  width: 8px;
+  height: 8px;
+  display: none;
+  position: absolute;
+  right: 15px;
+  cursor: pointer;
+}
+.chat-page .chat-menu .chat-menu-header .search-bar-container .cross-icon path {
+  fill: #fff;
 }
 .chat-page .chat-menu .chat-menu-header .create-chat {
   width: -moz-fit-content;

@@ -9,9 +9,13 @@ import ChatTypeFilter from './ChatTypeFilter';
 function ChatMenu({ chats, setFilteredChats, filteredChats }) {
     const navigate = useNavigate();
 
+    const getSearch = (search) => {
+        setFilteredChats(chats.filter(chat => chat.name.toLowerCase().includes(search.toLowerCase())));
+    }
+
     return (
         <Container className='chat-menu'>
-            <ChatMenuHeader />
+            <ChatMenuHeader getSearch={getSearch} />
             <ChatTypeFilter setChats={setFilteredChats} chats={chats} />
 
             <Stack direction='vertical'>
