@@ -211,6 +211,12 @@
                 font-size: 18px;
             }
 
+            span {
+                font-size: 16px;
+                font-weight: 500;
+                color: #8F8F8F;
+            }
+
             .user-activity {
                 display: flex;
                 gap: 7px;
@@ -220,11 +226,6 @@
                     width: 14px;
                     height: 14px;
                     margin-bottom: 1px;
-                }
-
-                span {
-                    font-size: 14px;
-                    font-weight: 500;
                 }
             }
 

@@ -15,16 +15,16 @@ function SignUp() {
     const register = async (e) => {
         e.preventDefault();
         const body = {
-            first_name: "Test " + username,
-            last_name: "The " + nickname,
+            firstName: "Test " + username,
+            lastName: "The " + nickname,
             username: username,
             password: password,
             nickname: nickname,
             email: email,
             gender: "other",
-            birth_date: "2004-12-22",
+            birthDate: "2004-12-22",
             bio: "Test " + username,
-            avatar_url: ""
+            avatarUrl: ""
         };
         try {
             await axios.post(`${API_SERVER}/auth/register`, body)

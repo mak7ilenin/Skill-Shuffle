@@ -23,7 +23,6 @@ public class ConfirmationCode {
     @Column(name = "reset_code", nullable = false, length = 5)
     private String resetCode;
 
-    @ColumnDefault("current_timestamp()")
     @Column(name = "expires_at", nullable = false)
     private Timestamp expiresAt;
 

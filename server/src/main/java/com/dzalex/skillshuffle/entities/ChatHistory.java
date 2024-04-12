@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 public class ChatHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -28,7 +28,6 @@ public class ChatHistory {
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
-    @ColumnDefault("current_timestamp()")
     @Column(name = "hidden_before", nullable = false)
     private Timestamp hiddenBefore;
 

@@ -1,7 +1,7 @@
 import CryptoJS from 'crypto-js';
 import { ENCRYPTION_KEY } from './config';
 
-const dynamicValue = '12/12/2021'; // Could use a date or something dynamic
+const dynamicValue = new Date().toISOString().slice(0, 10);
 
 export function AESEncrypt(pureText) {    
     const privateKey=`${dynamicValue} ${ENCRYPTION_KEY}`;    

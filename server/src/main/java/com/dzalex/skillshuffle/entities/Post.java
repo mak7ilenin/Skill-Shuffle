@@ -36,7 +36,7 @@ public class Post {
 
     @ColumnDefault("1")
     @Column(name = "allow_comments", nullable = false)
-    private Byte allowComments;
+    private Boolean allowComments;
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "created_at", nullable = false)

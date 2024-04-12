@@ -23,30 +23,30 @@ public class UserNotification {
 
     @ColumnDefault("1")
     @Column(name = "likes_notification", nullable = false)
-    private Byte likesNotification;
+    private Boolean likesNotification;
 
     @ColumnDefault("1")
     @Column(name = "comments_notification", nullable = false)
-    private Byte commentsNotification;
+    private Boolean commentsNotification;
 
     @ColumnDefault("1")
     @Column(name = "reposted_notification", nullable = false)
-    private Byte repostedNotification;
+    private Boolean repostedNotification;
 
     @ColumnDefault("1")
     @Column(name = "private_messages_notification", nullable = false)
-    private Byte privateMessagesNotification;
+    private Boolean privateMessagesNotification;
 
     @ColumnDefault("1")
     @Column(name = "friend_requests_notification", nullable = false)
-    private Byte friendRequestsNotification;
+    private Boolean friendRequestsNotification;
 
     @ColumnDefault("1")
     @Column(name = "mentions_notification", nullable = false)
-    private Byte mentionsNotification;
+    private Boolean mentionsNotification;
 
     @ColumnDefault("1")
     @Column(name = "followers_notification", nullable = false)
-    private Byte followersNotification;
+    private Boolean followersNotification;
 
 }

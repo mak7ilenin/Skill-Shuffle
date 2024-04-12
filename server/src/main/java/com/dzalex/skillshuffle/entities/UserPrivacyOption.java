@@ -1,5 +1,7 @@
 package com.dzalex.skillshuffle.entities;
 
+import com.dzalex.skillshuffle.enums.BirthdayVisibility;
+import com.dzalex.skillshuffle.enums.PrivacyOption;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,53 +17,52 @@ public class UserPrivacyOption {
     private Integer id;
 
     @ColumnDefault("all users")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "view_main_information", nullable = false)
-    private String viewMainInformation;
+    private PrivacyOption viewMainInformation;
 
     @ColumnDefault("all users")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "view_followings", nullable = false)
-    private String viewFollowings;
+    private PrivacyOption viewFollowings;
 
     @ColumnDefault("all users")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "view_photos_videos", nullable = false)
-    private String viewPhotosVideos;
+    private PrivacyOption viewPhotosVideos;
 
     @ColumnDefault("all users")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "view_friends", nullable = false)
-    private String viewFriends;
+    private PrivacyOption viewFriends;
 
     @ColumnDefault("full birthday")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "birthday_settings", nullable = false)
-    private String birthdaySettings;
+    private BirthdayVisibility birthdaySettings;
 
     @ColumnDefault("all users")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "view_post_comments", nullable = false)
-    private String viewPostComments;
+    private PrivacyOption viewPostComments;
 
     @ColumnDefault("all users")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "comment_on_posts", nullable = false)
-    private String commentOnPosts;
+    private PrivacyOption commentOnPosts;
 
     @ColumnDefault("all users")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "send_private_messages", nullable = false)
-    private String sendPrivateMessages;
+    private PrivacyOption sendPrivateMessages;
 
     @ColumnDefault("all users")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "add_to_chats", nullable = false)
-    private String addToChats;
+    private PrivacyOption addToChats;
 
     @ColumnDefault("all users")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "invite_to_communities", nullable = false)
-    private String inviteToCommunities;
-
+    private PrivacyOption inviteToCommunities;
 }

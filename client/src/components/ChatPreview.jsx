@@ -30,7 +30,7 @@ function ChatPreview({ chat, navigate }) {
         >
             <Col className='chat-avatar d-flex justify-content-center'>
                 <CreateImage
-                    url={chat.avatar_url}
+                    url={chat.avatarUrl}
                     alt={chat.name}
                     width={55}
                     height={55}
@@ -40,9 +40,9 @@ function ChatPreview({ chat, navigate }) {
             <Col className='chat-info w-75 ps-3'>
                 <p className='chat-name d-flex justify-content-between'>
                     {chat.name}
-                    <span>{formatTimestampForChatContainer(chat.last_message.timestamp)}</span>
+                    <span>{formatTimestampForChatContainer(chat.lastMessage.timestamp)}</span>
                 </p>
-                <p className='last-message text-truncate'>{chat.last_message.content}</p>
+                <p className='last-message text-truncate'>{chat.lastMessage.content}</p>
             </Col>
         </Row>
     )

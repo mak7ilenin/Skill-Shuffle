@@ -75,7 +75,8 @@ public class WebSocketController {
                         sender.getFirstName(),
                         sender.getLastName(),
                         sender.getNickname(),
-                        sender.getAvatarUrl()
+                        sender.getAvatarUrl(),
+                        sender.getLastSeen()
                 ),
                 notificationMessage,
                 message.getContent(),

@@ -1,6 +1,5 @@
 package com.dzalex.skillshuffle.dtos;
 
-import com.dzalex.skillshuffle.enums.ChatType;
 import lombok.*;
 
 @Getter
@@ -8,10 +7,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatPreviewDTO {
-    private Integer id;
+public class CommunityPreviewDTO {
     private String name;
-    private ChatType type;
+    private String nickname;
+    private String description;
     private String avatarUrl;
-    private MessageDTO lastMessage;
 }

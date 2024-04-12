@@ -2,10 +2,12 @@ package com.dzalex.skillshuffle.services;
 
 import com.dzalex.skillshuffle.dtos.ChatDTO;
 import com.dzalex.skillshuffle.dtos.ChatPreviewDTO;
+import com.dzalex.skillshuffle.dtos.CommunityPreviewDTO;
 import com.dzalex.skillshuffle.dtos.MessageDTO;
-import com.dzalex.skillshuffle.entities.Chat;
-import com.dzalex.skillshuffle.entities.ChatMessage;
+import com.dzalex.skillshuffle.entities.*;
+import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
+import com.dzalex.skillshuffle.repositories.CommunityChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,14 @@ public class ChatService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CommunityChatRepository communityChatRepository;
+
+    @Autowired
+    private CommunityService communityService;
+
+    @Autowired
+    private ChatMemberRepository chatMemberRepository;
 
     public List<ChatPreviewDTO> getChatList() {
         List<Chat> chats = chatRepository.findAll();
@@ -50,8 +60,8 @@ public class ChatService {
             chatPreviewDTO.setId(chat.getId());
             chatPreviewDTO.setName(chat.getName());
             chatPreviewDTO.setType(chat.getType());
-            chatPreviewDTO.setAvatar_url(chat.getAvatarUrl());
-            chatPreviewDTO.setLast_message(lastMessage);
+            chatPreviewDTO.setAvatarUrl(chat.getAvatarUrl());
+            chatPreviewDTO.setLastMessage(lastMessage);
 
             chatPreviewDTOs.add(chatPreviewDTO);
         }
@@ -60,6 +70,7 @@ public class ChatService {
     }
 
     public ChatDTO getChatWithMessages(Chat chat) {
+        // Get chat info depending on the chat type
         ChatDTO chatDTO = getChatInfo(chat);
 
         // Load only 30 last messages
@@ -89,11 +100,35 @@ public class ChatService {
 
     // Get chat info
     public ChatDTO getChatInfo(Chat chat) {
+        User authedUser = userService.getCurrentUser();
         ChatDTO chatDTO = new ChatDTO();
         chatDTO.setId(chat.getId());
-        chatDTO.setName(chat.getName());
         chatDTO.setType(chat.getType());
-        chatDTO.setAvatar_url(chat.getAvatarUrl());
+
+        switch (chat.getType()) {
+            case COMMUNITY:
+                CommunityChat communityChat = communityChatRepository.findCommunityChatByChatId(chat.getId());
+                CommunityPreviewDTO community = communityService.convertToPreviewDTO(communityChat.getCommunity());
+                chatDTO.setCommunity(community);
+                chatDTO.setAvatarUrl(community.getAvatarUrl());
+                chatDTO.setName(community.getName());
+                break;
+            case PRIVATE:
+                chatMemberRepository.findAllByChatId(chat.getId()).forEach(chatMember -> {
+                    if (!chatMember.getMember().getUsername().equals(authedUser.getUsername())) {
+                        User chatPartner = chatMember.getMember();
+                        chatDTO.setUser(chatPartner);
+                        chatDTO.setAvatarUrl(chatPartner.getAvatarUrl());
+                        chatDTO.setName(chatPartner.getFirstName() + " " + chatPartner.getLastName());
+                    }
+                });
+                break;
+            case GROUP:
+                chatDTO.setMemberCount(userService.getUsersInChat(chat.getId()).size());
+                chatDTO.setAvatarUrl(chat.getAvatarUrl());
+                chatDTO.setName(chat.getName());
+                break;
+        }
 
         return chatDTO;
     }

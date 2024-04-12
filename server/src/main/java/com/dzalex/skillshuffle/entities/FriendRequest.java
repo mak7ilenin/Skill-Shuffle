@@ -1,5 +1,6 @@
 package com.dzalex.skillshuffle.entities;
 
+import com.dzalex.skillshuffle.enums.FriendRequestStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,9 +30,9 @@ public class FriendRequest {
     private User receiver;
 
     @ColumnDefault("pending")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private String status;
+    private FriendRequestStatus status;
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "created_at", nullable = false)

@@ -76,7 +76,7 @@ function MessageNotification({ messageNotification, onDismiss }) {
                 <hr />
                 <div className="alert-message w-100 mt-2 d-flex flex-column flex-md-row align-items-center">
                     <Image
-                        src={notification.chat.avatar_url ? `${SERVER_URL}/${notification.chat.avatar_url}` : imagePlaceholder}
+                        src={notification.chat.avatarUrl ? `${SERVER_URL}/${notification.chat.avatarUrl}` : imagePlaceholder}
                         width={35}
                         height={35}
                         alt={notification.chat.name}
@@ -84,7 +84,7 @@ function MessageNotification({ messageNotification, onDismiss }) {
                         roundedCircle
                     />
                     <div className='flex-grow-1 d-flex align-items-center flex-wrap flex-shrink-1'>
-                        <h5>{notification.sender.first_name}</h5>
+                        <h5>{notification.sender.firstName}</h5>
                         <span>{notification.content}</span>
                     </div>
                     <div className="flex-grow-1"></div>

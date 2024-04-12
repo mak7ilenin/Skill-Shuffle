@@ -1,5 +1,6 @@
 package com.dzalex.skillshuffle.entities;
 
+import com.dzalex.skillshuffle.enums.MemberRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -17,20 +18,20 @@ import java.sql.Timestamp;
 public class ChatMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "member_id", nullable = false)
     private User member;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private String role;
+    private MemberRole role;
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "joined_at", nullable = false)

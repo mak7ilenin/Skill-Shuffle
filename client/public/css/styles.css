@@ -365,6 +365,11 @@ h1, h2, h3, h4, h5, h6, p {
   font-weight: 600;
   font-size: 18px;
 }
+.chat-page .chat-box .chat-header span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #8F8F8F;
+}
 .chat-page .chat-box .chat-header .user-activity {
   display: flex;
   gap: 7px;
@@ -374,10 +379,6 @@ h1, h2, h3, h4, h5, h6, p {
   width: 14px;
   height: 14px;
   margin-bottom: 1px;
-}
-.chat-page .chat-box .chat-header .user-activity span {
-  font-size: 14px;
-  font-weight: 500;
 }
 .chat-page .chat-box .chat-header span,
 .chat-page .chat-box .chat-header p {
@@ -728,6 +729,9 @@ h1, h2, h3, h4, h5, h6, p {
 .profile-links span {
   color: black;
 }
+.profile-links p {
+  font-weight: 500;
+}
 
 .profile-links a {
   color: #757575;
@@ -771,13 +775,12 @@ h1, h2, h3, h4, h5, h6, p {
   margin-left: 20px !important;
   margin-top: 20px !important;
 }
-.main-block-profile div {
-  display: block;
-}
-
-.post-block {
+.main-block-profile .post-block {
+  padding: 16px !important;
+  display: block !important;
   background-color: white;
   border-radius: 5px;
+  position: relative !important;
 }
 
 .post-user {
@@ -824,64 +827,4 @@ h1, h2, h3, h4, h5, h6, p {
 .post-main-block div {
   display: flex !important;
   gap: 10px;
-}
-
-.container {
-  width: 100%;
-  margin: 30px auto;
-  overflow: hidden;
-}
-
-.galleryItem {
-  color: #797478;
-  font: 10px/1.5 Verdana, Helvetica, sans-serif;
-  float: left;
-}
-
-.galleryItem h3 {
-  text-transform: uppercase;
-}
-
-.galleryItem img {
-  max-width: 100%;
-  border-radius: 5px;
-}
-
-.galleryItem {
-  color: #797478;
-  font: 10px/1.5 Verdana, Helvetica, sans-serif;
-  float: left;
-  width: 16%;
-  margin: 2% 2% 50px 2%;
-}
-
-/* MEDIA QUERIES*/
-@media only screen and (max-width: 940px), only screen and (max-device-width: 940px) {
-  .galleryItem {
-    width: 21%;
-  }
-}
-@media only screen and (max-width: 720px), only screen and (max-device-width: 720px) {
-  .galleryItem {
-    width: 29.33333%;
-  }
-}
-@media only screen and (max-width: 530px), only screen and (max-device-width: 530px) {
-  .galleryItem {
-    width: 46%;
-  }
-}
-@media only screen and (max-width: 320px), only screen and (max-device-width: 320px) {
-  .galleryItem {
-    width: 96%;
-  }
-  .galleryItem img {
-    width: 96%;
-  }
-  .galleryItem h3 {
-    font-size: 18px;
-  }
-  .galleryItem p {
-    font-size: 18px;
-  }
 }/*# sourceMappingURL=styles.css.map */

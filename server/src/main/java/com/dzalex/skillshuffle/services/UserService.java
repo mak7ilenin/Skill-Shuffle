@@ -1,6 +1,5 @@
 package com.dzalex.skillshuffle.services;
 
-import com.dzalex.skillshuffle.dtos.AuthRequestDTO;
 import com.dzalex.skillshuffle.entities.ChatMember;
 import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
@@ -11,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

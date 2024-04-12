@@ -59,7 +59,8 @@ public class MessageService {
                             lastMessage.getSender().getFirstName(),
                             lastMessage.getSender().getLastName(),
                             lastMessage.getSender().getNickname(),
-                            lastMessage.getSender().getAvatarUrl()),
+                            lastMessage.getSender().getAvatarUrl(),
+                            lastMessage.getSender().getLastSeen()),
                     lastMessage.getContent(),
                     lastMessage.getTimestamp(),
                     lastMessage.getStatus());
@@ -75,7 +76,8 @@ public class MessageService {
                         message.getSender().getFirstName(),
                         message.getSender().getLastName(),
                         message.getSender().getNickname(),
-                        message.getSender().getAvatarUrl()),
+                        message.getSender().getAvatarUrl(),
+                        message.getSender().getLastSeen()),
                 message.getContent(),
                 message.getTimestamp(),
                 message.getStatus());

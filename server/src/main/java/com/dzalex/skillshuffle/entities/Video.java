@@ -7,6 +7,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.sql.Timestamp;
 import java.time.LocalTime;
 
 @Getter
@@ -38,7 +39,6 @@ public class Video {
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    @Lob
     @Column(name = "description")
     private String description;
 
@@ -49,8 +49,9 @@ public class Video {
     @Column(name = "views", nullable = false)
     private Integer views;
 
-    @Column(name = "created_at")
-    private String createdAt;
+    @ColumnDefault("current_timestamp()")
+    @Column(name = "created_at", nullable = false)
+    private Timestamp createdAt;
 
     @Column(name = "name")
     private String name;

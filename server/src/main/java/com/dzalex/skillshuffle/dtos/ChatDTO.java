@@ -1,6 +1,5 @@
 package com.dzalex.skillshuffle.dtos;
 
-import com.dzalex.skillshuffle.entities.Community;
 import com.dzalex.skillshuffle.enums.ChatType;
 import com.dzalex.skillshuffle.entities.User;
 import lombok.*;
@@ -16,9 +15,9 @@ public class ChatDTO {
     private Integer id;
     private String name;
     private ChatType type;
-    private String avatar_url;
+    private String avatarUrl;
     private List<MessageDTO> messages;
-    private List<String> members;
-    private Community community;
+    private int memberCount;
+    private CommunityPreviewDTO community;
     private User user;
 }

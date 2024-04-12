@@ -18,11 +18,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JsonProperty("first_name")
     @Column(name = "first_name", nullable = false, length = 30)
     private String firstName;
 
-    @JsonProperty("last_name")
     @Column(name = "last_name", nullable = false, length = 30)
     private String lastName;
 
@@ -42,7 +40,6 @@ public class User {
     @Column(name = "gender", nullable = false)
     private Gender gender;
 
-    @JsonProperty("birth_date")
     @Column(name = "birth_date")
     private Timestamp birthDate;
 
@@ -53,7 +50,6 @@ public class User {
     @Column(name = "points", nullable = false)
     private Integer points;
 
-    @JsonProperty("avatar_url")
     @Column(name = "avatar_url")
     private String avatarUrl;
 

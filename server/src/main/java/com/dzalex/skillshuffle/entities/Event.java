@@ -1,5 +1,6 @@
 package com.dzalex.skillshuffle.entities;
 
+import com.dzalex.skillshuffle.enums.EventType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,9 +18,9 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private String type;
+    private EventType type;
 
     @Column(name = "title", nullable = false, length = 75)
     private String title;

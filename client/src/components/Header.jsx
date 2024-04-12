@@ -58,7 +58,7 @@ function Header() {
                     />
                     <Row>
                         <p style={{fontSize: '28px', height: '28px', letterSpacing: '4px', display: 'flex', alignItems: 'center'}}>SKILL</p>
-                        <p style={{height: '19px', display: 'flex', display: 'flex', alignItems: 'center'}}>SHUFFLE</p>
+                        <p style={{height: '19px', display: 'flex', alignItems: 'center'}}>SHUFFLE</p>
                     </Row>
                 </a>
             </Container>
@@ -88,7 +88,7 @@ function Header() {
                         <ListGroup.Item action href='/my-profile'>
                             <div className='avatar-container d-flex justify-content-center align-items-center flex-column'>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
                                     width={25}
                                     height={25}
                                     style={{ objectFit: 'cover', border: '1px solid #c2c2c2' }}

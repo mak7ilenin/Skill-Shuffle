@@ -56,7 +56,7 @@ const AuthProvider = ({ children }) => {
                         const client = new Client({
                             brokerURL: WEBSOCKET_URL,
                             connectHeaders: {
-                                Authorization: `Bearer ${response.data.access_token}`,
+                                Authorization: `Bearer ${response.data.accessToken}`,
                             },
                             onConnect: function (frame) {
                                 console.log('Connected: ' + frame);

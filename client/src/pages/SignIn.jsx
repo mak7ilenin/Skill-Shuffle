@@ -22,8 +22,7 @@ function SignIn() {
                         console.error(responseData);
                         return;
                     }
-                    const authUser = responseData.user
-                    setAuthUser(authUser);
+                    setAuthUser(responseData.user);
                     navigate('/messenger');
                 });
         } catch (error) {

@@ -36,7 +36,7 @@ function Chat() {
         if (AESDecrypt(chat.id) === message.chat.id.toString()) {
           return {
             ...chat,
-            last_message: { ...chat.last_message, content: message.content }
+            lastMessage: { ...chat.lastMessage, content: message.content }
           };
         }
         return chat;
@@ -164,12 +164,6 @@ function Chat() {
     // 
   };
 
-  const formatTimestampForMessage = (timestamp) => {
-    const date = new Date(timestamp);
-    // hh:mm for the time of the message
-    return date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' });
-  }
-
   // ---------------------------- //
 
   useEffect(() => {
@@ -206,7 +200,7 @@ function Chat() {
     axios.get(`${API_SERVER}/chats`, { withCredentials: true })
       .then(response => {
         // If last message is null, then not include it in the chats
-        response.data = response.data.filter(chat => chat.last_message !== null);
+        response.data = response.data.filter(chat => chat.lastMessage !== null);
 
         // Encrypt the chat IDs before storing them
         response.data.forEach(chat => {
@@ -252,7 +246,6 @@ function Chat() {
                     index={index}
                     authUser={authUser}
                     chat={choosenChat}
-                    formatTimestamp={formatTimestampForMessage}
                   />
                 </div>
               )

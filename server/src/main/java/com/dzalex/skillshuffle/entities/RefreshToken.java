@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "token", nullable = false)
     private String token;

@@ -1,5 +1,6 @@
 package com.dzalex.skillshuffle.entities;
 
+import com.dzalex.skillshuffle.enums.InteractionType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,9 +29,9 @@ public class UserPostInteraction {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "interaction_type", nullable = false)
-    private String interactionType;
+    private InteractionType interactionType;
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "created_at", nullable = false)

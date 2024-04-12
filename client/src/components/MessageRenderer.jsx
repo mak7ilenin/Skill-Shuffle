@@ -3,7 +3,7 @@ import { Image, NavLink } from 'react-bootstrap';
 
 import CreateImage from './CreateImage';
 
-function MessageRenderer({ message, index, authUser, chat, formatTimestamp }) {
+function MessageRenderer({ message, index, authUser, chat }) {
     // Regular expression to match URLs
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
@@ -19,6 +19,12 @@ function MessageRenderer({ message, index, authUser, chat, formatTimestamp }) {
             }
         }
     };
+
+    const formatTimestampForMessage = (timestamp) => {
+        const date = new Date(timestamp);
+        // hh:mm for the time of the message
+        return date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' });
+    }
 
     // Function to detect URLs in the message content
     const detectUrls = (content) => {
@@ -55,27 +61,27 @@ function MessageRenderer({ message, index, authUser, chat, formatTimestamp }) {
                 <div className='message-content-container d-flex'>
                     <div className='message-content message-series flex-column'>{detectUrls(message.content)}</div>
                     <div className="message-time-container">
-                        <p className='message-time'>{formatTimestamp(message.timestamp)}</p>
+                        <p className='message-time'>{formatTimestampForMessage(message.timestamp)}</p>
                     </div>
                 </div>
             ) : (
                 <>
                     <div className='sender-info w-100 d-flex align-items-center mb-2'>
                         <CreateImage
-                            url={message.sender.avatar_url}
+                            url={message.sender.avatarUrl}
                             alt={message.sender.nickname}
                             width={30}
                             height={30}
                             rounded={true}
                         />
                         <span className={`sender-name ${message.sender.nickname === authUser.nickname ? 'me-3' : 'ms-3'}`}>
-                            <NavLink href={`/users?${message.sender.nickname}`}>{message.sender.first_name}</NavLink>
+                            <NavLink href={`/users?${message.sender.nickname}`}>{message.sender.firstName}</NavLink>
                         </span>
                     </div>
                     <div className='message-content-container d-flex'>
                         <div className='message-content flex-column'>{detectUrls(message.content)}</div>
                         <div className="message-time-container">
-                            <p className='message-time'>{formatTimestamp(message.timestamp)}</p>
+                            <p className='message-time'>{formatTimestampForMessage(message.timestamp)}</p>
                         </div>
                     </div>
                 </>

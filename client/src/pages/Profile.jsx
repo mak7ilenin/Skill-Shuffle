@@ -53,7 +53,7 @@ function Profile() {
                 <Row className='d-flex flex-column info-profile'>
                     <Row>
                         <Image
-                            src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                            src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
                             style={{ padding: 'unset' }}
                             className='profile-avatar'
                             alt='Avatar'
@@ -124,42 +124,42 @@ function Profile() {
                         <Col className='d-flex flex-row mt-1 photos-videos-block'>
                             <Col>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                         </Col>
@@ -174,7 +174,7 @@ function Profile() {
                         <Col className='post-user'>
                             <Row className='post-user-img'>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Row>
                             <Row>

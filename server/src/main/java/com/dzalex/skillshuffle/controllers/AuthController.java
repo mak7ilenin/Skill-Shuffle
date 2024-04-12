@@ -63,12 +63,13 @@ public class AuthController {
             User user = userRepository.findByUsername(request.getUsername());
             JwtResponseDTO jwtResponse = JwtResponseDTO.builder()
                     .username(request.getUsername())
-                    .access_token(helper.createAccessTokenCookie(response, userDetails))
+                    .accessToken(helper.createAccessTokenCookie(response, userDetails))
                     .user(new PublicUserDTO(
                             user.getFirstName(),
                             user.getLastName(),
                             user.getNickname(),
-                            user.getAvatarUrl()))
+                            user.getAvatarUrl(),
+                            user.getLastSeen()))
                     .build();
             return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
         } else {
@@ -101,12 +102,13 @@ public class AuthController {
                 User user = userRepository.findByUsername(username);
                 return new ResponseEntity<>(JwtResponseDTO.builder()
                         .username(userDetails.getUsername())
-                        .access_token(token)
+                        .accessToken(token)
                         .user(new PublicUserDTO(
                                 user.getFirstName(),
                                 user.getLastName(),
                                 user.getNickname(),
-                                user.getAvatarUrl()))
+                                user.getAvatarUrl(),
+                                user.getLastSeen()))
                         .build(), HttpStatus.OK);
             }
         }
