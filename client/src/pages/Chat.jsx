@@ -1,23 +1,20 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
-import { Row, Stack, Button, Container } from 'react-bootstrap';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Row, Stack, Button } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 import { AESEncrypt, AESDecrypt } from '../crypto';
 import { API_SERVER } from '../config';
 import { useAuth } from '../components/AuthContext';
 import MessageRenderer from '../components/MessageRenderer';
-import ChatPreview from '../components/ChatPreview';
-import ChatMenuHeader from '../components/ChatMenuHeader';
-import ChatTypeFilter from '../components/ChatTypeFilter';
 import ChatHeader from '../components/ChatHeader';
+import ChatMenu from '../components/ChatMenu';
 
 import EmojiGifPicker from '../components/EmojiGifPicker';
 import ChatBackground from '../assets/images/chat-background.jpg'
 
 function Chat() {
   const { authUser, stompClient, isStompClientInitialized } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -220,23 +217,8 @@ function Chat() {
 
   return (
     <div className="chat-page w-100 d-flex">
-      <Container className="chat-menu">
 
-        <ChatMenuHeader />
-
-        <ChatTypeFilter setChats={setFilteredChats} chats={chats} />
-
-        <Stack direction='vertical'>
-          {filteredChats.map(chat => (
-            <ChatPreview
-              chat={chat}
-              navigate={navigate}
-              key={chat.id}
-            />
-          ))}
-        </Stack>
-
-      </Container>
+      <ChatMenu chats={chats} setFilteredChats={setFilteredChats} filteredChats={filteredChats} />
 
       {choosenChat.id === undefined ? (
         // If no chat is selected, display:

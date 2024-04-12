@@ -35,11 +35,15 @@ public class ChatService {
 
     public List<ChatPreviewDTO> getChatListWithLastMessage() {
         List<Chat> chats = chatRepository.findAll();
+
+        // Get chat members and remove chat_member if user is not in the chat, then get chats again with updated list
+        chatMemberRepository.findAll().forEach(chatMember -> {
+            if (userService.getCurrentUser() == null || !chatMember.getMember().getUsername().equals(userService.getCurrentUser().getUsername())) {
+                chats.remove(chatMember.getChat());
+            }
+        });
+
         List<ChatPreviewDTO> chatPreviewDTOs = new ArrayList<>();
-
-        // Get chats that belongs to the user
-        chats.removeIf(chat -> !userService.getUsersInChat(chat.getId()).contains(userService.getCurrentUser().getUsername()));
-
         for (Chat chat : chats) {
             MessageDTO lastMessage = messageService.findLastMessageByChatId(chat.getId());
             ChatPreviewDTO chatPreviewDTO = new ChatPreviewDTO();

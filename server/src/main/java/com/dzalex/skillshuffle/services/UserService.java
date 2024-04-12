@@ -6,6 +6,9 @@ import com.dzalex.skillshuffle.models.User;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
@@ -47,7 +50,12 @@ public class UserService {
         return usernames;
     }
 
-    public AuthRequestDTO getCurrentUser() {
-        // Get the current user from the security context
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            String username = authentication.getName();
+            return userRepo.findByUsername(username);
+        }
+        return null;
     }
 }
