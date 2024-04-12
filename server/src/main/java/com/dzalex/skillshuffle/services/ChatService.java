@@ -5,6 +5,7 @@ import com.dzalex.skillshuffle.dtos.ChatPreviewDTO;
 import com.dzalex.skillshuffle.dtos.MessageDTO;
 import com.dzalex.skillshuffle.models.Chat;
 import com.dzalex.skillshuffle.models.Message;
+import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,18 @@ public class ChatService {
     @Autowired
     private ChatRepository chatRepository;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ChatMemberRepository chatMemberRepository;
+
     public List<ChatPreviewDTO> getChatListWithLastMessage() {
         List<Chat> chats = chatRepository.findAll();
         List<ChatPreviewDTO> chatPreviewDTOs = new ArrayList<>();
+
+        // Get chats that belongs to the user
+        chats.removeIf(chat -> !userService.getUsersInChat(chat.getId()).contains(userService.getCurrentUser().getUsername()));
 
         for (Chat chat : chats) {
             MessageDTO lastMessage = messageService.findLastMessageByChatId(chat.getId());
