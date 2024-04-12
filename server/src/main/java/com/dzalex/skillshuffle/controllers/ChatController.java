@@ -22,7 +22,7 @@ public class ChatController {
 
     @GetMapping("/chats")
     public List<ChatPreviewDTO> getChats() {
-        return chatService.getChatListWithLastMessage();
+        return chatService.getChatList();
     }
 
     @GetMapping("/chats/{id}")

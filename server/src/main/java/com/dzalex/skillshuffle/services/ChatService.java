@@ -5,7 +5,6 @@ import com.dzalex.skillshuffle.dtos.ChatPreviewDTO;
 import com.dzalex.skillshuffle.dtos.MessageDTO;
 import com.dzalex.skillshuffle.models.Chat;
 import com.dzalex.skillshuffle.models.Message;
-import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,21 +29,20 @@ public class ChatService {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private ChatMemberRepository chatMemberRepository;
 
-    public List<ChatPreviewDTO> getChatListWithLastMessage() {
+    public List<ChatPreviewDTO> getChatList() {
         List<Chat> chats = chatRepository.findAll();
-
-        // Get chat members and remove chat_member if user is not in the chat, then get chats again with updated list
-        chatMemberRepository.findAll().forEach(chatMember -> {
-            if (userService.getCurrentUser() == null || !chatMember.getMember().getUsername().equals(userService.getCurrentUser().getUsername())) {
-                chats.remove(chatMember.getChat());
-            }
-        });
-
         List<ChatPreviewDTO> chatPreviewDTOs = new ArrayList<>();
+
         for (Chat chat : chats) {
+
+            // Check if the current user is a member of the chat
+            String authedUsername = userService.getCurrentUser().getUsername();
+            if (!userService.getUsersInChat(chat.getId()).contains(authedUsername)) {
+                continue;
+            }
+
+            // Get the last message of the chat
             MessageDTO lastMessage = messageService.findLastMessageByChatId(chat.getId());
             ChatPreviewDTO chatPreviewDTO = new ChatPreviewDTO();
 
@@ -91,5 +89,14 @@ public class ChatService {
         messageDTOs.sort(Comparator.comparing(MessageDTO::getTimestamp));
 
         return messageDTOs;
+    }
+
+    // Get chat info
+    public Chat getChatInfo(Chat chat) {
+        ChatDTO chatDTO = new ChatDTO();
+        chatDTO.setId(chat.getId());
+        chatDTO.setName(chat.getName());
+        chatDTO.setType(chat.getType());
+        chatDTO.setAvatar_url(chat.getAvatar_url());
     }
 }

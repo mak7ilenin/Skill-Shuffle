@@ -189,23 +189,31 @@ function Chat() {
     const encryptedChatId = new URLSearchParams(location.search).get('c');
     if (encryptedChatId) {
       try {
+        // Decrypt the chat ID
         const decryptedChatId = AESDecrypt(encryptedChatId);
         if (decryptedChatId !== '' && !isNaN(decryptedChatId)) {
+          // Get the current chat messages
           getChatMessages(decryptedChatId);
         }
       } catch (error) {
         console.error("Error decrypting chat: ", error);
       }
     }
-  }, [location.search, getChatMessages, updateChatLastMessage, subscribeToChat]);
+  }, [location.search, getChatMessages, subscribeToChat]);
 
 
   useEffect(() => {
     axios.get(`${API_SERVER}/chats`, { withCredentials: true })
       .then(response => {
+        // If last message is null, then not include it in the chats
+        response.data = response.data.filter(chat => chat.last_message !== null);
+
+        // Encrypt the chat IDs before storing them
         response.data.forEach(chat => {
           chat.id = AESEncrypt(chat.id.toString());
         });
+
+        // Set the chats and filtered chats
         setChats(response.data);
         setFilteredChats(response.data);
       })
