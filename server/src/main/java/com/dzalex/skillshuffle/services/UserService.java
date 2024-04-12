@@ -1,5 +1,6 @@
 package com.dzalex.skillshuffle.services;
 
+import com.dzalex.skillshuffle.dtos.AuthRequestDTO;
 import com.dzalex.skillshuffle.models.ChatMember;
 import com.dzalex.skillshuffle.models.User;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
@@ -7,6 +8,7 @@ import com.dzalex.skillshuffle.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,5 +45,9 @@ public class UserService {
             usernames.add(chatMember.getMember().getUsername());
         }
         return usernames;
+    }
+
+    public AuthRequestDTO getCurrentUser() {
+        // Get the current user from the security context
     }
 }
