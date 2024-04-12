@@ -197,6 +197,7 @@ h1, h2, h3, h4, h5, h6, p {
   font-size: 32px;
   font-weight: 700;
   color: #fff;
+  cursor: pointer;
 }
 .chat-page .chat-menu .chat-menu-header .search-bar-container {
   height: 32px;
@@ -354,6 +355,76 @@ h1, h2, h3, h4, h5, h6, p {
   overflow: hidden;
   font-size: 16px;
   font-weight: 500;
+}
+.chat-page .chat-menu .new-chat {
+  font-family: "Manrope", sans-serif;
+}
+.chat-page .chat-menu .new-chat input.chat-name {
+  width: 250px;
+  height: 34px;
+  outline: none;
+  border: none;
+  position: relative;
+  font-weight: 600;
+  color: #373737;
+  border-bottom: 1px solid #8f8f8f;
+  transition: ease all 0.1s;
+}
+.chat-page .chat-menu .new-chat input.chat-name::-moz-placeholder {
+  color: #8f8f8f;
+  font-weight: 500;
+}
+.chat-page .chat-menu .new-chat input.chat-name::placeholder {
+  color: #8f8f8f;
+  font-weight: 500;
+}
+.chat-page .chat-menu .new-chat input.chat-name:focus-visible {
+  border-color: #373737;
+}
+.chat-page .chat-menu .new-chat .search-friend input {
+  border-left: 0;
+  border-right: 0;
+  border-color: rgba(143, 143, 143, 0.1450980392);
+  font-weight: 600;
+  color: #373737;
+  transition: ease all 0.1s;
+}
+.chat-page .chat-menu .new-chat .search-friend input::-moz-placeholder {
+  color: #8f8f8f;
+  font-weight: 500;
+}
+.chat-page .chat-menu .new-chat .search-friend input::placeholder {
+  color: #8f8f8f;
+  font-weight: 500;
+}
+.chat-page .chat-menu .new-chat .search-friend input:focus-visible {
+  outline: none;
+  border-color: rgba(143, 143, 143, 0.3137254902);
+}
+.chat-page .chat-menu .new-chat .friend-list {
+  height: auto;
+}
+.chat-page .chat-menu .new-chat .friend-list .friend-name {
+  font-weight: 500;
+  font-size: 18px;
+  color: #000;
+}
+.chat-page .chat-menu .new-chat .create-chat-footer {
+  background-color: #E3E3E3;
+}
+.chat-page .chat-menu .new-chat .create-chat-footer button {
+  font-family: "Mitr", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+}
+.chat-page .chat-menu .new-chat .create-chat-footer button.btn-light {
+  background-color: transparent;
+  border: none;
+  color: #8F8F8F;
+}
+.chat-page .chat-menu .new-chat .create-chat-footer button.btn-primary {
+  background-color: #5D6BE4;
+  padding: 0 26px;
 }
 .chat-page .chat-box {
   width: 72.39%;
