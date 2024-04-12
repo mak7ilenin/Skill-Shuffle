@@ -1,6 +1,6 @@
 package com.dzalex.skillshuffle.services;
 
-import com.dzalex.skillshuffle.models.RefreshToken;
+import com.dzalex.skillshuffle.entities.RefreshToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

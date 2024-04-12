@@ -3,8 +3,8 @@ package com.dzalex.skillshuffle.services;
 import com.dzalex.skillshuffle.dtos.ChatDTO;
 import com.dzalex.skillshuffle.dtos.ChatPreviewDTO;
 import com.dzalex.skillshuffle.dtos.MessageDTO;
-import com.dzalex.skillshuffle.models.Chat;
-import com.dzalex.skillshuffle.models.Message;
+import com.dzalex.skillshuffle.entities.Chat;
+import com.dzalex.skillshuffle.entities.ChatMessage;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class ChatService {
             chatPreviewDTO.setId(chat.getId());
             chatPreviewDTO.setName(chat.getName());
             chatPreviewDTO.setType(chat.getType());
-            chatPreviewDTO.setAvatar_url(chat.getAvatar_url());
+            chatPreviewDTO.setAvatar_url(chat.getAvatarUrl());
             chatPreviewDTO.setLast_message(lastMessage);
 
             chatPreviewDTOs.add(chatPreviewDTO);
@@ -60,11 +60,7 @@ public class ChatService {
     }
 
     public ChatDTO getChatWithMessages(Chat chat) {
-        ChatDTO chatDTO = new ChatDTO();
-        chatDTO.setId(chat.getId());
-        chatDTO.setName(chat.getName());
-        chatDTO.setType(chat.getType());
-        chatDTO.setAvatar_url(chat.getAvatar_url());
+        ChatDTO chatDTO = getChatInfo(chat);
 
         // Load only 30 last messages
         chatDTO.setMessages(getChatMessages(chat.getId(), 30, 0));
@@ -73,12 +69,12 @@ public class ChatService {
     }
 
     // Get chat messages with limit and offset parameters
-    public List<MessageDTO> getChatMessages(Long chatId, int limit, int offset) {
-        List<Message> messages = messageRepository.findMessagesByChatId(chatId);
+    public List<MessageDTO> getChatMessages(Integer chatId, int limit, int offset) {
+        List<ChatMessage> messages = messageRepository.findMessagesByChatId(chatId);
         List<MessageDTO> messageDTOs = new ArrayList<>();
 
         // Sort messages by latest timestamp
-        messages.sort(Comparator.comparing(Message::getTimestamp).reversed());
+        messages.sort(Comparator.comparing(ChatMessage::getTimestamp).reversed());
 
         // Add messages to the list with limit and offset
         for (int i = offset; i < messages.size() && i < offset + limit; i++) {
@@ -92,11 +88,13 @@ public class ChatService {
     }
 
     // Get chat info
-    public Chat getChatInfo(Chat chat) {
+    public ChatDTO getChatInfo(Chat chat) {
         ChatDTO chatDTO = new ChatDTO();
         chatDTO.setId(chat.getId());
         chatDTO.setName(chat.getName());
         chatDTO.setType(chat.getType());
-        chatDTO.setAvatar_url(chat.getAvatar_url());
+        chatDTO.setAvatar_url(chat.getAvatarUrl());
+
+        return chatDTO;
     }
 }

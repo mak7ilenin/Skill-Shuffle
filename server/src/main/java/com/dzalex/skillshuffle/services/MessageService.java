@@ -3,8 +3,8 @@ package com.dzalex.skillshuffle.services;
 import com.dzalex.skillshuffle.dtos.MessageDTO;
 import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.enums.MessageStatus;
-import com.dzalex.skillshuffle.models.Message;
-import com.dzalex.skillshuffle.models.User;
+import com.dzalex.skillshuffle.entities.ChatMessage;
+import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
@@ -25,7 +25,7 @@ public class MessageService {
     @Autowired
     private UserRepository userRepository;
 
-    public Message saveMessage(Message message, String chatId) {
+    public ChatMessage saveMessage(ChatMessage message, Integer chatId) {
         // Find the sender of the message
         User sender = userRepository.findByNickname(message.getSender().getNickname());
 
@@ -34,9 +34,9 @@ public class MessageService {
         }
 
         // Create a new message and set its attributes
-        Message savedMessage = new Message();
+        ChatMessage savedMessage = new ChatMessage();
         savedMessage.setSender(sender);
-        savedMessage.setChat(chatRepository.findChatById(Long.parseLong(chatId)));
+        savedMessage.setChat(chatRepository.findChatById(chatId));
         savedMessage.setContent(message.getContent());
         savedMessage.setTimestamp(message.getTimestamp());
         savedMessage.setStatus(MessageStatus.SENT);
@@ -45,21 +45,21 @@ public class MessageService {
         return messageRepository.save(savedMessage);
     }
 
-    public MessageDTO findLastMessageByChatId(Long chatId) {
-        List<Message> messages = messageRepository.findMessagesByChatId(chatId);
+    public MessageDTO findLastMessageByChatId(Integer chatId) {
+        List<ChatMessage> messages = messageRepository.findMessagesByChatId(chatId);
 
         // Check if messages list is not empty
         if (!messages.isEmpty()) {
             // Sort messages by timestamp in descending order to get the last message
-            messages.sort(Comparator.comparing(Message::getTimestamp).reversed());
-            Message lastMessage = messages.get(0);
+            messages.sort(Comparator.comparing(ChatMessage::getTimestamp).reversed());
+            ChatMessage lastMessage = messages.get(0);
             return new MessageDTO(
                     lastMessage.getId(),
                     new PublicUserDTO(
-                            lastMessage.getSender().getFirst_name(),
-                            lastMessage.getSender().getLast_name(),
+                            lastMessage.getSender().getFirstName(),
+                            lastMessage.getSender().getLastName(),
                             lastMessage.getSender().getNickname(),
-                            lastMessage.getSender().getAvatar_url()),
+                            lastMessage.getSender().getAvatarUrl()),
                     lastMessage.getContent(),
                     lastMessage.getTimestamp(),
                     lastMessage.getStatus());
@@ -68,14 +68,14 @@ public class MessageService {
         }
     }
 
-    public MessageDTO convertToDTO(Message message) {
+    public MessageDTO convertToDTO(ChatMessage message) {
         return new MessageDTO(
                 message.getId(),
                 new PublicUserDTO(
-                        message.getSender().getFirst_name(),
-                        message.getSender().getLast_name(),
+                        message.getSender().getFirstName(),
+                        message.getSender().getLastName(),
                         message.getSender().getNickname(),
-                        message.getSender().getAvatar_url()),
+                        message.getSender().getAvatarUrl()),
                 message.getContent(),
                 message.getTimestamp(),
                 message.getStatus());

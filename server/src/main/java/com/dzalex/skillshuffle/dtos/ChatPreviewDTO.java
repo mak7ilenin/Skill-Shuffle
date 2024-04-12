@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ChatPreviewDTO {
-    private Long id;
+    private Integer id;
     private String name;
     private ChatType type;
     private String avatar_url;

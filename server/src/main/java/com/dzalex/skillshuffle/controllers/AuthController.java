@@ -3,8 +3,8 @@ package com.dzalex.skillshuffle.controllers;
 import com.dzalex.skillshuffle.dtos.AuthRequestDTO;
 import com.dzalex.skillshuffle.dtos.JwtResponseDTO;
 import com.dzalex.skillshuffle.dtos.PublicUserDTO;
-import com.dzalex.skillshuffle.models.RefreshToken;
-import com.dzalex.skillshuffle.models.User;
+import com.dzalex.skillshuffle.entities.RefreshToken;
+import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import com.dzalex.skillshuffle.services.JwtHelper;
 import com.dzalex.skillshuffle.services.RefreshTokenService;
@@ -65,10 +65,10 @@ public class AuthController {
                     .username(request.getUsername())
                     .access_token(helper.createAccessTokenCookie(response, userDetails))
                     .user(new PublicUserDTO(
-                            user.getFirst_name(),
-                            user.getLast_name(),
+                            user.getFirstName(),
+                            user.getLastName(),
                             user.getNickname(),
-                            user.getAvatar_url()))
+                            user.getAvatarUrl()))
                     .build();
             return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
         } else {
@@ -103,10 +103,10 @@ public class AuthController {
                         .username(userDetails.getUsername())
                         .access_token(token)
                         .user(new PublicUserDTO(
-                                user.getFirst_name(),
-                                user.getLast_name(),
+                                user.getFirstName(),
+                                user.getLastName(),
                                 user.getNickname(),
-                                user.getAvatar_url()))
+                                user.getAvatarUrl()))
                         .build(), HttpStatus.OK);
             }
         }

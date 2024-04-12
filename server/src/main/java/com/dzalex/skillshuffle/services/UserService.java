@@ -1,8 +1,8 @@
 package com.dzalex.skillshuffle.services;
 
 import com.dzalex.skillshuffle.dtos.AuthRequestDTO;
-import com.dzalex.skillshuffle.models.ChatMember;
-import com.dzalex.skillshuffle.models.User;
+import com.dzalex.skillshuffle.entities.ChatMember;
+import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,8 @@ public class UserService {
         return userRepo.save(user);
     }
 
-    public List<String> getUsersInChat(Long chatId) {
+    @Transactional
+    public List<String> getUsersInChat(Integer chatId) {
         List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);
         List<String> usernames = new ArrayList<>();
         for (ChatMember chatMember : chatMembers) {

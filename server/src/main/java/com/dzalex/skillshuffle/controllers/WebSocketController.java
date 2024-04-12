@@ -3,10 +3,10 @@ package com.dzalex.skillshuffle.controllers;
 import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.enums.ChatType;
 import com.dzalex.skillshuffle.enums.NotificationType;
-import com.dzalex.skillshuffle.models.Chat;
-import com.dzalex.skillshuffle.models.Message;
-import com.dzalex.skillshuffle.models.ChatNotification;
-import com.dzalex.skillshuffle.models.User;
+import com.dzalex.skillshuffle.entities.Chat;
+import com.dzalex.skillshuffle.entities.ChatMessage;
+import com.dzalex.skillshuffle.dtos.ChatNotificationDTO;
+import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import com.dzalex.skillshuffle.services.MessageService;
@@ -40,12 +40,12 @@ public class WebSocketController {
     private SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/chat")
-    public void sendMessage(@Payload Message message) {
-        String chatId = message.getChat().getId().toString();
-        Message savedMessage = messageService.saveMessage(message, chatId);
+    public void sendMessage(@Payload ChatMessage message) {
+        Integer chatId = message.getChat().getId();
+        ChatMessage savedMessage = messageService.saveMessage(message, chatId);
 
         // Get all users in this chat
-        List<String> usernames = userService.getUsersInChat(Long.parseLong(chatId));
+        List<String> usernames = userService.getUsersInChat(chatId);
         User sender = userRepository.findByNickname(message.getSender().getNickname());
         String senderUsername = sender.getUsername();
 
@@ -58,24 +58,24 @@ public class WebSocketController {
         sendNotification(chatId, savedMessage, usernames, sender);
     }
 
-    public void sendNotification(String chatId, Message message, List<String> usernames, User sender) {
+    public void sendNotification(Integer chatId, ChatMessage message, List<String> usernames, User sender) {
         // Create notification message based on chat type
         String notificationMessage = "";
-        Chat chat = chatRepository.findChatById(Long.parseLong(chatId));
+        Chat chat = chatRepository.findChatById(chatId);
         if (chat.getType() == ChatType.PRIVATE) {
-            notificationMessage = sender.getFirst_name() + " sent you a message";
+            notificationMessage = sender.getFirstName() + " sent you a message";
         } else if (chat.getType() == ChatType.GROUP) {
             notificationMessage = "New message in " + chat.getName();
         }
 
         // Create notification object
-        ChatNotification notification = new ChatNotification(
+        ChatNotificationDTO notification = new ChatNotificationDTO(
                 chat,
                 new PublicUserDTO(
-                        sender.getFirst_name(),
-                        sender.getLast_name(),
+                        sender.getFirstName(),
+                        sender.getLastName(),
                         sender.getNickname(),
-                        sender.getAvatar_url()
+                        sender.getAvatarUrl()
                 ),
                 notificationMessage,
                 message.getContent(),

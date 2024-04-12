@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Builder
 public class MessageDTO {
-    private Long id;
+    private Integer id;
     private PublicUserDTO sender;
     private String content;
     private Timestamp timestamp;

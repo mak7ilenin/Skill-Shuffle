@@ -1,7 +1,8 @@
 package com.dzalex.skillshuffle.dtos;
 
+import com.dzalex.skillshuffle.entities.Community;
 import com.dzalex.skillshuffle.enums.ChatType;
-import com.dzalex.skillshuffle.models.User;
+import com.dzalex.skillshuffle.entities.User;
 import lombok.*;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ChatDTO {
-    private Long id;
+    private Integer id;
     private String name;
     private ChatType type;
     private String avatar_url;

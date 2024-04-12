@@ -1,11 +1,11 @@
 package com.dzalex.skillshuffle.repositories;
 
-import com.dzalex.skillshuffle.models.Message;
+import com.dzalex.skillshuffle.entities.ChatMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface MessageRepository  extends JpaRepository<Message, Long> {
-    Message findMessageById(Long id);
-    List<Message> findMessagesByChatId(Long chatId);
+public interface MessageRepository  extends JpaRepository<ChatMessage, Long> {
+    ChatMessage findMessageById(Integer id);
+    List<ChatMessage> findMessagesByChatId(Integer chatId);
 }
