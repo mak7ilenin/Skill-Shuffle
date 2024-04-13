@@ -25,6 +25,7 @@ function Header() {
         setAuthUser(null);
         navigate('/sign-in');
     };
+
     useEffect(() => {
         const currentUrl = window.location.href;
         if (currentUrl.indexOf('my-profile') > -1) {
@@ -34,21 +35,19 @@ function Header() {
                 div.querySelector('p').style.display = 'block';
 
             });
-        }else{
+        } else {
             document.querySelectorAll('.logo-container').forEach(div => {
                 div.querySelector('.row').querySelectorAll('p').forEach(div => {
                     div.style.display = 'none';
                 });
             });
         }
-        // document.querySelector('.dropdown-container').addEventListener('click', function() {
-        //     document.querySelector('#secondElement').click();
-        // });
     }, []);
+    
     return (
         <div className='default-header d-flex flex-column closed'>
             <Container className='logo-container w-100 d-flex align-items-center'>
-                <a className='d-flex flex-row' href="/" style={{textDecoration: 'none', fontFamily: 'Russo One', color: 'black'}}>
+                <a className='d-flex flex-row' href="/" style={{ textDecoration: 'none', fontFamily: 'Russo One', color: 'black' }}>
                     <Image
                         src={Logo}
                         className='logo'
@@ -57,8 +56,8 @@ function Header() {
                         height={51}
                     />
                     <Row>
-                        <p style={{fontSize: '28px', height: '28px', letterSpacing: '4px', display: 'flex', alignItems: 'center'}}>SKILL</p>
-                        <p style={{height: '19px', display: 'flex', alignItems: 'center'}}>SHUFFLE</p>
+                        <p style={{ fontSize: '28px', height: '28px', letterSpacing: '4px', display: 'flex', alignItems: 'center' }}>SKILL</p>
+                        <p style={{ height: '19px', display: 'flex', alignItems: 'center' }}>SHUFFLE</p>
                     </Row>
                 </a>
             </Container>

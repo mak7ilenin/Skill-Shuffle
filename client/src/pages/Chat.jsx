@@ -54,7 +54,7 @@ function Chat() {
       .catch(error => {
         console.error(error.response?.data.message || error.message);
       });
-  }, []);
+  }, [setChoosenChat]);
 
 
   const subscribeToChat = useCallback((chatId) => {
@@ -193,7 +193,7 @@ function Chat() {
         console.error("Error decrypting chat: ", error);
       }
     }
-  }, [location.search, getChatMessages, subscribeToChat]);
+  }, [location.search, getChatMessages]);
 
 
   useEffect(() => {
@@ -220,7 +220,12 @@ function Chat() {
   return (
     <div className="chat-page w-100 d-flex">
 
-      <ChatMenu chats={chats} setFilteredChats={setFilteredChats} filteredChats={filteredChats} />
+      <ChatMenu
+        chats={chats}
+        setFilteredChats={setFilteredChats}
+        filteredChats={filteredChats}
+        choosenChat={choosenChat}
+      />
 
       {choosenChat.id === undefined ? (
         // If no chat is selected, display:

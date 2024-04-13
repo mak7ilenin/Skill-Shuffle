@@ -7,6 +7,8 @@
         background-color: #fff;
         border-right: 1px solid #ccc;
         flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
 
         .chat-menu-header {
             height: 80px;
@@ -80,11 +82,6 @@
                     display: none;
                     position: absolute;
                     right: 15px;
-                    cursor: pointer;
-
-                    path {
-                        fill: #fff;
-                    }
                 }
             }
 
@@ -96,11 +93,22 @@
                     border: none;
                     background: transparent;
                     padding: 0;
+
+                    &:focus-visible {
+                        outline: none;
+                    }
                 }
 
                 svg {
-                    width: 29px;
-                    height: 29px;
+                    &.new-icon {
+                        width: 29px;
+                        height: 29px;
+                    }
+
+                    &.cross-icon {
+                        width: 22px;
+                        height: 22px;
+                    }
                 }
             }
         }
@@ -141,6 +149,7 @@
         .chat-preview {
             padding: 13px 14px !important;
             border-bottom: 1px solid #8f8f8f25;
+            margin: 0 !important;
 
             &>* {
                 font-family: $main-font;
@@ -209,6 +218,7 @@
 
         .new-chat {
             font-family: $main-font;
+            flex: 1;
 
             input.chat-name {
                 width: 250px;
@@ -251,7 +261,16 @@
             }
 
             .friend-list {
-                height: auto;
+                .friend-container {
+                    cursor: pointer;
+                    border-radius: 0;
+                    background-color: transparent;
+                    transition: ease all .1s;
+
+                    &:hover {
+                        background-color: #f5f5f5;
+                    }
+                }
 
                 .friend-name {
                     font-weight: 500;
@@ -261,9 +280,11 @@
             }
 
             .create-chat-footer {
+                max-height: 83px;
                 background-color: #E3E3E3;
 
                 button {
+                    height: 40px;
                     font-family: $secondary-font;
                     font-weight: 400;
                     font-size: 16px;
@@ -277,6 +298,7 @@
                     &.btn-primary {
                         background-color: #5D6BE4;
                         padding: 0 26px;
+                        border-radius: 7px;
                     }
                 }
             }
@@ -580,5 +602,82 @@
 
     .gpr-category-list {
         grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+.cross-icon {
+    cursor: pointer;
+
+    path {
+        fill: #fff;
+    }
+}
+
+.rounded-checkbox-label {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid #8F8F8F;
+    cursor: pointer;
+
+    &::after {
+        content: '🗸';
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background-color: $primary-color;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+        padding-top: 2px;
+        display: none;
+    }
+
+    &.checked {
+        border: 1px solid $primary-color;
+
+        &::after {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}
+
+.upload-modal {
+    font-family: $main-font;
+
+    .modal-content {
+        width: 600px;
+    }
+
+    .modal-title {
+        font-weight: 600;
+        font-size: 18px;
+        color: #373737;
+    }
+
+    .modal-body {
+        p {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #373737;
+        }
+
+        button {
+            height: 29px;
+            background-color: #5D6BE4;
+            font-family: $secondary-font;
+            font-size: 14px;
+            font-weight: 300;
+        }
+    }
+
+    .modal-footer {
+        font-size: 12px;
+        font-weight: 400;
+        color: #373737;
     }
 }

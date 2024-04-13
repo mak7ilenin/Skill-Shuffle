@@ -117,7 +117,7 @@ public class ChatService {
                 chatMemberRepository.findAllByChatId(chat.getId()).forEach(chatMember -> {
                     if (!chatMember.getMember().getUsername().equals(authedUser.getUsername())) {
                         User chatPartner = chatMember.getMember();
-                        chatDTO.setUser(chatPartner);
+                        chatDTO.setUser(userService.getPublicUserDTO(chatPartner));
                         chatDTO.setAvatarUrl(chatPartner.getAvatarUrl());
                         chatDTO.setName(chatPartner.getFirstName() + " " + chatPartner.getLastName());
                     }

@@ -7,7 +7,7 @@ import ChatMenuHeader from './ChatMenuHeader';
 import ChatTypeFilter from './ChatTypeFilter';
 import CreateChat from './CreateChat';
 
-function ChatMenu({ chats, setFilteredChats, filteredChats }) {
+function ChatMenu({ chats, setFilteredChats, filteredChats, choosenChat }) {
     const navigate = useNavigate();
     const [newChatVisibility, setNewChatVisibility] = useState(false);
 
@@ -15,17 +15,17 @@ function ChatMenu({ chats, setFilteredChats, filteredChats }) {
         setFilteredChats(chats.filter(chat => chat.name.toLowerCase().includes(search.toLowerCase())));
     };
 
-    const handleCreateChat = () => {
-        setNewChatVisibility(true);
+    const handleCreateChat = (state) => {
+        setNewChatVisibility(state);
     };
 
     return (
         <Container className='chat-menu'>
 
             <ChatMenuHeader getSearch={getSearch} createChat={handleCreateChat} />
-            {/* <CreateChat /> */}
 
             {!newChatVisibility ? (
+                // Default view with chat previews
                 <>
                     <ChatTypeFilter setChats={setFilteredChats} chats={chats} />
                     <Stack direction='vertical'>
@@ -39,9 +39,9 @@ function ChatMenu({ chats, setFilteredChats, filteredChats }) {
                     </Stack>
                 </>
             ) : (
+                // Create chat view
                 <CreateChat />
             )}
-
 
         </Container>
     )

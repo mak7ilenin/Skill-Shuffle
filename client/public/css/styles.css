@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Russo+One&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
@@ -183,6 +184,8 @@ h1, h2, h3, h4, h5, h6, p {
   background-color: #fff;
   border-right: 1px solid #ccc;
   flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 .chat-page .chat-menu .chat-menu-header {
   height: 80px;
@@ -250,10 +253,6 @@ h1, h2, h3, h4, h5, h6, p {
   display: none;
   position: absolute;
   right: 15px;
-  cursor: pointer;
-}
-.chat-page .chat-menu .chat-menu-header .search-bar-container .cross-icon path {
-  fill: #fff;
 }
 .chat-page .chat-menu .chat-menu-header .create-chat {
   width: -moz-fit-content;
@@ -265,9 +264,16 @@ h1, h2, h3, h4, h5, h6, p {
   background: transparent;
   padding: 0;
 }
-.chat-page .chat-menu .chat-menu-header .create-chat svg {
+.chat-page .chat-menu .chat-menu-header .create-chat button:focus-visible {
+  outline: none;
+}
+.chat-page .chat-menu .chat-menu-header .create-chat svg.new-icon {
   width: 29px;
   height: 29px;
+}
+.chat-page .chat-menu .chat-menu-header .create-chat svg.cross-icon {
+  width: 22px;
+  height: 22px;
 }
 .chat-page .chat-menu .chat-types {
   height: 58px;
@@ -301,6 +307,7 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-menu .chat-preview {
   padding: 13px 14px !important;
   border-bottom: 1px solid rgba(143, 143, 143, 0.1450980392);
+  margin: 0 !important;
 }
 .chat-page .chat-menu .chat-preview > * {
   font-family: "Manrope", sans-serif;
@@ -358,6 +365,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .chat-page .chat-menu .new-chat {
   font-family: "Manrope", sans-serif;
+  flex: 1;
 }
 .chat-page .chat-menu .new-chat input.chat-name {
   width: 250px;
@@ -401,8 +409,14 @@ h1, h2, h3, h4, h5, h6, p {
   outline: none;
   border-color: rgba(143, 143, 143, 0.3137254902);
 }
-.chat-page .chat-menu .new-chat .friend-list {
-  height: auto;
+.chat-page .chat-menu .new-chat .friend-list .friend-container {
+  cursor: pointer;
+  border-radius: 0;
+  background-color: transparent;
+  transition: ease all 0.1s;
+}
+.chat-page .chat-menu .new-chat .friend-list .friend-container:hover {
+  background-color: #f5f5f5;
 }
 .chat-page .chat-menu .new-chat .friend-list .friend-name {
   font-weight: 500;
@@ -410,9 +424,11 @@ h1, h2, h3, h4, h5, h6, p {
   color: #000;
 }
 .chat-page .chat-menu .new-chat .create-chat-footer {
+  max-height: 83px;
   background-color: #E3E3E3;
 }
 .chat-page .chat-menu .new-chat .create-chat-footer button {
+  height: 40px;
   font-family: "Mitr", sans-serif;
   font-weight: 400;
   font-size: 16px;
@@ -425,6 +441,7 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-menu .new-chat .create-chat-footer button.btn-primary {
   background-color: #5D6BE4;
   padding: 0 26px;
+  border-radius: 7px;
 }
 .chat-page .chat-box {
   width: 72.39%;
@@ -664,6 +681,72 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .gif-picker .gpr-category-list {
   grid-template-columns: repeat(2, 1fr) !important;
+}
+
+.cross-icon {
+  cursor: pointer;
+}
+.cross-icon path {
+  fill: #fff;
+}
+
+.rounded-checkbox-label {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #8F8F8F;
+  cursor: pointer;
+}
+.rounded-checkbox-label::after {
+  content: "🗸";
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #3D00FF;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding-top: 2px;
+  display: none;
+}
+.rounded-checkbox-label.checked {
+  border: 1px solid #3D00FF;
+}
+.rounded-checkbox-label.checked::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-modal {
+  font-family: "Manrope", sans-serif;
+}
+.upload-modal .modal-content {
+  width: 600px;
+}
+.upload-modal .modal-title {
+  font-weight: 600;
+  font-size: 18px;
+  color: #373737;
+}
+.upload-modal .modal-body p {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #373737;
+}
+.upload-modal .modal-body button {
+  height: 29px;
+  background-color: #5D6BE4;
+  font-family: "Mitr", sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+}
+.upload-modal .modal-footer {
+  font-size: 12px;
+  font-weight: 400;
+  color: #373737;
 }
 
 .wrapper-profile {

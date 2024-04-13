@@ -8,6 +8,7 @@ import { ReactComponent as Cross } from '../assets/icons/cross-icon.svg';
 
 function ChatMenuHeader({ getSearch, createChat }) {
     const [search, setSearch] = useState('');
+    const [newChatVisibility, setNewChatVisibility] = useState(false);
     const navigate = useNavigate();
 
     const handleSearch = (e) => {
@@ -20,12 +21,17 @@ function ChatMenuHeader({ getSearch, createChat }) {
         getSearch('');
     };
 
+    const handleCreateChat = (state) => {
+        setNewChatVisibility(state);
+        createChat(state);
+    };
+
     return (
         <Row className='chat-menu-header w-100 d-flex'>
             <Col className='header-name' onClick={() => { navigate('/messenger'); window.location.reload(); }}>
                 Messages
             </Col>
-            <Col className='search-bar-container mx-3 d-flex flex-grow-1 justify-content-center w-auto'>
+            <Col className={`search-bar-container mx-3 d-flex justify-content-center w-auto ${newChatVisibility ? 'invisible' : 'visible'}`}>
                 <div className={`search-bar w-auto d-flex align-items-center ${search !== '' ? 'active' : ''}`}>
                     <Search className='search-icon' />
                     <input
@@ -38,9 +44,15 @@ function ChatMenuHeader({ getSearch, createChat }) {
                 </div>
             </Col>
             <Col className='create-chat'>
-                <button className='d-flex align-items-center justify-content-center' onClick={createChat}>
-                    <NewChatIcon />
-                </button>
+                {newChatVisibility ? (
+                    <button className='d-flex align-items-center justify-content-center' onClick={() => handleCreateChat(false)}>
+                        <Cross className='cross-icon' />
+                    </button>
+                ) : (
+                    <button className='d-flex align-items-center justify-content-center' onClick={() => handleCreateChat(true)}>
+                        <NewChatIcon className='new-icon' />
+                    </button>
+                )}
             </Col>
         </Row>
     );

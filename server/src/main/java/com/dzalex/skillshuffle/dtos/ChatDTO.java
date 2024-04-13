@@ -19,5 +19,5 @@ public class ChatDTO {
     private List<MessageDTO> messages;
     private int memberCount;
     private CommunityPreviewDTO community;
-    private User user;
+    private PublicUserDTO user;
 }
