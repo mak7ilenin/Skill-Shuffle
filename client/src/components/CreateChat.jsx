@@ -13,8 +13,10 @@ function CreateChat() {
     const { authUser } = useAuth();
     const [friends, setFriends] = useState([]);
     const [filteredFriends, setFilteredFriends] = useState([]);
+    const [chatName, setChatName] = useState('');
     const [imageURL, setImageURL] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [selectedFriends, setSelectedFriends] = useState([]);
 
     useEffect(() => {
         axios.get(`${API_SERVER}/users/${authUser.nickname}/friends`, { withCredentials: true })
@@ -27,7 +29,7 @@ function CreateChat() {
             });
     }, [authUser, setFriends]);
 
-    const handleFriendClick = (e) => {
+    const handleSelectFriend = (e, friend) => {
         const friendContainer = e.target.closest('.friend-container');
         const checkbox = friendContainer.querySelector('input[type="checkbox"]');
         const label = friendContainer.querySelector('.rounded-checkbox-label');
@@ -38,9 +40,15 @@ function CreateChat() {
             if (checkbox.checked) {
                 // Friend added
                 label.classList.add('checked');
+                setSelectedFriends(prev => {
+                    return [...prev, friend.nickname];
+                });
             } else {
                 // Friend removed
                 label.classList.remove('checked');
+                setSelectedFriends(prev => {
+                    return prev.filter(nickname => nickname !== friend.nickname);
+                });
             }
         }
     };
@@ -55,6 +63,33 @@ function CreateChat() {
 
     const handleOpenModal = () => {
         setShowModal(true);
+    };
+
+    const handleCreateChat = () => {
+        if (chatName) {
+            const formData = new FormData();
+            formData.append('name', chatName);
+            formData.append('type', selectedFriends.length === 1 ? 'private' : 'group');
+            formData.append('members', JSON.stringify(selectedFriends));
+
+            // Check if an image file is selected
+            if (imageURL) {
+                formData.append('avatarUrl', imageURL);
+            }
+
+            axios.post(`${API_SERVER}/chats`, formData, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then(response => {
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
     };
 
     return (
@@ -79,6 +114,8 @@ function CreateChat() {
                         type='text'
                         placeholder='Enter a chat name'
                         className='chat-name'
+                        value={chatName}
+                        onChange={(e) => setChatName(e.target.value)}
                     />
                 </Col>
             </Row>
@@ -97,7 +134,7 @@ function CreateChat() {
                         variant='light'
                         title='friend'
                         className="friend-container d-flex align-items-center border-0 px-4"
-                        onClick={handleFriendClick}
+                        onClick={(e) => handleSelectFriend(e, friend)}
                     >
                         <div className="friend-info w-75 d-flex align-items-center">
                             <CreateImage
@@ -110,19 +147,39 @@ function CreateChat() {
                             <span className='friend-name ms-3'>{friend.firstName} {friend.lastName}</span>
                         </div>
                         <div className="friend-add w-25 d-flex justify-content-end align-items-center">
-                            <label className="rounded-checkbox-label d-flex align-items-center justify-content-center">
-                                <input title='add-friend' type="checkbox" name="friend" className='d-none' />
+                            <label className={`rounded-checkbox-label d-flex align-items-center justify-content-center ${selectedFriends.includes(friend.nickname) ? 'checked' : ''}`}>
+                                <input
+                                    title='add-friend'
+                                    type="checkbox"
+                                    name="friend"
+                                    className='d-none'
+                                    checked={selectedFriends.includes(friend.nickname)}
+                                    onChange={(e) => handleSelectFriend(e, friend)}
+                                />
                             </label>
                         </div>
                     </Button>
                 ))}
             </Stack>
 
-            <Row className='create-chat-footer d-flex justify-content-end align-items-center py-3 px-4'>
-                <Button variant='light' className='w-auto me-3'>Cancel</Button>
-                <Button variant='primary' className='w-auto'>Create group</Button>
-            </Row>
-        </Container>
+            {selectedFriends.length > 0 || chatName !== '' ? (
+                <Row className='create-chat-footer d-flex justify-content-end align-items-center py-3 px-4'>
+                    <Button variant='light' className='w-auto me-3'>Cancel</Button>
+                    {chatName !== '' ? (
+                        <Button variant='primary' className='w-auto' onClick={handleCreateChat}>Create chat</Button>
+                    ) : (
+                        <>
+                            {selectedFriends.length === 1 ? (
+                                <Button variant='primary' className='w-auto' onClick={handleCreateChat}>Open chat</Button>
+                            ) : null}
+                            {selectedFriends.length > 1 ? (
+                                <Button variant='primary' className='w-auto' onClick={handleCreateChat}>Create chat</Button>
+                            ) : null}
+                        </>
+                    )}
+                </Row>
+            ) : null}
+        </Container >
     )
 }
 

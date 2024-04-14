@@ -9,12 +9,15 @@ function UploadChatAvatarModal({ showModal, setShowModal, setImageURL }) {
     };
 
     const { getRootProps, getInputProps } = useDropzone({
-        accept: 'image/*',
+        accept: {
+            'image/*': ['.jpg', '.jpeg', '.png']
+        },
         onDrop: acceptedFiles => {
             const file = acceptedFiles[0];
             const reader = new FileReader();
 
             reader.onload = () => {
+                console.log(reader.result);
                 setImageURL(reader.result);
             };
 

@@ -1,18 +1,20 @@
 package com.dzalex.skillshuffle.services;
 
-import com.dzalex.skillshuffle.dtos.ChatDTO;
-import com.dzalex.skillshuffle.dtos.ChatPreviewDTO;
-import com.dzalex.skillshuffle.dtos.CommunityPreviewDTO;
-import com.dzalex.skillshuffle.dtos.MessageDTO;
+import com.dzalex.skillshuffle.dtos.*;
 import com.dzalex.skillshuffle.entities.*;
+import com.dzalex.skillshuffle.enums.ChatType;
+import com.dzalex.skillshuffle.enums.MemberRole;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.CommunityChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -39,6 +41,9 @@ public class ChatService {
 
     @Autowired
     private ChatMemberRepository chatMemberRepository;
+
+    @Autowired
+    private MediaService mediaService;
 
     public List<ChatPreviewDTO> getChatList() {
         List<Chat> chats = chatRepository.findAll();
@@ -131,5 +136,45 @@ public class ChatService {
         }
 
         return chatDTO;
+    }
+
+    // Create a new chat
+    public NewChatDTO createChat(NewChatDTO chat, MultipartFile avatarUrl) throws IOException {
+        Chat newChat = Chat.builder()
+                .name(chat.getName())
+                .type(chat.getType())
+                .avatarUrl(null)
+                .build();
+        chatRepository.save(newChat);
+
+        // Save the avatar image if provided
+        if (avatarUrl != null) {
+            String avatarFilePath = "chats/chat-" + newChat.getId() + "/avatar/";
+            newChat.setAvatarUrl(mediaService.uploadImage(avatarUrl, avatarFilePath));
+            chatRepository.save(newChat);
+        }
+
+        // Add the current user to the chat
+        addMemberToChat(newChat, userService.getCurrentUser(), getRoleByChatType(chat.getType()));
+
+        // Add members to the chat
+        Arrays.stream(chat.getMembers())
+              .map(userService::getUserByNickname)
+              .forEach(user -> addMemberToChat(newChat, user, MemberRole.MEMBER));
+
+        return chat;
+    }
+
+    private void addMemberToChat(Chat chat, User user, MemberRole role) {
+        ChatMember chatMember = ChatMember.builder()
+                .chat(chat)
+                .member(user)
+                .role(role)
+                .build();
+        chatMemberRepository.save(chatMember);
+    }
+
+    private MemberRole getRoleByChatType(ChatType chatType) {
+        return chatType == ChatType.GROUP ? MemberRole.CREATOR : MemberRole.MEMBER;
     }
 }
