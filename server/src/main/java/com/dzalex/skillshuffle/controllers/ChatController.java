@@ -7,6 +7,7 @@ import com.dzalex.skillshuffle.dtos.NewChatDTO;
 import com.dzalex.skillshuffle.entities.Chat;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.services.ChatService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,13 +31,17 @@ public class ChatController {
     }
 
     @PostMapping("/chats")
-    public ResponseEntity<NewChatDTO> createChat(@RequestBody NewChatDTO chat,
-                                 @RequestParam(required = false, name = "avatarUrl") MultipartFile avatarUrl) throws IOException {
-        NewChatDTO createdChat = chatService.createChat(chat, avatarUrl);
+    public ResponseEntity<Chat> createChat(@RequestParam("chat") String chatStr,
+                                                 @RequestParam(required = false, name = "avatarBlob") MultipartFile avatarBlob) throws IOException {
+        // Convert chatStr to NewChatDTO object
+        ObjectMapper mapper = new ObjectMapper();
+        NewChatDTO chat = mapper.readValue(chatStr, NewChatDTO.class);
+
+        Chat createdChat = chatService.createChat(chat, avatarBlob);
         if (createdChat != null) {
             return ResponseEntity.ok(createdChat);
         } else {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 

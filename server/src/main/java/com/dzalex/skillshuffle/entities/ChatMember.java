@@ -34,9 +34,10 @@ public class ChatMember {
     private MemberRole role;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "joined_at", nullable = false)
+    @Column(name = "joined_at")
     private Timestamp joinedAt;
 
+    @ColumnDefault("true")
     @Column(name = "notifications")
     private Boolean notifications;
 

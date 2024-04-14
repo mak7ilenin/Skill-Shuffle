@@ -139,7 +139,7 @@ public class ChatService {
     }
 
     // Create a new chat
-    public NewChatDTO createChat(NewChatDTO chat, MultipartFile avatarUrl) throws IOException {
+    public Chat createChat(NewChatDTO chat, MultipartFile avatarBlob) throws IOException {
         Chat newChat = Chat.builder()
                 .name(chat.getName())
                 .type(chat.getType())
@@ -148,9 +148,9 @@ public class ChatService {
         chatRepository.save(newChat);
 
         // Save the avatar image if provided
-        if (avatarUrl != null) {
+        if (avatarBlob != null) {
             String avatarFilePath = "chats/chat-" + newChat.getId() + "/avatar/";
-            newChat.setAvatarUrl(mediaService.uploadImage(avatarUrl, avatarFilePath));
+            newChat.setAvatarUrl(avatarFilePath + mediaService.uploadImage(avatarBlob, avatarFilePath));
             chatRepository.save(newChat);
         }
 
@@ -162,7 +162,7 @@ public class ChatService {
               .map(userService::getUserByNickname)
               .forEach(user -> addMemberToChat(newChat, user, MemberRole.MEMBER));
 
-        return chat;
+        return newChat;
     }
 
     private void addMemberToChat(Chat chat, User user, MemberRole role) {
@@ -170,6 +170,7 @@ public class ChatService {
                 .chat(chat)
                 .member(user)
                 .role(role)
+                .notifications(true)
                 .build();
         chatMemberRepository.save(chatMember);
     }

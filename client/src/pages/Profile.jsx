@@ -1,6 +1,6 @@
 import { Row, Col, Tab, Tabs, Button, Image  } from 'react-bootstrap';
 import { ReactComponent as EditBanner } from '../assets/icons/edit_Banner.svg';
-import { API_SERVER, SERVER_URL } from '../config';
+import { API_SERVER, STATIC_RESOURCES } from '../config';
 import { useAuth } from '../components/AuthContext';
 
 
@@ -53,7 +53,7 @@ function Profile() {
                 <Row className='d-flex flex-column info-profile'>
                     <Row>
                         <Image
-                            src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
+                            src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
                             style={{ padding: 'unset' }}
                             className='profile-avatar'
                             alt='Avatar'
@@ -124,42 +124,42 @@ function Profile() {
                         <Col className='d-flex flex-row mt-1 photos-videos-block'>
                             <Col>
                                 <Image
-                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                             <Col>
                                 <Image
-                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Col>
                         </Col>
@@ -174,7 +174,7 @@ function Profile() {
                         <Col className='post-user'>
                             <Row className='post-user-img'>
                                 <Image
-                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
                                 />
                             </Row>
                             <Row>

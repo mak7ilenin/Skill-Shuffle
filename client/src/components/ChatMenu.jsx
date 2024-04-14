@@ -7,7 +7,7 @@ import ChatMenuHeader from './ChatMenuHeader';
 import ChatTypeFilter from './ChatTypeFilter';
 import CreateChat from './CreateChat';
 
-function ChatMenu({ chats, setFilteredChats, filteredChats, choosenChat }) {
+function ChatMenu({ chats, setFilteredChats, filteredChats }) {
     const navigate = useNavigate();
     const [newChatVisibility, setNewChatVisibility] = useState(false);
 
@@ -40,7 +40,7 @@ function ChatMenu({ chats, setFilteredChats, filteredChats, choosenChat }) {
                 </>
             ) : (
                 // Create chat view
-                <CreateChat />
+                <CreateChat newChatVisibility={handleCreateChat} />
             )}
 
         </Container>

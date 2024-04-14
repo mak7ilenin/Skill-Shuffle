@@ -224,7 +224,6 @@ function Chat() {
         chats={chats}
         setFilteredChats={setFilteredChats}
         filteredChats={filteredChats}
-        choosenChat={choosenChat}
       />
 
       {choosenChat.id === undefined ? (

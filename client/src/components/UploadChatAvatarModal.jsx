@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { useDropzone } from 'react-dropzone';
 
-function UploadChatAvatarModal({ showModal, setShowModal, setImageURL }) {
+function UploadChatAvatarModal({ showModal, setShowModal, setImageURL, setImageBlob }) {
 
     const handleCloseModal = () => {
         setShowModal(false);
@@ -17,7 +17,7 @@ function UploadChatAvatarModal({ showModal, setShowModal, setImageURL }) {
             const reader = new FileReader();
 
             reader.onload = () => {
-                console.log(reader.result);
+                setImageBlob(file);
                 setImageURL(reader.result);
             };
 

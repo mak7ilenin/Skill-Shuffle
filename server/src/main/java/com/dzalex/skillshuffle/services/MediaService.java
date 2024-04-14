@@ -20,9 +20,17 @@ public class MediaService {
         // Generate a unique file name
         String fileName = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(file.getOriginalFilename());
 
-        // Save the file to the upload directory
-        Path filePath = Paths.get(MEDIA_PATH + path, fileName);
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        // Define the target directory
+        Path targetDirectory = Paths.get(MEDIA_PATH, path);
+
+        // Create the directory if it doesn't exist
+        Files.createDirectories(targetDirectory);
+
+        // Construct the full file path
+        Path targetFile = targetDirectory.resolve(fileName);
+
+        // Save the file to the target directory
+        Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
 
         // Return the URL of the uploaded image
         return fileName;

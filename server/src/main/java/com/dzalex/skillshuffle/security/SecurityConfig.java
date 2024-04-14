@@ -25,9 +25,7 @@ public class SecurityConfig {
     private final String[] allowedUrls = new String[] {
             "/auth/**",
             "/ws",
-            "/communities/**",
-            "/chats/**",
-            "/users/**",
+            "/static/**"
     };
 
     @Bean

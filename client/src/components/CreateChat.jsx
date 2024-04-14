@@ -1,20 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Row, Col, Container, Image, Stack, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { API_SERVER } from '../config';
+import { AESEncrypt } from '../crypto';
 import { useAuth } from '../components/AuthContext';
 import CreateImage from './CreateImage';
 import UploadChatAvatarModal from './UploadChatAvatarModal';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function CreateChat() {
+function CreateChat({ newChatVisibility }) {
     const { authUser } = useAuth();
+    const navigate = useNavigate();
     const [friends, setFriends] = useState([]);
     const [filteredFriends, setFilteredFriends] = useState([]);
     const [chatName, setChatName] = useState('');
     const [imageURL, setImageURL] = useState(null);
+    const [imageBlob, setImageBlob] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [selectedFriends, setSelectedFriends] = useState([]);
 
@@ -29,7 +33,7 @@ function CreateChat() {
             });
     }, [authUser, setFriends]);
 
-    const handleSelectFriend = (e, friend) => {
+    const handleSelectFriend = useCallback((e, friend) => {
         const friendContainer = e.target.closest('.friend-container');
         const checkbox = friendContainer.querySelector('input[type="checkbox"]');
         const label = friendContainer.querySelector('.rounded-checkbox-label');
@@ -51,7 +55,7 @@ function CreateChat() {
                 });
             }
         }
-    };
+    }, [setSelectedFriends]);
 
     const handleFriendSearch = (e) => {
         const search = e.target.value;
@@ -67,14 +71,18 @@ function CreateChat() {
 
     const handleCreateChat = () => {
         if (chatName) {
+            const newChat = {
+                name: chatName,
+                type: selectedFriends.length === 1 ? 'private' : 'group',
+                members: selectedFriends,
+            }
+
             const formData = new FormData();
-            formData.append('name', chatName);
-            formData.append('type', selectedFriends.length === 1 ? 'private' : 'group');
-            formData.append('members', JSON.stringify(selectedFriends));
+            formData.append('chat', JSON.stringify(newChat));
 
             // Check if an image file is selected
-            if (imageURL) {
-                formData.append('avatarUrl', imageURL);
+            if (imageBlob) {
+                formData.append('avatarBlob', imageBlob);
             }
 
             axios.post(`${API_SERVER}/chats`, formData, {
@@ -84,7 +92,8 @@ function CreateChat() {
                 }
             })
                 .then(response => {
-                    console.log(response.data);
+                    navigate(`/messenger?c=${AESEncrypt(response.data.id)}`);
+                    newChatVisibility(false);
                 })
                 .catch(error => {
                     console.error(error);
@@ -95,7 +104,12 @@ function CreateChat() {
     return (
         <Container className='new-chat d-flex flex-column'>
 
-            <UploadChatAvatarModal showModal={showModal} setShowModal={setShowModal} setImageURL={setImageURL} />
+            <UploadChatAvatarModal
+                showModal={showModal}
+                setShowModal={setShowModal}
+                setImageURL={setImageURL}
+                setImageBlob={setImageBlob}
+            />
 
             <Row className='chat-header d-flex justify-content-start py-3 px-4'>
                 <Col className='me-4' xs lg={2}>

@@ -3,7 +3,7 @@ import { Container, ListGroup, Image, Dropdown, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-import { API_SERVER, SERVER_URL } from '../config';
+import { API_SERVER, STATIC_RESOURCES } from '../config';
 import { useAuth } from './AuthContext';
 
 import Logo from '../assets/icons/logo.svg';
@@ -87,7 +87,7 @@ function Header() {
                         <ListGroup.Item action href='/my-profile'>
                             <div className='avatar-container d-flex justify-content-center align-items-center flex-column'>
                                 <Image
-                                    src={authUser.avatarUrl ? `${SERVER_URL}/${authUser.avatarUrl}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
                                     width={25}
                                     height={25}
                                     style={{ objectFit: 'cover', border: '1px solid #c2c2c2' }}

@@ -2,12 +2,12 @@ import React from 'react';
 import { Image } from 'react-bootstrap';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
-import { SERVER_URL } from '../config';
+import { STATIC_RESOURCES } from '../config';
 
 function CreateImage({ url, alt, width, height, rounded }) {
     return (
         <Image
-            src={url !== null ? `${SERVER_URL}/${url}` : imagePlaceholder}
+            src={url !== null ? `${STATIC_RESOURCES}/${url}` : imagePlaceholder}
             alt={alt}
             width={width}
             height={height}
