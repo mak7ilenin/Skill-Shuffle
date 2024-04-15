@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ChatService {
@@ -46,22 +43,30 @@ public class ChatService {
     private MediaService mediaService;
 
     public List<ChatPreviewDTO> getChatList() {
+        User authedUser = userService.getCurrentUser();
         List<Chat> chats = chatRepository.findAll();
         List<ChatPreviewDTO> chatPreviewDTOs = new ArrayList<>();
 
         for (Chat chat : chats) {
+            // Check if the authenticated user is a member of the chat
+            List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chat.getId());
+            boolean isUserMember = chatMembers.stream()
+                    .anyMatch(chatMember -> chatMember.getMember().getId().equals(authedUser.getId()));
 
-            // Get chat info based on the chat type
-            ChatDTO chatInfo = getChatInfo(chat);
 
-            ChatPreviewDTO chatPreviewDTO = new ChatPreviewDTO();
-            chatPreviewDTO.setId(chat.getId());
-            chatPreviewDTO.setType(chat.getType());
-            chatPreviewDTO.setName(chatInfo.getName());
-            chatPreviewDTO.setAvatarUrl(chatInfo.getAvatarUrl());
-            chatPreviewDTO.setLastMessage(messageService.findLastMessageByChatId(chat.getId()));
+            if (isUserMember) {
+                // Get chat info based on the chat type
+                ChatDTO chatInfo = getChatInfo(chat);
 
-            chatPreviewDTOs.add(chatPreviewDTO);
+                ChatPreviewDTO chatPreviewDTO = new ChatPreviewDTO();
+                chatPreviewDTO.setId(chat.getId());
+                chatPreviewDTO.setType(chat.getType());
+                chatPreviewDTO.setName(chatInfo.getName());
+                chatPreviewDTO.setAvatarUrl(chatInfo.getAvatarUrl());
+                chatPreviewDTO.setLastMessage(messageService.findLastMessageByChatId(chat.getId()));
+
+                chatPreviewDTOs.add(chatPreviewDTO);
+            }
         }
 
         return chatPreviewDTOs;
@@ -105,18 +110,16 @@ public class ChatService {
         switch (chat.getType()) {
             case COMMUNITY -> setCommunityChatInfo(chat, authedUser, chatDTO);
             case PRIVATE -> setPrivateChatInfo(chat, authedUser, chatDTO);
-            case GROUP -> setGroupChatInfo(chat, authedUser, chatDTO);
+            case GROUP -> setGroupChatInfo(chat, chatDTO);
         }
 
         return chatDTO;
     }
 
     private void setCommunityChatInfo(Chat chat, User authedUser, ChatDTO chatDTO) {
-        // TODO: FIND COMMUNITY_CHAT ONLY BY CHAT_ID, THEN COMPARE USER_ID WITH AUTHUSER_ID
-        CommunityChat communityChat = communityChatRepository.findCommunityChatByChatIdAndUserId(chat.getId(), authedUser.getId());
-        if (communityChat != null) {
+        CommunityChat communityChat = communityChatRepository.findCommunityChatByChatId(chat.getId());
+        if (communityChat != null && Objects.equals(communityChat.getUser().getId(), authedUser.getId())) {
             CommunityPreviewDTO community = communityService.convertToPreviewDTO(communityChat.getCommunity());
-            chatDTO.setCommunity(community);
             chatDTO.setAvatarUrl(community.getAvatarUrl());
             chatDTO.setName(community.getName());
         }
@@ -128,21 +131,16 @@ public class ChatService {
             .findFirst()
             .ifPresent(chatMember -> {
                 User chatPartner = chatMember.getMember();
-                chatDTO.setUser(userService.getPublicUserDTO(chatPartner));
                 chatDTO.setAvatarUrl(chatPartner.getAvatarUrl());
                 chatDTO.setName(chatPartner.getFirstName() + " " + chatPartner.getLastName());
+                chatDTO.setChatPartner(userService.getPublicUserDTO(chatPartner));
             });
     }
 
-    private void setGroupChatInfo(Chat chat, User authedUser, ChatDTO chatDTO) {
-        chatMemberRepository.findAllByChatId(chat.getId()).stream()
-            .filter(chatMember -> !chatMember.getMember().getUsername().equals(authedUser.getUsername()))
-            .findFirst()
-            .ifPresent(chatMember -> {
-                chatDTO.setMemberCount(userService.getUsersInChat(chat.getId()).size());
-                chatDTO.setAvatarUrl(chat.getAvatarUrl());
-                chatDTO.setName(chat.getName());
-            });
+    private void setGroupChatInfo(Chat chat, ChatDTO chatDTO) {
+        chatDTO.setMemberCount(userService.getUsersInChat(chat.getId()).size());
+        chatDTO.setAvatarUrl(chat.getAvatarUrl());
+        chatDTO.setName(chat.getName());
     }
 
     // Create a new chat
@@ -184,15 +182,5 @@ public class ChatService {
 
     private MemberRole getRoleByChatType(ChatType chatType) {
         return chatType == ChatType.GROUP ? MemberRole.CREATOR : MemberRole.MEMBER;
-    }
-
-    private ChatPreviewDTO getChatPreviewDTO(Chat chat, MessageDTO lastMessage) {
-        return ChatPreviewDTO.builder()
-                .id(chat.getId())
-                .name(chat.getName())
-                .type(chat.getType())
-                .avatarUrl(chat.getAvatarUrl())
-                .lastMessage(lastMessage)
-                .build();
     }
 }

@@ -52,7 +52,7 @@ function ChatHeader({ chat, openChatMenu }) {
                 ) : (
                     <p className='user-activity'>
                         <NetworkIcon className='network-icon' />
-                        <span className='text-secondary'>{formatLastSeenTimestamp(chat.user.lastSeen)}</span>
+                        <span className='text-secondary'>{formatLastSeenTimestamp(chat.chatPartner.lastSeen)}</span>
                     </p>
                 )}
             </Col>

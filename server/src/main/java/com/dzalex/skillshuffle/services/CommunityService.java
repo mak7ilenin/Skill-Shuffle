@@ -28,12 +28,4 @@ public class CommunityService {
                 .avatarUrl(community.getAvatarUrl())
                 .build();
     }
-
-    public CommunityPreviewDTO getCommunityByChatIdAndUserId(Integer chatId, Integer userId) {
-        CommunityChat communityChat = communityChatRepository.findCommunityChatByChatIdAndUserId(chatId, userId);
-        if (communityChat == null) return null;
-
-        Community community = communityRepository.findById(communityChat.getCommunity().getId()).orElse(null);
-        return community != null ? convertToPreviewDTO(community) : null;
-    }
 }

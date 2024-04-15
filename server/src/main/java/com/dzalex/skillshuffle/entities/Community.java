@@ -38,7 +38,7 @@ public class Community {
     @Column(name = "banner_url")
     private String bannerUrl;
 
-    @Column(name = "banner_color", nullable = false, length = 7)
+    @Column(name = "banner_color", length = 7)
     private String bannerColor = "#bdbdbd";
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -46,14 +46,14 @@ public class Community {
     private User creator;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "privacy", nullable = false)
+    @Column(name = "privacy")
     private CommunityPrivacy privacy = CommunityPrivacy.OPEN;
 
     @Column(name = "allow_comments", nullable = false)
     private Boolean allowComments = true;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     private Timestamp createdAt;
 
 }
