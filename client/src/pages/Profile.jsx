@@ -220,7 +220,7 @@ function Profile() {
                             <Col className='post-message'>
                                 <Row className='post-user-img'>
                                     <Image
-                                        src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
                                     />
                                 </Row>
                                 <Row style={{ fontSize: '18px' }}>
@@ -228,7 +228,7 @@ function Profile() {
                                     <span style={{ display: 'flex', alignItems: 'center' }}>
                                         <input
                                             type="text"
-                                            class="form-control form-control-lg"
+                                            className="form-control form-control-lg"
                                             id="exampleFormControlInput1"
                                             placeholder="Type message"
                                         ></input>
@@ -246,7 +246,7 @@ function Profile() {
                         <Col className='post-user-right'>
                             <Row className='post-user-img'>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
                                 />
                             </Row>
                             <Row>
@@ -258,7 +258,7 @@ function Profile() {
                         <Col className='post-user-right'>
                             <Row className='post-user-img'>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
                                 />
                             </Row>
                             <Row>
@@ -270,7 +270,7 @@ function Profile() {
                         <Col className='post-user-right'>
                             <Row className='post-user-img'>
                                 <Image
-                                    src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                    src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
                                 />
                             </Row>
                             <Row>
@@ -291,7 +291,7 @@ function Profile() {
                             <Col className='post-friend-right'>
                                 <Row className='post-friend-img'>
                                     <Image
-                                        src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
                                     />
                                 </Row>
                                 <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
@@ -299,7 +299,7 @@ function Profile() {
                             <Col className='post-friend-right'>
                                 <Row className='post-friend-img'>
                                     <Image
-                                        src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
                                     />
                                 </Row>
                                 <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
@@ -307,7 +307,7 @@ function Profile() {
                             <Col className='post-friend-right'>
                                 <Row className='post-friend-img'>
                                     <Image
-                                        src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
                                     />
                                 </Row>
                                 <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
@@ -319,7 +319,7 @@ function Profile() {
                             <Col className='post-friend-right'>
                                 <Row className='post-friend-img'>
                                     <Image
-                                        src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
                                     />
                                 </Row>
                                 <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
@@ -327,7 +327,7 @@ function Profile() {
                             <Col className='post-friend-right'>
                                 <Row className='post-friend-img'>
                                     <Image
-                                        src={authUser.avatar_url ? `${SERVER_URL}/${authUser.avatar_url}` : imagePlaceholder}
+                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
                                     />
                                 </Row>
                                 <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>

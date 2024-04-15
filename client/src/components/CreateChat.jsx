@@ -71,9 +71,16 @@ function CreateChat({ newChatVisibility }) {
 
     const handleCreateChat = () => {
         if (chatName) {
+            let chatType;
+            if (chatName !== '') {
+                chatType = 'group';
+            } else {
+                chatType = selectedFriends.length === 1 ? 'private' : 'group';
+            }
+
             const newChat = {
                 name: chatName,
-                type: selectedFriends.length === 1 ? 'private' : 'group',
+                type: chatType,
                 members: selectedFriends,
             }
 

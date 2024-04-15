@@ -53,13 +53,18 @@ public class ChatService {
 
             // Check if the current user is a member of the chat
             String authedUsername = userService.getCurrentUser().getUsername();
-            if (!userService.getUsersInChat(chat.getId()).contains(authedUsername)) {
-                continue;
+
+            ChatPreviewDTO chatPreviewDTO = new ChatPreviewDTO();
+            if (chat.getType() == ChatType.COMMUNITY) {
+                // TODO: Implement community chat preview
+            } else {
+                if (!userService.getUsersInChat(chat.getId()).contains(authedUsername)) {
+                    continue;
+                }
             }
 
             // Get the last message of the chat
             MessageDTO lastMessage = messageService.findLastMessageByChatId(chat.getId());
-            ChatPreviewDTO chatPreviewDTO = new ChatPreviewDTO();
 
             // Populate the DTO with chat information and last message
             chatPreviewDTO.setId(chat.getId());
