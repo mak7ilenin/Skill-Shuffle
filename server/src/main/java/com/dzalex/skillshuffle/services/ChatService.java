@@ -52,26 +52,29 @@ public class ChatService {
         for (Chat chat : chats) {
 
             // Check if the current user is a member of the chat
-            String authedUsername = userService.getCurrentUser().getUsername();
+            User authedUser = userService.getCurrentUser();
+
+            // Get chat info based on the chat type
+            ChatDTO chatInfo = getChatInfo(chat);
 
             ChatPreviewDTO chatPreviewDTO = new ChatPreviewDTO();
+            chatPreviewDTO.setId(chat.getId());
+            chatPreviewDTO.setType(chat.getType());
+
             if (chat.getType() == ChatType.COMMUNITY) {
-                // TODO: Implement community chat preview
+                // If chat type is community, check if this user is in this chat, get the community info
+                CommunityPreviewDTO community = communityService.getCommunityByChatIdAndUserId(chat.getId(), authedUser.getId());
+                chatPreviewDTO.setName(chatInfo.getName());
+                chatPreviewDTO.setAvatarUrl(chatInfo.getAvatarUrl());
+                chatPreviewDTO = getChatPreviewDTO(chat, messageService.findLastMessageByChatId(chat.getId()));
             } else {
-                if (!userService.getUsersInChat(chat.getId()).contains(authedUsername)) {
-                    continue;
+                // If chat type is group or private, check if the user is a member
+                if (userService.getUsersInChat(chat.getId()).contains(authedUser.getUsername())) {
+                    chat.getType() == ChatType.GROUP ? chat.setName(chat.getName()) : chat.setName(chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authedUser.getId()).getMember().getFirstName() + " " + chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authedUser.getId()).getMember().getLastName();
+                    // Populate the DTO with chat information and last message
+                    chatPreviewDTO = getChatPreviewDTO(chat, messageService.findLastMessageByChatId(chat.getId()));
                 }
             }
-
-            // Get the last message of the chat
-            MessageDTO lastMessage = messageService.findLastMessageByChatId(chat.getId());
-
-            // Populate the DTO with chat information and last message
-            chatPreviewDTO.setId(chat.getId());
-            chatPreviewDTO.setName(chat.getName());
-            chatPreviewDTO.setType(chat.getType());
-            chatPreviewDTO.setAvatarUrl(chat.getAvatarUrl());
-            chatPreviewDTO.setLastMessage(lastMessage);
 
             chatPreviewDTOs.add(chatPreviewDTO);
         }
@@ -182,5 +185,15 @@ public class ChatService {
 
     private MemberRole getRoleByChatType(ChatType chatType) {
         return chatType == ChatType.GROUP ? MemberRole.CREATOR : MemberRole.MEMBER;
+    }
+
+    private ChatPreviewDTO getChatPreviewDTO(Chat chat, MessageDTO lastMessage) {
+        return ChatPreviewDTO.builder()
+                .id(chat.getId())
+                .name(chat.getName())
+                .type(chat.getType())
+                .avatarUrl(chat.getAvatarUrl())
+                .lastMessage(lastMessage)
+                .build();
     }
 }

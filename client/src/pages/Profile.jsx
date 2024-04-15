@@ -287,7 +287,7 @@ function Profile() {
 
                     <Col className='right-block'>
                         <p className='r-block-m-p'>Friends online <span>3</span></p>
-                        <Col className='friends-online'>
+                        <Row className='friends-online'>
                             <Col className='post-friend-right'>
                                 <Row className='post-friend-img'>
                                     <Image
@@ -312,7 +312,15 @@ function Profile() {
                                 </Row>
                                 <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
                             </Col>
-                        </Col>
+                            <Col className='post-friend-right'>
+                                <Row className='post-friend-img'>
+                                    <Image
+                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
+                                    />
+                                </Row>
+                                <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
+                            </Col>
+                        </Row>
                         <hr />
                         <p className='r-block-m-p'>Friends <span>3</span></p>
                         <Col className='friends'>
