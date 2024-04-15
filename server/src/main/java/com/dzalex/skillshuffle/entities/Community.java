@@ -4,6 +4,7 @@ import com.dzalex.skillshuffle.enums.CommunityPrivacy;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
@@ -37,24 +38,21 @@ public class Community {
     @Column(name = "banner_url")
     private String bannerUrl;
 
-    @ColumnDefault("#bdbdbd")
     @Column(name = "banner_color", nullable = false, length = 7)
-    private String bannerColor;
+    private String bannerColor = "#bdbdbd";
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "creator_id", nullable = false)
     private User creator;
 
-    @ColumnDefault("open")
     @Enumerated(EnumType.STRING)
     @Column(name = "privacy", nullable = false)
-    private CommunityPrivacy privacy;
+    private CommunityPrivacy privacy = CommunityPrivacy.OPEN;
 
-    @ColumnDefault("1")
     @Column(name = "allow_comments", nullable = false)
-    private Boolean allowComments;
+    private Boolean allowComments = true;
 
-    @ColumnDefault("current_timestamp()")
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 

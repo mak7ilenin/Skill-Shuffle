@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -35,12 +36,11 @@ public class Notification {
     @Column(name = "type", nullable = false)
     private NotificationType type;
 
-    @ColumnDefault("0")
-    @Column(name = "is_read", nullable = false)
+    @Column(name = "is_read")
     private Boolean isRead = false;
 
-    @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    @Column(name = "created_at")
     private Timestamp createdAt;
 
 }

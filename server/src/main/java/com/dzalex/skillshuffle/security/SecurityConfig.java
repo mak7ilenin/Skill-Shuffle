@@ -23,7 +23,7 @@ public class SecurityConfig {
     private JwtAuthenticationFilter filter;
 
     private final String[] allowedUrls = new String[] {
-            "/auth/**",
+            "/auth/*",
             "/ws",
             "/static/**"
     };

@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 
@@ -46,9 +48,8 @@ public class User {
     @Column(name = "bio", length = 275)
     private String bio;
 
-    @ColumnDefault("0")
     @Column(name = "points", nullable = false)
-    private Integer points;
+    private Integer points = 0;
 
     @Column(name = "avatar_url")
     private String avatarUrl;
@@ -65,16 +66,16 @@ public class User {
     @Column(name = "auto_follow")
     private Boolean autoFollow;
 
-    @ColumnDefault("current_timestamp()")
-    @Column(name = "last_seen", nullable = false)
+    @CreationTimestamp
+    @Column(name = "last_seen")
     private Timestamp lastSeen;
 
-    @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @ColumnDefault("current_timestamp()")
-    @Column(name = "updated_at", nullable = false)
+    @UpdateTimestamp
+    @Column(name = "updated_at")
     private Timestamp updatedAt;
 
     @Column(name = "deleted_at")

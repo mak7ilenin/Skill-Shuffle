@@ -4,6 +4,7 @@ import com.dzalex.skillshuffle.enums.MemberRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -33,12 +34,11 @@ public class ChatMember {
     @Column(name = "role", nullable = false)
     private MemberRole role;
 
-    @ColumnDefault("current_timestamp()")
+    @CreationTimestamp
     @Column(name = "joined_at")
     private Timestamp joinedAt;
 
-    @ColumnDefault("true")
     @Column(name = "notifications")
-    private Boolean notifications;
+    private Boolean notifications = true;
 
 }

@@ -45,7 +45,7 @@ const AuthProvider = ({ children }) => {
                 })
                 .catch(() => {
                     setAuthUser(null);
-                    navigate('/sign-in');
+                    // navigate('/sign-in');
                 });
         } else {
             if (!stompClient) {
@@ -71,7 +71,7 @@ const AuthProvider = ({ children }) => {
                     .catch(error => {
                         console.error('Error while initializing STOMP client:', error);
                         setAuthUser(null);
-                        navigate('/sign-in');
+                        // navigate('/sign-in');
                     });
             }
         }
