@@ -26,7 +26,8 @@ function ChatTypeFilter({ setChats, chats }) {
     return (
         <Row className='chat-types d-flex'>
             <Col className='chat-type active' onClick={(e) => filterChatsByType('all', e)}>
-                <p>All&nbsp;({chats.length})</p>
+                <p>All</p>
+                {/* <p>All&nbsp;({chats.length})</p> */}
             </Col>
             {existingChatTypes.map((chatType, index) => (
                 <Col key={index} className='chat-type' onClick={(e) => filterChatsByType(chatType.type, e)}>

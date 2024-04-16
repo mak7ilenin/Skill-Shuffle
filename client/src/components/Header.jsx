@@ -1,66 +1,49 @@
-import React from 'react';
-import { Container, ListGroup, Image, Dropdown, Row } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import { ListGroup, Image, Dropdown, NavLink } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { API_SERVER, STATIC_RESOURCES } from '../config';
 import { useAuth } from './AuthContext';
 
-import Logo from '../assets/icons/logo.svg';
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
+import { ReactComponent as Logo } from '../assets/icons/logo.svg';
 import { ReactComponent as More } from '../assets/icons/more.svg';
 import { ReactComponent as Home } from '../assets/icons/home.svg';
 import { ReactComponent as Search } from '../assets/icons/search.svg';
 import { ReactComponent as Chats } from '../assets/icons/chats.svg';
 import { ReactComponent as Notifications } from '../assets/icons/notification-bell.svg';
 import { ReactComponent as Create } from '../assets/icons/create.svg';
-import { useEffect } from 'react';
 
 function Header() {
-    const { setAuthUser, authUser } = useAuth();
+    const { authUser, setAuthUser } = useAuth();
     const navigate = useNavigate();
 
     const logout = async () => {
         await axios.post(`${API_SERVER}/auth/logout`, {}, { withCredentials: true });
-        setAuthUser(null);
         navigate('/sign-in');
+        setAuthUser(null);
     };
 
     useEffect(() => {
-        const currentUrl = window.location.href;
-        if (currentUrl.indexOf('my-profile') > -1) {
-            document.querySelector('div.default-header').classList.remove('closed');
-            document.querySelectorAll('.list-group-item').forEach(div => {
-                div.classList.add("opened");
-                div.querySelector('p').style.display = 'block';
-
-            });
-        } else {
-            document.querySelectorAll('.logo-container').forEach(div => {
-                div.querySelector('.row').querySelectorAll('p').forEach(div => {
-                    div.style.display = 'none';
-                });
-            });
+        const currentPathName = window.location.pathname;
+        const pathsWithOpenHeader = ['/my-profile'];
+        if (!pathsWithOpenHeader.includes(currentPathName)) {
+            document.querySelector('.default-header').classList.add('closed');
         }
     }, []);
-    
+
     return (
         <div className='default-header d-flex flex-column closed'>
-            <Container className='logo-container w-100 d-flex align-items-center'>
-                <a className='d-flex flex-row' href="/" style={{ textDecoration: 'none', fontFamily: 'Russo One', color: 'black' }}>
-                    <Image
-                        src={Logo}
-                        className='logo'
-                        alt='Logo'
-                        width={37.5}
-                        height={51}
-                    />
-                    <Row>
-                        <p style={{ fontSize: '28px', height: '28px', letterSpacing: '4px', display: 'flex', alignItems: 'center' }}>SKILL</p>
-                        <p style={{ height: '19px', display: 'flex', alignItems: 'center' }}>SHUFFLE</p>
-                    </Row>
-                </a>
-            </Container>
+            <NavLink href='/' className='logo-container w-100 d-flex align-items-center flex-row'>
+                <div className='logo'>
+                    <Logo width={37.5} height={51} />
+                </div>
+                <div className='logo-text ms-2'>
+                    <p>SKILL</p>
+                    <p>SHUFFLE</p>
+                </div>
+            </NavLink>
             <ListGroup className='flex-grow-1'>
                 <ListGroup.Item>
                     <Home className='home-icon' />

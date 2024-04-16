@@ -5,15 +5,11 @@
 
 .profile-banner {
     background-color: #00B3DB;
-    width: 100%;
     height: 389px;
-    justify-content: flex-end;
-    align-items: flex-end;
 }
 
 .profile-header-list-container {
-    width: 100%;
-    background-color: white;
+    background-color: #fff;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
@@ -119,9 +115,16 @@
     padding: unset !important;
 }
 
+.profile-content {
+    font-family: $main-font;
+    font-weight: 600;
+    width: fit-content;
+}
+
 .profile-avatar {
     user-select: none;
     width: 280px !important;
+    max-width: fit-content !important;
     height: 280px !important;
     border-radius: 50% 50% !important;
     object-fit: contain !important;
@@ -133,14 +136,11 @@
     outline-offset: -6px;
 }
 
-.info-profile {
-    // position: sticky !important;
-    // top: 5px !important;
+.profile-info-container {
     margin-left: 54px !important;
     margin-top: -236px !important;
+    max-width: 310px !important;
     width: 310px !important;
-    display: flex !important;
-    justify-content: flex-start !important;
 
     div {
         width: fit-content;
@@ -150,42 +150,62 @@
     hr {
         margin-top: 5px !important;
     }
-}
 
-.nickname {
-    padding: unset !important;
-    width: fit-content;
-    font-size: 32px;
-    font-weight: 700;
-}
+    .profile-info {
+        .user-name {
+            padding: unset !important;
+            width: fit-content;
+            font-size: 32px;
+            font-weight: 700;
+        }
 
-.marginTopDates {
-    margin-top: 23px !important;
+        .nickname {
+            color: $light-gray;
+            font-size: 18px;
+            font-weight: 400;
+        }
 
-    div {
-        margin-bottom: 8px !important;
-    }
-}
-
-.profile-links {
-    margin-top: 10px !important;
-    color: #757575;
-
-    span {
-        color: black;
+        .points {
+            color: $primary-color;
+            font-size: 18px;
+        }
     }
 
-    p {
-        font-weight: 500;
+    .profile-bio {
+        p {
+            color: $dark-gray;
+        }
+
+        button {
+            font-family: $main-font;
+            font-weight: bold;
+            margin-top: 10px;
+            background-color: $secondary-btn;
+            color: #fff;
+        }
     }
-}
-
-.profile-links a {
-    color: #757575;
-    transition-duration: 0.1s !important;
-
-    &:hover {
-        color: #9f9e9e !important;
+    
+    .profile-links {
+        margin-top: 10px !important;
+        color: #757575;
+    
+        span {
+            color: black;
+        }
+    
+        p {
+            font-weight: 500;
+        }
+        
+        a {
+            color: #757575;
+            transition-duration: 0.1s !important;
+    
+            &:hover {
+                color: #9f9e9e !important;
+            }
+        
+        }
     }
 }
 
@@ -231,6 +251,12 @@
         margin-bottom: 16px !important;
         border-radius: 5px;
         position: relative !important;
+
+        .post-menu-icon {
+            top: 15px;
+            right: 19px;
+            height: fit-content !important;
+        }
     }
 }
 

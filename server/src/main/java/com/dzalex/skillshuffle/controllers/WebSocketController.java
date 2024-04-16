@@ -2,6 +2,7 @@ package com.dzalex.skillshuffle.controllers;
 
 import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.enums.ChatType;
+import com.dzalex.skillshuffle.enums.MessageType;
 import com.dzalex.skillshuffle.enums.NotificationType;
 import com.dzalex.skillshuffle.entities.Chat;
 import com.dzalex.skillshuffle.entities.ChatMessage;
@@ -9,16 +10,20 @@ import com.dzalex.skillshuffle.dtos.ChatNotificationDTO;
 import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
+import com.dzalex.skillshuffle.services.ChatService;
 import com.dzalex.skillshuffle.services.MessageService;
 import com.dzalex.skillshuffle.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Controller
@@ -38,6 +43,8 @@ public class WebSocketController {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private ChatService chatService;
 
     @MessageMapping("/chat")
     public void sendMessage(@Payload ChatMessage message) {
@@ -71,13 +78,7 @@ public class WebSocketController {
         // Create notification object
         ChatNotificationDTO notification = new ChatNotificationDTO(
                 chat,
-                new PublicUserDTO(
-                        sender.getFirstName(),
-                        sender.getLastName(),
-                        sender.getNickname(),
-                        sender.getAvatarUrl(),
-                        sender.getLastSeen()
-                ),
+                userService.getPublicUserDTO(sender),
                 notificationMessage,
                 message.getContent(),
                 NotificationType.CHAT_MESSAGE
@@ -89,10 +90,18 @@ public class WebSocketController {
         }
     }
 
-    // Add method to mark message as seen
-    @MessageMapping("/chat/seen")
-    public void markMessageAsSeen(@Payload ChatMessage message) {
-        messageService.markMessageAsSeen(message);
+    // Event listener for disconnecting from the WebSocket
+    @EventListener
+    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+        // Close status 1000 means normal disconnect, 1001 means browser/tab closed
+        if (event.getCloseStatus().getCode() == 1000 || event.getCloseStatus().getCode() == 1001) {
+            // Check the chats(private/community) user created without any messages and delete them
+            String username = Objects.requireNonNull(event.getUser()).getName();
+            if (username != null) {
+                User user = userRepository.findByUsername(username);
+                chatService.deleteEmptyChatsByAuthedUser(user);
+            }
+        }
     }
 
 }

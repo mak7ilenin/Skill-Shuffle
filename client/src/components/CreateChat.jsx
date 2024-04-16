@@ -70,42 +70,40 @@ function CreateChat({ newChatVisibility }) {
     };
 
     const handleCreateChat = () => {
-        if (chatName) {
-            let chatType;
-            if (chatName !== '') {
-                chatType = 'group';
-            } else {
-                chatType = selectedFriends.length === 1 ? 'private' : 'group';
-            }
-
-            const newChat = {
-                name: chatName,
-                type: chatType,
-                members: selectedFriends,
-            }
-
-            const formData = new FormData();
-            formData.append('chat', JSON.stringify(newChat));
-
-            // Check if an image file is selected
-            if (imageBlob) {
-                formData.append('avatarBlob', imageBlob);
-            }
-
-            axios.post(`${API_SERVER}/chats`, formData, {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-                .then(response => {
-                    navigate(`/messenger?c=${AESEncrypt(response.data.id)}`);
-                    newChatVisibility(false);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+        let chatType;
+        if (chatName !== '') {
+            chatType = 'group';
+        } else {
+            chatType = selectedFriends.length === 1 ? 'private' : 'group';
         }
+
+        const newChat = {
+            name: chatName,
+            type: chatType,
+            members: selectedFriends,
+        }
+
+        const formData = new FormData();
+        formData.append('chat', JSON.stringify(newChat));
+
+        // Check if an image file is selected
+        if (imageBlob) {
+            formData.append('avatarBlob', imageBlob);
+        }
+
+        axios.post(`${API_SERVER}/chats`, formData, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+            .then(response => {
+                navigate(`/messenger?c=${AESEncrypt(response.data.id)}`);
+                newChatVisibility(false);
+            })
+            .catch(error => {
+                console.error(error);
+            });
     };
 
     return (

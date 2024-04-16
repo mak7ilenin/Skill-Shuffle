@@ -1,6 +1,7 @@
 package com.dzalex.skillshuffle.entities;
 
 import com.dzalex.skillshuffle.enums.MessageStatus;
+import com.dzalex.skillshuffle.enums.MessageType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,11 +29,14 @@ public class ChatMessage {
     @Column(name = "content", nullable = false, length = 1024)
     private String content;
 
-    @Column(name = "timestamp")
+    @Column(name = "timestamp", nullable = false)
     private Timestamp timestamp;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private MessageStatus status = MessageStatus.SENT;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private MessageType type;
 }

@@ -57,9 +57,31 @@ h1, h2, h3, h4, h5, h6, p {
 .default-header.closed {
   width: 69px;
 }
+.default-header.closed .list-group-item p,
+.default-header.closed .dropdown-container p,
+.default-header.closed .logo-text {
+  display: none;
+}
 .default-header .logo-container {
-  margin-top: 45px !important;
-  margin-left: 13px !important;
+  margin-top: 45px;
+  margin-left: 13px;
+}
+.default-header .logo-container .logo-text p {
+  display: flex;
+  align-items: center;
+  color: #000;
+  text-decoration: none;
+  font-family: "Russo One", sans-serif;
+}
+.default-header .logo-container .logo-text p:first-child {
+  font-size: 28px;
+  height: 28px;
+  letter-spacing: 6px;
+}
+.default-header .logo-container .logo-text p:last-child {
+  font-size: 16px;
+  margin-top: 5px;
+  height: 19px;
 }
 .default-header .list-group {
   border: none;
@@ -76,10 +98,6 @@ h1, h2, h3, h4, h5, h6, p {
   padding-left: 21px;
   align-items: center;
   justify-content: flex-start;
-}
-.default-header .list-group .list-group-item.opened {
-  justify-content: flex-start;
-  padding-left: 21px;
 }
 .default-header .list-group .list-group-item:hover {
   background-color: #f4f4f4;
@@ -103,13 +121,10 @@ h1, h2, h3, h4, h5, h6, p {
 .default-header .list-group .list-group-item.dropdown-container button::after {
   display: none;
 }
-.default-header .list-group .list-group-item span {
-  display: block;
-}
-.default-header .list-group .list-group-item p, .default-header .list-group .dropdown-container p {
+.default-header .list-group .list-group-item p,
+.default-header .list-group .dropdown-container p {
   font-weight: 500;
   font-size: 16px;
-  display: none;
   padding-left: 16px;
 }
 
@@ -756,15 +771,11 @@ h1, h2, h3, h4, h5, h6, p {
 
 .profile-banner {
   background-color: #00B3DB;
-  width: 100%;
   height: 389px;
-  justify-content: flex-end;
-  align-items: flex-end;
 }
 
 .profile-header-list-container {
-  width: 100%;
-  background-color: white;
+  background-color: #fff;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
@@ -861,11 +872,20 @@ h1, h2, h3, h4, h5, h6, p {
   padding: unset !important;
 }
 
+.profile-content {
+  font-family: "Manrope", sans-serif;
+  font-weight: 600;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .profile-avatar {
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
   width: 280px !important;
+  max-width: -moz-fit-content !important;
+  max-width: fit-content !important;
   height: 280px !important;
   border-radius: 50% 50% !important;
   -o-object-fit: contain !important;
@@ -878,53 +898,61 @@ h1, h2, h3, h4, h5, h6, p {
   outline-offset: -6px;
 }
 
-.info-profile {
+.profile-info-container {
   margin-left: 54px !important;
   margin-top: -236px !important;
+  max-width: 310px !important;
   width: 310px !important;
-  display: flex !important;
-  justify-content: flex-start !important;
 }
-.info-profile div {
+.profile-info-container div {
   width: -moz-fit-content;
   width: fit-content;
   flex-direction: column;
 }
-.info-profile hr {
+.profile-info-container hr {
   margin-top: 5px !important;
 }
-
-.nickname {
+.profile-info-container .profile-info .user-name {
   padding: unset !important;
   width: -moz-fit-content;
   width: fit-content;
   font-size: 32px;
   font-weight: 700;
 }
-
-.marginTopDates {
-  margin-top: 23px !important;
+.profile-info-container .profile-info .nickname {
+  color: #8F8F8F;
+  font-size: 18px;
+  font-weight: 400;
 }
-.marginTopDates div {
-  margin-bottom: 8px !important;
+.profile-info-container .profile-info .points {
+  color: #3D00FF;
+  font-size: 18px;
 }
-
-.profile-links {
+.profile-info-container .profile-bio p {
+  color: #373737;
+}
+.profile-info-container .profile-bio button {
+  font-family: "Manrope", sans-serif;
+  font-weight: bold;
+  margin-top: 10px;
+  background-color: #929292;
+  color: #fff;
+}
+.profile-info-container .profile-links {
   margin-top: 10px !important;
   color: #757575;
 }
-.profile-links span {
+.profile-info-container .profile-links span {
   color: black;
 }
-.profile-links p {
+.profile-info-container .profile-links p {
   font-weight: 500;
 }
-
-.profile-links a {
+.profile-info-container .profile-links a {
   color: #757575;
   transition-duration: 0.1s !important;
 }
-.profile-links a:hover {
+.profile-info-container .profile-links a:hover {
   color: #9f9e9e !important;
 }
 
@@ -969,6 +997,12 @@ h1, h2, h3, h4, h5, h6, p {
   margin-bottom: 16px !important;
   border-radius: 5px;
   position: relative !important;
+}
+.main-block-profile .post-block .post-menu-icon {
+  top: 15px;
+  right: 19px;
+  height: -moz-fit-content !important;
+  height: fit-content !important;
 }
 
 .post-user {

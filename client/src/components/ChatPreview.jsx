@@ -23,28 +23,32 @@ function ChatPreview({ chat, navigate }) {
     }
 
     return (
-        <Row className='chat-preview d-flex align-items-center flex-nowrap'
-            key={chat.id}
-            role='button'
-            onClick={() => { navigate(`/messenger?c=${chat.id}`); }}
-        >
-            <Col className='chat-avatar d-flex justify-content-center'>
-                <CreateImage
-                    url={chat.avatarUrl}
-                    alt={chat.name}
-                    width={55}
-                    height={55}
-                    rounded={true}
-                />
-            </Col>
-            <Col className='chat-info w-75 ps-3'>
-                <p className='chat-name d-flex justify-content-between'>
-                    {chat.name}
-                    <span>{formatTimestampForChatContainer(chat.lastMessage.timestamp)}</span>
-                </p>
-                <p className='last-message text-truncate'>{chat.lastMessage.content}</p>
-            </Col>
-        </Row>
+        <>
+            {chat.lastMessage.type !== 'entry' ? (
+                <Row className='chat-preview d-flex align-items-center flex-nowrap'
+                    key={chat.id}
+                    role='button'
+                    onClick={() => { navigate(`/messenger?c=${chat.id}`); }}
+                >
+                    <Col className='chat-avatar d-flex justify-content-center'>
+                        <CreateImage
+                            url={chat.avatarUrl}
+                            alt={chat.name}
+                            width={55}
+                            height={55}
+                            rounded={true}
+                        />
+                    </Col>
+                    <Col className='chat-info w-75 ps-3'>
+                        <p className='chat-name d-flex justify-content-between'>
+                            {chat.name}
+                            <span>{formatTimestampForChatContainer(chat.lastMessage.timestamp)}</span>
+                        </p>
+                        <p className='last-message text-truncate'>{chat.lastMessage.content}</p>
+                    </Col>
+                </Row>
+            ) : null}
+        </>
     )
 }
 

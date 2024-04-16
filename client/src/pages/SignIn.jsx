@@ -23,11 +23,12 @@ function SignIn() {
                         return;
                     }
                     setAuthUser(responseData.user);
-                    navigate('/messenger');
+                    navigate('/my-profile');
                 });
         } catch (error) {
             if (error.response) {
-                console.error(error.response.data.message);
+                console.error(error.response.data);
+                setPassword('');
             }
         }
     }
@@ -36,12 +37,12 @@ function SignIn() {
         <Container className='d-flex justify-content-center align-items-center'>
             <Form onSubmit={login}>
                 <Form.Group controlId='formBasicUsername'>
-                    <Form.Control type='text' name='username' placeholder='Username'
+                    <Form.Control type='text' name='username' placeholder='Username' value={username}
                         onChange={e => setUsername(e.target.value)} autoComplete='username' />
                 </Form.Group>
 
                 <Form.Group controlId='formBasicPassword'>
-                    <Form.Control type='password' name='password' placeholder='Password'
+                    <Form.Control type='password' name='password' placeholder='Password' value={password}
                         onChange={e => setPassword(e.target.value)} autoComplete='current-password' />
                 </Form.Group>
 

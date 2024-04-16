@@ -1,5 +1,4 @@
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Client } from '@stomp/stompjs';
 
@@ -9,7 +8,6 @@ import MessageNotification from './MessageNotification';
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-    const navigate = useNavigate();
     const [stompClient, setStompClient] = useState(null);
     const [isStompClientInitialized, setIsStompClientInitialized] = useState(false);
     const [messageNotification, setMessageNotification] = useState({ visible: false, notification: {} });
@@ -18,12 +16,10 @@ const AuthProvider = ({ children }) => {
     });
 
     const subscribeToNotifications = useCallback(() => {
-        if (!isStompClientInitialized) {
-            console.log('STOMP client is not yet initialized.');
-            return;
-        }
+        if (!isStompClientInitialized) return;
+
         stompClient.subscribe('/user/notification', receivedNotification => {
-            // Process the received message
+            // Process the received noitification
             const notification = JSON.parse(receivedNotification.body);
             setMessageNotification({ visible: true, notification: notification });
         });
@@ -31,51 +27,40 @@ const AuthProvider = ({ children }) => {
 
     const initializeStompClient = useCallback(() => {
         if (stompClient) {
-            console.log('STOMP client is already initialized.');
             subscribeToNotifications();
             return;
         }
 
-        if (!authUser) {
-            axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
-                .then(response => {
-                    if (response.status === 200) {
-                        setAuthUser(response.data.user);
-                    }
-                })
-                .catch(() => {
-                    setAuthUser(null);
-                    // navigate('/sign-in');
-                });
-        } else {
-            if (!stompClient) {
-                console.log('Initializing STOMP client...');
-                axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
-                    .then(response => {
-                        // Create a new WebSocket connection
-                        const client = new Client({
-                            brokerURL: WEBSOCKET_URL,
-                            connectHeaders: {
-                                Authorization: `Bearer ${response.data.accessToken}`,
-                            },
-                            onConnect: function (frame) {
-                                console.log('Connected: ' + frame);
-                                setStompClient(client);
-                                setIsStompClientInitialized(true);
-                                setAuthUser(response.data.user);
-                            }
-                        });
-                        client.activate();
+        axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
+            .then(response => {
+                // Create a new WebSocket connection
+                const client = new Client({
+                    brokerURL: WEBSOCKET_URL,
+                    connectHeaders: {
+                        Authorization: `Bearer ${response.data.accessToken}`,
+                    },
+                    onConnect: function (frame) {
+                        console.log('Connected: ' + frame);
                         setStompClient(client);
-                    })
-                    .catch(error => {
-                        console.error('Error while initializing STOMP client:', error);
+                        setIsStompClientInitialized(true);
+                        setAuthUser(response.data.user);
+                    },
+                    onDisconnect: function (frame) {
+                        console.log('Disconnected: ' + frame);
+                        setStompClient(null);
+                        setIsStompClientInitialized(false);
                         setAuthUser(null);
-                        // navigate('/sign-in');
-                    });
-            }
-        }
-    }, [navigate, stompClient, authUser, subscribeToNotifications]);
+                    }
+                });
+
+                client.activate();
+                setStompClient(client);
+            })
+            .catch(error => {
+                console.error('Error while initializing STOMP client:', error);
+                setAuthUser(null);
+            });
+    }, [stompClient, subscribeToNotifications]);
 
     useEffect(() => {
         initializeStompClient();
@@ -87,8 +72,13 @@ const AuthProvider = ({ children }) => {
             sessionStorage.setItem('auth-user', JSON.stringify(authUser));
         } else {
             sessionStorage.removeItem('auth-user');
+
+            // Disconnect stomp client if user is logged out
+            if (stompClient) {
+                stompClient.deactivate();
+            }
         }
-    }, [authUser]);
+    }, [authUser, stompClient]);
 
     return (
         <AuthContext.Provider value={{ authUser, setAuthUser, stompClient, isStompClientInitialized }}>

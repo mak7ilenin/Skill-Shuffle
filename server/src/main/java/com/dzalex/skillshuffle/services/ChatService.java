@@ -2,17 +2,21 @@ package com.dzalex.skillshuffle.services;
 
 import com.dzalex.skillshuffle.dtos.*;
 import com.dzalex.skillshuffle.entities.*;
+import com.dzalex.skillshuffle.enums.ChatAnnouncementType;
 import com.dzalex.skillshuffle.enums.ChatType;
 import com.dzalex.skillshuffle.enums.MemberRole;
+import com.dzalex.skillshuffle.enums.MessageType;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.CommunityChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -159,13 +163,22 @@ public class ChatService {
             chatRepository.save(newChat);
         }
 
+        User authedUser = userService.getCurrentUser();
+
         // Add the current user to the chat
-        addMemberToChat(newChat, userService.getCurrentUser(), getRoleByChatType(chat.getType()));
+        addMemberToChat(newChat, authedUser, getRoleByChatType(chat.getType()));
 
         // Add members to the chat
         Arrays.stream(chat.getMembers())
               .map(userService::getUserByNickname)
               .forEach(user -> addMemberToChat(newChat, user, MemberRole.MEMBER));
+
+        // Send ENTRY message to the chat
+        if (chat.getType() == ChatType.GROUP) {
+            messageService.createAnnouncementMessage(authedUser, newChat, ChatAnnouncementType.CREATED);
+        } else {
+            messageService.createEntryMessage(authedUser, newChat);
+        }
 
         return newChat;
     }
@@ -182,5 +195,24 @@ public class ChatService {
 
     private MemberRole getRoleByChatType(ChatType chatType) {
         return chatType == ChatType.GROUP ? MemberRole.CREATOR : MemberRole.MEMBER;
+    }
+
+    @Transactional
+    public void deleteEmptyChatsByAuthedUser(User authedUser) {
+        // Delete chats with only one ENTRY type message
+        chatRepository.findAll().forEach(chat -> {
+            List<ChatMessage> messages = messageRepository.findMessagesByChatId(chat.getId());
+            if (messages.size() == 1 && messages.get(0).getType() == MessageType.ENTRY
+                    && Objects.equals(messages.get(0).getSender().getId(), authedUser.getId()))
+            {
+                if (chat.getType() == ChatType.COMMUNITY) {
+                    communityChatRepository.deleteAllByChatId(chat.getId());
+                } else {
+                    chatMemberRepository.deleteAllByChatId(chat.getId());
+                }
+                messageRepository.delete(messages.get(0));
+                chatRepository.delete(chat);
+            }
+        });
     }
 }

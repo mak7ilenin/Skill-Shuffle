@@ -106,7 +106,7 @@ function Chat() {
       sender: authUser,
       chat: { id: choosenChat.id },
       content: gif ? gif.url : messageContent,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     };
     if (stompClient != null) {
       // Send the message to the server to handle
@@ -240,18 +240,22 @@ function Chat() {
           <Row className='messages-list p-0 py-3' ref={messagesListRef} onScroll={handleScroll}>
             <Stack direction='vertical' gap={2}>
               {choosenChat.messages && choosenChat.messages.map((message, index) => (
-                <div
-                  className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'} ${index > 0 && message.sender.nickname === choosenChat.messages[index - 1].sender.nickname ? '' : 'mt-2'}`}
-                  key={index}
-                  ref={index === 0 ? firstMessageRef : null}
-                >
-                  <MessageRenderer
-                    message={message}
-                    index={index}
-                    authUser={authUser}
-                    chat={choosenChat}
-                  />
-                </div>
+                <>
+                  {message.type !== 'entry' ? (
+                    <div
+                      className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'} ${index > 0 && message.sender.nickname === choosenChat.messages[index - 1].sender.nickname ? '' : 'mt-2'}`}
+                      key={index}
+                      ref={index === 0 ? firstMessageRef : null}
+                    >
+                      <MessageRenderer
+                        message={message}
+                        index={index}
+                        authUser={authUser}
+                        chat={choosenChat}
+                      />
+                    </div>
+                  ) : null}
+                </>
               )
               )}
             </Stack>
