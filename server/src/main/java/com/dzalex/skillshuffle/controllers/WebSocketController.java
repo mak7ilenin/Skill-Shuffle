@@ -89,4 +89,10 @@ public class WebSocketController {
         }
     }
 
+    // Add method to mark message as seen
+    @MessageMapping("/chat/seen")
+    public void markMessageAsSeen(@Payload ChatMessage message) {
+        messageService.markMessageAsSeen(message);
+    }
+
 }

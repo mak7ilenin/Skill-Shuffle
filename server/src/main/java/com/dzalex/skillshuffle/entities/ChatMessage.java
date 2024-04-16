@@ -33,6 +33,6 @@ public class ChatMessage {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private MessageStatus status;
+    private MessageStatus status = MessageStatus.SENT;
 
 }

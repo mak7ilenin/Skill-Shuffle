@@ -82,4 +82,10 @@ public class MessageService {
                 message.getTimestamp(),
                 message.getStatus());
     }
+
+    public void markMessageAsSeen(ChatMessage message) {
+        ChatMessage messageToUpdate = messageRepository.findMessageById(message.getId());
+        messageToUpdate.setStatus(MessageStatus.SEEN);
+        messageRepository.save(messageToUpdate);
+    }
 }

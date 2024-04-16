@@ -7,6 +7,6 @@ public enum MessageStatus {
     SENT,
     @JsonProperty("delivered")
     DELIVERED,
-    @JsonProperty("read")
-    READ
+    @JsonProperty("seen")
+    SEEN
 }
