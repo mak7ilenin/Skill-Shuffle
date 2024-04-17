@@ -467,19 +467,18 @@ h1, h2, h3, h4, h5, h6, p {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 20px;
-  color: #b2b2b2;
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
 .chat-page .chat-box.non-selected p {
+  font-family: "Manrope", sans-serif;
   color: #fff;
   font-size: 20px;
-  font-weight: 600;
-  background-color: rgba(255, 255, 255, 0.2784313725);
+  font-weight: 400;
+  background-color: rgba(255, 255, 255, 0.3137254902);
   border-radius: 10px;
-  padding: 5px 20px;
+  padding: 9px 36px;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -530,6 +529,22 @@ h1, h2, h3, h4, h5, h6, p {
   overflow-y: auto;
   flex: 1;
   margin-right: 0;
+}
+.chat-page .chat-box .messages-list .date-separator {
+  font-family: "Manrope", sans-serif;
+  font-size: 16px;
+  color: #5B5B5B;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.4392156863);
+  border: 1px solid rgba(143, 143, 143, 0.0509803922);
+  padding: 5px 66px;
+  border-radius: 100px;
+}
+.chat-page .chat-box .messages-list .announcement {
+  font-family: "Manrope", sans-serif;
+  font-size: 16px;
+  color: #373737;
+  font-weight: 500;
 }
 .chat-page .chat-box .messages-list .message {
   flex-wrap: wrap;
@@ -612,6 +627,9 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-box .messages-list .message .message-time-container .message-time {
   font-size: 12px;
   color: #b2b2b2;
+}
+.chat-page .chat-box .messages-list .message:hover .message-time-container {
+  visibility: visible !important;
 }
 .chat-page .chat-box .message-input {
   margin-right: 0;

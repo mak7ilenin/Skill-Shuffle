@@ -11,7 +11,7 @@ function SignUp() {
     const [password, setPassword] = useState('');
     const [nickname, setNickname] = useState('');
     const navigate = useNavigate();
-    
+
     const register = async (e) => {
         e.preventDefault();
         const body = {
@@ -42,23 +42,23 @@ function SignUp() {
         <Container className='d-flex justify-content-center align-items-center'>
             <Form onSubmit={register}>
                 <Form.Group controlId='formBasicUsername'>
-                    <Form.Control type='text' name='username' placeholder='Username' 
+                    <Form.Control type='text' name='username' placeholder='Username'
                         onChange={e => setUsername(e.target.value)} autoComplete='username' />
                 </Form.Group>
 
                 <Form.Group controlId='formBasicEmail'>
-                    <Form.Control type='email' name='email' placeholder='E-mail' 
+                    <Form.Control type='email' name='email' placeholder='E-mail'
                         onChange={e => setEmail(e.target.value)} autoComplete='email' />
                 </Form.Group>
 
                 <Form.Group controlId='formBasicNickname'>
-                    <Form.Control type='text' name='nickname' placeholder='Nickname' 
+                    <Form.Control type='text' name='nickname' placeholder='Nickname'
                         onChange={e => setNickname(e.target.value)} autoComplete='nickname' />
                 </Form.Group>
 
                 <Form.Group controlId='formBasicPassword'>
-                    <Form.Control type='password' name='password' placeholder='Password' 
-                    onChange={e => setPassword(e.target.value)} autoComplete='password' />
+                    <Form.Control type='password' name='password' placeholder='Password'
+                        onChange={e => setPassword(e.target.value)} autoComplete='password' />
                 </Form.Group>
 
                 <Button variant='primary' type='submit'>

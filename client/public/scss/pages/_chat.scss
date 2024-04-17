@@ -314,19 +314,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 20px;
-            color: #b2b2b2;
             background-repeat: no-repeat;
             background-position: center;
             background-size: cover;
 
             p {
+                font-family: $main-font;
                 color: #fff;
                 font-size: 20px;
-                font-weight: 600;
-                background-color: #ffffff47;
+                font-weight: 400;
+                background-color: #ffffff50;
                 border-radius: 10px;
-                padding: 5px 20px;
+                padding: 9px 36px;
                 cursor: pointer;
 
                 // Make text non selectable
@@ -386,6 +385,25 @@
             overflow-y: auto;
             flex: 1;
             margin-right: 0;
+
+            .date-separator {      
+                font-family: $main-font;
+                font-size: 16px;
+                color: #5B5B5B;
+                font-weight: 500;
+
+                background-color: #ffffff70;
+                border: 1px solid #8f8f8f0d;
+                padding: 5px 66px;
+                border-radius: 100px;
+            }
+
+            .announcement {  
+                font-family: $main-font;
+                font-size: 16px;
+                color: $dark-gray;
+                font-weight: 500;
+            }
 
             .message {
                 flex-wrap: wrap;
@@ -494,8 +512,13 @@
                         color: #b2b2b2;
                     }
                 }
-            }
 
+                &:hover {
+                    .message-time-container {
+                        visibility: visible !important;
+                    }
+                }
+            }
         }
 
         .message-input {

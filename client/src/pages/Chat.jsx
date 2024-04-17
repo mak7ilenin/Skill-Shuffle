@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef, useCallback, useMemo } from 'react';
 import { Row, Stack, Button } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -146,6 +146,25 @@ function Chat() {
   };
 
 
+  const messagesByDay = useMemo(() => {
+    const groupedMessages = [];
+    let currentDay = null;
+
+    choosenChat.messages.forEach((message, index) => {
+      const messageDay = new Date(message.timestamp).toLocaleDateString();
+
+      if (messageDay !== currentDay) {
+        groupedMessages.push({ day: messageDay, messages: [] });
+        currentDay = messageDay;
+      }
+
+      groupedMessages[groupedMessages.length - 1].messages.push(message);
+    });
+
+    return groupedMessages;
+  }, [choosenChat.messages]);
+
+
   const handleScroll = () => {
     const { scrollTop } = messagesListRef.current;
     if (scrollTop === 0 && !loading) {
@@ -238,10 +257,38 @@ function Chat() {
           <ChatHeader chat={choosenChat} openChatMenu={openChatMenu} />
 
           <Row className='messages-list p-0 py-3' ref={messagesListRef} onScroll={handleScroll}>
-            <Stack direction='vertical' gap={2}>
-              {choosenChat.messages && choosenChat.messages.map((message, index) => (
+            <Stack direction='vertical' gap={1}>
+              {messagesByDay.map((dayMessages, index) => (
                 <>
-                  {message.type !== 'entry' ? (
+                  <div className='date-separator mt-3'>{dayMessages.day}</div>
+                  {dayMessages.messages.map((message, index) => (
+                    <>
+                      {message.type !== 'entry' && message.type !== 'announcement' ? (
+                        <div
+                          className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'} ${index > 0 && message.sender.nickname === choosenChat.messages[index - 1].sender.nickname ? '' : 'mt-2'}`}
+                          key={index}
+                          ref={index === 0 ? firstMessageRef : null}
+                        >
+                          <MessageRenderer
+                            message={message}
+                            index={index}
+                            authUser={authUser}
+                            chat={choosenChat}
+                          />
+                        </div>
+                      ) : null}
+                      {message.type === 'announcement' ? (
+                        <div className='announcement w-100 d-flex justify-content-center mt-3' key={index}>
+                          {message.content}
+                        </div>
+                      ) : null}
+                    </>
+                  ))}
+                </>
+              ))}
+              {/* {choosenChat.messages && choosenChat.messages.map((message, index) => (
+                <>
+                  {message.type !== 'entry' && message.type !== 'announcement' ? (
                     <div
                       className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'} ${index > 0 && message.sender.nickname === choosenChat.messages[index - 1].sender.nickname ? '' : 'mt-2'}`}
                       key={index}
@@ -255,9 +302,14 @@ function Chat() {
                       />
                     </div>
                   ) : null}
+                  {message.type === 'announcement' ? (
+                    <div className='announcement w-100 d-flex justify-content-center mt-3' key={index}>
+                      {message.content}
+                    </div>
+                  ) : null}
                 </>
               )
-              )}
+              )} */}
             </Stack>
           </Row>
 

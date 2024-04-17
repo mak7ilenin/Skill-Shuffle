@@ -57,10 +57,10 @@ function MessageRenderer({ message, index, authUser, chat }) {
 
     return (
         <>
-            {index > 0 && message.sender.nickname === chat.messages[index - 1].sender.nickname ? (
+            {index > 0 && message.sender.nickname === chat.messages[index - 1].sender.nickname && chat.messages[index - 1].type !== 'announcement' ? (
                 <div className='message-content-container d-flex'>
                     <div className='message-content message-series flex-column'>{detectUrls(message.content)}</div>
-                    <div className="message-time-container">
+                    <div className="message-time-container invisible">
                         <p className='message-time'>{formatTimestampForMessage(message.timestamp)}</p>
                     </div>
                 </div>
@@ -80,7 +80,7 @@ function MessageRenderer({ message, index, authUser, chat }) {
                     </div>
                     <div className='message-content-container d-flex'>
                         <div className='message-content flex-column'>{detectUrls(message.content)}</div>
-                        <div className="message-time-container">
+                        <div className="message-time-container visible">
                             <p className='message-time'>{formatTimestampForMessage(message.timestamp)}</p>
                         </div>
                     </div>
