@@ -145,13 +145,21 @@ function Chat() {
     }
   };
 
-
+  // Group messages by day
   const messagesByDay = useMemo(() => {
+    if (choosenChat.messages === undefined) {
+      return [];
+    }
+
     const groupedMessages = [];
     let currentDay = null;
 
-    choosenChat.messages.forEach((message, index) => {
-      const messageDay = new Date(message.timestamp).toLocaleDateString();
+    choosenChat.messages.forEach((message) => {
+      // Format the message timestamp to a '24 January' format
+      const messageDay = new Date(message.timestamp).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+      });
 
       if (messageDay !== currentDay) {
         groupedMessages.push({ day: messageDay, messages: [] });
@@ -162,7 +170,7 @@ function Chat() {
     });
 
     return groupedMessages;
-  }, [choosenChat.messages]);
+  }, [choosenChat]);
 
 
   const handleScroll = () => {
@@ -258,9 +266,9 @@ function Chat() {
 
           <Row className='messages-list p-0 py-3' ref={messagesListRef} onScroll={handleScroll}>
             <Stack direction='vertical' gap={1}>
-              {messagesByDay.map((dayMessages, index) => (
+              {messagesByDay.map((dayMessages) => (
                 <>
-                  <div className='date-separator mt-3'>{dayMessages.day}</div>
+                  <div className='date-separator mt-3 mb-1'>{dayMessages.day}</div>
                   {dayMessages.messages.map((message, index) => (
                     <>
                       {message.type !== 'entry' && message.type !== 'announcement' ? (
@@ -273,7 +281,7 @@ function Chat() {
                             message={message}
                             index={index}
                             authUser={authUser}
-                            chat={choosenChat}
+                            messageList={dayMessages}
                           />
                         </div>
                       ) : null}

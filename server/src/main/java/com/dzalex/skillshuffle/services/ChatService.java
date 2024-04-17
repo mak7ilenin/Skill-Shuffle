@@ -46,6 +46,9 @@ public class ChatService {
     @Autowired
     private MediaService mediaService;
 
+    @Autowired
+    private FileService fileService;
+
     public List<ChatPreviewDTO> getChatList() {
         User authedUser = userService.getCurrentUser();
         List<Chat> chats = chatRepository.findAll();
@@ -159,7 +162,11 @@ public class ChatService {
         // Save the avatar image if provided
         if (avatarBlob != null) {
             String avatarFilePath = "chats/chat-" + newChat.getId() + "/avatar/";
-            newChat.setAvatarUrl(avatarFilePath + mediaService.uploadImage(avatarBlob, avatarFilePath));
+            // Upload the image to the S3 bucket
+            String avatarUrl = fileService.uploadFile(avatarBlob, avatarFilePath);
+            if (avatarUrl != null) {
+                newChat.setAvatarUrl(avatarUrl);
+            }
             chatRepository.save(newChat);
         }
 

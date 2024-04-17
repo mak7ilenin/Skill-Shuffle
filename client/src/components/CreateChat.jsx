@@ -6,7 +6,6 @@ import axios from 'axios';
 import { API_SERVER } from '../config';
 import { AESEncrypt } from '../crypto';
 import { useAuth } from '../components/AuthContext';
-import CreateImage from './CreateImage';
 import UploadChatAvatarModal from './UploadChatAvatarModal';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
@@ -156,12 +155,13 @@ function CreateChat({ newChatVisibility }) {
                         onClick={(e) => handleSelectFriend(e, friend)}
                     >
                         <div className="friend-info w-75 d-flex align-items-center">
-                            <CreateImage
-                                url={friend.avatarUrl}
+                            <Image
+                                src={friend.avatarUrl !== null ? friend.avatarUrl : imagePlaceholder}
                                 alt={'Friend'}
-                                width={35}
-                                height={35}
-                                rounded={true}
+                                width='35'
+                                height='35'
+                                style={{ objectFit: 'cover' }}
+                                roundedCircle
                             />
                             <span className='friend-name ms-3'>{friend.firstName} {friend.lastName}</span>
                         </div>

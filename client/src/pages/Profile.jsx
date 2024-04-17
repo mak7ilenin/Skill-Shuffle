@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
 import { Row, Col, Tab, Tabs, Button, Image, NavLink } from 'react-bootstrap';
 
-import { STATIC_RESOURCES } from '../config';
 import { useAuth } from '../components/AuthContext';
-import CreateImage from '../components/CreateImage';
 
 import { ReactComponent as EditBanner } from '../assets/icons/edit_Banner.svg';
 import { ReactComponent as Trophy } from '../assets/icons/pointsTrophy.svg';
@@ -67,7 +65,7 @@ function Profile() {
                 <Col className='profile-info-container d-flex justify-content-start flex-column'>
                     <Row>
                         <Image
-                            src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
+                            src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
                             className='profile-avatar p-0'
                             alt='Avatar'
                             roundedCircle
@@ -122,71 +120,66 @@ function Profile() {
 
                     <Row className='d-flex flex-row mt-3 photos-videos-block'>
                         <Col>
-                            <CreateImage
-                                url={authUser.avatarUrl}
-                                alt={'Media'}
-                                width={70}
-                                height={70}
-                                rounded={false}
-                            />
-                        </Col>
-                        <Col>
-                            <CreateImage
-                                url={authUser.avatarUrl}
-                                alt={'Media'}
-                                width={70}
-                                height={70}
-                                rounded={false}
-                            />
-                        </Col>
-                        <Col>
-                            <CreateImage
-                                url={authUser.avatarUrl}
-                                alt={'Media'}
-                                width={70}
-                                height={70}
-                                rounded={false}
-                            />
-                        </Col>
-                        <Col>
-                            <CreateImage
-                                url={authUser.avatarUrl}
-                                alt={'Media'}
-                                width={70}
-                                height={70}
-                                rounded={false}
+                            <Image
+                                src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                alt='Media'
+                                width='70'
+                                height='70'
+                                style={{ objectFit: 'cover' }}
                             />
                         </Col>
                         <Col>
                             <Image
-                                src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
+                                src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                alt='Media'
+                                width='70'
+                                height='70'
+                                style={{ objectFit: 'cover' }}
                             />
                         </Col>
                         <Col>
-                            <CreateImage
-                                url={authUser.avatarUrl}
-                                alt={'Media'}
-                                width={70}
-                                height={70}
-                                rounded={false}
+                            <Image
+                                src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                alt='Media'
+                                width='70'
+                                height='70'
+                                style={{ objectFit: 'cover' }}
                             />
                         </Col>
                         <Col>
-                            <CreateImage
-                                url={authUser.avatarUrl}
-                                alt={'Media'}
-                                width={70}
-                                height={70}
-                                rounded={false}
+                            <Image
+                                src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                alt='Media'
+                                width='70'
+                                height='70'
+                                style={{ objectFit: 'cover' }}
                             />
                         </Col>
                         <Col>
-                            <CreateImage
-                                url={authUser.avatarUrl}
-                                alt={'Media'}
-                                width={70}
-                                height={70}
-                                rounded={false}
+                            <Image
+                                src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                alt='Media'
+                                width='70'
+                                height='70'
+                                style={{ objectFit: 'cover' }}
+                            />
+                        </Col>
+                        <Col>
+                            <Image
+                                src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                alt='Media'
+                                width='70'
+                                height='70'
+                                style={{ objectFit: 'cover' }}
+                            />
+                        </Col>
+                        <Col>
+                            <Image
+                                src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                alt='Media'
+                                width='70'
+                                height='70'
+                                style={{ objectFit: 'cover' }}
                             />
                         </Col>
                     </Row>
@@ -200,7 +193,7 @@ function Profile() {
                         <Col className='post-user'>
                             <Row className='post-user-img'>
                                 <Image
-                                    src={authUser.avatarUrl ? `${STATIC_RESOURCES}/${authUser.avatarUrl}` : imagePlaceholder}
+                                    src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
                                 />
                             </Row>
                             <Row style={{ fontSize: '18px' }}>
@@ -240,12 +233,13 @@ function Profile() {
                         <Col className='post-messages'>
                             <Col className='post-message d-flex justify-content-start align-items-center flex-row mt-3'>
                                 <Row className='post-user-img m-0'>
-                                    <CreateImage
-                                        url={authUser.avatarUrl}
-                                        alt={'Avatar'}
-                                        width={60}
-                                        height={60}
-                                        rounded={true}
+                                    <Image
+                                        src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                        alt='Avatar'
+                                        width='60'
+                                        height='60'
+                                        style={{ objectFit: 'cover' }}
+                                        roundedCircle
                                     />
                                 </Row>
                                 <Row className='post-user-input'>
@@ -269,12 +263,13 @@ function Profile() {
                         <p className='aside-header'>You might like</p>
                         <NavLink href='/' className='user-container d-flex align-items-center justify-content-between flex-row mb-2'>
                             <Row className='user-img p-0 me-2'>
-                                <CreateImage
-                                    url={authUser.avatarUrl}
-                                    alt={'User'}
-                                    width={45}
-                                    height={45}
-                                    rounded={true}
+                                <Image
+                                    src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                    alt='User'
+                                    width='45'
+                                    height='45'
+                                    style={{ objectFit: 'cover' }}
+                                    roundedCircle
                                 />
                             </Row>
                             <Row className='user-info'>
@@ -285,12 +280,13 @@ function Profile() {
                         </NavLink>
                         <NavLink href='/' className='user-container d-flex align-items-center justify-content-between flex-row mb-2'>
                             <Row className='user-img p-0 me-2'>
-                                <CreateImage
-                                    url={authUser.avatarUrl}
-                                    alt={'User'}
-                                    width={45}
-                                    height={45}
-                                    rounded={true}
+                                <Image
+                                    src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                    alt='User'
+                                    width='45'
+                                    height='45'
+                                    style={{ objectFit: 'cover' }}
+                                    roundedCircle
                                 />
                             </Row>
                             <Row className='user-info'>
@@ -301,12 +297,13 @@ function Profile() {
                         </NavLink>
                         <NavLink href='/' className='user-container d-flex align-items-center justify-content-between flex-row mb-2'>
                             <Row className='user-img p-0 me-2'>
-                                <CreateImage
-                                    url={authUser.avatarUrl}
-                                    alt={'User'}
-                                    width={45}
-                                    height={45}
-                                    rounded={true}
+                                <Image
+                                    src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                    alt='User'
+                                    width='45'
+                                    height='45'
+                                    style={{ objectFit: 'cover' }}
+                                    roundedCircle
                                 />
                             </Row>
                             <Row className='user-info'>
@@ -317,12 +314,13 @@ function Profile() {
                         </NavLink>
                         <NavLink href='/' className='user-container d-flex align-items-center justify-content-between flex-row mb-2'>
                             <Row className='user-img p-0 me-2'>
-                                <CreateImage
-                                    url={authUser.avatarUrl}
-                                    alt={'User'}
-                                    width={45}
-                                    height={45}
-                                    rounded={true}
+                                <Image
+                                    src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                    alt='User'
+                                    width='45'
+                                    height='45'
+                                    style={{ objectFit: 'cover' }}
+                                    roundedCircle
                                 />
                             </Row>
                             <Row className='user-info'>
@@ -339,48 +337,52 @@ function Profile() {
                         <Col className='friends-online d-flex flex-row align-items-center justify-content-start'>
                             <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
                                 <Row className='friend-img w-auto'>
-                                    <CreateImage
-                                        url={authUser.avatarUrl}
-                                        alt={'Friend'}
-                                        width={60}
-                                        height={60}
-                                        rounded={true}
+                                    <Image
+                                        src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                        alt='Friend'
+                                        width='60'
+                                        height='60'
+                                        style={{ objectFit: 'cover' }}
+                                        roundedCircle
                                     />
                                 </Row>
                                 <p>Durgesh</p>
                             </NavLink>
                             <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
                                 <Row className='friend-img w-auto'>
-                                    <CreateImage
-                                        url={authUser.avatarUrl}
-                                        alt={'Friend'}
-                                        width={60}
-                                        height={60}
-                                        rounded={true}
+                                    <Image
+                                        src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                        alt='Friend'
+                                        width='60'
+                                        height='60'
+                                        style={{ objectFit: 'cover' }}
+                                        roundedCircle
                                     />
                                 </Row>
                                 <p>Durgesh</p>
                             </NavLink>
                             <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
                                 <Row className='friend-img w-auto'>
-                                    <CreateImage
-                                        url={authUser.avatarUrl}
-                                        alt={'Friend'}
-                                        width={60}
-                                        height={60}
-                                        rounded={true}
+                                    <Image
+                                        src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                        alt='Friend'
+                                        width='60'
+                                        height='60'
+                                        style={{ objectFit: 'cover' }}
+                                        roundedCircle
                                     />
                                 </Row>
                                 <p>Durgesh</p>
                             </NavLink>
                             <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
                                 <Row className='friend-img w-auto'>
-                                    <CreateImage
-                                        url={authUser.avatarUrl}
-                                        alt={'Friend'}
-                                        width={60}
-                                        height={60}
-                                        rounded={true}
+                                    <Image
+                                        src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                        alt='Friend'
+                                        width='60'
+                                        height='60'
+                                        style={{ objectFit: 'cover' }}
+                                        roundedCircle
                                     />
                                 </Row>
                                 <p>Durgesh</p>
@@ -393,12 +395,13 @@ function Profile() {
                         <Col className='friends d-flex flex-row align-items-center justify-content-start'>
                             <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
                                 <Row className='friend-img'>
-                                    <CreateImage
-                                        url={authUser.avatarUrl}
-                                        alt={'Friend'}
-                                        width={60}
-                                        height={60}
-                                        rounded={true}
+                                    <Image
+                                        src={authUser.avatarUrl !== null ? authUser.avatarUrl : imagePlaceholder}
+                                        alt='Friend'
+                                        width='60'
+                                        height='60'
+                                        style={{ objectFit: 'cover' }}
+                                        roundedCircle
                                     />
                                 </Row>
                                 <p>Durgesh</p>

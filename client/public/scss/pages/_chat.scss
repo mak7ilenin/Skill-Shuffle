@@ -386,7 +386,9 @@
             flex: 1;
             margin-right: 0;
 
-            .date-separator {      
+            .date-separator { 
+                width: fit-content;     
+                margin: 0 auto;
                 font-family: $main-font;
                 font-size: 16px;
                 color: #5B5B5B;

@@ -1,14 +1,14 @@
 import React from 'react';
 import { Image, NavLink } from 'react-bootstrap';
 
-import CreateImage from './CreateImage';
+import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function MessageRenderer({ message, index, authUser, chat }) {
+function MessageRenderer({ message, index, authUser, messageList }) {
     // Regular expression to match URLs
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
     const scrollToBottom = () => {
-        if (index !== chat.messages.length - 1) {
+        if (index !== messageList.messages.length - 1) {
             return
         } else {
             // Check if the message was sent by the current user
@@ -57,7 +57,7 @@ function MessageRenderer({ message, index, authUser, chat }) {
 
     return (
         <>
-            {index > 0 && message.sender.nickname === chat.messages[index - 1].sender.nickname && chat.messages[index - 1].type !== 'announcement' ? (
+            {index > 0 && message.sender.nickname === messageList.messages[index - 1].sender.nickname ? (
                 <div className='message-content-container d-flex'>
                     <div className='message-content message-series flex-column'>{detectUrls(message.content)}</div>
                     <div className="message-time-container invisible">
@@ -67,12 +67,13 @@ function MessageRenderer({ message, index, authUser, chat }) {
             ) : (
                 <>
                     <div className='sender-info w-100 d-flex align-items-center mb-2'>
-                        <CreateImage
-                            url={message.sender.avatarUrl}
+                        <Image
+                            src={message.sender.avatarUrl !== null ? message.sender.avatarUrl : imagePlaceholder}
                             alt={message.sender.nickname}
-                            width={30}
-                            height={30}
-                            rounded={true}
+                            width='30'
+                            height='30'
+                            style={{ objectFit: 'cover' }}
+                            roundedCircle
                         />
                         <span className={`sender-name ${message.sender.nickname === authUser.nickname ? 'me-3' : 'ms-3'}`}>
                             <NavLink href={`/users?${message.sender.nickname}`}>{message.sender.firstName}</NavLink>

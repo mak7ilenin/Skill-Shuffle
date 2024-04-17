@@ -1,7 +1,7 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Image } from 'react-bootstrap';
 
-import CreateImage from './CreateImage';
+import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 import { ReactComponent as NetworkIcon } from '../assets/icons/network.svg';
 
@@ -34,12 +34,13 @@ function ChatHeader({ chat, openChatMenu }) {
     return (
         <Row className='chat-header'>
             <Col className='chat-avatar me-3' role='button'>
-                <CreateImage
-                    url={chat.avatarUrl}
+                <Image
+                    src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
                     alt={chat.name}
-                    width={55}
-                    height={55}
-                    rounded={true}
+                    width='55'
+                    height='55'
+                    style={{ objectFit: 'cover' }}
+                    roundedCircle
                 />
             </Col>
             <Col className='d-flex flex-column'>

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Image } from 'react-bootstrap';
 
-import CreateImage from './CreateImage';
+import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function ChatPreview({ chat, navigate }) {
 
@@ -31,12 +31,13 @@ function ChatPreview({ chat, navigate }) {
                     onClick={() => { navigate(`/messenger?c=${chat.id}`); }}
                 >
                     <Col className='chat-avatar d-flex justify-content-center'>
-                        <CreateImage
-                            url={chat.avatarUrl}
+                        <Image
+                            src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
                             alt={chat.name}
-                            width={55}
-                            height={55}
-                            rounded={true}
+                            width='55'
+                            height='55'
+                            style={{ objectFit: 'cover' }}
+                            roundedCircle
                         />
                     </Col>
                     <Col className='chat-info w-75 ps-3'>
