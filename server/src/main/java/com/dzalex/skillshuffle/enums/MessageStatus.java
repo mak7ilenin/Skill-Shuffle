@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public enum MessageStatus {
     @JsonProperty("sent")
     SENT,
-    @JsonProperty("delivered")
-    DELIVERED,
     @JsonProperty("seen")
     SEEN
 }

@@ -33,6 +33,9 @@ const AuthProvider = ({ children }) => {
 
         axios.get(`${API_SERVER}/auth/confirm`, { withCredentials: true })
             .then(response => {
+                // Store the user in the session storage
+                setAuthUser(response.data.user);
+
                 // Create a new WebSocket connection
                 const client = new Client({
                     brokerURL: WEBSOCKET_URL,
@@ -43,7 +46,6 @@ const AuthProvider = ({ children }) => {
                         console.log('Connected: ' + frame);
                         setStompClient(client);
                         setIsStompClientInitialized(true);
-                        setAuthUser(response.data.user);
                     },
                     onDisconnect: function (frame) {
                         console.log('Disconnected: ' + frame);

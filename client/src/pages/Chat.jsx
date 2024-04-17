@@ -286,8 +286,11 @@ function Chat() {
                         </div>
                       ) : null}
                       {message.type === 'announcement' ? (
-                        <div className='announcement w-100 d-flex justify-content-center mt-3' key={index}>
-                          {message.content}
+                        <div
+                          key={index}
+                          className='announcement w-100 d-flex justify-content-center mt-3'
+                        >
+                          <span dangerouslySetInnerHTML={{ __html: message.content }} />
                         </div>
                       ) : null}
                     </>

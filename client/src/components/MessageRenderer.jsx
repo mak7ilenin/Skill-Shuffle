@@ -57,7 +57,7 @@ function MessageRenderer({ message, index, authUser, messageList }) {
 
     return (
         <>
-            {index > 0 && message.sender.nickname === messageList.messages[index - 1].sender.nickname ? (
+            {index > 0 && message.sender.nickname === messageList.messages[index - 1].sender.nickname && messageList.messages[index - 1].type !== 'announcement' ? (
                 <div className='message-content-container d-flex'>
                     <div className='message-content message-series flex-column'>{detectUrls(message.content)}</div>
                     <div className="message-time-container invisible">

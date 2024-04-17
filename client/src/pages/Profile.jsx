@@ -194,6 +194,8 @@ function Profile() {
                             <Row className='post-user-img'>
                                 <Image
                                     src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                    alt='Avatar'
+                                    roundedCircle
                                 />
                             </Row>
                             <Row style={{ fontSize: '18px' }}>
@@ -236,8 +238,6 @@ function Profile() {
                                     <Image
                                         src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
                                         alt='Avatar'
-                                        width='60'
-                                        height='60'
                                         style={{ objectFit: 'cover' }}
                                         roundedCircle
                                     />

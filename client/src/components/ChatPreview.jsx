@@ -45,7 +45,12 @@ function ChatPreview({ chat, navigate }) {
                             {chat.name}
                             <span>{formatTimestampForChatContainer(chat.lastMessage.timestamp)}</span>
                         </p>
-                        <p className='last-message text-truncate'>{chat.lastMessage.content}</p>
+                        {chat.lastMessage.type === 'announcement' ? (
+                            // Remove the HTML tags from the announcement message
+                            <p className='last-message text-truncate'>{chat.lastMessage.content.replace(/<[^>]*>/g, '')}</p>
+                        ) : (
+                            <p className='last-message text-truncate'>{chat.lastMessage.content}</p>
+                        )}
                     </Col>
                 </Row>
             ) : null}
