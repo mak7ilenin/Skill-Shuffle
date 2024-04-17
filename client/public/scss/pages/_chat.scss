@@ -316,6 +316,26 @@
             align-items: center;
             font-size: 20px;
             color: #b2b2b2;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+
+            p {
+                color: #fff;
+                font-size: 20px;
+                font-weight: 600;
+                background-color: #ffffff47;
+                border-radius: 10px;
+                padding: 5px 20px;
+                cursor: pointer;
+
+                // Make text non selectable
+                user-select: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                -o-user-select: none;
+            }
         }
 
         .chat-header {

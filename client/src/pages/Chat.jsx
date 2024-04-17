@@ -229,7 +229,7 @@ function Chat() {
       {choosenChat.id === undefined ? (
         // If no chat is selected, display:
         <div className='chat-box non-selected' key={choosenChat.id} style={{ backgroundImage: `url(${ChatBackground})` }}>
-          <p className='no-chat-selected'>Select a chat to start messaging</p>
+          <p className='no-chat-selected'>Select chat</p>
         </div>
       ) :
         // If a chat is selected, display:

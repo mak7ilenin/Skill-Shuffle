@@ -469,6 +469,23 @@ h1, h2, h3, h4, h5, h6, p {
   align-items: center;
   font-size: 20px;
   color: #b2b2b2;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+.chat-page .chat-box.non-selected p {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.2784313725);
+  border-radius: 10px;
+  padding: 5px 20px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
 }
 .chat-page .chat-box .chat-header {
   height: 80px;
@@ -1104,18 +1121,21 @@ h1, h2, h3, h4, h5, h6, p {
   }
 }
 .post-message {
-  display: flex !important;
   gap: 10px;
-  margin-top: 22px !important;
-  justify-content: flex-start;
-  align-items: center;
+}
+.post-message .post-user-input {
+  font-size: 18px;
+}
+.post-message .post-user-input p {
+  color: #000;
+  font-weight: 800;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding: unset;
+}
+.post-message .post-user-input p span {
   color: #8F8F8F;
   font-weight: 400;
-  flex-direction: row !important;
-}
-.post-message p,
-.post-message span {
-  padding: unset;
 }
 
 .right-block-profile {
@@ -1128,61 +1148,53 @@ h1, h2, h3, h4, h5, h6, p {
   margin-left: 20px !important;
   gap: 10px;
 }
-.right-block-profile .right-block {
-  background-color: white;
+.right-block-profile .profile-aside {
+  background-color: #fff;
   border-radius: 5px;
-  display: flex;
-  flex-direction: column;
-  padding: 16px !important;
-  justify-content: space-between !important;
 }
-.right-block-profile .right-block .r-block-m-p {
+.right-block-profile .profile-aside .aside-header {
   font-size: 20px !important;
   font-weight: 800 !important;
   margin-bottom: 16px !important;
 }
-.right-block-profile .right-block .r-block-m-p span {
+.right-block-profile .profile-aside .aside-header span {
   color: #8F8F8F;
   font-weight: 500;
 }
-.right-block-profile .right-block .post-user-right {
-  display: flex !important;
-  margin-bottom: 10px !important;
-  align-items: center;
-  justify-content: space-between;
-  color: #8F8F8F;
+.right-block-profile .profile-aside .user-container p a {
   font-weight: 400;
-  flex-direction: row !important;
-}
-.right-block-profile .right-block .post-user-right p a {
   text-decoration: unset !important;
   color: #8F8F8F;
 }
-.right-block-profile .right-block .post-user-right p,
-.right-block-profile .right-block .post-user-right span {
+.right-block-profile .profile-aside .user-container p,
+.right-block-profile .profile-aside .user-container span {
   margin: unset !important;
   font-size: 14px;
   margin-left: 0px !important;
   padding: unset !important;
 }
-.right-block-profile .right-block .post-user-img {
-  min-width: 45px;
+.right-block-profile .profile-aside .user-img img,
+.right-block-profile .profile-aside .friend-img img {
   padding: unset;
-  margin-right: 10px !important;
-  min-height: 45px;
-  width: 45px;
-  height: 45px;
 }
-.right-block-profile .right-block .post-user-img img {
-  padding: unset !important;
-  width: 100%;
-  height: 100%;
+.right-block-profile .profile-aside .user-img {
+  min-width: 45px;
 }
-.right-block-profile .right-block button {
-  font-family: "Manrope" !important;
-  margin: auto auto;
+.right-block-profile .profile-aside .friend-img {
+  min-width: 60px;
+}
+.right-block-profile .profile-aside .user-info .name {
+  color: #000;
+  font-weight: 800;
+}
+.right-block-profile .profile-aside .user-info .nickname {
+  color: #8F8F8F;
+}
+.right-block-profile .profile-aside button {
+  font-family: "Manrope", sans-serif;
   padding: unset;
   font-size: 14px !important;
+  font-weight: bold;
   width: 100px;
   min-width: 100px;
   height: 25px;
@@ -1215,10 +1227,6 @@ h1, h2, h3, h4, h5, h6, p {
 
 .friends-online,
 .friends {
-  display: flex;
-  flex-direction: row !important;
-  justify-content: flex-start;
-  align-items: center;
   gap: 26px;
 }
 .friends-online.col, .friends-online .col,
@@ -1227,29 +1235,17 @@ h1, h2, h3, h4, h5, h6, p {
   flex: 0 !important;
 }
 
-.post-friend-right {
+.friend-container {
   width: -moz-fit-content !important;
   width: fit-content !important;
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
-  color: #8F8F8F;
-  font-weight: 400;
-  flex-direction: column !important;
 }
-.post-friend-right .post-friend-img img {
-  width: 60px;
-  min-width: 60px;
-  height: 60px;
-  min-height: 60px;
-  padding: unset !important;
+.friend-container img {
+  padding: unset;
 }
-.post-friend-right p {
+.friend-container p {
   font-size: 12px;
+  color: #8F8F8F;
+  font-weight: 800;
   padding: unset;
   margin-top: 5px !important;
-}
-.post-friend-right p a {
-  text-decoration: unset !important;
-  color: #8F8F8F;
 }/*# sourceMappingURL=styles.css.map */

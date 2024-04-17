@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Row, Col, Tab, Tabs, Button, Image } from 'react-bootstrap';
+import { Row, Col, Tab, Tabs, Button, Image, NavLink } from 'react-bootstrap';
 
 import { STATIC_RESOURCES } from '../config';
 import { useAuth } from '../components/AuthContext';
@@ -238,23 +238,26 @@ function Profile() {
                             </Col>
                         </Col>
                         <Col className='post-messages'>
-                            <Col className='post-message'>
-                                <Row className='post-user-img'>
-                                    <Image
-                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
+                            <Col className='post-message d-flex justify-content-start align-items-center flex-row mt-3'>
+                                <Row className='post-user-img m-0'>
+                                    <CreateImage
+                                        url={authUser.avatarUrl}
+                                        alt={'Avatar'}
+                                        width={60}
+                                        height={60}
+                                        rounded={true}
                                     />
                                 </Row>
-                                <Row style={{ fontSize: '18px' }}>
-                                    <p style={{ width: 'fit-content' }}><span style={{ color: 'black', fontWeight: '800' }}>Durgesh Kirillovich</span> • <span>@durgesh</span></p>
-                                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                                <Row className='post-user-input'>
+                                    <p>Durgesh Kirillovich<span> • @durgesh</span></p>
+                                    <div className="input-container p-0">
                                         <input
                                             type="text"
-                                            className="form-control form-control-lg"
+                                            className="form-control"
                                             id="exampleFormControlInput1"
-                                            placeholder="Type message"
+                                            placeholder="Enter message..."
                                         />
-                                        {/* <EmojiGifPicker setMessageContent={setMessageContent} sendMessage={sendMessage} /> */}
-                                    </span>
+                                    </div>
                                 </Row>
                             </Col>
                         </Col>
@@ -262,102 +265,144 @@ function Profile() {
                 </Row>
 
                 <Row className="right-block-profile">
-                    <Col className='right-block'>
-                        <p className='r-block-m-p'>You might like</p>
-                        <Col className='post-user-right'>
-                            <Row className='post-user-img'>
-                                <Image
-                                    src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
+                    <Col className='profile-aside might-like d-flex flex-column justify-content-between p-3'>
+                        <p className='aside-header'>You might like</p>
+                        <NavLink href='/' className='user-container d-flex align-items-center justify-content-between flex-row mb-2'>
+                            <Row className='user-img p-0 me-2'>
+                                <CreateImage
+                                    url={authUser.avatarUrl}
+                                    alt={'User'}
+                                    width={45}
+                                    height={45}
+                                    rounded={true}
                                 />
                             </Row>
-                            <Row>
-                                <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh Kirillovich</span></a></p>
-                                <p><a href='/'><span>@durgesh</span></a></p>
+                            <Row className='user-info'>
+                                <p className='name'>Durgesh Kirillovich</p>
+                                <p className='nickname'>@durgesh</p>
                             </Row>
-                            <Button variant="secondary" style={{ fontFamily: 'Manrope', fontWeight: 'bold', marginTop: '10px' }}>Add friend</Button>{' '}
-                        </Col>
-                        <Col className='post-user-right'>
-                            <Row className='post-user-img'>
-                                <Image
-                                    src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
+                            <Button variant="secondary">Add friend</Button>
+                        </NavLink>
+                        <NavLink href='/' className='user-container d-flex align-items-center justify-content-between flex-row mb-2'>
+                            <Row className='user-img p-0 me-2'>
+                                <CreateImage
+                                    url={authUser.avatarUrl}
+                                    alt={'User'}
+                                    width={45}
+                                    height={45}
+                                    rounded={true}
                                 />
                             </Row>
-                            <Row>
-                                <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh Kirillovich</span></a></p>
-                                <p><a href='/'><span>@durgesh</span></a></p>
+                            <Row className='user-info'>
+                                <p className='name'>Durgesh Kirillovich</p>
+                                <p className='nickname'>@durgesh</p>
                             </Row>
-                            <Button variant="secondary" style={{ fontFamily: 'Manrope', fontWeight: 'bold', marginTop: '10px' }}>Add friend</Button>{' '}
-                        </Col>
-                        <Col className='post-user-right'>
-                            <Row className='post-user-img'>
-                                <Image
-                                    src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
+                            <Button variant="secondary">Add friend</Button>
+                        </NavLink>
+                        <NavLink href='/' className='user-container d-flex align-items-center justify-content-between flex-row mb-2'>
+                            <Row className='user-img p-0 me-2'>
+                                <CreateImage
+                                    url={authUser.avatarUrl}
+                                    alt={'User'}
+                                    width={45}
+                                    height={45}
+                                    rounded={true}
                                 />
                             </Row>
-                            <Row>
-                                <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh Kirillovich</span></a></p>
-                                <p><a href='/'><span>@durgesh</span></a></p>
+                            <Row className='user-info'>
+                                <p className='name'>Durgesh Kirillovich</p>
+                                <p className='nickname'>@durgesh</p>
                             </Row>
-                            <Button variant="secondary" style={{ fontFamily: 'Manrope', fontWeight: 'bold', marginTop: '10px' }}>Add friend</Button>{' '}
-                        </Col>
-                        <p className='show-more-like'><a href="/">Show more</a></p>
+                            <Button variant="secondary">Add friend</Button>
+                        </NavLink>
+                        <NavLink href='/' className='user-container d-flex align-items-center justify-content-between flex-row mb-2'>
+                            <Row className='user-img p-0 me-2'>
+                                <CreateImage
+                                    url={authUser.avatarUrl}
+                                    alt={'User'}
+                                    width={45}
+                                    height={45}
+                                    rounded={true}
+                                />
+                            </Row>
+                            <Row className='user-info'>
+                                <p className='name'>Durgesh Kirillovich</p>
+                                <p className='nickname'>@durgesh</p>
+                            </Row>
+                            <Button variant="secondary">Add friend</Button>
+                        </NavLink>
+                        <p className='show-more-like mt-1'><a href="/">Show more</a></p>
                     </Col>
 
-                    <Col className='right-block'>
-                        <p className='r-block-m-p'>Friends online <span>3</span></p>
-                        <Row className='friends-online'>
-                            <Col className='post-friend-right'>
-                                <Row className='post-friend-img'>
-                                    <Image
-                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
+                    <Col className='profile-aside friend-list d-flex flex-column justify-content-between p-3'>
+                        <p className='aside-header'>Friends online <span>3</span></p>
+                        <Col className='friends-online d-flex flex-row align-items-center justify-content-start'>
+                            <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
+                                <Row className='friend-img w-auto'>
+                                    <CreateImage
+                                        url={authUser.avatarUrl}
+                                        alt={'Friend'}
+                                        width={60}
+                                        height={60}
+                                        rounded={true}
                                     />
                                 </Row>
-                                <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
-                            </Col>
-                            <Col className='post-friend-right'>
-                                <Row className='post-friend-img'>
-                                    <Image
-                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
+                                <p>Durgesh</p>
+                            </NavLink>
+                            <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
+                                <Row className='friend-img w-auto'>
+                                    <CreateImage
+                                        url={authUser.avatarUrl}
+                                        alt={'Friend'}
+                                        width={60}
+                                        height={60}
+                                        rounded={true}
                                     />
                                 </Row>
-                                <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
-                            </Col>
-                            <Col className='post-friend-right'>
-                                <Row className='post-friend-img'>
-                                    <Image
-                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
+                                <p>Durgesh</p>
+                            </NavLink>
+                            <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
+                                <Row className='friend-img w-auto'>
+                                    <CreateImage
+                                        url={authUser.avatarUrl}
+                                        alt={'Friend'}
+                                        width={60}
+                                        height={60}
+                                        rounded={true}
                                     />
                                 </Row>
-                                <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
-                            </Col>
-                            <Col className='post-friend-right'>
-                                <Row className='post-friend-img'>
-                                    <Image
-                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
+                                <p>Durgesh</p>
+                            </NavLink>
+                            <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
+                                <Row className='friend-img w-auto'>
+                                    <CreateImage
+                                        url={authUser.avatarUrl}
+                                        alt={'Friend'}
+                                        width={60}
+                                        height={60}
+                                        rounded={true}
                                     />
                                 </Row>
-                                <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
-                            </Col>
-                        </Row>
+                                <p>Durgesh</p>
+                            </NavLink>
+                        </Col>
+
                         <hr />
-                        <p className='r-block-m-p'>Friends <span>3</span></p>
-                        <Col className='friends'>
-                            <Col className='post-friend-right'>
-                                <Row className='post-friend-img'>
-                                    <Image
-                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
+
+                        <p className='aside-header'>Friends <span>3</span></p>
+                        <Col className='friends d-flex flex-row align-items-center justify-content-start'>
+                            <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
+                                <Row className='friend-img'>
+                                    <CreateImage
+                                        url={authUser.avatarUrl}
+                                        alt={'Friend'}
+                                        width={60}
+                                        height={60}
+                                        rounded={true}
                                     />
                                 </Row>
-                                <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
-                            </Col>
-                            <Col className='post-friend-right'>
-                                <Row className='post-friend-img'>
-                                    <Image
-                                        src={authUser.avatar_url ? `${STATIC_RESOURCES}/${authUser.avatar_url}` : imagePlaceholder}
-                                    />
-                                </Row>
-                                <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh</span></a></p>
-                            </Col>
+                                <p>Durgesh</p>
+                            </NavLink>
                         </Col>
                     </Col>
                 </Row>

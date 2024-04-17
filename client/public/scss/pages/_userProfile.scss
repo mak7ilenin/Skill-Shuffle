@@ -266,13 +266,13 @@
     margin-bottom: 16px !important;
     justify-content: flex-start;
     align-items: center;
-    color: #8F8F8F;
+    color: $light-gray;
     font-weight: 400;
     flex-direction: row !important;
 
     p a {
         text-decoration: unset !important;
-        color: #8F8F8F;
+        color: $light-gray;
     }
 
     p,
@@ -365,18 +365,22 @@
 }
 
 .post-message {
-    display: flex !important;
     gap: 10px;
-    margin-top: 22px !important;
-    justify-content: flex-start;
-    align-items: center;
-    color: #8F8F8F;
-    font-weight: 400;
-    flex-direction: row !important;
 
-    p,
-    span {
-        padding: unset;
+    .post-user-input {
+        font-size: 18px;
+
+        p {
+            color: #000;
+            font-weight: 800;
+            width: fit-content;
+            padding: unset;
+
+            span {
+                color: $light-gray;
+                font-weight: 400;
+            }
+        }
     }
 }
 
@@ -390,37 +394,26 @@
     margin-left: 20px !important;
     gap: 10px;
 
-    .right-block {
-        background-color: white;
+    .profile-aside {
+        background-color: #fff;
         border-radius: 5px;
-        display: flex;
-        flex-direction: column;
-        padding: 16px !important;
-        justify-content: space-between !important;
 
-        .r-block-m-p {
+        .aside-header {
             font-size: 20px !important;
             font-weight: 800 !important;
             margin-bottom: 16px !important;
 
             span {
-                color: #8F8F8F;
+                color: $light-gray;
                 font-weight: 500;
             }
         }
 
-        .post-user-right {
-            display: flex !important;
-            margin-bottom: 10px !important;
-            align-items: center;
-            justify-content: space-between;
-            color: #8F8F8F;
-            font-weight: 400;
-            flex-direction: row !important;
-
+        .user-container {
             p a {
+                font-weight: 400;
                 text-decoration: unset !important;
-                color: #8F8F8F;
+                color: $light-gray;
             }
 
             p,
@@ -432,26 +425,37 @@
             }
         }
 
-        .post-user-img {
-            min-width: 45px;
-            padding: unset;
-            margin-right: 10px !important;
-            min-height: 45px;
-            width: 45px;
-            height: 45px;
-
+        .user-img, 
+        .friend-img {
             img {
-                padding: unset !important;
-                width: 100%;
-                height: 100%;
+                padding: unset;
+            }
+        }
+
+        .user-img {
+            min-width: 45px;
+        }
+
+        .friend-img {
+            min-width: 60px;
+        }
+
+        .user-info {
+            .name {
+                color: #000;
+                font-weight: 800;
+            }
+
+            .nickname {
+                color: $light-gray;
             }
         }
 
         button {
-            font-family: 'Manrope' !important;
-            margin: auto auto;
+            font-family: $main-font;
             padding: unset;
             font-size: 14px !important;
+            font-weight: bold;
             width: 100px;
             min-width: 100px;
             height: 25px;
@@ -489,10 +493,6 @@
 
 .friends-online,
 .friends {
-    display: flex;
-    flex-direction: row !important;
-    justify-content: flex-start;
-    align-items: center;
     gap: 26px;
     
     &.col, .col {
@@ -500,33 +500,18 @@
     }
 }
 
-.post-friend-right {
+.friend-container {
     width: fit-content !important;
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    color: #8F8F8F;
-    font-weight: 400;
-    flex-direction: column !important;
 
-    .post-friend-img {
-        img {
-            width: 60px;
-            min-width: 60px;
-            height: 60px;
-            min-height: 60px;
-            padding: unset !important;
-        }
+    img {
+        padding: unset;
     }
 
     p {
         font-size: 12px;
+        color: $light-gray;
+        font-weight: 800;
         padding: unset;
         margin-top: 5px !important;
-
-        a {
-            text-decoration: unset !important;
-            color: #8F8F8F;
-        }
     }
 }
