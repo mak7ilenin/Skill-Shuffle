@@ -242,7 +242,7 @@ function Profile() {
                                         roundedCircle
                                     />
                                 </Row>
-                                <Row className='post-user-input'>
+                                <Row className='post-user-input w-100'>
                                     <p>Durgesh Kirillovich<span> • @durgesh</span></p>
                                     <div className="input-container p-0">
                                         <input

@@ -98,4 +98,16 @@ public class UserService {
                 .lastSeen(user.getLastSeen())
                 .build();
     }
+
+    public List<String> getUsersFirstNameInChat(String[] members) {
+        List<String> firstNames = new ArrayList<>();
+        for (String member : members) {
+            User user = getUserByNickname(member);
+            if (user != null) {
+                firstNames.add(user.getFirstName());
+            }
+        }
+        firstNames.add(getCurrentUser().getFirstName());
+        return firstNames;
+    }
 }

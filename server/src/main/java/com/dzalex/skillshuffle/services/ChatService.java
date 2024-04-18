@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -42,9 +40,6 @@ public class ChatService {
 
     @Autowired
     private ChatMemberRepository chatMemberRepository;
-
-    @Autowired
-    private MediaService mediaService;
 
     @Autowired
     private FileService fileService;
@@ -151,7 +146,16 @@ public class ChatService {
     }
 
     // Create a new chat
-    public Chat createChat(NewChatDTO chat, MultipartFile avatarBlob) throws IOException {
+    public Chat createChat(NewChatDTO chat, MultipartFile avatarBlob) {
+        if (chat.getName().isEmpty() && chat.getType() == ChatType.GROUP) {
+            List<String> firstNames = userService.getUsersFirstNameInChat(chat.getMembers());
+            if (firstNames.size() > 3) {
+                firstNames = firstNames.subList(0, 3);
+                firstNames.add("and " + (firstNames.size() - 2) + " more");
+            }
+            chat.setName(String.join(", ", firstNames));
+        }
+
         Chat newChat = Chat.builder()
                 .name(chat.getName())
                 .type(chat.getType())

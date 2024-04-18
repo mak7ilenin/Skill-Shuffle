@@ -106,7 +106,7 @@ public class MessageService {
     }
 
     private String getAnnouncementMessageContent(User sender, Chat chat, ChatAnnouncementType announcementType) {
-        String senderName = sender.getFirstName() + " " + sender.getLastName();
+        String senderName = "<b>" + sender.getFirstName() + " " + sender.getLastName() + "</b>";
         return switch (announcementType) {
             case JOINED -> senderName + " joined the chat";
             case LEFT -> senderName + " left the chat";
