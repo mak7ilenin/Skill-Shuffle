@@ -552,13 +552,14 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-box .messages-list .message {
   flex-wrap: wrap;
   position: relative;
+  font-family: "Manrope", sans-serif;
+  color: #373737;
+  font-weight: 500;
+  font-size: 16px;
 }
 .chat-page .chat-box .messages-list .message.own-message {
   justify-content: flex-start;
   flex-direction: row-reverse;
-}
-.chat-page .chat-box .messages-list .message.own-message > img {
-  margin-left: 10px;
 }
 .chat-page .chat-box .messages-list .message.own-message .message-content {
   background-color: #E7DFFF;
@@ -570,14 +571,11 @@ h1, h2, h3, h4, h5, h6, p {
   margin-left: 0 !important;
   margin-right: 14px !important;
 }
-.chat-page .chat-box .messages-list .message.own-message .sender-info {
-  flex-direction: row-reverse;
-}
 .chat-page .chat-box .messages-list .message.other-message {
   justify-content: flex-start;
 }
-.chat-page .chat-box .messages-list .message.other-message > img {
-  margin-right: 10px;
+.chat-page .chat-box .messages-list .message.other-message .sender-avatar img {
+  margin-right: 12px;
 }
 .chat-page .chat-box .messages-list .message.other-message .message-content {
   background-color: #fff;
@@ -588,17 +586,16 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-box .messages-list .message.other-message .sender-avatar {
   flex-direction: row-reverse;
 }
-.chat-page .chat-box .messages-list .message .sender-info > img {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
+.chat-page .chat-box .messages-list .message.other-message .message-series {
+  margin-left: 47px;
 }
-.chat-page .chat-box .messages-list .message .sender-info .nav-link {
-  color: #3D00FF;
-  text-decoration: underline;
+.chat-page .chat-box .messages-list .message .sender-name .nav-link {
+  color: #3D00FF !important;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
 }
-.chat-page .chat-box .messages-list .message .message-content-container,
-.chat-page .chat-box .messages-list .message .sender-avatar {
+.chat-page .chat-box .messages-list .message .message-content-container {
   max-width: 70%;
 }
 .chat-page .chat-box .messages-list .message .message-content {

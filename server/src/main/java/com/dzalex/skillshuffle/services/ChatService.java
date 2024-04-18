@@ -150,8 +150,9 @@ public class ChatService {
         if (chat.getName().isEmpty() && chat.getType() == ChatType.GROUP) {
             List<String> firstNames = userService.getUsersFirstNameInChat(chat.getMembers());
             if (firstNames.size() > 3) {
+                int size = firstNames.size();
                 firstNames = firstNames.subList(0, 3);
-                firstNames.add("and " + (firstNames.size() - 2) + " more");
+                firstNames.add("and " + (size - 3) + " more");
             }
             chat.setName(String.join(", ", firstNames));
         }

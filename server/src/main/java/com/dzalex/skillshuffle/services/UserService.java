@@ -101,13 +101,13 @@ public class UserService {
 
     public List<String> getUsersFirstNameInChat(String[] members) {
         List<String> firstNames = new ArrayList<>();
+        firstNames.add(getCurrentUser().getFirstName());
         for (String member : members) {
             User user = getUserByNickname(member);
             if (user != null) {
                 firstNames.add(user.getFirstName());
             }
         }
-        firstNames.add(getCurrentUser().getFirstName());
         return firstNames;
     }
 }

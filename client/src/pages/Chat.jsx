@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback, useMemo } from 'react';
-import { Row, Stack, Button } from 'react-bootstrap';
+import { Row, Stack, Button, Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
@@ -17,13 +17,15 @@ function Chat() {
   const { authUser, stompClient, isStompClientInitialized } = useAuth();
   const location = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(true);
   const [chats, setChats] = useState([]);
   const [filteredChats, setFilteredChats] = useState([]);
   const [choosenChat, setChoosenChat] = useState({});
   const [messageContent, setMessageContent] = useState('');
   const currentSubscriptionRef = useRef(null);
   const messagesListRef = useRef(null);
+  const chatRef = useRef(null);
   const firstMessageRef = useRef(null);
   const offsetRef = useRef(0);
   const limit = 30;
@@ -50,11 +52,18 @@ function Chat() {
       .then(response => {
         setChoosenChat(response.data);
         offsetRef.current = 0;
+
+        setLoadingMessages(false);
+        
+        setTimeout(() => {
+          scrollToPosition(messagesListRef.current.scrollHeight);
+        }, 50);
+
       })
       .catch(error => {
         console.error(error.response?.data.message || error.message);
       });
-  }, [setChoosenChat]);
+  }, [setChoosenChat, setLoadingMessages, messagesListRef]);
 
 
   const subscribeToChat = useCallback((chatId) => {
@@ -118,11 +127,23 @@ function Chat() {
   };
 
 
+  const scrollToPrev = (prevScrollTop, prevScrollHeight) => {
+    // Calculate the difference in scroll height
+    const newScrollHeight = messagesListRef.current.scrollHeight;
+    const scrollHeightDifference = newScrollHeight - prevScrollHeight;
+
+    // Adjust scroll position to maintain the relative position of the first visible message
+    chatRef.current.scrollTop = prevScrollTop + scrollHeightDifference;
+  }
+
+
   const loadMoreMessages = async () => {
-    setLoading(true);
     const prevScrollHeight = messagesListRef.current.scrollHeight;
-    const prevScrollTop = messagesListRef.current.scrollTop;
+    const prevScrollTop = chatRef.current.scrollTop;
     offsetRef.current += limit;
+
+    setLoadingMessages(true);
+
     try {
       const response = await axios.get(`${API_SERVER}/chats/${choosenChat.id}/messages?offset=${offsetRef.current}&limit=${limit}`, { withCredentials: true });
       const newMessages = response.data;
@@ -131,21 +152,23 @@ function Chat() {
         messages: [...newMessages, ...prevChat.messages],
       }));
 
-      // Calculate the difference in scroll height
-      const newScrollHeight = messagesListRef.current.scrollHeight;
-      const scrollHeightDifference = newScrollHeight - prevScrollHeight;
+      setLoadingMessages(false);
 
-      // Adjust scroll position to maintain the relative position of the first visible message
-      messagesListRef.current.scrollTop = prevScrollTop + scrollHeightDifference;
-      setLoading(false);
+      setTimeout(() => {
+        scrollToPrev(prevScrollTop, prevScrollHeight);
+      }, 50);
+
     } catch (error) {
       console.error('Error loading more messages:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  // Group messages by day
+  const getFormattedDate = (date, format = 'en-GB') => {
+    const options = { day: 'numeric', month: 'long' };
+    return new Date(date).toLocaleDateString(format, options);
+  };
+
+  // Group messages by day for better readability
   const messagesByDay = useMemo(() => {
     if (choosenChat.messages === undefined) {
       return [];
@@ -155,11 +178,14 @@ function Chat() {
     let currentDay = null;
 
     choosenChat.messages.forEach((message) => {
-      // Format the message timestamp to a '24 January' format
-      const messageDay = new Date(message.timestamp).toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'long',
-      });
+      // Format date to display in the message list as 'Today', 'Yesterday', or the date itself
+      const today = getFormattedDate(new Date());
+      const messageDate = getFormattedDate(message.timestamp);
+      let messageDay = messageDate === today ? 'Today' : messageDate;
+
+      if (messageDay === getFormattedDate(new Date(new Date().setDate(new Date().getDate() - 1)))) {
+        messageDay = 'Yesterday';
+      }
 
       if (messageDay !== currentDay) {
         groupedMessages.push({ day: messageDay, messages: [] });
@@ -174,16 +200,15 @@ function Chat() {
 
 
   const handleScroll = () => {
-    const { scrollTop } = messagesListRef.current;
-    if (scrollTop === 0 && !loading) {
+    const { scrollTop } = chatRef.current;
+    if (scrollTop === 0 && !loadingMessages) {
       loadMoreMessages();
     }
-    setScrollPosition(scrollTop);
   };
 
   const scrollToPosition = (position) => {
-    if (messagesListRef.current) {
-      messagesListRef.current.scrollTop = position;
+    if (messagesListRef.current && chatRef.current) {
+      chatRef.current.scrollTop = position;
     }
   };
 
@@ -192,18 +217,6 @@ function Chat() {
   };
 
   // ---------------------------- //
-
-  useEffect(() => {
-    if (messagesListRef.current) {
-      setScrollPosition(messagesListRef.current.scrollHeight);
-    }
-  }, [choosenChat]);
-
-
-  useLayoutEffect(() => {
-    scrollToPosition(scrollPosition);
-  }, [choosenChat, scrollPosition]);
-
 
   // Get the current chat via the encrypted chat ID in the URL
   useEffect(() => {
@@ -264,64 +277,47 @@ function Chat() {
 
           <ChatHeader chat={choosenChat} openChatMenu={openChatMenu} />
 
-          <Row className='messages-list p-0 py-3' ref={messagesListRef} onScroll={handleScroll}>
-            <Stack direction='vertical' gap={1}>
-              {messagesByDay.map((dayMessages) => (
-                <>
-                  <div className='date-separator mt-3 mb-1'>{dayMessages.day}</div>
-                  {dayMessages.messages.map((message, index) => (
-                    <>
-                      {message.type !== 'entry' && message.type !== 'announcement' ? (
-                        <div
-                          className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'} ${index > 0 && message.sender.nickname === choosenChat.messages[index - 1].sender.nickname ? '' : 'mt-2'}`}
-                          key={index}
-                          ref={index === 0 ? firstMessageRef : null}
-                        >
-                          <MessageRenderer
-                            message={message}
-                            index={index}
-                            authUser={authUser}
-                            messageList={dayMessages}
-                          />
-                        </div>
-                      ) : null}
-                      {message.type === 'announcement' ? (
-                        <div
-                          key={index}
-                          className='announcement w-100 d-flex justify-content-center mt-3'
-                        >
-                          <span dangerouslySetInnerHTML={{ __html: message.content }} />
-                        </div>
-                      ) : null}
-                    </>
-                  ))}
-                </>
-              ))}
-              {/* {choosenChat.messages && choosenChat.messages.map((message, index) => (
-                <>
-                  {message.type !== 'entry' && message.type !== 'announcement' ? (
-                    <div
-                      className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'} ${index > 0 && message.sender.nickname === choosenChat.messages[index - 1].sender.nickname ? '' : 'mt-2'}`}
-                      key={index}
-                      ref={index === 0 ? firstMessageRef : null}
-                    >
-                      <MessageRenderer
-                        message={message}
-                        index={index}
-                        authUser={authUser}
-                        chat={choosenChat}
-                      />
-                    </div>
-                  ) : null}
-                  {message.type === 'announcement' ? (
-                    <div className='announcement w-100 d-flex justify-content-center mt-3' key={index}>
-                      {message.content}
-                    </div>
-                  ) : null}
-                </>
-              )
-              )} */}
-            </Stack>
+          <Row className='messages-list p-0 py-3' ref={chatRef} onScroll={handleScroll}>
+            {loadingMessages ? (
+              // Display a loading spinner while loading more messages
+              <div className='d-flex justify-content-center align-items-center w-100'>
+                <Spinner animation='border' variant='secondary' />
+              </div>
+            ) : (
+              <Stack direction='vertical' gap={1} ref={messagesListRef}>
+                {messagesByDay.map((dayMessages) => (
+                  <>
+                    <div className='date-separator mt-3 mb-1'>{dayMessages.day}</div>
+                    {dayMessages.messages.map((message, index) => (
+                      <>
+                        {message.type === 'message' ? (
+                          <div
+                            className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'}`}
+                            key={index}
+                            ref={index === 0 ? firstMessageRef : null}
+                          >
+                            <MessageRenderer
+                              message={message}
+                              index={index}
+                              authUser={authUser}
+                              messageList={dayMessages}
+                            />
+                          </div>
+                        ) : null}
+                        {message.type === 'announcement' ? (
+                          <div
+                            key={index}
+                            className='announcement w-100 d-flex justify-content-center mt-3'
+                          >
+                            <span dangerouslySetInnerHTML={{ __html: message.content }} />
+                          </div>
+                        ) : null}
+                      </>
+                    ))}
+                  </>
+                ))}
+              </Stack>
+            )}
           </Row>
 
           <Row className="message-input p-0 d-flex">
@@ -331,6 +327,7 @@ function Chat() {
                 name='message'
                 className='w-100 h-100'
                 placeholder='Type a message...'
+                autoComplete='off'
                 value={messageContent}
                 onChange={(event) => setMessageContent(event.target.value)}
                 onKeyDown={(event) => {

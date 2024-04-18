@@ -66,25 +66,38 @@ function MessageRenderer({ message, index, authUser, messageList }) {
                 </div>
             ) : (
                 <>
-                    <div className='sender-info w-100 d-flex align-items-center mb-2'>
-                        <Image
-                            src={message.sender.avatarUrl !== null ? message.sender.avatarUrl : imagePlaceholder}
-                            alt={message.sender.nickname}
-                            width='30'
-                            height='30'
-                            style={{ objectFit: 'cover' }}
-                            roundedCircle
-                        />
-                        <span className={`sender-name ${message.sender.nickname === authUser.nickname ? 'me-3' : 'ms-3'}`}>
-                            <NavLink href={`/users?${message.sender.nickname}`}>{message.sender.firstName}</NavLink>
-                        </span>
-                    </div>
-                    <div className='message-content-container d-flex'>
-                        <div className='message-content flex-column'>{detectUrls(message.content)}</div>
-                        <div className="message-time-container visible">
-                            <p className='message-time'>{formatTimestampForMessage(message.timestamp)}</p>
+                    {message.sender.nickname !== authUser.nickname ? (
+                        <div className='message-content-container d-flex flex-wrap'>
+                            <div className='sender-avatar d-flex mb-2'>
+                                <Image
+                                    src={message.sender.avatarUrl !== null ? message.sender.avatarUrl : imagePlaceholder}
+                                    alt={message.sender.nickname}
+                                    width='35'
+                                    height='35'
+                                    style={{ objectFit: 'cover' }}
+                                    roundedCircle
+                                />
+                            </div>
+                            <div className="d-flex flex-column">
+                                <span className='sender-name'>
+                                    <NavLink href={`/users?${message.sender.nickname}`}>{message.sender.firstName}</NavLink>
+                                </span>
+                                <div className="d-flex mt-1">
+                                    <div className='message-content flex-column'>{detectUrls(message.content)}</div>
+                                    <div className="message-time-container visible">
+                                        <p className='message-time'>{formatTimestampForMessage(message.timestamp)}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div className='message-content-container d-flex'>
+                            <div className='message-content message-series flex-column'>{detectUrls(message.content)}</div>
+                            <div className="message-time-container visible">
+                                <p className='message-time'>{formatTimestampForMessage(message.timestamp)}</p>
+                            </div>
+                        </div>
+                    )}
                 </>
             )}
         </>

@@ -386,8 +386,8 @@
             flex: 1;
             margin-right: 0;
 
-            .date-separator { 
-                width: fit-content;     
+            .date-separator {
+                width: fit-content;
                 margin: 0 auto;
                 font-family: $main-font;
                 font-size: 16px;
@@ -400,7 +400,7 @@
                 border-radius: 100px;
             }
 
-            .announcement {  
+            .announcement {
                 font-family: $main-font;
                 font-size: 16px;
                 color: $dark-gray;
@@ -411,13 +411,14 @@
                 flex-wrap: wrap;
                 position: relative;
 
+                font-family: $main-font;
+                color: $dark-gray;
+                font-weight: 500;
+                font-size: 16px;
+
                 &.own-message {
                     justify-content: flex-start;
                     flex-direction: row-reverse;
-
-                    &>img {
-                        margin-left: 10px;
-                    }
 
                     .message-content {
                         background-color: #E7DFFF;
@@ -431,17 +432,13 @@
                         margin-left: 0 !important;
                         margin-right: 14px !important;
                     }
-
-                    .sender-info {
-                        flex-direction: row-reverse;
-                    }
                 }
 
                 &.other-message {
                     justify-content: flex-start;
 
-                    &>img {
-                        margin-right: 10px;
+                    .sender-avatar img {
+                        margin-right: 12px;
                     }
 
                     .message-content {
@@ -455,23 +452,20 @@
                     .sender-avatar {
                         flex-direction: row-reverse;
                     }
-                }
 
-                .sender-info {
-                    &>img {
-                        width: 35px;
-                        height: 35px;
-                        border-radius: 50%;
-                    }
-
-                    .nav-link {
-                        color: $primary-color;
-                        text-decoration: underline;
+                    .message-series {
+                        margin-left: 47px;
                     }
                 }
 
-                .message-content-container,
-                .sender-avatar {
+                .sender-name .nav-link {
+                    color: $primary-color !important;
+                    text-decoration: none;
+                    font-weight: 600;
+                    font-size: 16px;
+                }
+
+                .message-content-container {
                     max-width: 70%;
                 }
 
