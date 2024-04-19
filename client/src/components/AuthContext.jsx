@@ -59,7 +59,7 @@ const AuthProvider = ({ children }) => {
                 setStompClient(client);
             })
             .catch(error => {
-                console.error('Error while initializing STOMP client:', error);
+                // console.error('Error while initializing STOMP client:', error);
                 setAuthUser(null);
             });
     }, [stompClient, subscribeToNotifications]);

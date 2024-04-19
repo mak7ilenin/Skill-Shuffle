@@ -37,8 +37,26 @@ public class FileService {
             file.delete();
             return getFileUrlFromS3Bucket(path + fileName);
         } catch (Exception e) {
-            log.error("Error uploading file", e);
-            return null;
+            throw new IllegalArgumentException("Error uploading file");
+        }
+    }
+
+    public String changeFile(MultipartFile multipartFile, String path, String oldUrl) {
+        try {
+            String oldKey = extractKeyFromUrl(oldUrl);
+            deleteFileFromS3Bucket(oldKey);
+            return uploadFile(multipartFile, path);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error changing file");
+        }
+    }
+
+    private void deleteFileFromS3Bucket(String key) {
+        try {
+            s3Client.deleteObject(builder -> builder.bucket(bucketName).key(key));
+        } catch (Exception e) {
+            log.error("Error deleting file from S3 bucket", e);
+            throw new IllegalArgumentException("Error deleting file from S3 bucket");
         }
     }
 
@@ -49,7 +67,7 @@ public class FileService {
                 .build(), RequestBody.fromFile(file));
     }
 
-    public String getFileUrlFromS3Bucket(String key) {
+    private String getFileUrlFromS3Bucket(String key) {
         GetUrlRequest getUrlRequest = GetUrlRequest.builder()
                 .bucket(bucketName)
                 .key(key)
@@ -57,6 +75,15 @@ public class FileService {
 
         URL url = s3Client.utilities().getUrl(getUrlRequest);
         return url.toString();
+    }
+
+    public String extractKeyFromUrl(String url) {
+        String bucketUrl = "https://skill-shuffle.s3.eu-north-1.amazonaws.com/";
+        if (url.startsWith(bucketUrl)) {
+            return url.substring(bucketUrl.length());
+        } else {
+            throw new IllegalArgumentException("URL does not start with the expected bucket URL");
+        }
     }
 
     private File convertMultiPartFileToFile(MultipartFile file) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Stack, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,25 +6,25 @@ import ChatPreview from './ChatPreview';
 import ChatMenuHeader from './ChatMenuHeader';
 import ChatTypeFilter from './ChatTypeFilter';
 import CreateChat from './CreateChat';
+import GroupChatMenu from './GroupChatMenu';
 
-function ChatMenu({ chats, setFilteredChats, filteredChats }) {
+function ChatMenu({ chats, chat, setFilteredChats, filteredChats, handleMenuChange, activeMenu }) {
     const navigate = useNavigate();
-    const [newChatVisibility, setNewChatVisibility] = useState(false);
 
     const getSearch = (search) => {
         setFilteredChats(chats.filter(chat => chat.name.toLowerCase().includes(search.toLowerCase())));
     };
 
-    const handleCreateChat = (state) => {
-        setNewChatVisibility(state);
-    };
-
     return (
         <Container className='chat-menu'>
 
-            <ChatMenuHeader getSearch={getSearch} createChat={handleCreateChat} />
+            <ChatMenuHeader
+                getSearch={getSearch}
+                changeMenu={handleMenuChange}
+                activeMenu={activeMenu}
+            />
 
-            {!newChatVisibility ? (
+            {activeMenu === 'DEFAULT' ? (
                 // Default view with chat previews
                 <>
                     <ChatTypeFilter setChats={setFilteredChats} chats={chats} />
@@ -38,10 +38,15 @@ function ChatMenu({ chats, setFilteredChats, filteredChats }) {
                         ))}
                     </Stack>
                 </>
-            ) : (
+            ) : null}
+            {activeMenu === 'CREATE_CHAT' ? (
                 // Create chat view
-                <CreateChat newChatVisibility={handleCreateChat} />
-            )}
+                <CreateChat changeMenu={handleMenuChange} />
+            ) : null}
+            {activeMenu === 'GROUP_MENU' ? (
+                // Group menu view
+                <GroupChatMenu chat={chat} />
+            ) : null}
 
         </Container>
     )

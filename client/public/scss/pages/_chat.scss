@@ -303,6 +303,144 @@
                 }
             }
         }
+
+        .group-menu {
+            font-family: $main-font;
+            flex: 1;
+
+            .chat-header img {
+                position: relative;
+
+                &:hover {
+                    &::after {
+                        // Show plus icon on hover
+                        content: '+';
+                        display: block;
+                        position: absolute;
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 50%;
+                        background-color: #fff;
+                        color: #000;
+                        font-size: 16px;
+                        font-weight: 600;
+                        top: 0;
+                        right: 0;
+
+                    }
+                }
+            }
+
+            .chat-name {
+                font-weight: 700;
+                font-size: 20px;
+                color: #000;
+            }
+
+            .members-count {
+                font-size: 14px;
+                font-weight: 500;
+                color: $light-gray;
+            }
+
+            .btn {
+                outline: none !important;
+                border: none !important;
+                background-color: transparent !important;
+            }
+
+            .members-filter {
+                border: 1px solid #8f8f8f40;
+                border-left: none;
+                border-right: none;
+                gap: 20px;
+
+                .all-members,
+                .admins {
+                    width: fit-content;
+                    padding: 12px 3px;
+                    border-radius: 0;
+                    font-size: 16px;
+                    color: $dark-gray;
+                    font-weight: 600;
+                    position: relative;
+
+                    // On hover - animate line under text from left to right
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        bottom: -1px;
+                        left: 0;
+                        width: 0;
+                        height: 1px;
+                        background-color: $primary-color;
+                        transition: ease all .15s;
+                    }
+
+                    &:hover::after {
+                        width: 100%;
+                    }
+
+                    &.active {
+                        border-color: transparent !important;
+                        border-bottom: 2px solid $primary-color !important;
+                    }
+
+                    span {
+                        font-weight: 500;
+                        color: $light-gray;
+                    }
+                }
+
+                input {
+                    padding: 12px 3px;
+                    border-radius: 0;
+                    color: $dark-gray;
+                    font-size: 16px;
+                    font-weight: 500;
+
+                    &::placeholder {
+                        color: $light-gray;
+                        font-weight: 400;
+                    }
+
+                    &:focus-visible {
+                        outline: none;
+                    }
+                }
+
+                .icon-btn {
+                    &.cross-btn {
+                        width: fit-content;
+                        position: absolute;
+                        right: 0;
+                    }
+
+                    svg path {
+                        fill: $light-gray;
+                    }
+                }
+            }
+
+            .member-list {
+                .member-container {
+                    cursor: pointer;
+                    border-radius: 0;
+                    background-color: transparent;
+                    transition: ease all .1s;
+
+                    &:hover {
+                        background-color: #f5f5f5;
+                    }
+                }
+
+                .member-name {
+                    font-weight: 500;
+                    font-size: 18px;
+                    color: #000;
+                }
+            }
+        }
     }
 
     .chat-box {
@@ -464,6 +602,10 @@
 
                     .message-series {
                         margin-left: 47px;
+                    }
+
+                    &:not(:has(.message-content.message-series)) {
+                        margin-top: 8px;
                     }
                 }
 

@@ -16,6 +16,6 @@ public class ChatDTO {
     private ChatType type;
     private String avatarUrl;
     private List<MessageDTO> messages;
-    private List<PublicUserDTO> members;
+    private List<ChatMemberDTO> members;
     private CommunityPreviewDTO community;
 }

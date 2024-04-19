@@ -1,8 +1,10 @@
 package com.dzalex.skillshuffle.services;
 
+import com.dzalex.skillshuffle.dtos.ChatMemberDTO;
 import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.entities.ChatMember;
 import com.dzalex.skillshuffle.entities.User;
+import com.dzalex.skillshuffle.enums.MemberRole;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.FriendshipRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
@@ -52,11 +54,11 @@ public class UserService {
     }
 
     @Transactional
-    public List<PublicUserDTO> getUsersInChat(Integer chatId) {
+    public List<ChatMemberDTO> getUsersInChat(Integer chatId) {
         List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);
-        List<PublicUserDTO> users = new ArrayList<>();
+        List<ChatMemberDTO> users = new ArrayList<>();
         for (ChatMember chatMember : chatMembers) {
-            users.add(getPublicUserDTO(chatMember.getMember()));
+            users.add(getChatMemberDTO(chatMember.getMember(), chatMember.getRole()));
         }
         return users;
     }
@@ -106,6 +108,17 @@ public class UserService {
                 .nickname(user.getNickname())
                 .avatarUrl(user.getAvatarUrl())
                 .lastSeen(user.getLastSeen())
+                .build();
+    }
+
+    public ChatMemberDTO getChatMemberDTO(User user, MemberRole role) {
+        return ChatMemberDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .nickname(user.getNickname())
+                .avatarUrl(user.getAvatarUrl())
+                .lastSeen(user.getLastSeen())
+                .role(role)
                 .build();
     }
 

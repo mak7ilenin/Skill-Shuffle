@@ -1,13 +1,10 @@
 import React from 'react';
 import { Row, Col, Image, NavLink } from 'react-bootstrap';
 
-import { useAuth } from './AuthContext';
-
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 import { ReactComponent as NetworkIcon } from '../assets/icons/network.svg';
 
-function ChatHeader({ chat, openChatMenu }) {
-    const { authUser } = useAuth();
+function ChatHeader({ chat, handleMenuChange }) {
 
     const generateLink = () => {
         switch (chat.type) {
@@ -63,8 +60,6 @@ function ChatHeader({ chat, openChatMenu }) {
 
                         {chat.type === 'community' ? (
                             <span className='text-secondary'>Community</span>
-                        ) : chat.type === 'group' ? (
-                            <span role='button' onClick={openChatMenu} className='text-secondary'>{chat.members.length} members</span>
                         ) : (
                             <p className='user-activity'>
                                 <NetworkIcon className='network-icon' />
@@ -74,7 +69,7 @@ function ChatHeader({ chat, openChatMenu }) {
                     </Col>
                 </NavLink>
             ) : (
-                <div className='chat-info d-flex p-0'> {/* ADD ON CLICK */}
+                <div className='chat-info d-flex p-0' onClick={() => handleMenuChange('GROUP_MENU')}>
                     <Col className='chat-avatar me-3' role='button'>
                         <Image
                             src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
@@ -87,17 +82,7 @@ function ChatHeader({ chat, openChatMenu }) {
                     </Col>
                     <Col className='d-flex flex-column'>
                         <p role='button' className='chat-name'>{chat.name}</p>
-
-                        {chat.type === 'community' ? (
-                            <span className='text-secondary'>Community</span>
-                        ) : chat.type === 'group' ? (
-                            <span role='button' onClick={openChatMenu} className='text-secondary'>{chat.members.length} members</span>
-                        ) : (
-                            <p className='user-activity'>
-                                <NetworkIcon className='network-icon' />
-                                <span className='text-secondary'>{formatLastSeenTimestamp(chat.members[0].lastSeen)}</span>
-                            </p>
-                        )}
+                        <span role='button' className='text-secondary'>{chat.members.length} members</span>
                     </Col>
                 </div>
             )}

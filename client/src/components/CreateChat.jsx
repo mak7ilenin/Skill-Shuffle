@@ -5,12 +5,12 @@ import axios from 'axios';
 
 import { API_SERVER } from '../config';
 import { AESEncrypt } from '../crypto';
-import { useAuth } from '../components/AuthContext';
+import { useAuth } from './AuthContext';
 import UploadChatAvatarModal from './UploadChatAvatarModal';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function CreateChat({ newChatVisibility }) {
+function CreateChat({ changeMenu }) {
     const { authUser } = useAuth();
     const navigate = useNavigate();
     const [friends, setFriends] = useState([]);
@@ -98,7 +98,7 @@ function CreateChat({ newChatVisibility }) {
         })
             .then(response => {
                 navigate(`/messenger?c=${AESEncrypt(response.data.id)}`);
-                newChatVisibility(false);
+                changeMenu('DEFAULT');
             })
             .catch(error => {
                 console.error(error);
@@ -183,7 +183,7 @@ function CreateChat({ newChatVisibility }) {
 
             {selectedFriends.length > 0 || chatName !== '' ? (
                 <Row className='create-chat-footer d-flex justify-content-end align-items-center py-3 px-4'>
-                    <Button variant='light' className='w-auto me-3'>Cancel</Button>
+                    <Button variant='light' className='w-auto me-3' onClick={() => changeMenu('DEFAULT')}>Cancel</Button>
                     {chatName !== '' ? (
                         <Button variant='primary' className='w-auto' onClick={handleCreateChat}>Create chat</Button>
                     ) : (

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Alert, Image } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { STATIC_RESOURCES } from '../config';
 import { AESEncrypt, AESDecrypt } from '../crypto';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
@@ -76,7 +75,7 @@ function MessageNotification({ messageNotification, onDismiss }) {
                 <hr />
                 <div className="alert-message w-100 mt-2 d-flex flex-column flex-md-row align-items-center">
                     <Image
-                        src={notification.chat.avatarUrl ? `${STATIC_RESOURCES}/${notification.chat.avatarUrl}` : imagePlaceholder}
+                        src={notification.chat.avatarUrl ? notification.chat.avatarUrl : imagePlaceholder}
                         width={35}
                         height={35}
                         alt={notification.chat.name}

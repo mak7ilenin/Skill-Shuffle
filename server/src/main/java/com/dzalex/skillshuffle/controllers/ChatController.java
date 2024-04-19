@@ -45,6 +45,18 @@ public class ChatController {
         }
     }
 
+    @PatchMapping("/chats/{id}/avatar")
+    public ResponseEntity<Chat> updateChatAvatar(@PathVariable("id") Integer id,
+                                                @RequestParam("avatarBlob") MultipartFile avatarBlob) {
+        Chat chat = chatRepository.findChatById(id);
+        Chat updatedChat = chatService.updateChatAvatar(chat, avatarBlob);
+        if (updatedChat != null) {
+            return ResponseEntity.ok(updatedChat);
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @GetMapping("/chats/{id}")
     public ChatDTO getChat(@PathVariable("id") Integer id) {
         Chat chat = chatRepository.findChatById(id);

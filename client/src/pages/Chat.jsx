@@ -19,12 +19,12 @@ function Chat() {
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [chats, setChats] = useState([]);
   const [filteredChats, setFilteredChats] = useState([]);
-  const [choosenChat, setChoosenChat] = useState({});
+  const [chosenChat, setChosenChat] = useState({});
   const [messageContent, setMessageContent] = useState('');
+  const [activeMenu, setActiveMenu] = useState('DEFAULT'); // 'CREATE_CHAT', 'GROUP_MENU', or 'DEFAULT'
   const currentSubscriptionRef = useRef(null);
   const messagesListRef = useRef(null);
   const chatRef = useRef(null);
-  const firstMessageRef = useRef(null);
   const offsetRef = useRef(0);
   const limit = 30;
 
@@ -48,11 +48,11 @@ function Chat() {
   const getChatMessages = useCallback((chatId) => {
     axios.get(`${API_SERVER}/chats/${chatId}`, { withCredentials: true })
       .then(response => {
-        setChoosenChat(response.data);
+        setChosenChat(response.data);
         offsetRef.current = 0;
 
         setLoadingMessages(false);
-        
+
         setTimeout(() => {
           scrollToPosition(messagesListRef.current.scrollHeight);
         }, 50);
@@ -61,7 +61,7 @@ function Chat() {
       .catch(error => {
         console.error(error.response?.data.message || error.message);
       });
-  }, [setChoosenChat, setLoadingMessages, messagesListRef]);
+  }, [setChosenChat, setLoadingMessages, messagesListRef]);
 
 
   const subscribeToChat = useCallback((chatId) => {
@@ -78,7 +78,7 @@ function Chat() {
       const newSubscription = stompClient.subscribe(chatEndpoint, receivedMessage => {
         const message = JSON.parse(receivedMessage.body);
         updateChatLastMessage(message);
-        setChoosenChat(prevChat => ({
+        setChosenChat(prevChat => ({
           ...prevChat,
           messages: [...prevChat.messages, message]
         }));
@@ -94,17 +94,15 @@ function Chat() {
         // Unsubscribe from chat messages when component unmounts
         newSubscription.unsubscribe();
       };
-    } else {
-      console.error('STOMP client is not initialized.');
     }
   }, [stompClient, updateChatLastMessage, isStompClientInitialized]);
 
 
   useEffect(() => {
-    if (choosenChat.id !== undefined) {
-      subscribeToChat(choosenChat.id);
+    if (chosenChat.id !== undefined) {
+      subscribeToChat(chosenChat.id);
     }
-  }, [choosenChat.id, subscribeToChat]);
+  }, [chosenChat.id, subscribeToChat]);
 
 
   const sendMessage = (gif) => {
@@ -114,7 +112,7 @@ function Chat() {
     const destination = `/app/chat`;
     const message = {
       sender: authUser,
-      chat: { id: choosenChat.id },
+      chat: { id: chosenChat.id },
       content: gif ? gif.url : messageContent,
       timestamp: new Date().toISOString()
     };
@@ -146,9 +144,9 @@ function Chat() {
     setLoadingMessages(true);
 
     try {
-      const response = await axios.get(`${API_SERVER}/chats/${choosenChat.id}/messages?offset=${offsetRef.current}&limit=${limit}`, { withCredentials: true });
+      const response = await axios.get(`${API_SERVER}/chats/${chosenChat.id}/messages?offset=${offsetRef.current}&limit=${limit}`, { withCredentials: true });
       const newMessages = response.data;
-      setChoosenChat(prevChat => ({
+      setChosenChat(prevChat => ({
         ...prevChat,
         messages: [...newMessages, ...prevChat.messages],
       }));
@@ -164,21 +162,23 @@ function Chat() {
     }
   };
 
+
   const getFormattedDate = (date, format = 'en-GB') => {
     const options = { day: 'numeric', month: 'long' };
     return new Date(date).toLocaleDateString(format, options);
   };
 
+
   // Group messages by day for better readability
   const messagesByDay = useMemo(() => {
-    if (choosenChat.messages === undefined) {
+    if (chosenChat.messages === undefined) {
       return [];
     }
 
     const groupedMessages = [];
     let currentDay = null;
 
-    choosenChat.messages.forEach((message) => {
+    chosenChat.messages.forEach((message) => {
       // Format date to display in the message list as 'Today', 'Yesterday', or the date itself
       const today = getFormattedDate(new Date());
       const messageDate = getFormattedDate(message.timestamp);
@@ -197,7 +197,12 @@ function Chat() {
     });
 
     return groupedMessages;
-  }, [choosenChat]);
+  }, [chosenChat]);
+
+
+  const handleMenuChange = (menuName) => {
+    setActiveMenu(menuName);
+  }
 
 
   const handleScroll = () => {
@@ -207,14 +212,11 @@ function Chat() {
     }
   };
 
+
   const scrollToPosition = (position) => {
     if (messagesListRef.current && chatRef.current) {
       chatRef.current.scrollTop = position;
     }
-  };
-
-  const openChatMenu = () => {
-    // 
   };
 
   // ---------------------------- //
@@ -263,40 +265,39 @@ function Chat() {
 
       <ChatMenu
         chats={chats}
+        chat={chosenChat}
         setFilteredChats={setFilteredChats}
         filteredChats={filteredChats}
+        handleMenuChange={handleMenuChange}
+        activeMenu={activeMenu}
       />
 
-      {choosenChat.id === undefined ? (
+      {chosenChat.id === undefined ? (
         // If no chat is selected, display:
-        <div className='chat-box non-selected' key={choosenChat.id} style={{ backgroundImage: `url(${ChatBackground})` }}>
+        <div className='chat-box non-selected' style={{ backgroundImage: `url(${ChatBackground})` }}>
           <p className='no-chat-selected'>Select chat</p>
         </div>
       ) :
         // If a chat is selected, display:
-        <div className='chat-box d-flex flex-nowrap flex-column' key={choosenChat.id}>
+        <div className='chat-box d-flex flex-nowrap flex-column'>
 
-          <ChatHeader chat={choosenChat} openChatMenu={openChatMenu} />
+          <ChatHeader chat={chosenChat} handleMenuChange={handleMenuChange} />
 
           <Row className='messages-list p-0 py-3' ref={chatRef} onScroll={handleScroll}>
             {loadingMessages ? (
-              // Display a loading spinner while loading more messages
               <div className='d-flex justify-content-center align-items-center w-100'>
                 <Spinner animation='border' variant='secondary' />
               </div>
             ) : (
               <Stack direction='vertical' gap={1} ref={messagesListRef}>
                 {messagesByDay.map((dayMessages) => (
-                  <>
-                    <div className='date-separator mt-3 mb-1'>{dayMessages.day}</div>
+                  <React.Fragment key={dayMessages.day}>
+                    <div className='date-separator my-2'>{dayMessages.day}</div>
+
                     {dayMessages.messages.map((message, index) => (
-                      <>
+                      <React.Fragment key={message.id}>
                         {message.type === 'message' ? (
-                          <div
-                            className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'}`}
-                            key={index}
-                            ref={index === 0 ? firstMessageRef : null}
-                          >
+                          <div className={`message d-flex flex-wrap ${message.sender.nickname === authUser.nickname ? 'own-message' : 'other-message'}`}>
                             <MessageRenderer
                               message={message}
                               index={index}
@@ -305,17 +306,16 @@ function Chat() {
                             />
                           </div>
                         ) : null}
+
                         {message.type === 'announcement' ? (
-                          <div
-                            key={index}
-                            className='announcement w-100 d-flex justify-content-center mt-3'
-                          >
+                          <div className='announcement w-100 d-flex justify-content-center mt-3'>
                             <span dangerouslySetInnerHTML={{ __html: message.content }} />
                           </div>
                         ) : null}
-                      </>
+                      </React.Fragment>
                     ))}
-                  </>
+
+                  </React.Fragment>
                 ))}
               </Stack>
             )}

@@ -50,11 +50,17 @@ public class ChatService {
         List<ChatPreviewDTO> chatPreviewDTOs = new ArrayList<>();
 
         for (Chat chat : chats) {
-            // Check if the authenticated user is a member of the chat
-            List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chat.getId());
-            boolean isUserMember = chatMembers.stream()
-                    .anyMatch(chatMember -> chatMember.getMember().getId().equals(authedUser.getId()));
+            boolean isUserMember;
 
+            if (chat.getType() != ChatType.COMMUNITY) {
+                // Check if the authenticated user is a member of the chat
+                List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chat.getId());
+                isUserMember = chatMembers.stream().anyMatch(chatMember -> chatMember.getMember().getId().equals(authedUser.getId()));
+            } else {
+                // Check if the chat is a community chat and the authenticated user is the chat
+                CommunityChat communityChat = communityChatRepository.findCommunityChatByChatId(chat.getId());
+                isUserMember = communityChat != null && Objects.equals(communityChat.getUser().getId(), authedUser.getId());
+            }
 
             if (isUserMember) {
                 // Get chat info based on the chat type
@@ -136,8 +142,8 @@ public class ChatService {
                 User chatPartner = chatMember.getMember();
                 chatDTO.setAvatarUrl(chatPartner.getAvatarUrl());
                 chatDTO.setName(chatPartner.getFirstName() + " " + chatPartner.getLastName());
-                List<PublicUserDTO> members = new ArrayList<>();
-                members.add(userService.getPublicUserDTO(chatPartner));
+                List<ChatMemberDTO> members = new ArrayList<>();
+                members.add(userService.getChatMemberDTO(chatPartner, chatMember.getRole()));
                 chatDTO.setMembers(members);
             });
     }
@@ -229,5 +235,17 @@ public class ChatService {
                 chatRepository.delete(chat);
             }
         });
+    }
+
+    // Patch method to update chat avatar
+    public Chat updateChatAvatar(Chat chat, MultipartFile avatarBlob) {
+        String avatarFilePath = "chats/chat-" + chat.getId() + "/avatar/";
+        String avatarUrl = fileService.changeFile(avatarBlob, avatarFilePath, chat.getAvatarUrl());
+        if (avatarUrl != null) {
+            chat.setAvatarUrl(avatarUrl);
+            chatRepository.save(chat);
+            return chat;
+        }
+        return null;
     }
 }
