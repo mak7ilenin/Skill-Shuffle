@@ -52,7 +52,17 @@ public class UserService {
     }
 
     @Transactional
-    public List<String> getUsersInChat(Integer chatId) {
+    public List<PublicUserDTO> getUsersInChat(Integer chatId) {
+        List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);
+        List<PublicUserDTO> users = new ArrayList<>();
+        for (ChatMember chatMember : chatMembers) {
+            users.add(getPublicUserDTO(chatMember.getMember()));
+        }
+        return users;
+    }
+
+    @Transactional
+    public List<String> getUsernamesInChat(Integer chatId) {
         List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);
         List<String> usernames = new ArrayList<>();
         for (ChatMember chatMember : chatMembers) {

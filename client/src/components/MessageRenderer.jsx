@@ -80,7 +80,7 @@ function MessageRenderer({ message, index, authUser, messageList }) {
                             </div>
                             <div className="d-flex flex-column">
                                 <span className='sender-name'>
-                                    <NavLink href={`/users?${message.sender.nickname}`}>{message.sender.firstName}</NavLink>
+                                    <NavLink href={`/users?nn=${message.sender.nickname}`}>{message.sender.firstName}</NavLink>
                                 </span>
                                 <div className="d-flex mt-1">
                                     <div className='message-content flex-column'>{detectUrls(message.content)}</div>

@@ -346,6 +346,15 @@
             background-color: #fff;
             font-family: $main-font;
 
+            .chat-info {
+                width: fit-content;
+
+                .chat-name {
+                    text-decoration: none;
+                    color: #000 !important;
+                }
+            }
+
             .chat-avatar {
                 flex: 0;
             }

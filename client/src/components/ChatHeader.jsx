@@ -1,11 +1,24 @@
 import React from 'react';
-import { Row, Col, Image } from 'react-bootstrap';
+import { Row, Col, Image, NavLink } from 'react-bootstrap';
+
+import { useAuth } from './AuthContext';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
-
 import { ReactComponent as NetworkIcon } from '../assets/icons/network.svg';
 
 function ChatHeader({ chat, openChatMenu }) {
+    const { authUser } = useAuth();
+
+    const generateLink = () => {
+        switch (chat.type) {
+            case 'private':
+                return `/users?nn=${chat.members[0].nickname}`;
+            case 'community':
+                return `/communities?nn=${chat.community.nickname}`;
+            default:
+                return '/';
+        }
+    }
 
     const formatLastSeenTimestamp = (timestamp) => {
         const date = new Date(timestamp);
@@ -33,30 +46,61 @@ function ChatHeader({ chat, openChatMenu }) {
 
     return (
         <Row className='chat-header'>
-            <Col className='chat-avatar me-3' role='button'>
-                <Image
-                    src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
-                    alt={chat.name}
-                    width='55'
-                    height='55'
-                    style={{ objectFit: 'cover' }}
-                    roundedCircle
-                />
-            </Col>
-            <Col className='d-flex flex-column'>
-                <p role='button' className='chat-name'>{chat.name}</p>
+            {chat.type !== 'group' ? (
+                <NavLink href={generateLink()} className='chat-info d-flex'>
+                    <Col className='chat-avatar me-3' role='button'>
+                        <Image
+                            src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
+                            alt={chat.name}
+                            width='55'
+                            height='55'
+                            style={{ objectFit: 'cover' }}
+                            roundedCircle
+                        />
+                    </Col>
+                    <Col className='d-flex flex-column'>
+                        <p role='button' className='chat-name'>{chat.name}</p>
 
-                {chat.type === 'community' ? (
-                    <span className='text-secondary'>Community</span>
-                ) : chat.type === 'group' ? (
-                    <span role='button' onClick={openChatMenu} className='text-secondary'>{chat.memberCount} members</span>
-                ) : (
-                    <p className='user-activity'>
-                        <NetworkIcon className='network-icon' />
-                        <span className='text-secondary'>{formatLastSeenTimestamp(chat.chatPartner.lastSeen)}</span>
-                    </p>
-                )}
-            </Col>
+                        {chat.type === 'community' ? (
+                            <span className='text-secondary'>Community</span>
+                        ) : chat.type === 'group' ? (
+                            <span role='button' onClick={openChatMenu} className='text-secondary'>{chat.members.length} members</span>
+                        ) : (
+                            <p className='user-activity'>
+                                <NetworkIcon className='network-icon' />
+                                <span className='text-secondary'>{formatLastSeenTimestamp(chat.members[0].lastSeen)}</span>
+                            </p>
+                        )}
+                    </Col>
+                </NavLink>
+            ) : (
+                <div className='chat-info d-flex p-0'> {/* ADD ON CLICK */}
+                    <Col className='chat-avatar me-3' role='button'>
+                        <Image
+                            src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
+                            alt={chat.name}
+                            width='55'
+                            height='55'
+                            style={{ objectFit: 'cover' }}
+                            roundedCircle
+                        />
+                    </Col>
+                    <Col className='d-flex flex-column'>
+                        <p role='button' className='chat-name'>{chat.name}</p>
+
+                        {chat.type === 'community' ? (
+                            <span className='text-secondary'>Community</span>
+                        ) : chat.type === 'group' ? (
+                            <span role='button' onClick={openChatMenu} className='text-secondary'>{chat.members.length} members</span>
+                        ) : (
+                            <p className='user-activity'>
+                                <NetworkIcon className='network-icon' />
+                                <span className='text-secondary'>{formatLastSeenTimestamp(chat.members[0].lastSeen)}</span>
+                            </p>
+                        )}
+                    </Col>
+                </div>
+            )}
         </Row>
     )
 }

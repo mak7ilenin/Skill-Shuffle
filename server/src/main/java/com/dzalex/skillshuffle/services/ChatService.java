@@ -124,6 +124,7 @@ public class ChatService {
             CommunityPreviewDTO community = communityService.convertToPreviewDTO(communityChat.getCommunity());
             chatDTO.setAvatarUrl(community.getAvatarUrl());
             chatDTO.setName(community.getName());
+            chatDTO.setCommunity(community);
         }
     }
 
@@ -135,12 +136,14 @@ public class ChatService {
                 User chatPartner = chatMember.getMember();
                 chatDTO.setAvatarUrl(chatPartner.getAvatarUrl());
                 chatDTO.setName(chatPartner.getFirstName() + " " + chatPartner.getLastName());
-                chatDTO.setChatPartner(userService.getPublicUserDTO(chatPartner));
+                List<PublicUserDTO> members = new ArrayList<>();
+                members.add(userService.getPublicUserDTO(chatPartner));
+                chatDTO.setMembers(members);
             });
     }
 
     private void setGroupChatInfo(Chat chat, ChatDTO chatDTO) {
-        chatDTO.setMemberCount(userService.getUsersInChat(chat.getId()).size());
+        chatDTO.setMembers(userService.getUsersInChat(chat.getId()));
         chatDTO.setAvatarUrl(chat.getAvatarUrl());
         chatDTO.setName(chat.getName());
     }

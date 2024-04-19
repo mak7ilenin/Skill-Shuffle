@@ -52,7 +52,7 @@ public class WebSocketController {
         ChatMessage savedMessage = messageService.saveMessage(message, chatId);
 
         // Get all users in this chat
-        List<String> usernames = userService.getUsersInChat(chatId);
+        List<String> usernames = userService.getUsernamesInChat(chatId);
         User sender = userRepository.findByNickname(message.getSender().getNickname());
         String senderUsername = sender.getUsername();
 

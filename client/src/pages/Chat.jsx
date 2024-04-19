@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { Row, Stack, Button, Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -16,7 +16,6 @@ import ChatBackground from '../assets/images/chat-background.jpg'
 function Chat() {
   const { authUser, stompClient, isStompClientInitialized } = useAuth();
   const location = useLocation();
-  const [scrollPosition, setScrollPosition] = useState(0);
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [chats, setChats] = useState([]);
   const [filteredChats, setFilteredChats] = useState([]);
