@@ -17,7 +17,6 @@ function Chat() {
   const { authUser, stompClient, isStompClientInitialized } = useAuth();
   const location = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [chats, setChats] = useState([]);
   const [filteredChats, setFilteredChats] = useState([]);
@@ -84,6 +83,9 @@ function Chat() {
           ...prevChat,
           messages: [...prevChat.messages, message]
         }));
+        setTimeout(() => {
+          scrollToPosition(messagesListRef.current.scrollHeight);
+        }, 50);
       });
 
       // Update current subscription

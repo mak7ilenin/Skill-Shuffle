@@ -24,7 +24,7 @@ function SignUp() {
             gender: "other",
             birthDate: "2004-12-22",
             bio: "Test " + username,
-            avatarUrl: ""
+            avatarUrl: null
         };
         try {
             await axios.post(`${API_SERVER}/auth/register`, body)
