@@ -22,6 +22,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
@@ -88,6 +89,15 @@ public class WebSocketController {
         for (String username : usernames) {
             messagingTemplate.convertAndSendToUser(username, "/notification", notification);
         }
+    }
+
+    // Event listener for heartbeat messages
+    @MessageMapping("/heartbeat")
+    public void handleHeartbeat(@Payload PublicUserDTO user) {
+        // Update the user's last activity timestamp
+        User authUser = userRepository.findByNickname(user.getNickname());
+        authUser.setLastSeen(new Timestamp(System.currentTimeMillis()));
+        userRepository.save(authUser);
     }
 
     // Event listener for disconnecting from the WebSocket

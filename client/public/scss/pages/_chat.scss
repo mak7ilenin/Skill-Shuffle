@@ -308,25 +308,26 @@
             font-family: $main-font;
             flex: 1;
 
-            .chat-header img {
+            .chat-avatar {
+                width: fit-content;
                 position: relative;
 
-                &:hover {
-                    &::after {
-                        // Show plus icon on hover
-                        content: '+';
-                        display: block;
-                        position: absolute;
-                        width: 20px;
-                        height: 20px;
-                        border-radius: 50%;
-                        background-color: #fff;
-                        color: #000;
-                        font-size: 16px;
-                        font-weight: 600;
-                        top: 0;
-                        right: 0;
+                .img-overlay {
+                    background-color: transparent;
+                    cursor: pointer;
+                    opacity: 0;
+                    transition: ease all .15s;
 
+                    svg path {
+                        opacity: 0.75;
+                        fill: #fff;
+                    }
+                }
+
+                &:hover {
+                    .img-overlay {
+                        background-color: rgba(0, 0, 0, 0.548);
+                        opacity: 1;
                     }
                 }
             }
@@ -381,9 +382,9 @@
                         width: 100%;
                     }
 
-                    &.active {
-                        border-color: transparent !important;
-                        border-bottom: 2px solid $primary-color !important;
+                    &.active::after {
+                        width: 100%;
+                        height: 2px;
                     }
 
                     span {
@@ -422,10 +423,34 @@
                 }
             }
 
+            .add-members {
+                border-bottom: 1px solid #8f8f8f40;
+                transition: ease all .1s;
+
+                &:hover {
+                    background-color: #8f8f8f16;
+                }
+
+                button {
+                    div {
+                        width: 55px;
+                        height: 55px;
+                        background-color: $super-light-gray;
+                    }
+
+                    span {
+                        font-size: 16px;
+                        font-weight: 700;
+                        color: $primary-color;
+                    }
+                }
+            }
+
             .member-list {
                 .member-container {
                     cursor: pointer;
                     border-radius: 0;
+                    border-bottom: 1px solid #8f8f8f40;
                     background-color: transparent;
                     transition: ease all .1s;
 
@@ -434,10 +459,33 @@
                     }
                 }
 
-                .member-name {
+                .member-name span {
+                    width: fit-content;
                     font-weight: 500;
-                    font-size: 18px;
+                    font-size: 16px;
                     color: #000;
+                }
+
+                .member-role {
+                    font-weight: 500;
+                    font-size: 14px;
+                    color: $light-gray;
+                }
+
+                .member-activity {
+                    .online-icon {
+                        width: 13px;
+                        height: 13px;
+                        background-color: $green;
+                        margin-top: 2px;
+                    }
+
+                    span {
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: $light-gray;
+                        margin-left: 5px;
+                    }
                 }
             }
         }

@@ -15,6 +15,24 @@ const AuthProvider = ({ children }) => {
         return JSON.parse(sessionStorage.getItem('auth-user'));
     });
 
+    // Send heartbeat to the server
+    const sendHeartbeat = useCallback(() => {
+        if (!isStompClientInitialized) return;
+        stompClient.publish({
+            destination: '/app/heartbeat',
+            body: JSON.stringify(authUser)
+        });
+    }, [isStompClientInitialized, stompClient, authUser]);
+
+    // Send heartbeats to the server every 5 minutes
+    useEffect(() => {
+        const interval = setInterval(() => {
+            sendHeartbeat();
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [sendHeartbeat]);
+
+    // Subscribe to notifications
     const subscribeToNotifications = useCallback(() => {
         if (!isStompClientInitialized) return;
 
@@ -25,6 +43,7 @@ const AuthProvider = ({ children }) => {
         });
     }, [isStompClientInitialized, stompClient, setMessageNotification]);
 
+    // Initialize the WebSocket connection
     const initializeStompClient = useCallback(() => {
         if (stompClient) {
             subscribeToNotifications();

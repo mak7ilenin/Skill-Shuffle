@@ -55,7 +55,6 @@ public class FileService {
         try {
             s3Client.deleteObject(builder -> builder.bucket(bucketName).key(key));
         } catch (Exception e) {
-            log.error("Error deleting file from S3 bucket", e);
             throw new IllegalArgumentException("Error deleting file from S3 bucket");
         }
     }
