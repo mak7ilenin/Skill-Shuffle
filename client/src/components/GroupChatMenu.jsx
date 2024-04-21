@@ -16,6 +16,7 @@ function GroupChatMenu({ chat }) {
     const [imageURL, setImageURL] = useState(chat.avatarUrl || null);
     const [imageBlob, setImageBlob] = useState(null);
     const [filteredMembers, setFilteredMembers] = useState(chat.members);
+    const [search, setSearch] = useState('');
     const [searchMemberVisibility, setSearchMemberVisibility] = useState('');
 
     const handleMemberFilter = (e) => {
@@ -28,10 +29,14 @@ function GroupChatMenu({ chat }) {
         e.target.classList.add('active');
     };
 
-    const handleMemberSearch = (e) => {
+    const handleMemberSearch = () => {
+        if (search === '') {
+            setFilteredMembers(chat.members);
+            return;
+        }
         setFilteredMembers(chat.members.filter(member => {
-            return member.firstName.toLowerCase().includes(e.target.value.toLowerCase())
-                || member.lastName.toLowerCase().includes(e.target.value.toLowerCase())
+            return member.firstName.toLowerCase().includes(search.toLowerCase())
+                || member.lastName.toLowerCase().includes(search.toLowerCase())
         }));
     };
 
@@ -141,9 +146,19 @@ function GroupChatMenu({ chat }) {
                             placeholder='Enter member’s name or surname'
                             className='border-0'
                             autoFocus={true}
-                            onKeyDown={handleMemberSearch}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            onKeyUp={() => handleMemberSearch()}
                         />
-                        <Button variant='none' className='icon-btn cross-btn px-3' onClick={() => setSearchMemberVisibility(false)}>
+                        <Button
+                            variant='none'
+                            className='icon-btn cross-btn px-3'
+                            onClick={() => {
+                                setSearchMemberVisibility(false);
+                                setSearch('');
+                                setFilteredMembers(chat.members);
+                            }}
+                        >
                             <Cross className='cross-icon' width={10} height={10} />
                         </Button>
                     </>
@@ -186,7 +201,7 @@ function GroupChatMenu({ chat }) {
                                         </Col>
                                     ) : null}
                                 </div>
-                                <p className='member-activity d-flex align-items-center justify-content-start flex-row'>
+                                <div className='member-activity d-flex align-items-center justify-content-start flex-row'>
                                     {formatLastSeenTimestamp(member.lastSeen) === 'Online' ? (
                                         <>
                                             <div className="online-icon rounded-circle"></div>
@@ -198,7 +213,7 @@ function GroupChatMenu({ chat }) {
                                             <span>{formatLastSeenTimestamp(member.lastSeen)}</span>
                                         </>
                                     )}
-                                </p>
+                                </div>
                             </div>
                         </div>
                     </NavLink>
