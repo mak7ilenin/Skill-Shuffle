@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Row, Col, Tab, Tabs, Button, Image, NavLink } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Row, Col, Tab, Tabs, Button, Image, NavLink, InputGroup, Form } from 'react-bootstrap';
 
 import { useAuth } from '../components/AuthContext';
 
@@ -18,12 +18,16 @@ import { ReactComponent as Share } from '../assets/icons/share.svg';
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function Profile() {
-    const { authUser } = useAuth();
+    const { authUser, stompClient, isStompClientInitialized } = useAuth();
 
+    const [text, setText] = useState('');
+
+    const handleChange = (event) => {
+        setText(event.target.value);
+    };
     useEffect(() => {
         document.querySelector('.default-header').classList.remove('closed');
     }, []);
-
     return (
         <Col className='wrapper-profile'>
             <Row className="profile-banner w-100 justify-content-end align-items-end">
@@ -63,15 +67,16 @@ function Profile() {
 
             <Row className='d-flex profile-content'>
                 <Col className='profile-info-container d-flex justify-content-start flex-column'>
-                    <Row>
-                        <Image
-                            src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
-                            className='profile-avatar p-0'
-                            alt='Avatar'
-                            roundedCircle
-                        />
-                    </Row>
-
+                    <NavLink href='/' className='user-container d-flex align-items-center justify-content-between flex-row mb-2'>
+                        <Row>
+                            <Image
+                                src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                className='profile-avatar p-0'
+                                alt='Avatar'
+                                roundedCircle
+                            />
+                        </Row>
+                    </NavLink>
                     <Row className='profile-info'>
                         <p className='user-name'>Durgesh Kirillovich</p>
                         <Col className='d-flex flex-row align-items-center'>
@@ -184,19 +189,55 @@ function Profile() {
                         </Col>
                     </Row>
                 </Col>
-
-                <Row className="main-block-profile tab-content">
+                <Row className="main-block-profile">
+                    <Row className='post-block d-flex align-items-center flex-row'>
+                        <Row className='add-post-line'>
+                            <Row className='textarea-block'>
+                                <Row className='post-user-img img-small'>
+                                    <Image
+                                        src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                        alt='Avatar'
+                                        roundedCircle
+                                    />
+                                </Row>
+                                <InputGroup className='textarea-post'>
+                                    <Form.Control as="textarea" aria-label="With textarea" placeholder="What's New?"
+                                        style={{ height: text.split('\n').length + 'em' }}
+                                        onInput={handleChange}
+                                    />
+                                </InputGroup>
+                            </Row>
+                            <Row className='d-flex flex-column emoji-container'>
+                                <Image
+                                    src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                    alt='Avatar'
+                                    width='30'
+                                    height='30'
+                                    roundedCircle
+                                />
+                                <Image
+                                    src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                    alt='Avatar'
+                                    width='30'
+                                    height='30'
+                                    roundedCircle
+                                />
+                            </Row>
+                        </Row>
+                    </Row>
                     <Row className='post-block'>
                         <div className="post-menu-icon w-auto p-0 position-absolute">
                             <PostMenu width={19} />
                         </div>
                         <Col className='post-user'>
                             <Row className='post-user-img'>
-                                <Image
-                                    src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
-                                    alt='Avatar'
-                                    roundedCircle
-                                />
+                                <NavLink href='/' className='user-container d-flex align-items-center justify-content-between flex-row mb-2'>
+                                    <Image
+                                        src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
+                                        alt='Avatar'
+                                        roundedCircle
+                                    />
+                                </NavLink>
                             </Row>
                             <Row style={{ fontSize: '18px' }}>
                                 <p><a href='/'><span style={{ color: 'black', fontWeight: '800' }}>Durgesh Kirillovich</span></a> • <a href='/'><span>@durgesh</span></a></p>

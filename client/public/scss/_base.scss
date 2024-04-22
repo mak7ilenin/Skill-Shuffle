@@ -1,7 +1,14 @@
 #root {
     display: flex;
 }
-h1, h2, h3, h4, h5, h6, p {
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
     margin: 0 !important;
 }
 
@@ -22,7 +29,8 @@ h1, h2, h3, h4, h5, h6, p {
     padding: 0 !important;
 }
 
-.row, .col {
+.row,
+.col {
     margin: auto 0 !important;
     padding: 0 !important;
 }
@@ -43,4 +51,18 @@ h1, h2, h3, h4, h5, h6, p {
 .fade-enter.fade-enter-active {
     opacity: 1;
     transition: opacity 2s ease-in;
+}
+
+*::-webkit-scrollbar {
+    width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+    background: white;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: rgb(0, 0, 0);
+    border-radius: 20px;
+    border: 3px solid #5D6BE4;
 }
