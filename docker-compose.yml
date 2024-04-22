@@ -7,6 +7,17 @@ services:
     ports:
       - "8080:8080"
 
+  database:
+    image: mariadb
+    container_name: database
+    volumes:
+      - ./database/skill_shuffle.sql:/docker-entrypoint-initdb.d/skill_shuffle.sql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: skill_shuffle
+    ports:
+      - "3306:3306"
+
   client:
     build: ./client
     container_name: client
