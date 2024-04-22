@@ -238,6 +238,35 @@ public class ChatService {
         });
     }
 
+    // Delete chat by id
+    public void deleteChatById(Integer id) {
+        Chat chat = chatRepository.findChatById(id);
+        if (chat != null) {
+            chatMemberRepository.deleteAllByChatId(id);
+            messageRepository.deleteAllByChatId(id);
+            chatRepository.delete(chat);
+        }
+    }
+
+    // Leave chat
+    public void leaveChat(Chat chat) {
+        User authedUser = userService.getCurrentUser();
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authedUser.getId());
+        if (chatMember != null) {
+            chatMemberRepository.delete(chatMember);
+            messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.LEFT, null);
+        }
+    }
+
+    // Remove member from chat
+    public void removeMemberFromChat(Chat chat, User user) {
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), user.getId());
+        if (chatMember != null) {
+            chatMemberRepository.delete(chatMember);
+            messageService.createAnnouncementMessage(userService.getCurrentUser(), chat, ChatAnnouncementType.REMOVED, user);
+        }
+    }
+
     // Patch method to update chat avatar
     public Chat updateChatAvatar(Chat chat, MultipartFile avatarBlob) {
         String avatarFilePath = "chats/chat-" + chat.getId() + "/avatar/";

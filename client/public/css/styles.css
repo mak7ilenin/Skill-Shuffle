@@ -538,6 +538,20 @@ h1, h2, h3, h4, h5, h6, p {
   color: #8F8F8F;
   margin-left: 5px;
 }
+.chat-page .chat-menu .group-menu .leave-chat-footer {
+  background-color: #E3E3E3;
+}
+.chat-page .chat-menu .group-menu .leave-chat-footer:hover {
+  background-color: #cdcdcd;
+}
+.chat-page .chat-menu .group-menu .leave-chat-footer button {
+  font-family: "Mitr", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #E64646;
+  background-color: transparent;
+  border-radius: 0;
+}
 .chat-page .chat-menu .members-filter,
 .chat-page .chat-menu .search-friend {
   position: relative;

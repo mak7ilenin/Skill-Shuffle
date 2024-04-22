@@ -7,6 +7,7 @@ import com.dzalex.skillshuffle.dtos.NewChatDTO;
 import com.dzalex.skillshuffle.entities.Chat;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.services.ChatService;
+import com.dzalex.skillshuffle.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,8 @@ public class ChatController {
 
     @Autowired
     private ChatRepository chatRepository;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/chats")
     public List<ChatPreviewDTO> getChats() {
@@ -80,5 +83,20 @@ public class ChatController {
         } else {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @DeleteMapping("/chats/{id}/remove?nn={nickname}")
+    public ResponseEntity<Chat> removeChatMember(@PathVariable("id") Integer id,
+                                             @PathVariable("nickname") String nickname) {
+        Chat chat = chatRepository.findChatById(id);
+        chatService.removeMemberFromChat(chat, userService.getUserByNickname(nickname));
+        return ResponseEntity.ok(chat);
+    }
+
+    @DeleteMapping("/chats/{id}/leave")
+    public ResponseEntity<Chat> leaveChat(@PathVariable("id") Integer id) {
+        Chat chat = chatRepository.findChatById(id);
+        chatService.removeMemberFromChat(chat, userService.getCurrentUser());
+        return ResponseEntity.ok(chat);
     }
 }

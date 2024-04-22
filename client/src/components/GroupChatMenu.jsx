@@ -55,6 +55,10 @@ function GroupChatMenu({ chat }) {
         }
     };
 
+    const handleLeaveChat = () => {
+        
+    };
+
     const formatLastSeenTimestamp = (timestamp) => {
         const date = new Date(timestamp);
         const currentDate = new Date();
@@ -237,12 +241,15 @@ function GroupChatMenu({ chat }) {
                             </NavLink>
                         ))}
                     </Stack>
+                    <Row className='leave-chat-footer d-flex justify-content-center align-items-center'>
+                        <Button variant='danger' className='w-100 h-100 py-3 px-4 border-0' onClick={handleLeaveChat}>Leave chat</Button>
+                    </Row>
                 </>
             ) : (
                 <>
                     <AddFriends selectedFriends={selectedFriends} setSelectedFriends={setSelectedFriends} chat={chat} />
 
-                    <Row className='create-chat-footer d-flex justify-content-end align-items-center py-3 px-4'>
+                    <Row className='add-members-footer d-flex justify-content-end align-items-center py-3 px-4'>
                         <Button variant='light' className='w-auto' onClick={() => setAddMemberVisibility(false)}>Cancel</Button>
 
                         {selectedFriends.length === 1 ? (
