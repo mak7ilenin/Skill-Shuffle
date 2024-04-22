@@ -3,6 +3,7 @@
 
     .chat-menu {
         width: 27.61%;
+        min-width: 400px;
         height: 100vh;
         background-color: #fff;
         border-right: 1px solid #ccc;
@@ -220,8 +221,12 @@
             font-family: $main-font;
             flex: 1;
 
+            .chat-avatar {
+                width: fit-content;
+            }
+
             input.chat-name {
-                width: 250px;
+                max-width: 280px;
                 height: 34px;
                 outline: none;
                 border: none;
@@ -812,7 +817,22 @@
                 width: 60px;
                 height: 60px;
                 border-radius: 0;
-                border-bottom: 0;
+                background-color: $primary-color;
+                border-color: $primary-color;
+
+                svg path {
+                    fill: #fff;
+                }
+
+                &:hover {
+                    background-color: #fff;
+                    border-color: $primary-color;
+
+                    svg path {
+                        fill: $primary-button;
+                    }
+                
+                }
             }
         }
     }

@@ -116,7 +116,7 @@ function CreateChat({ changeMenu }) {
             />
 
             <Row className='chat-header d-flex justify-content-start py-3 px-4'>
-                <Col className='me-4' xs lg={2}>
+                <Col className='me-4 chat-avatar' xs lg={2}>
                     <Image
                         src={imageURL || imagePlaceholder}
                         alt='Chat'

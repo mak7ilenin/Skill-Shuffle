@@ -195,6 +195,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .chat-page .chat-menu {
   width: 27.61%;
+  min-width: 400px;
   height: 100vh;
   background-color: #fff;
   border-right: 1px solid #ccc;
@@ -382,8 +383,12 @@ h1, h2, h3, h4, h5, h6, p {
   font-family: "Manrope", sans-serif;
   flex: 1;
 }
+.chat-page .chat-menu .new-chat .chat-avatar {
+  width: -moz-fit-content;
+  width: fit-content;
+}
 .chat-page .chat-menu .new-chat input.chat-name {
-  width: 250px;
+  max-width: 280px;
   height: 34px;
   outline: none;
   border: none;
@@ -878,7 +883,18 @@ h1, h2, h3, h4, h5, h6, p {
   width: 60px;
   height: 60px;
   border-radius: 0;
-  border-bottom: 0;
+  background-color: #3D00FF;
+  border-color: #3D00FF;
+}
+.chat-page .chat-box .message-input .btn-send svg path {
+  fill: #fff;
+}
+.chat-page .chat-box .message-input .btn-send:hover {
+  background-color: #fff;
+  border-color: #3D00FF;
+}
+.chat-page .chat-box .message-input .btn-send:hover svg path {
+  fill: #5D6BE4;
 }
 
 .emoji-picker {

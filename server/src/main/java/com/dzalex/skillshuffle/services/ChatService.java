@@ -240,7 +240,12 @@ public class ChatService {
     // Patch method to update chat avatar
     public Chat updateChatAvatar(Chat chat, MultipartFile avatarBlob) {
         String avatarFilePath = "chats/chat-" + chat.getId() + "/avatar/";
-        String avatarUrl = fileService.changeFile(avatarBlob, avatarFilePath, chat.getAvatarUrl());
+        String avatarUrl;
+        if (chat.getAvatarUrl() == null) {
+            avatarUrl = fileService.uploadFile(avatarBlob, avatarFilePath);
+        } else {
+            avatarUrl = fileService.changeFile(avatarBlob, avatarFilePath, chat.getAvatarUrl());
+        }
         if (avatarUrl != null) {
             chat.setAvatarUrl(avatarUrl);
             chatRepository.save(chat);

@@ -12,6 +12,7 @@ import ChatMenu from '../components/ChatMenu';
 
 import EmojiGifPicker from '../components/EmojiGifPicker';
 import ChatBackground from '../assets/images/chat-background.jpg'
+import { ReactComponent as Send } from '../assets/icons/send.svg';
 
 function Chat() {
   const { authUser, stompClient, isStompClientInitialized } = useAuth();
@@ -348,8 +349,8 @@ function Chat() {
 
             <EmojiGifPicker setMessageContent={setMessageContent} sendMessage={sendMessage} />
 
-            <Button variant='outline-primary' className='btn-send' onClick={() => sendMessage(undefined)}>
-              Send
+            <Button variant='primary-outline' className='btn-send' onClick={() => sendMessage(undefined)}>
+              <Send />
             </Button>
           </Row>
         </div>
