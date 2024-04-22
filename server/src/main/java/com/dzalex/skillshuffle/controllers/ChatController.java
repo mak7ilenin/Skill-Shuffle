@@ -69,4 +69,16 @@ public class ChatController {
                                             @RequestParam(defaultValue = "0") int offset) {
         return chatService.getChatMessages(id, limit, offset);
     }
+
+    @PostMapping("/chats/{id}/members")
+    public ResponseEntity<Chat> addChatMembers(@PathVariable("id") Integer id,
+                                             @RequestBody List<String> users) {
+        Chat chat = chatRepository.findChatById(id);
+        Chat updatedChat = chatService.inviteMembersToChat(chat, users);
+        if (updatedChat != null) {
+            return ResponseEntity.ok(updatedChat);
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

@@ -309,7 +309,7 @@ function Chat() {
                         ) : null}
 
                         {message.type === 'announcement' ? (
-                          <div className='announcement w-100 d-flex justify-content-center mt-3'>
+                          <div className='announcement w-100 d-flex justify-content-center my-2'>
                             <span dangerouslySetInnerHTML={{ __html: message.content }} />
                           </div>
                         ) : null}

@@ -1,68 +1,22 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Row, Col, Container, Image, Stack, Button } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Row, Col, Container, Image, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { API_SERVER } from '../config';
 import { AESEncrypt } from '../crypto';
-import { useAuth } from './AuthContext';
 import UploadChatAvatarModal from './UploadChatAvatarModal';
+import AddFriends from './AddFriends';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function CreateChat({ changeMenu }) {
-    const { authUser } = useAuth();
     const navigate = useNavigate();
-    const [friends, setFriends] = useState([]);
-    const [filteredFriends, setFilteredFriends] = useState([]);
     const [chatName, setChatName] = useState('');
     const [imageURL, setImageURL] = useState(null);
     const [imageBlob, setImageBlob] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [selectedFriends, setSelectedFriends] = useState([]);
-
-    useEffect(() => {
-        axios.get(`${API_SERVER}/users/${authUser.nickname}/friends`, { withCredentials: true })
-            .then(response => {
-                setFriends(response.data);
-                setFilteredFriends(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }, [authUser, setFriends]);
-
-    const handleSelectFriend = useCallback((e, friend) => {
-        const friendContainer = e.target.closest('.friend-container');
-        const checkbox = friendContainer.querySelector('input[type="checkbox"]');
-        const label = friendContainer.querySelector('.rounded-checkbox-label');
-
-        if (checkbox) {
-            checkbox.checked = !checkbox.checked;
-
-            if (checkbox.checked) {
-                // Friend added
-                label.classList.add('checked');
-                setSelectedFriends(prev => {
-                    return [...prev, friend.nickname];
-                });
-            } else {
-                // Friend removed
-                label.classList.remove('checked');
-                setSelectedFriends(prev => {
-                    return prev.filter(nickname => nickname !== friend.nickname);
-                });
-            }
-        }
-    }, [setSelectedFriends]);
-
-    const handleFriendSearch = (e) => {
-        const search = e.target.value;
-        setFilteredFriends(friends.filter(friend => {
-            return friend.firstName.toLowerCase().includes(search.toLowerCase())
-                || friend.lastName.toLowerCase().includes(search.toLowerCase());
-        }));
-    };
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -137,62 +91,21 @@ function CreateChat({ changeMenu }) {
                     />
                 </Col>
             </Row>
-            <Row className='search-friend'>
-                <input
-                    type='text'
-                    placeholder='Enter friend’s name or surname'
-                    className='px-4 py-3 border-1'
-                    onChange={handleFriendSearch}
-                />
-            </Row>
-            <Stack className='friend-list flex-grow-1 my-3' direction='vertical' gap={2}>
-                {filteredFriends.map((friend, index) => (
-                    <Button
-                        key={index}
-                        variant='light'
-                        title='friend'
-                        className="friend-container d-flex align-items-center border-0 px-4"
-                        onClick={(e) => handleSelectFriend(e, friend)}
-                    >
-                        <div className="friend-info w-75 d-flex align-items-center">
-                            <Image
-                                src={friend.avatarUrl !== null ? friend.avatarUrl : imagePlaceholder}
-                                alt={'Friend'}
-                                width='35'
-                                height='35'
-                                style={{ objectFit: 'cover' }}
-                                roundedCircle
-                            />
-                            <span className='friend-name ms-3'>{friend.firstName} {friend.lastName}</span>
-                        </div>
-                        <div className="friend-add w-25 d-flex justify-content-end align-items-center">
-                            <label className={`rounded-checkbox-label d-flex align-items-center justify-content-center ${selectedFriends.includes(friend.nickname) ? 'checked' : ''}`}>
-                                <input
-                                    title='add-friend'
-                                    type="checkbox"
-                                    name="friend"
-                                    className='d-none'
-                                    checked={selectedFriends.includes(friend.nickname)}
-                                    onChange={(e) => handleSelectFriend(e, friend)}
-                                />
-                            </label>
-                        </div>
-                    </Button>
-                ))}
-            </Stack>
+            
+            <AddFriends selectedFriends={selectedFriends} setSelectedFriends={setSelectedFriends} />
 
             {selectedFriends.length > 0 || chatName !== '' ? (
                 <Row className='create-chat-footer d-flex justify-content-end align-items-center py-3 px-4'>
-                    <Button variant='light' className='w-auto me-3' onClick={() => changeMenu('DEFAULT')}>Cancel</Button>
+                    <Button variant='light' className='w-auto' onClick={() => changeMenu('DEFAULT')}>Cancel</Button>
                     {chatName !== '' ? (
-                        <Button variant='primary' className='w-auto' onClick={handleCreateChat}>Create chat</Button>
+                        <Button variant='primary' className='w-auto ms-3' onClick={handleCreateChat}>Create chat</Button>
                     ) : (
                         <>
                             {selectedFriends.length === 1 ? (
-                                <Button variant='primary' className='w-auto' onClick={handleCreateChat}>Open chat</Button>
+                                <Button variant='primary' className='w-auto ms-3' onClick={handleCreateChat}>Open chat</Button>
                             ) : null}
                             {selectedFriends.length > 1 ? (
-                                <Button variant='primary' className='w-auto' onClick={handleCreateChat}>Create chat</Button>
+                                <Button variant='primary' className='w-auto ms-3' onClick={handleCreateChat}>Create chat</Button>
                             ) : null}
                         </>
                     )}

@@ -114,6 +114,7 @@ public class ChatService {
         ChatDTO chatDTO = new ChatDTO();
         chatDTO.setId(chat.getId());
         chatDTO.setType(chat.getType());
+        chatDTO.setMessages(getChatMessages(chat.getId(), 30, 0));
 
         switch (chat.getType()) {
             case COMMUNITY -> setCommunityChatInfo(chat, authedUser, chatDTO);
@@ -196,7 +197,7 @@ public class ChatService {
 
         // Send ENTRY message to the chat
         if (chat.getType() == ChatType.GROUP) {
-            messageService.createAnnouncementMessage(authedUser, newChat, ChatAnnouncementType.CREATED);
+            messageService.createAnnouncementMessage(authedUser, newChat, ChatAnnouncementType.CREATED, null);
         } else {
             messageService.createEntryMessage(authedUser, newChat);
         }
@@ -249,6 +250,19 @@ public class ChatService {
         if (avatarUrl != null) {
             chat.setAvatarUrl(avatarUrl);
             chatRepository.save(chat);
+            return chat;
+        }
+        return null;
+    }
+
+    public Chat inviteMembersToChat(Chat chat, List<String> users) {
+        if (chat.getType() == ChatType.GROUP) {
+            users.stream()
+                 .map(userService::getUserByNickname)
+                 .forEach(user -> {
+                     addMemberToChat(chat, user, MemberRole.MEMBER);
+                     messageService.createAnnouncementMessage(userService.getCurrentUser(), chat, ChatAnnouncementType.ADDED, user);
+                 });
             return chat;
         }
         return null;

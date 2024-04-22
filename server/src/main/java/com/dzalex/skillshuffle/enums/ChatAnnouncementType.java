@@ -3,14 +3,14 @@ package com.dzalex.skillshuffle.enums;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum ChatAnnouncementType {
-    @JsonProperty("joined")
-    JOINED,
     @JsonProperty("left")
     LEFT,
-    @JsonProperty("kicked")
-    KICKED,
+    @JsonProperty("removed")
+    REMOVED,
     @JsonProperty("created")
     CREATED,
-    @JsonProperty("invited")
-    INVITED
+    @JsonProperty("added")
+    ADDED,
+    @JsonProperty("returned")
+    RETURNED
 }

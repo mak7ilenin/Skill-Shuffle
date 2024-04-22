@@ -3,6 +3,7 @@ import { Row, Col, Container, Image, Stack, Button, NavLink } from 'react-bootst
 import axios from 'axios';
 
 import UploadChatAvatarModal from './UploadChatAvatarModal';
+import AddFriends from './AddFriends';
 import { API_SERVER } from '../config';
 
 import { ReactComponent as NetworkIcon } from '../assets/icons/network.svg';
@@ -16,8 +17,10 @@ function GroupChatMenu({ chat }) {
     const [imageURL, setImageURL] = useState(chat.avatarUrl || null);
     const [imageBlob, setImageBlob] = useState(null);
     const [filteredMembers, setFilteredMembers] = useState(chat.members);
+    const [selectedFriends, setSelectedFriends] = useState([]);
     const [search, setSearch] = useState('');
-    const [searchMemberVisibility, setSearchMemberVisibility] = useState('');
+    const [searchMemberVisibility, setSearchMemberVisibility] = useState(false);
+    const [addMemberVisibility, setAddMemberVisibility] = useState(false);
 
     const handleMemberFilter = (e) => {
         // Filter members based on the role
@@ -38,6 +41,18 @@ function GroupChatMenu({ chat }) {
             return member.firstName.toLowerCase().includes(search.toLowerCase())
                 || member.lastName.toLowerCase().includes(search.toLowerCase())
         }));
+    };
+
+    const handleAddMembers = () => {
+        if (selectedFriends.length > 0) {
+            axios.post(`${API_SERVER}/chats/${chat.id}/members`, selectedFriends, { withCredentials: true })
+                .then(() => {
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
     };
 
     const formatLastSeenTimestamp = (timestamp) => {
@@ -121,105 +136,124 @@ function GroupChatMenu({ chat }) {
                 </Col>
             </Row>
 
-            <Row className='members-filter d-flex justify-content-start align-items-center position-relative ps-3'>
-                {!searchMemberVisibility ? (
-                    <>
-                        <Button variant='light' className='all-members active' data-role='member' onClick={handleMemberFilter}>
-                            All members <span className='ms-2'>{chat.members.length}</span>
-                        </Button>
+            {!addMemberVisibility ? (
+                <>
 
-                        <Button variant='light' className='admins' data-role='admin' onClick={handleMemberFilter}>
-                            Administrators
-                            <span className='ms-2'>{chat.members.filter(member => member.role === 'admin' || member.role === 'creator').length}</span>
-                        </Button>
+                    <Row className='members-filter d-flex justify-content-start align-items-center position-relative ps-3'>
+                        {!searchMemberVisibility ? (
+                            <>
+                                <Button variant='light' className='all-members active' data-role='member' onClick={handleMemberFilter}>
+                                    All members <span className='ms-2'>{chat.members.length}</span>
+                                </Button>
 
-                        <Col className='d-flex justify-content-end align-items-center'>
-                            <Button variant='none' className='icon-btn search-btn px-3' onClick={() => setSearchMemberVisibility(true)}>
-                                <Search className='search-icon' width={22} height={22} />
-                            </Button>
-                        </Col>
-                    </>
-                ) : (
-                    <>
-                        <input
-                            type='text'
-                            placeholder='Enter member’s name or surname'
-                            className='border-0'
-                            autoFocus={true}
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            onKeyUp={() => handleMemberSearch()}
-                        />
-                        <Button
-                            variant='none'
-                            className='icon-btn cross-btn px-3'
-                            onClick={() => {
-                                setSearchMemberVisibility(false);
-                                setSearch('');
-                                setFilteredMembers(chat.members);
-                            }}
-                        >
-                            <Cross className='cross-icon' width={10} height={10} />
-                        </Button>
-                    </>
-                )}
-            </Row>
+                                <Button variant='light' className='admins' data-role='admin' onClick={handleMemberFilter}>
+                                    Administrators
+                                    <span className='ms-2'>{chat.members.filter(member => member.role === 'admin' || member.role === 'creator').length}</span>
+                                </Button>
 
-            <Row className='add-members px-3'>
-                <Button variant='light' className='d-flex align-items-center px-0 py-2'>
-                    <div className='rounded-circle d-flex justify-content-center align-items-center'>
-                        <Plus width={22} height={22} />
-                    </div>
-                    <span className='ms-2'>Add members</span>
-                </Button>
-            </Row>
+                                <Col className='d-flex justify-content-end align-items-center'>
+                                    <Button variant='none' className='icon-btn search-btn px-3' onClick={() => setSearchMemberVisibility(true)}>
+                                        <Search className='search-icon' width={22} height={22} />
+                                    </Button>
+                                </Col>
+                            </>
+                        ) : (
+                            <>
+                                <input
+                                    type='text'
+                                    placeholder='Enter member’s name or surname'
+                                    className='border-0'
+                                    autoFocus={true}
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    onKeyUp={handleMemberSearch}
+                                />
+                                <Button
+                                    variant='none'
+                                    className='icon-btn cross-btn px-3'
+                                    onClick={() => {
+                                        setSearchMemberVisibility(false);
+                                        setSearch('');
+                                        setFilteredMembers(chat.members);
+                                    }}
+                                >
+                                    <Cross className='cross-icon' width={10} height={10} />
+                                </Button>
+                            </>
+                        )}
+                    </Row>
 
-            <Stack className='member-list flex-grow-1' direction='vertical' gap={0}>
-                {filteredMembers.map((member, index) => (
-                    <NavLink
-                        key={index}
-                        href={`/users?nn=${member.nickname}`}
-                        className="member-container d-flex align-items-center m-0 py-2 px-3"
-                    >
-                        <div className="member-info w-100 d-flex align-items-center px-0">
-                            <Image
-                                src={member.avatarUrl !== null ? member.avatarUrl : imagePlaceholder}
-                                alt={'Member'}
-                                width='55'
-                                height='55'
-                                style={{ objectFit: 'cover' }}
-                                roundedCircle
-                            />
-                            <div className='d-flex flex-column w-100 ms-3'>
-                                <div className='d-flex flex-row'>
-                                    <div className="member-name w-75">
-                                        <span>{member.firstName} {member.lastName}</span>
-                                    </div>
-                                    {member.role === 'creator' || member.role === 'admin' ? (
-                                        <Col className="member-role w-25 d-flex justify-content-end align-items-center">
-                                            <span>{member.role === 'creator' ? 'Creator' : 'Administrator'}</span>
-                                        </Col>
-                                    ) : null}
-                                </div>
-                                <div className='member-activity d-flex align-items-center justify-content-start flex-row'>
-                                    {formatLastSeenTimestamp(member.lastSeen) === 'Online' ? (
-                                        <>
-                                            <div className="online-icon rounded-circle"></div>
-                                            <span>Online</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <NetworkIcon width={13} height={13} />
-                                            <span>{formatLastSeenTimestamp(member.lastSeen)}</span>
-                                        </>
-                                    )}
-                                </div>
+                    <Row className='add-members px-3'>
+                        <Button variant='light' className='d-flex align-items-center px-0 py-2' onClick={() => setAddMemberVisibility(true)}>
+                            <div className='rounded-circle d-flex justify-content-center align-items-center'>
+                                <Plus width={22} height={22} />
                             </div>
-                        </div>
-                    </NavLink>
-                ))}
-            </Stack>
+                            <span className='ms-2'>Add members</span>
+                        </Button>
+                    </Row>
 
+                    <Stack className='member-list flex-grow-1' direction='vertical' gap={0}>
+                        {filteredMembers.map((member, index) => (
+                            <NavLink
+                                key={index}
+                                href={`/users?nn=${member.nickname}`}
+                                className="member-container d-flex align-items-center m-0 py-2 px-3"
+                            >
+                                <div className="member-info w-100 d-flex align-items-center px-0">
+                                    <Image
+                                        src={member.avatarUrl !== null ? member.avatarUrl : imagePlaceholder}
+                                        alt={'Member'}
+                                        width='55'
+                                        height='55'
+                                        style={{ objectFit: 'cover' }}
+                                        roundedCircle
+                                    />
+                                    <div className='d-flex flex-column w-100 ms-3'>
+                                        <div className='d-flex flex-row'>
+                                            <div className="member-name w-75">
+                                                <span>{member.firstName} {member.lastName}</span>
+                                            </div>
+                                            {member.role === 'creator' || member.role === 'admin' ? (
+                                                <Col className="member-role w-25 d-flex justify-content-end align-items-center">
+                                                    <span>{member.role === 'creator' ? 'Creator' : 'Administrator'}</span>
+                                                </Col>
+                                            ) : null}
+                                        </div>
+                                        <div className='member-activity d-flex align-items-center justify-content-start flex-row'>
+                                            {formatLastSeenTimestamp(member.lastSeen) === 'Online' ? (
+                                                <>
+                                                    <div className="online-icon rounded-circle"></div>
+                                                    <span>Online</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <NetworkIcon width={13} height={13} />
+                                                    <span>{formatLastSeenTimestamp(member.lastSeen)}</span>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </NavLink>
+                        ))}
+                    </Stack>
+                </>
+            ) : (
+                <>
+                    <AddFriends selectedFriends={selectedFriends} setSelectedFriends={setSelectedFriends} chat={chat} />
+
+                    <Row className='create-chat-footer d-flex justify-content-end align-items-center py-3 px-4'>
+                        <Button variant='light' className='w-auto' onClick={() => setAddMemberVisibility(false)}>Cancel</Button>
+
+                        {selectedFriends.length === 1 ? (
+                            <Button variant='primary' className='w-auto ms-3' onClick={handleAddMembers}>Add member</Button>
+                        ) : null}
+                        {selectedFriends.length > 1 ? (
+                            <Button variant='primary' className='w-auto ms-3' onClick={handleAddMembers}>Add members</Button>
+                        ) : null}
+                    </Row>
+                </>
+            )}
         </Container>
     )
 }

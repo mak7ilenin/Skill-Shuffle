@@ -93,11 +93,11 @@ public class MessageService {
         messageRepository.save(entryMessage);
     }
 
-    public void createAnnouncementMessage(User sender, Chat chat, ChatAnnouncementType announcementType) {
+    public void createAnnouncementMessage(User sender, Chat chat, ChatAnnouncementType announcementType, User user) {
         ChatMessage announcementMessage = ChatMessage.builder()
                 .sender(sender)
                 .chat(chat)
-                .content(getAnnouncementMessageContent(sender, chat, announcementType))
+                .content(getAnnouncementMessageContent(sender, chat, announcementType, user))
                 .timestamp(Timestamp.from(new Date().toInstant()))
                 .status(MessageStatus.SENT)
                 .type(MessageType.ANNOUNCEMENT)
@@ -105,14 +105,19 @@ public class MessageService {
         messageRepository.save(announcementMessage);
     }
 
-    private String getAnnouncementMessageContent(User sender, Chat chat, ChatAnnouncementType announcementType) {
-        String senderName = "<b>" + sender.getFirstName() + " " + sender.getLastName() + "</b>";
+    private String getAnnouncementMessageContent(User sender, Chat chat, ChatAnnouncementType announcementType, User user) {
+        String userNameTemplate = "<a href='/users?nn=%s'><b>%s %s</b></a>";
+        String senderName = userNameTemplate.formatted(sender.getNickname(), sender.getFirstName(), sender.getLastName());
+        String userName = "anonymous";
+        if (user != null) {
+            userName = userNameTemplate.formatted(user.getNickname(), user.getFirstName(), user.getLastName());
+        }
         return switch (announcementType) {
-            case JOINED -> senderName + " joined the chat";
             case LEFT -> senderName + " left the chat";
-            case CREATED -> senderName + " created '" + chat.getName() + "'";
-            case KICKED -> senderName + " was kicked from the chat";
-            case INVITED -> senderName + " was invited to the chat";
+            case CREATED -> senderName + " created '<i>" + chat.getName() + "</i>'";
+            case REMOVED -> senderName + " kicked " + userName;
+            case RETURNED -> senderName + " returned to the chat";
+            case ADDED -> senderName + " added " + userName;
         };
     }
 

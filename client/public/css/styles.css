@@ -383,6 +383,10 @@ h1, h2, h3, h4, h5, h6, p {
   font-family: "Manrope", sans-serif;
   flex: 1;
 }
+.chat-page .chat-menu .new-chat .btn {
+  outline: none !important;
+  border: none !important;
+}
 .chat-page .chat-menu .new-chat .chat-avatar {
   width: -moz-fit-content;
   width: fit-content;
@@ -408,60 +412,6 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .chat-page .chat-menu .new-chat input.chat-name:focus-visible {
   border-color: #373737;
-}
-.chat-page .chat-menu .new-chat .search-friend input {
-  border-left: 0;
-  border-right: 0;
-  border-color: rgba(143, 143, 143, 0.1450980392);
-  font-weight: 600;
-  color: #373737;
-  transition: ease all 0.1s;
-}
-.chat-page .chat-menu .new-chat .search-friend input::-moz-placeholder {
-  color: #8f8f8f;
-  font-weight: 500;
-}
-.chat-page .chat-menu .new-chat .search-friend input::placeholder {
-  color: #8f8f8f;
-  font-weight: 500;
-}
-.chat-page .chat-menu .new-chat .search-friend input:focus-visible {
-  outline: none;
-  border-color: rgba(143, 143, 143, 0.3137254902);
-}
-.chat-page .chat-menu .new-chat .friend-list .friend-container {
-  cursor: pointer;
-  border-radius: 0;
-  background-color: transparent;
-  transition: ease all 0.1s;
-}
-.chat-page .chat-menu .new-chat .friend-list .friend-container:hover {
-  background-color: #f5f5f5;
-}
-.chat-page .chat-menu .new-chat .friend-list .friend-name {
-  font-weight: 500;
-  font-size: 18px;
-  color: #000;
-}
-.chat-page .chat-menu .new-chat .create-chat-footer {
-  max-height: 83px;
-  background-color: #E3E3E3;
-}
-.chat-page .chat-menu .new-chat .create-chat-footer button {
-  height: 40px;
-  font-family: "Mitr", sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-}
-.chat-page .chat-menu .new-chat .create-chat-footer button.btn-light {
-  background-color: transparent;
-  border: none;
-  color: #8F8F8F;
-}
-.chat-page .chat-menu .new-chat .create-chat-footer button.btn-primary {
-  background-color: #5D6BE4;
-  padding: 0 26px;
-  border-radius: 7px;
 }
 .chat-page .chat-menu .group-menu {
   font-family: "Manrope", sans-serif;
@@ -496,19 +446,8 @@ h1, h2, h3, h4, h5, h6, p {
   font-weight: 500;
   color: #8F8F8F;
 }
-.chat-page .chat-menu .group-menu .btn {
-  outline: none !important;
-  border: none !important;
-  background-color: transparent !important;
-}
-.chat-page .chat-menu .group-menu .members-filter {
-  border: 1px solid rgba(143, 143, 143, 0.2509803922);
-  border-left: none;
-  border-right: none;
-  gap: 20px;
-}
-.chat-page .chat-menu .group-menu .members-filter .all-members,
-.chat-page .chat-menu .group-menu .members-filter .admins {
+.chat-page .chat-menu .group-menu .all-members,
+.chat-page .chat-menu .group-menu .admins {
   width: -moz-fit-content;
   width: fit-content;
   padding: 12px 3px;
@@ -518,8 +457,8 @@ h1, h2, h3, h4, h5, h6, p {
   font-weight: 600;
   position: relative;
 }
-.chat-page .chat-menu .group-menu .members-filter .all-members::after,
-.chat-page .chat-menu .group-menu .members-filter .admins::after {
+.chat-page .chat-menu .group-menu .all-members::after,
+.chat-page .chat-menu .group-menu .admins::after {
   content: "";
   position: absolute;
   bottom: -1px;
@@ -529,46 +468,19 @@ h1, h2, h3, h4, h5, h6, p {
   background-color: #3D00FF;
   transition: ease all 0.15s;
 }
-.chat-page .chat-menu .group-menu .members-filter .all-members:hover::after,
-.chat-page .chat-menu .group-menu .members-filter .admins:hover::after {
+.chat-page .chat-menu .group-menu .all-members:hover::after,
+.chat-page .chat-menu .group-menu .admins:hover::after {
   width: 100%;
 }
-.chat-page .chat-menu .group-menu .members-filter .all-members.active::after,
-.chat-page .chat-menu .group-menu .members-filter .admins.active::after {
+.chat-page .chat-menu .group-menu .all-members.active::after,
+.chat-page .chat-menu .group-menu .admins.active::after {
   width: 100%;
   height: 2px;
 }
-.chat-page .chat-menu .group-menu .members-filter .all-members span,
-.chat-page .chat-menu .group-menu .members-filter .admins span {
+.chat-page .chat-menu .group-menu .all-members span,
+.chat-page .chat-menu .group-menu .admins span {
   font-weight: 500;
   color: #8F8F8F;
-}
-.chat-page .chat-menu .group-menu .members-filter input {
-  padding: 12px 3px;
-  border-radius: 0;
-  color: #373737;
-  font-size: 16px;
-  font-weight: 500;
-}
-.chat-page .chat-menu .group-menu .members-filter input::-moz-placeholder {
-  color: #8F8F8F;
-  font-weight: 400;
-}
-.chat-page .chat-menu .group-menu .members-filter input::placeholder {
-  color: #8F8F8F;
-  font-weight: 400;
-}
-.chat-page .chat-menu .group-menu .members-filter input:focus-visible {
-  outline: none;
-}
-.chat-page .chat-menu .group-menu .members-filter .icon-btn.cross-btn {
-  width: -moz-fit-content;
-  width: fit-content;
-  position: absolute;
-  right: 0;
-}
-.chat-page .chat-menu .group-menu .members-filter .icon-btn svg path {
-  fill: #8F8F8F;
 }
 .chat-page .chat-menu .group-menu .add-members {
   border-bottom: 1px solid rgba(143, 143, 143, 0.2509803922);
@@ -576,6 +488,11 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .chat-page .chat-menu .group-menu .add-members:hover {
   background-color: rgba(143, 143, 143, 0.0862745098);
+}
+.chat-page .chat-menu .group-menu .add-members button {
+  outline: none !important;
+  border: none !important;
+  background-color: transparent !important;
 }
 .chat-page .chat-menu .group-menu .add-members button div {
   width: 55px;
@@ -620,6 +537,91 @@ h1, h2, h3, h4, h5, h6, p {
   font-weight: 500;
   color: #8F8F8F;
   margin-left: 5px;
+}
+.chat-page .chat-menu .members-filter,
+.chat-page .chat-menu .search-friend {
+  position: relative;
+  border: 1px solid rgba(143, 143, 143, 0.2509803922);
+  border-left: none;
+  border-right: none;
+  gap: 20px;
+}
+.chat-page .chat-menu .members-filter .btn,
+.chat-page .chat-menu .search-friend .btn {
+  outline: none !important;
+  border: none !important;
+  background-color: transparent !important;
+}
+.chat-page .chat-menu .members-filter input,
+.chat-page .chat-menu .search-friend input {
+  padding: 12px 3px;
+  border-radius: 0;
+  color: #373737;
+  font-size: 16px;
+  font-weight: 500;
+}
+.chat-page .chat-menu .members-filter input::-moz-placeholder, .chat-page .chat-menu .search-friend input::-moz-placeholder {
+  color: #8F8F8F;
+  font-weight: 400;
+}
+.chat-page .chat-menu .members-filter input::placeholder,
+.chat-page .chat-menu .search-friend input::placeholder {
+  color: #8F8F8F;
+  font-weight: 400;
+}
+.chat-page .chat-menu .members-filter input:focus-visible,
+.chat-page .chat-menu .search-friend input:focus-visible {
+  outline: none;
+}
+.chat-page .chat-menu .members-filter .icon-btn.cross-btn,
+.chat-page .chat-menu .search-friend .icon-btn.cross-btn {
+  width: -moz-fit-content;
+  width: fit-content;
+  position: absolute;
+  right: 0;
+}
+.chat-page .chat-menu .members-filter .icon-btn svg path,
+.chat-page .chat-menu .search-friend .icon-btn svg path {
+  fill: #8F8F8F;
+}
+.chat-page .chat-menu .friend-list .friend-container {
+  cursor: pointer;
+  border-radius: 0;
+  background-color: transparent;
+  border-bottom: 1px solid rgba(143, 143, 143, 0.2509803922) !important;
+  transition: ease all 0.1s;
+}
+.chat-page .chat-menu .friend-list .friend-container:hover {
+  background-color: #f5f5f5;
+}
+.chat-page .chat-menu .friend-list .friend-name {
+  font-weight: 500;
+  font-size: 18px;
+  color: #000;
+}
+.chat-page .chat-menu .create-chat-footer,
+.chat-page .chat-menu .add-members-footer {
+  max-height: 83px;
+  background-color: #E3E3E3;
+}
+.chat-page .chat-menu .create-chat-footer button,
+.chat-page .chat-menu .add-members-footer button {
+  height: 40px;
+  font-family: "Mitr", sans-serif !important;
+  font-weight: 400;
+  font-size: 16px;
+}
+.chat-page .chat-menu .create-chat-footer button.btn-light,
+.chat-page .chat-menu .add-members-footer button.btn-light {
+  background-color: transparent !important;
+  border: none;
+  color: #8F8F8F;
+}
+.chat-page .chat-menu .create-chat-footer button.btn-primary,
+.chat-page .chat-menu .add-members-footer button.btn-primary {
+  background-color: #5D6BE4 !important;
+  padding: 0 26px;
+  border-radius: 7px;
 }
 .chat-page .chat-box {
   width: 72.39%;
@@ -716,9 +718,12 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .chat-page .chat-box .messages-list .announcement {
   font-family: "Manrope", sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   color: #373737;
   font-weight: 500;
+}
+.chat-page .chat-box .messages-list .announcement a {
+  color: #373737;
 }
 .chat-page .chat-box .messages-list .message {
   flex-wrap: wrap;
