@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Container, Image, Stack, Button, NavLink } from 'react-bootstrap';
+import { Row, Col, Container, Image, Stack, Button, NavLink, Modal } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import UploadChatAvatarModal from './UploadChatAvatarModal';
@@ -13,6 +14,7 @@ import { ReactComponent as Cross } from '../assets/icons/cross-icon.svg';
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function GroupChatMenu({ chat }) {
+    const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [imageURL, setImageURL] = useState(chat.avatarUrl || null);
     const [imageBlob, setImageBlob] = useState(null);
@@ -21,6 +23,7 @@ function GroupChatMenu({ chat }) {
     const [search, setSearch] = useState('');
     const [searchMemberVisibility, setSearchMemberVisibility] = useState(false);
     const [addMemberVisibility, setAddMemberVisibility] = useState(false);
+    const [leaveChatModalVisibility, setLeaveChatModalVisibility] = useState(false);
 
     const handleMemberFilter = (e) => {
         // Filter members based on the role
@@ -56,7 +59,14 @@ function GroupChatMenu({ chat }) {
     };
 
     const handleLeaveChat = () => {
-        
+        axios.delete(`${API_SERVER}/chats/${chat.id}/leave`, { withCredentials: true })
+            .then(() => {
+                navigate('/messenger');
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error(error);
+            });
     };
 
     const formatLastSeenTimestamp = (timestamp) => {
@@ -87,6 +97,14 @@ function GroupChatMenu({ chat }) {
         setShowModal(true);
     };
 
+    const handleOpenLeaveModal = () => {
+        setLeaveChatModalVisibility(true);
+    };
+
+    const handleCloseLeaveModal = () => {
+        setLeaveChatModalVisibility(false);
+    };
+
     // Get the imageBlob from the modal and send it to the server
     useEffect(() => {
         if (imageBlob !== null) {
@@ -112,6 +130,24 @@ function GroupChatMenu({ chat }) {
 
     return (
         <Container className='group-menu d-flex flex-column'>
+
+            <Modal className='leave-chat-modal' show={leaveChatModalVisibility} onHide={handleCloseLeaveModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title className='w-100'>
+                        <h3 className='text-center'>Leave chat?</h3>
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>
+                        If you leave, you won’t receive any new messages from this chat.
+                        You can only return if there is enough room.
+                    </p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant='light' onClick={handleCloseLeaveModal}>Cancel</Button>
+                    <Button variant='danger' onClick={handleLeaveChat}>Leave chat</Button>
+                </Modal.Footer>
+            </Modal>
 
             <UploadChatAvatarModal
                 showModal={showModal}
@@ -242,7 +278,7 @@ function GroupChatMenu({ chat }) {
                         ))}
                     </Stack>
                     <Row className='leave-chat-footer d-flex justify-content-center align-items-center'>
-                        <Button variant='danger' className='w-100 h-100 py-3 px-4 border-0' onClick={handleLeaveChat}>Leave chat</Button>
+                        <Button variant='danger' className='w-100 h-100 py-3 px-4 border-0' onClick={handleOpenLeaveModal}>Leave chat</Button>
                     </Row>
                 </>
             ) : (

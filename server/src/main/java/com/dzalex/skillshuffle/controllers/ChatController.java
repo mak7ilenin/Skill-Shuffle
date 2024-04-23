@@ -5,6 +5,7 @@ import com.dzalex.skillshuffle.dtos.ChatPreviewDTO;
 import com.dzalex.skillshuffle.dtos.MessageDTO;
 import com.dzalex.skillshuffle.dtos.NewChatDTO;
 import com.dzalex.skillshuffle.entities.Chat;
+import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.services.ChatService;
 import com.dzalex.skillshuffle.services.UserService;
@@ -94,9 +95,8 @@ public class ChatController {
     }
 
     @DeleteMapping("/chats/{id}/leave")
-    public ResponseEntity<Chat> leaveChat(@PathVariable("id") Integer id) {
+    public void leaveChat(@PathVariable("id") Integer id) {
         Chat chat = chatRepository.findChatById(id);
-        chatService.removeMemberFromChat(chat, userService.getCurrentUser());
-        return ResponseEntity.ok(chat);
+        chatService.leaveChat(chat);
     }
 }

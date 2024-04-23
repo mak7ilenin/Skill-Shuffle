@@ -255,6 +255,15 @@ public class ChatService {
         if (chatMember != null) {
             chatMemberRepository.delete(chatMember);
             messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.LEFT, null);
+
+            // If the leaving user is the creator, transfer ownership to another member
+            if (chatMember.getRole() == MemberRole.CREATOR) {
+                ChatMember newOwner = chatMemberRepository.findFirstByChatIdAndRole(chat.getId(), MemberRole.MEMBER);
+                if (newOwner != null) {
+                    newOwner.setRole(MemberRole.CREATOR);
+                    chatMemberRepository.save(newOwner);
+                }
+            }
         }
     }
 
