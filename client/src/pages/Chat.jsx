@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { Row, Stack, Button, Spinner } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { AESEncrypt, AESDecrypt } from '../crypto';
@@ -17,6 +17,7 @@ import { ReactComponent as Send } from '../assets/icons/send.svg';
 function Chat() {
   const { authUser, stompClient, isStompClientInitialized } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [chats, setChats] = useState([]);
   const [filteredChats, setFilteredChats] = useState([]);
@@ -60,9 +61,10 @@ function Chat() {
 
       })
       .catch(error => {
+        navigate('/messenger')
         console.error(error.response?.data.message || error.message);
       });
-  }, [setChosenChat, setLoadingMessages, messagesListRef]);
+  }, [setChosenChat, setLoadingMessages, messagesListRef, navigate]);
 
 
   const subscribeToChat = useCallback((chatId) => {
@@ -271,6 +273,7 @@ function Chat() {
         filteredChats={filteredChats}
         handleMenuChange={handleMenuChange}
         activeMenu={activeMenu}
+        chatSubscription={currentSubscriptionRef}
       />
 
       {chosenChat.id === undefined ? (

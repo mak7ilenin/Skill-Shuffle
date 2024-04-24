@@ -2,7 +2,6 @@ package com.dzalex.skillshuffle.controllers;
 
 import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.enums.ChatType;
-import com.dzalex.skillshuffle.enums.MessageType;
 import com.dzalex.skillshuffle.enums.NotificationType;
 import com.dzalex.skillshuffle.entities.Chat;
 import com.dzalex.skillshuffle.entities.ChatMessage;
@@ -44,25 +43,30 @@ public class WebSocketController {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+
     @Autowired
     private ChatService chatService;
 
     @MessageMapping("/chat")
     public void sendMessage(@Payload ChatMessage message) {
         Integer chatId = message.getChat().getId();
+        User sender = userRepository.findByNickname(message.getSender().getNickname());
+
+        if (!userService.getUsernamesInChat(chatId).contains(sender.getUsername())) {
+            throw new IllegalArgumentException("User is not a member of this chat");
+        }
+
         ChatMessage savedMessage = messageService.saveMessage(message, chatId);
 
         // Get all users in this chat
         List<String> usernames = userService.getUsernamesInChat(chatId);
-        User sender = userRepository.findByNickname(message.getSender().getNickname());
-        String senderUsername = sender.getUsername();
 
         // Send the message to all users who subscribed to chat
         for (String username : usernames) {
             messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, savedMessage);
         }
 
-        usernames.remove(senderUsername); // Remove sender from the list of usernames
+        usernames.remove(sender.getUsername()); // Remove sender from the list of usernames
         sendNotification(chatId, savedMessage, usernames, sender);
     }
 

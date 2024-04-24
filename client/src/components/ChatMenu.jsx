@@ -8,7 +8,7 @@ import ChatTypeFilter from './ChatTypeFilter';
 import CreateChat from './CreateChat';
 import GroupChatMenu from './GroupChatMenu';
 
-function ChatMenu({ chats, chat, setFilteredChats, filteredChats, handleMenuChange, activeMenu }) {
+function ChatMenu({ chats, chat, setFilteredChats, filteredChats, handleMenuChange, activeMenu, chatSubscribtion }) {
     const navigate = useNavigate();
 
     const getSearch = (search) => {
@@ -45,7 +45,7 @@ function ChatMenu({ chats, chat, setFilteredChats, filteredChats, handleMenuChan
             ) : null}
             {activeMenu === 'GROUP_MENU' ? (
                 // Group menu view
-                <GroupChatMenu chat={chat} />
+                <GroupChatMenu chat={chat} chatSubscribtion={chatSubscribtion} />
             ) : null}
 
         </Container>

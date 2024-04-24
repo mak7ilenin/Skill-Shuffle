@@ -6,6 +6,7 @@ import com.dzalex.skillshuffle.dtos.MessageDTO;
 import com.dzalex.skillshuffle.dtos.NewChatDTO;
 import com.dzalex.skillshuffle.entities.Chat;
 import com.dzalex.skillshuffle.entities.User;
+import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.services.ChatService;
 import com.dzalex.skillshuffle.services.UserService;
@@ -28,6 +29,8 @@ public class ChatController {
     private ChatRepository chatRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ChatMemberRepository chatMemberRepository;
 
     @GetMapping("/chats")
     public List<ChatPreviewDTO> getChats() {

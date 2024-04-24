@@ -50,19 +50,7 @@ public class ChatService {
         List<ChatPreviewDTO> chatPreviewDTOs = new ArrayList<>();
 
         for (Chat chat : chats) {
-            boolean isUserMember;
-
-            if (chat.getType() != ChatType.COMMUNITY) {
-                // Check if the authenticated user is a member of the chat
-                List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chat.getId());
-                isUserMember = chatMembers.stream().anyMatch(chatMember -> chatMember.getMember().getId().equals(authedUser.getId()));
-            } else {
-                // Check if the chat is a community chat and the authenticated user is the chat
-                CommunityChat communityChat = communityChatRepository.findCommunityChatByChatId(chat.getId());
-                isUserMember = communityChat != null && Objects.equals(communityChat.getUser().getId(), authedUser.getId());
-            }
-
-            if (isUserMember) {
+            if (isUserMemberOfChat(chat, authedUser)) {
                 // Get chat info based on the chat type
                 ChatDTO chatInfo = getChatInfo(chat);
 
@@ -81,6 +69,10 @@ public class ChatService {
     }
 
     public ChatDTO getChatWithMessages(Chat chat) {
+        if (!isUserMemberOfChat(chat, userService.getCurrentUser())) {
+            throw new IllegalArgumentException("User is not a member of this chat");
+        }
+
         // Get chat info depending on the chat type
         ChatDTO chatDTO = getChatInfo(chat);
 
@@ -92,6 +84,10 @@ public class ChatService {
 
     // Get chat messages with limit and offset parameters
     public List<MessageDTO> getChatMessages(Integer chatId, int limit, int offset) {
+        if (limit < 0 || offset < 0) {
+            throw new IllegalArgumentException("Limit and offset must be non-negative");
+        }
+
         List<ChatMessage> messages = messageRepository.findMessagesByChatId(chatId);
         List<MessageDTO> messageDTOs = new ArrayList<>();
 
@@ -110,34 +106,31 @@ public class ChatService {
     }
 
     public ChatDTO getChatInfo(Chat chat) {
-        User authedUser = userService.getCurrentUser();
         ChatDTO chatDTO = new ChatDTO();
         chatDTO.setId(chat.getId());
         chatDTO.setType(chat.getType());
         chatDTO.setMessages(getChatMessages(chat.getId(), 30, 0));
 
         switch (chat.getType()) {
-            case COMMUNITY -> setCommunityChatInfo(chat, authedUser, chatDTO);
-            case PRIVATE -> setPrivateChatInfo(chat, authedUser, chatDTO);
+            case COMMUNITY -> setCommunityChatInfo(chat, chatDTO);
+            case PRIVATE -> setPrivateChatInfo(chat, chatDTO);
             case GROUP -> setGroupChatInfo(chat, chatDTO);
         }
 
         return chatDTO;
     }
 
-    private void setCommunityChatInfo(Chat chat, User authedUser, ChatDTO chatDTO) {
+    private void setCommunityChatInfo(Chat chat, ChatDTO chatDTO) {
         CommunityChat communityChat = communityChatRepository.findCommunityChatByChatId(chat.getId());
-        if (communityChat != null && Objects.equals(communityChat.getUser().getId(), authedUser.getId())) {
-            CommunityPreviewDTO community = communityService.convertToPreviewDTO(communityChat.getCommunity());
-            chatDTO.setAvatarUrl(community.getAvatarUrl());
-            chatDTO.setName(community.getName());
-            chatDTO.setCommunity(community);
-        }
+        CommunityPreviewDTO community = communityService.convertToPreviewDTO(communityChat.getCommunity());
+        chatDTO.setAvatarUrl(community.getAvatarUrl());
+        chatDTO.setName(community.getName());
+        chatDTO.setCommunity(community);
     }
 
-    private void setPrivateChatInfo(Chat chat, User authedUser, ChatDTO chatDTO) {
+    private void setPrivateChatInfo(Chat chat, ChatDTO chatDTO) {
         chatMemberRepository.findAllByChatId(chat.getId()).stream()
-            .filter(chatMember -> !chatMember.getMember().getUsername().equals(authedUser.getUsername()))
+            .filter(chatMember -> !chatMember.getMember().getUsername().equals(userService.getCurrentUser().getUsername()))
             .findFirst()
             .ifPresent(chatMember -> {
                 User chatPartner = chatMember.getMember();
@@ -219,6 +212,16 @@ public class ChatService {
         return chatType == ChatType.GROUP ? MemberRole.CREATOR : MemberRole.MEMBER;
     }
 
+    private boolean isUserMemberOfChat(Chat chat, User user) {
+        if (chat.getType() == ChatType.COMMUNITY) {
+            CommunityChat communityChat = communityChatRepository.findCommunityChatByChatId(chat.getId());
+            return communityChat != null && Objects.equals(communityChat.getUser().getId(), user.getId());
+        } else {
+            ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), user.getId());
+            return chatMember != null;
+        }
+    }
+
     @Transactional
     public void deleteEmptyChatsByAuthedUser(User authedUser) {
         // Delete chats with only one ENTRY type message
@@ -258,6 +261,16 @@ public class ChatService {
 
             // If the leaving user is the creator, transfer ownership to another member
             if (chatMember.getRole() == MemberRole.CREATOR) {
+
+                // If there is any admins, transfer ownership to the first admin
+                ChatMember firstAdmin = chatMemberRepository.findFirstByChatIdAndRole(chat.getId(), MemberRole.ADMIN);
+                if (firstAdmin != null) {
+                    firstAdmin.setRole(MemberRole.CREATOR);
+                    chatMemberRepository.save(firstAdmin);
+                    return;
+                }
+
+                // If there is any members, transfer ownership to the first member
                 ChatMember newOwner = chatMemberRepository.findFirstByChatIdAndRole(chat.getId(), MemberRole.MEMBER);
                 if (newOwner != null) {
                     newOwner.setRole(MemberRole.CREATOR);

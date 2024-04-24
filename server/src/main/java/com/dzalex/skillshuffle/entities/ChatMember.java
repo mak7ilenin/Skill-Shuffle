@@ -38,6 +38,9 @@ public class ChatMember {
     @Column(name = "joined_at")
     private Timestamp joinedAt;
 
+    @Column(name = "left_at")
+    private Timestamp leftAt;
+
     @Column(name = "notifications")
     private Boolean notifications = true;
 
