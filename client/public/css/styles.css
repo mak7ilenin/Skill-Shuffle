@@ -670,6 +670,7 @@ h1, h2, h3, h4, h5, h6, p {
   height: 80px;
   display: flex;
   align-items: center;
+  position: relative;
   padding: 12.5px 14px !important;
   border-bottom: 1px solid #ccc;
   background-color: #fff;
@@ -711,6 +712,22 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-box .chat-header p {
   width: -moz-fit-content;
   width: fit-content;
+}
+.chat-page .chat-box .chat-header .small-menu-col {
+  width: -moz-fit-content;
+  width: fit-content;
+  top: 22px;
+  right: 15px;
+  z-index: 10;
+}
+.chat-page .chat-box .chat-header .small-menu-col .menu-btn svg {
+  transform: rotate(90deg);
+}
+.chat-page .chat-box .chat-header .small-menu-col .menu-btn svg path {
+  fill: #8F8F8F;
+}
+.chat-page .chat-box .chat-header .small-menu-col .menu-btn.active svg path {
+  fill: #3D00FF;
 }
 .chat-page .chat-box .messages-list {
   position: relative;
@@ -973,6 +990,48 @@ h1, h2, h3, h4, h5, h6, p {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.small-menu {
+  position: relative;
+  right: 30px;
+  background-color: #F0F0FF;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.2509803922);
+  border-radius: 10px;
+  gap: 13px;
+}
+.small-menu .menu-option {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+.small-menu .menu-option .option-icon {
+  width: -moz-fit-content;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  flex: 0;
+}
+.small-menu .menu-option .option-icon svg {
+  width: 14px;
+}
+.small-menu .menu-option .option-icon svg path {
+  stroke: #000;
+  stroke-width: 2px;
+}
+.small-menu .menu-option .option-text {
+  font-family: "Manrope", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  white-space: nowrap;
 }
 
 .upload-modal {

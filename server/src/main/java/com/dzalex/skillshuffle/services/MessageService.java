@@ -1,17 +1,16 @@
 package com.dzalex.skillshuffle.services;
 
+import com.dzalex.skillshuffle.dtos.ChatNotificationDTO;
 import com.dzalex.skillshuffle.dtos.MessageDTO;
-import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.entities.Chat;
-import com.dzalex.skillshuffle.enums.ChatAnnouncementType;
-import com.dzalex.skillshuffle.enums.MessageStatus;
+import com.dzalex.skillshuffle.enums.*;
 import com.dzalex.skillshuffle.entities.ChatMessage;
 import com.dzalex.skillshuffle.entities.User;
-import com.dzalex.skillshuffle.enums.MessageType;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -30,25 +29,77 @@ public class MessageService {
     @Autowired
     private UserRepository userRepository;
 
-    public ChatMessage saveMessage(ChatMessage message, Integer chatId) {
-        // Find the sender of the message
-        User sender = userRepository.findByNickname(message.getSender().getNickname());
+    @Autowired
+    private UserService userService;
 
-        if (sender == null) {
-            throw new IllegalArgumentException("Sender not found!");
-        }
+    @Autowired
+    private SessionService sessionService;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    public ChatMessage saveMessage(ChatMessage message, Integer chatId, User sender) {
         // Create a new message and set its attributes
-        ChatMessage savedMessage = new ChatMessage();
-        savedMessage.setSender(sender);
-        savedMessage.setChat(chatRepository.findChatById(chatId));
-        savedMessage.setContent(message.getContent());
-        savedMessage.setTimestamp(message.getTimestamp());
-        savedMessage.setStatus(MessageStatus.SENT);
-        savedMessage.setType(MessageType.MESSAGE);
+        ChatMessage savedMessage = ChatMessage.builder()
+                .sender(sender)
+                .chat(chatRepository.findChatById(chatId))
+                .content(message.getContent())
+                .timestamp(Timestamp.from(new Date().toInstant()))
+                .status(MessageStatus.SENT)
+                .type(MessageType.MESSAGE)
+                .build();
 
         // Save the message to the database
         return messageRepository.save(savedMessage);
+    }
+
+    public void sendMessage(ChatMessage message) {
+        Integer chatId = message.getChat().getId();
+        User sender = userRepository.findByNickname(message.getSender().getNickname());
+
+        if (!userService.getUsernamesInChat(chatId).contains(sender.getUsername())) {
+            throw new IllegalArgumentException("User is not a member of this chat");
+        }
+
+        // Save the message to the database
+        ChatMessage savedMessage = saveMessage(message, chatId, sender);
+
+        List<String> usernames = userService.getUsernamesInChat(chatId);
+        for (String username : usernames) {
+            if (sessionService.isUserSubscribed(username, "/chat/" + chatId)) {
+                // Send the message to all users who subscribed to chat
+                messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, savedMessage);
+            } else {
+                // Send notifications to users who are not currently subscribed to the chat
+                sendNotification(chatId, savedMessage, usernames, sender);
+            }
+        }
+    }
+
+    public void sendNotification(Integer chatId, ChatMessage message, List<String> usernames, User sender) {
+        // Create notification message based on chat type
+        String notificationMessage;
+        Chat chat = chatRepository.findChatById(chatId);
+
+        if (chat.isPrivate()) {
+            notificationMessage = sender.getFirstName() + " sent you a message";
+        } else {
+            notificationMessage = "New message in " + chat.getName();
+        }
+
+        // Create notification object
+        ChatNotificationDTO notification = new ChatNotificationDTO(
+                chat,
+                userService.getPublicUserDTO(sender),
+                notificationMessage,
+                message.getContent(),
+                NotificationType.CHAT_MESSAGE
+        );
+
+        // Send notification to all users in the chat
+        for (String username : usernames) {
+            messagingTemplate.convertAndSendToUser(username, "/notification", notification);
+        }
     }
 
     public MessageDTO findLastMessageByChatId(Integer chatId) {
@@ -69,12 +120,7 @@ public class MessageService {
     public MessageDTO convertToDTO(ChatMessage message) {
         return new MessageDTO(
                 message.getId(),
-                new PublicUserDTO(
-                        message.getSender().getFirstName(),
-                        message.getSender().getLastName(),
-                        message.getSender().getNickname(),
-                        message.getSender().getAvatarUrl(),
-                        message.getSender().getLastSeen()),
+                userService.getPublicUserDTO(message.getSender()),
                 message.getContent(),
                 message.getTimestamp(),
                 message.getStatus(),
@@ -102,7 +148,9 @@ public class MessageService {
                 .status(MessageStatus.SENT)
                 .type(MessageType.ANNOUNCEMENT)
                 .build();
-        messageRepository.save(announcementMessage);
+
+        // Send the announcement message to websocket endpoint
+        sendMessage(announcementMessage);
     }
 
     private String getAnnouncementMessageContent(User sender, Chat chat, ChatAnnouncementType announcementType, User user) {

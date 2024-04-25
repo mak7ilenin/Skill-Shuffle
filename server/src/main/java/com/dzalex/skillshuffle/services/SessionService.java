@@ -11,7 +11,7 @@ public class SessionService {
 
     private final ConcurrentHashMap<String, Map<String, WebSocketSession>> userSessions = new ConcurrentHashMap<>();
 
-    private WebSocketSession getWebSocketSession(String username, String endpoint) {
+    public WebSocketSession getWebSocketSession(String username, String endpoint) {
         Map<String, WebSocketSession> userEndpoints = userSessions.get(username);
         return userEndpoints != null ? userEndpoints.get(endpoint) : null;
     }

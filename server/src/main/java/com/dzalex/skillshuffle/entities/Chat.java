@@ -25,4 +25,15 @@ public class Chat {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
+    public boolean isPrivate() {
+        return type == ChatType.PRIVATE;
+    }
+
+    public boolean isGroup() {
+        return type == ChatType.GROUP;
+    }
+
+    public boolean isCommunity() {
+        return type == ChatType.COMMUNITY;
+    }
 }

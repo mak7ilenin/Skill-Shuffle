@@ -269,11 +269,11 @@ function Chat() {
       <ChatMenu
         chats={chats}
         chat={chosenChat}
+        setChat={setChosenChat}
         setFilteredChats={setFilteredChats}
         filteredChats={filteredChats}
         handleMenuChange={handleMenuChange}
         activeMenu={activeMenu}
-        chatSubscription={currentSubscriptionRef}
       />
 
       {chosenChat.id === undefined ? (

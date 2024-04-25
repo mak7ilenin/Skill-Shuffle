@@ -108,12 +108,7 @@ public class AuthController {
                 return new ResponseEntity<>(JwtResponseDTO.builder()
                         .username(userDetails.getUsername())
                         .accessToken(token)
-                        .user(new PublicUserDTO(
-                                user.getFirstName(),
-                                user.getLastName(),
-                                user.getNickname(),
-                                user.getAvatarUrl(),
-                                user.getLastSeen()))
+                        .user(userService.getPublicUserDTO(user))
                         .build(), HttpStatus.OK);
             }
         }
@@ -122,13 +117,12 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-        // Invalidate session
+        // Invalidate session and clear authentication
         request.getSession().invalidate();
-        // Clear authentication
         SecurityContextHolder.clearContext();
-        // Clear access token from the cookies
+
+        // Clear access and refresh tokens from the cookies
         helper.deleteAccessTokenCookie(response);
-        // Clear refresh token from the cookies and database
         String refreshToken = helper.getRefreshTokenFromCookies(request);
         if (refreshToken != null) {
             refreshTokenService.deleteByToken(refreshToken);

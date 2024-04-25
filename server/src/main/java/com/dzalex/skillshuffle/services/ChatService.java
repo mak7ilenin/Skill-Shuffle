@@ -52,7 +52,6 @@ public class ChatService {
 
         for (Chat chat : chats) {
             if (isUserMemberOfChat(chat, authedUser)) {
-                // Get chat info based on the chat type
                 ChatDTO chatInfo = getChatInfo(chat);
 
                 ChatPreviewDTO chatPreviewDTO = new ChatPreviewDTO();
@@ -74,10 +73,7 @@ public class ChatService {
             throw new IllegalArgumentException("User is not a member of this chat");
         }
 
-        // Get chat info depending on the chat type
         ChatDTO chatDTO = getChatInfo(chat);
-
-        // Load only 30 last messages
         chatDTO.setMessages(getChatMessages(chat.getId(), 30, 0));
 
         return chatDTO;
@@ -112,6 +108,7 @@ public class ChatService {
         return messageDTOs;
     }
 
+    // Get chat info based on the chat type
     public ChatDTO getChatInfo(Chat chat) {
         ChatDTO chatDTO = new ChatDTO();
         chatDTO.setId(chat.getId());
@@ -143,23 +140,20 @@ public class ChatService {
                 User chatPartner = chatMember.getMember();
                 chatDTO.setAvatarUrl(chatPartner.getAvatarUrl());
                 chatDTO.setName(chatPartner.getFirstName() + " " + chatPartner.getLastName());
-                List<ChatMemberDTO> members = new ArrayList<>();
-                ChatMemberDTO member = userService.getChatMemberDTO(chatPartner, chatMember.getRole());
-                member.setIsLeft(chatMember.getLeftAt() != null);
-                members.add(member);
-                chatDTO.setMembers(members);
+                chatDTO.setMembers(List.of(userService.getChatMemberDTO(chatPartner, MemberRole.MEMBER)));
             });
     }
 
     private void setGroupChatInfo(Chat chat, ChatDTO chatDTO) {
-        chatDTO.setMembers(userService.getUsersInChat(chat.getId()));
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
+        chatDTO.setMembers(!chatMember.isLeft() ? userService.getUsersInChat(chat.getId()) : null);
         chatDTO.setAvatarUrl(chat.getAvatarUrl());
         chatDTO.setName(chat.getName());
     }
 
     // Create a new chat
     public Chat createChat(NewChatDTO chat, MultipartFile avatarBlob) {
-        if (chat.getName().isEmpty() && chat.getType() == ChatType.GROUP) {
+        if (chat.getName().isEmpty() && chat.isGroup()) {
             List<String> firstNames = userService.getUsersFirstNameInChat(chat.getMembers());
             if (firstNames.size() > 3) {
                 int size = firstNames.size();
@@ -178,8 +172,8 @@ public class ChatService {
 
         // Save the avatar image if provided
         if (avatarBlob != null) {
-            String avatarFilePath = "chats/chat-" + newChat.getId() + "/avatar/";
             // Upload the image to the S3 bucket
+            String avatarFilePath = "chats/chat-" + newChat.getId() + "/avatar/";
             String avatarUrl = fileService.uploadFile(avatarBlob, avatarFilePath);
             if (avatarUrl != null) {
                 newChat.setAvatarUrl(avatarUrl);
@@ -187,6 +181,7 @@ public class ChatService {
             chatRepository.save(newChat);
         }
 
+        // Get the current user
         User authedUser = userService.getCurrentUser();
 
         // Add the current user to the chat
@@ -198,7 +193,7 @@ public class ChatService {
               .forEach(user -> addMemberToChat(newChat, user, MemberRole.MEMBER));
 
         // Send ENTRY message to the chat
-        if (chat.getType() == ChatType.GROUP) {
+        if (chat.isGroup()) {
             messageService.createAnnouncementMessage(authedUser, newChat, ChatAnnouncementType.CREATED, null);
         } else {
             messageService.createEntryMessage(authedUser, newChat);
@@ -222,7 +217,7 @@ public class ChatService {
     }
 
     private boolean isUserMemberOfChat(Chat chat, User user) {
-        if (chat.getType() == ChatType.COMMUNITY) {
+        if (chat.isCommunity()) {
             CommunityChat communityChat = communityChatRepository.findCommunityChatByChatId(chat.getId());
             return communityChat != null && Objects.equals(communityChat.getUser().getId(), user.getId());
         } else {
@@ -239,7 +234,7 @@ public class ChatService {
             if (messages.size() == 1 && messages.get(0).getType() == MessageType.ENTRY
                     && Objects.equals(messages.get(0).getSender().getId(), authedUser.getId()))
             {
-                if (chat.getType() == ChatType.COMMUNITY) {
+                if (chat.isCommunity()) {
                     communityChatRepository.deleteAllByChatId(chat.getId());
                 } else {
                     chatMemberRepository.deleteAllByChatId(chat.getId());
@@ -254,8 +249,8 @@ public class ChatService {
     public void deleteChatById(Integer id) {
         Chat chat = chatRepository.findChatById(id);
         if (chat != null) {
-            chatMemberRepository.deleteAllByChatId(id);
             messageRepository.deleteAllByChatId(id);
+            chatMemberRepository.deleteAllByChatId(id);
             chatRepository.delete(chat);
         }
     }
@@ -267,8 +262,8 @@ public class ChatService {
         if (chatMember != null) {
             chatMember.setLeftAt(new Timestamp(System.currentTimeMillis()));
 
-            // If the leaving user is the creator, transfer ownership to another member
-            if (chatMember.getRole() == MemberRole.CREATOR) {
+            // If the leaving user is the owner, transfer ownership to another member
+            if (chatMember.isOwner()) {
                 chatMember.setRole(MemberRole.MEMBER);
 
                 // If there is any admins, transfer ownership to the first admin
@@ -318,15 +313,17 @@ public class ChatService {
         return null;
     }
 
-    public Chat inviteMembersToChat(Chat chat, List<String> users) {
-        if (chat.getType() == ChatType.GROUP) {
+    public List<ChatMemberDTO> inviteMembersToChat(Chat chat, List<String> users) {
+        if (chat.isGroup()) {
+            List<ChatMemberDTO> updatedMembers = new ArrayList<>();
             users.stream()
                  .map(userService::getUserByNickname)
                  .forEach(user -> {
                      addMemberToChat(chat, user, MemberRole.MEMBER);
                      messageService.createAnnouncementMessage(userService.getCurrentUser(), chat, ChatAnnouncementType.ADDED, user);
+                     updatedMembers.add(userService.getChatMemberDTO(user, MemberRole.MEMBER));
                  });
-            return chat;
+            return updatedMembers;
         }
         return null;
     }

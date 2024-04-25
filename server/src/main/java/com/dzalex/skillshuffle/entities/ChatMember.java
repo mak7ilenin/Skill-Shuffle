@@ -44,4 +44,19 @@ public class ChatMember {
     @Column(name = "notifications")
     private Boolean notifications = true;
 
+    public boolean isOwner() {
+        return role == MemberRole.CREATOR;
+    }
+
+    public boolean isAdmin() {
+        return role == MemberRole.ADMIN;
+    }
+
+    public boolean isMember() {
+        return role == MemberRole.MEMBER;
+    }
+
+    public boolean isLeft() {
+        return leftAt != null;
+    }
 }

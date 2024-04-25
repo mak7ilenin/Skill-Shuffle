@@ -13,7 +13,7 @@ import { ReactComponent as Search } from '../assets/icons/search-icon.svg';
 import { ReactComponent as Cross } from '../assets/icons/cross-icon.svg';
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function GroupChatMenu({ chat, chatSubscribtion }) {
+function GroupChatMenu({ chat, setChat }) {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [imageURL, setImageURL] = useState(chat.avatarUrl || null);
@@ -49,8 +49,13 @@ function GroupChatMenu({ chat, chatSubscribtion }) {
     const handleAddMembers = () => {
         if (selectedFriends.length > 0) {
             axios.post(`${API_SERVER}/chats/${chat.id}/members`, selectedFriends, { withCredentials: true })
-                .then(() => {
-                    window.location.reload();
+                .then((response) => {
+                    const updatedListOfMembers = [...chat.members, ...response.data];
+                    setChat({ ...chat, members: updatedListOfMembers });
+                    setFilteredMembers(updatedListOfMembers);
+                    setSelectedFriends([]);
+                    setSearch('');
+                    setAddMemberVisibility(false);
                 })
                 .catch(error => {
                     console.error(error);
@@ -61,8 +66,7 @@ function GroupChatMenu({ chat, chatSubscribtion }) {
     const handleLeaveChat = () => {
         axios.delete(`${API_SERVER}/chats/${chat.id}/leave`, { withCredentials: true })
             .then(() => {
-                window.location.reload();
-                // chatSubscribtion.current.unsubscribe();
+                navigate('/messenger');
             })
             .catch(error => {
                 console.error(error);

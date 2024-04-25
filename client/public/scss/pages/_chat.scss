@@ -402,11 +402,11 @@
 
             .leave-chat-footer {
                 background-color: #E3E3E3;
-                
+
                 &:hover {
                     background-color: #cdcdcd
                 }
-                
+
                 button {
                     font-family: $secondary-font;
                     font-size: 16px;
@@ -544,6 +544,7 @@
             height: 80px;
             display: flex;
             align-items: center;
+            position: relative;
             padding: 12.5px 14px !important;
             border-bottom: 1px solid #ccc;
             background-color: #fff;
@@ -589,6 +590,29 @@
             span,
             p {
                 width: fit-content;
+            }
+
+            .small-menu-col {
+                width: fit-content;
+                top: 22px;
+                right: 15px;
+                z-index: 10;
+
+                .menu-btn {
+                    svg {
+                        transform: rotate(90deg);
+
+                        path {
+                            fill: $light-gray;
+                        }
+                    }
+
+                    &.active {
+                        svg path {
+                            fill: $primary-color;
+                        }
+                    }
+                }
             }
         }
 
@@ -916,6 +940,53 @@
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+    }
+}
+
+.small-menu {
+    position: relative;
+    right: 30px;
+    background-color: $light-purple;
+    box-shadow: 1px 2px 4px #00000040;
+    border-radius: 10px;
+    gap: 13px;
+
+    .menu-option {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 8px;
+
+        .option-icon {
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            flex: 0;
+
+            svg {
+                width: 14px;
+
+                path {
+                    stroke: #000;
+                    stroke-width: 2px;
+                }
+            }
+        }
+
+        .option-text {
+            font-family: $main-font;
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -o-user-select: none;
+            white-space: nowrap;
         }
     }
 }

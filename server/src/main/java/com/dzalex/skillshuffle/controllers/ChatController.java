@@ -1,9 +1,6 @@
 package com.dzalex.skillshuffle.controllers;
 
-import com.dzalex.skillshuffle.dtos.ChatDTO;
-import com.dzalex.skillshuffle.dtos.ChatPreviewDTO;
-import com.dzalex.skillshuffle.dtos.MessageDTO;
-import com.dzalex.skillshuffle.dtos.NewChatDTO;
+import com.dzalex.skillshuffle.dtos.*;
 import com.dzalex.skillshuffle.entities.Chat;
 import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
@@ -78,15 +75,10 @@ public class ChatController {
     }
 
     @PostMapping("/chats/{id}/members")
-    public ResponseEntity<Chat> addChatMembers(@PathVariable("id") Integer id,
-                                             @RequestBody List<String> users) {
+    public List<ChatMemberDTO> addChatMembers(@PathVariable("id") Integer id,
+                                                        @RequestBody List<String> users) {
         Chat chat = chatRepository.findChatById(id);
-        Chat updatedChat = chatService.inviteMembersToChat(chat, users);
-        if (updatedChat != null) {
-            return ResponseEntity.ok(updatedChat);
-        } else {
-            return ResponseEntity.internalServerError().build();
-        }
+        return chatService.inviteMembersToChat(chat, users);
     }
 
     @DeleteMapping("/chats/{id}/remove?nn={nickname}")
