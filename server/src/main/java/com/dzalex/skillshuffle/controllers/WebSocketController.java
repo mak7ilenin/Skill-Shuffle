@@ -11,13 +11,16 @@ import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import com.dzalex.skillshuffle.services.ChatService;
 import com.dzalex.skillshuffle.services.MessageService;
+import com.dzalex.skillshuffle.services.SessionService;
 import com.dzalex.skillshuffle.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
@@ -46,6 +49,9 @@ public class WebSocketController {
 
     @Autowired
     private ChatService chatService;
+
+    @Autowired
+    private SessionService sessionService;
 
     @MessageMapping("/chat")
     public void sendMessage(@Payload ChatMessage message) {
@@ -92,6 +98,14 @@ public class WebSocketController {
         // Send notifications to users who are not currently subscribed to the chat
         for (String username : usernames) {
             messagingTemplate.convertAndSendToUser(username, "/notification", notification);
+        }
+    }
+
+    @SubscribeMapping("/chat/{chatId}")
+    public void handleSubscription(Integer chatId, SimpMessageHeaderAccessor headerAccessor) {
+        String username = headerAccessor.getUser().getName();
+        if (username != null) {
+            sessionService.addSession(username, "/chat/" + chatId, headerAccessor.getSessionId());
         }
     }
 

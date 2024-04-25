@@ -259,6 +259,7 @@
             .chat-avatar {
                 width: fit-content;
                 position: relative;
+                flex: 0;
 
                 .img-overlay {
                     background-color: transparent;
@@ -834,6 +835,7 @@
                 border-radius: 0;
                 background-color: $primary-color;
                 border-color: $primary-color;
+                border-bottom: 0;
 
                 svg path {
                     fill: #fff;

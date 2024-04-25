@@ -58,7 +58,9 @@ public class UserService {
         List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);
         List<ChatMemberDTO> users = new ArrayList<>();
         for (ChatMember chatMember : chatMembers) {
-            users.add(getChatMemberDTO(chatMember.getMember(), chatMember.getRole()));
+            if (chatMember.getLeftAt() == null) {
+                users.add(getChatMemberDTO(chatMember.getMember(), chatMember.getRole()));
+            }
         }
         return users;
     }

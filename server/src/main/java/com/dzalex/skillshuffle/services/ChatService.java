@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -93,6 +94,12 @@ public class ChatService {
 
         // Sort messages by latest timestamp
         messages.sort(Comparator.comparing(ChatMessage::getTimestamp).reversed());
+
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userService.getCurrentUser().getId());
+        // Remove messages sent after the user left the chat
+        if (chatMember != null && chatMember.getLeftAt() != null) {
+            messages.removeIf(message -> message.getTimestamp().after(chatMember.getLeftAt()));
+        }
 
         // Add messages to the list with limit and offset
         for (int i = offset; i < messages.size() && i < offset + limit; i++) {
@@ -256,11 +263,11 @@ public class ChatService {
         User authedUser = userService.getCurrentUser();
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authedUser.getId());
         if (chatMember != null) {
-            chatMemberRepository.delete(chatMember);
-            messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.LEFT, null);
+            chatMember.setLeftAt(new Timestamp(System.currentTimeMillis()));
 
             // If the leaving user is the creator, transfer ownership to another member
             if (chatMember.getRole() == MemberRole.CREATOR) {
+                chatMember.setRole(MemberRole.MEMBER);
 
                 // If there is any admins, transfer ownership to the first admin
                 ChatMember firstAdmin = chatMemberRepository.findFirstByChatIdAndRole(chat.getId(), MemberRole.ADMIN);
@@ -277,6 +284,9 @@ public class ChatService {
                     chatMemberRepository.save(newOwner);
                 }
             }
+
+            chatMemberRepository.save(chatMember);
+            messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.LEFT, null);
         }
     }
 

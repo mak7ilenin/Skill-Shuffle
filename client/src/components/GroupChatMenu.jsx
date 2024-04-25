@@ -61,7 +61,7 @@ function GroupChatMenu({ chat, chatSubscribtion }) {
     const handleLeaveChat = () => {
         axios.delete(`${API_SERVER}/chats/${chat.id}/leave`, { withCredentials: true })
             .then(() => {
-                console.log('Chat left successfully');
+                window.location.reload();
                 chatSubscribtion.current.unsubscribe();
             })
             .catch(error => {
@@ -157,7 +157,10 @@ function GroupChatMenu({ chat, chatSubscribtion }) {
             />
 
             <Row className='chat-header d-flex justify-content-start py-3 px-4'>
-                <Col className='me-4 chat-avatar' xs lg={2}>
+                <Col className='me-4 chat-avatar'>
+                    <div className="img-overlay d-flex align-items-center justify-content-center w-100 h-100 position-absolute top-0 rounded-circle" onClick={handleOpenModal}>
+                        <Plus width={30} height={30} />
+                    </div>
                     <Image
                         src={imageURL || imagePlaceholder}
                         alt='Chat'
@@ -166,11 +169,8 @@ function GroupChatMenu({ chat, chatSubscribtion }) {
                         role='button'
                         className='rounded-circle object-fit-cover'
                     />
-                    <div className="img-overlay d-flex align-items-center justify-content-center w-100 h-100 position-absolute top-0 rounded-circle" onClick={handleOpenModal}>
-                        <Plus width={30} height={30} />
-                    </div>
                 </Col>
-                <Col xs>
+                <Col>
                     <p className='chat-name'>{chat.name}</p>
                     <p className='members-count'>{chat.members.length} members</p>
                 </Col>

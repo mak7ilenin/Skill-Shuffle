@@ -421,6 +421,7 @@ h1, h2, h3, h4, h5, h6, p {
   width: -moz-fit-content;
   width: fit-content;
   position: relative;
+  flex: 0;
 }
 .chat-page .chat-menu .group-menu .chat-avatar .img-overlay {
   background-color: transparent;
@@ -904,6 +905,7 @@ h1, h2, h3, h4, h5, h6, p {
   border-radius: 0;
   background-color: #3D00FF;
   border-color: #3D00FF;
+  border-bottom: 0;
 }
 .chat-page .chat-box .message-input .btn-send svg path {
   fill: #fff;

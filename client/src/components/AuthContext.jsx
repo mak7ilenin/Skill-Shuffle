@@ -28,7 +28,7 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         const interval = setInterval(() => {
             sendHeartbeat();
-        }, 3000);
+        }, 300000);
         return () => clearInterval(interval);
     }, [sendHeartbeat]);
 
