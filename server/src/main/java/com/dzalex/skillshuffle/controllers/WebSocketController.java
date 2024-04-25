@@ -22,6 +22,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.sql.Timestamp;
@@ -106,6 +107,14 @@ public class WebSocketController {
         String username = headerAccessor.getUser().getName();
         if (username != null) {
             sessionService.addSession(username, "/chat/" + chatId, headerAccessor.getSessionId());
+        }
+    }
+
+    @MessageMapping("/unsubscribe/{chatId}")
+    public void handleUnsubscribe(@Payload ChatMessage message, SimpMessageHeaderAccessor headerAccessor) {
+        String username = headerAccessor.getUser().getName();
+        if (username != null) {
+            sessionService.removeSession(username, "/chat/" + message.getChat().getId());
         }
     }
 

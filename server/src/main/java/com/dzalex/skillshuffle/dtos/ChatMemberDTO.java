@@ -17,4 +17,5 @@ public class ChatMemberDTO {
     private String avatarUrl;
     private Timestamp lastSeen;
     private MemberRole role;
+    private Boolean isLeft;
 }

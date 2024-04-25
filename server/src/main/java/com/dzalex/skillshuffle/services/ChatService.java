@@ -144,7 +144,9 @@ public class ChatService {
                 chatDTO.setAvatarUrl(chatPartner.getAvatarUrl());
                 chatDTO.setName(chatPartner.getFirstName() + " " + chatPartner.getLastName());
                 List<ChatMemberDTO> members = new ArrayList<>();
-                members.add(userService.getChatMemberDTO(chatPartner, chatMember.getRole()));
+                ChatMemberDTO member = userService.getChatMemberDTO(chatPartner, chatMember.getRole());
+                member.setIsLeft(chatMember.getLeftAt() != null);
+                members.add(member);
                 chatDTO.setMembers(members);
             });
     }
@@ -285,8 +287,8 @@ public class ChatService {
                 }
             }
 
-            chatMemberRepository.save(chatMember);
             messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.LEFT, null);
+            chatMemberRepository.save(chatMember);
         }
     }
 

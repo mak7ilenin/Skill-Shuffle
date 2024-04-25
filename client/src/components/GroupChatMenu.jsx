@@ -62,7 +62,7 @@ function GroupChatMenu({ chat, chatSubscribtion }) {
         axios.delete(`${API_SERVER}/chats/${chat.id}/leave`, { withCredentials: true })
             .then(() => {
                 window.location.reload();
-                chatSubscribtion.current.unsubscribe();
+                // chatSubscribtion.current.unsubscribe();
             })
             .catch(error => {
                 console.error(error);

@@ -23,6 +23,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -100,6 +102,9 @@ public class AuthController {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (helper.validateToken(token, userDetails)) {
                 User user = userRepository.findByUsername(username);
+                user.setLastSeen(new Timestamp(System.currentTimeMillis()));
+                userRepository.save(user);
+
                 return new ResponseEntity<>(JwtResponseDTO.builder()
                         .username(userDetails.getUsername())
                         .accessToken(token)
@@ -113,7 +118,6 @@ public class AuthController {
             }
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//        return null;
     }
 
     @PostMapping("/logout")

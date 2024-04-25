@@ -8,11 +8,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class SessionService {
+
     private final ConcurrentHashMap<String, Map<String, WebSocketSession>> userSessions = new ConcurrentHashMap<>();
+
+    private WebSocketSession getWebSocketSession(String username, String endpoint) {
+        Map<String, WebSocketSession> userEndpoints = userSessions.get(username);
+        return userEndpoints != null ? userEndpoints.get(endpoint) : null;
+    }
 
     public void addSession(String username, String endpoint, String session) {
         Map<String, WebSocketSession> userEndpoints = userSessions.getOrDefault(username, new ConcurrentHashMap<>());
-        userEndpoints.put(endpoint, session);
+        userEndpoints.put(endpoint, getWebSocketSession(username, session));
         userSessions.put(username, userEndpoints);
     }
 
