@@ -13,7 +13,7 @@ import { ReactComponent as Search } from '../assets/icons/search-icon.svg';
 import { ReactComponent as Cross } from '../assets/icons/cross-icon.svg';
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function GroupChatMenu({ chat, setChat }) {
+function GroupChatMenu({ chat, setChat, changeMenu }) {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [imageURL, setImageURL] = useState(chat.avatarUrl || null);
@@ -67,6 +67,7 @@ function GroupChatMenu({ chat, setChat }) {
         axios.delete(`${API_SERVER}/chats/${chat.id}/leave`, { withCredentials: true })
             .then(() => {
                 navigate('/messenger');
+                window.location.reload();
             })
             .catch(error => {
                 console.error(error);

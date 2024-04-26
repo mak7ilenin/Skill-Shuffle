@@ -13,7 +13,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
@@ -41,22 +40,6 @@ public class WebSocketController {
         messageService.sendMessage(message);
     }
 
-    @SubscribeMapping("/chat/{chatId}")
-    public void handleSubscription(Integer chatId, SimpMessageHeaderAccessor headerAccessor) {
-        String username = headerAccessor.getUser().getName();
-        if (username != null) {
-            sessionService.addSession(username, "/chat/" + chatId, headerAccessor.getSessionId());
-        }
-    }
-
-    @MessageMapping("/unsubscribe/{chatId}")
-    public void handleUnsubscribe(@Payload ChatMessage message, SimpMessageHeaderAccessor headerAccessor) {
-        String username = headerAccessor.getUser().getName();
-        if (username != null) {
-            sessionService.removeSession(username, "/chat/" + message.getChat().getId());
-        }
-    }
-
     // Event listener for heartbeat messages
     @MessageMapping("/heartbeat")
     public void handleHeartbeat(@Payload PublicUserDTO user) {
@@ -76,6 +59,9 @@ public class WebSocketController {
             if (username != null) {
                 User user = userRepository.findByUsername(username);
                 chatService.deleteEmptyChatsByAuthedUser(user);
+
+                // Remove the user's websocket sessions
+                sessionService.removeAllUserSessions(username);
             }
         }
     }

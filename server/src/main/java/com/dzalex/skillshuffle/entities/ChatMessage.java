@@ -39,4 +39,16 @@ public class ChatMessage {
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private MessageType type;
+
+    public boolean isMessage() {
+        return this.type == MessageType.MESSAGE;
+    }
+
+    public boolean isAnnouncement() {
+        return this.type == MessageType.ANNOUNCEMENT;
+    }
+
+    public boolean isEntry() {
+        return this.type == MessageType.ENTRY;
+    }
 }

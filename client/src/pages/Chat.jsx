@@ -285,7 +285,7 @@ function Chat() {
         // If a chat is selected, display:
         <div className='chat-box d-flex flex-nowrap flex-column'>
 
-          <ChatHeader chat={chosenChat} handleMenuChange={handleMenuChange} />
+          <ChatHeader chat={chosenChat} setChat={setChosenChat} handleMenuChange={handleMenuChange} />
 
           <Row className='messages-list p-0 py-3' ref={chatRef} onScroll={handleScroll}>
             {loadingMessages ? (

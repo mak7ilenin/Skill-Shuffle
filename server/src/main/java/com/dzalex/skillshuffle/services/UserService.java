@@ -70,10 +70,9 @@ public class UserService {
         List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);
         List<String> usernames = new ArrayList<>();
         for (ChatMember chatMember : chatMembers) {
-            if (chatMember.getLeftAt() != null) {
-                continue;
+            if (!chatMember.isLeft()) {
+                usernames.add(chatMember.getMember().getUsername());
             }
-            usernames.add(chatMember.getMember().getUsername());
         }
         return usernames;
     }

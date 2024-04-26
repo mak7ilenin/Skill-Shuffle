@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { Row, Col, Image, NavLink, Button } from 'react-bootstrap';
 
 import ChatSmallMenu from './ChatSmallMenu';
-import { useAuth } from './AuthContext';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 import { ReactComponent as NetworkIcon } from '../assets/icons/network.svg';
 import { ReactComponent as Menu } from '../assets/icons/post-menu.svg';
 
-function ChatHeader({ chat, handleMenuChange }) {
+function ChatHeader({ chat, setChat, handleMenuChange }) {
     const [smallMenuVisibility, setSmallMenuVisibility] = useState(false);
-    const { authUser } = useAuth();
 
     const generateLink = () => {
         switch (chat.type) {
@@ -114,7 +112,13 @@ function ChatHeader({ chat, handleMenuChange }) {
                 <Button variant='link' className='menu-btn d-flex justify-content-end py-3'>
                     <Menu className='menu-icon' />
                 </Button>
-                {smallMenuVisibility && <ChatSmallMenu setSmallMenuVisibility={setSmallMenuVisibility} />}
+                {smallMenuVisibility && (
+                    <ChatSmallMenu
+                        setSmallMenuVisibility={setSmallMenuVisibility}
+                        chat={chat}
+                        setChat={setChat}
+                    />
+                )}
             </Col>
 
         </Row>

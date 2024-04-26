@@ -1,29 +1,22 @@
 package com.dzalex.skillshuffle.services;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.WebSocketSession;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class SessionService {
+    private final ConcurrentHashMap<String, Map<String, String>> userSessions = new ConcurrentHashMap<>();
 
-    private final ConcurrentHashMap<String, Map<String, WebSocketSession>> userSessions = new ConcurrentHashMap<>();
-
-    public WebSocketSession getWebSocketSession(String username, String endpoint) {
-        Map<String, WebSocketSession> userEndpoints = userSessions.get(username);
-        return userEndpoints != null ? userEndpoints.get(endpoint) : null;
-    }
-
-    public void addSession(String username, String endpoint, String session) {
-        Map<String, WebSocketSession> userEndpoints = userSessions.getOrDefault(username, new ConcurrentHashMap<>());
-        userEndpoints.put(endpoint, getWebSocketSession(username, session));
+    public void addSession(String username, String endpoint, String sessionId) {
+        Map<String, String> userEndpoints = userSessions.getOrDefault(username, new ConcurrentHashMap<>());
+        userEndpoints.put(endpoint, sessionId);
         userSessions.put(username, userEndpoints);
     }
 
     public void removeSession(String username, String endpoint) {
-        Map<String, WebSocketSession> userEndpoints = userSessions.get(username);
+        Map<String, String> userEndpoints = userSessions.get(username);
         if (userEndpoints != null) {
             userEndpoints.remove(endpoint);
             if (userEndpoints.isEmpty()) {
@@ -34,8 +27,12 @@ public class SessionService {
         }
     }
 
+    public void removeAllUserSessions(String username) {
+        userSessions.remove(username);
+    }
+
     public boolean isUserSubscribed(String username, String endpoint) {
-        Map<String, WebSocketSession> userEndpoints = userSessions.get(username);
+        Map<String, String> userEndpoints = userSessions.get(username);
         return userEndpoints != null && userEndpoints.containsKey(endpoint);
     }
 }

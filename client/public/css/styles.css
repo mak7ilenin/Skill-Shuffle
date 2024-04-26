@@ -973,8 +973,8 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .rounded-checkbox-label::after {
   content: "🗸";
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background-color: #3D00FF;
   color: #fff;

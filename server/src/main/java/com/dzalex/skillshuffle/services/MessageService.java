@@ -3,9 +3,11 @@ package com.dzalex.skillshuffle.services;
 import com.dzalex.skillshuffle.dtos.ChatNotificationDTO;
 import com.dzalex.skillshuffle.dtos.MessageDTO;
 import com.dzalex.skillshuffle.entities.Chat;
+import com.dzalex.skillshuffle.entities.ChatMember;
 import com.dzalex.skillshuffle.enums.*;
 import com.dzalex.skillshuffle.entities.ChatMessage;
 import com.dzalex.skillshuffle.entities.User;
+import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
@@ -28,6 +30,9 @@ public class MessageService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ChatMemberRepository chatMemberRepository;
 
     @Autowired
     private UserService userService;
@@ -62,21 +67,25 @@ public class MessageService {
         }
 
         // Save the message to the database
-        ChatMessage savedMessage = saveMessage(message, chatId, sender);
+        if (message.isAnnouncement()) {
+            messageRepository.save(message);
+        } else {
+            message = saveMessage(message, chatId, sender);
+        }
 
         List<String> usernames = userService.getUsernamesInChat(chatId);
         for (String username : usernames) {
-            if (sessionService.isUserSubscribed(username, "/chat/" + chatId)) {
+            if (sessionService.isUserSubscribed(username, "/user/chat/" + chatId)) {
                 // Send the message to all users who subscribed to chat
-                messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, savedMessage);
+                messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, message);
             } else {
                 // Send notifications to users who are not currently subscribed to the chat
-                sendNotification(chatId, savedMessage, usernames, sender);
+                sendNotification(chatId, message, username, sender);
             }
         }
     }
 
-    public void sendNotification(Integer chatId, ChatMessage message, List<String> usernames, User sender) {
+    public void sendNotification(Integer chatId, ChatMessage message, String receiverUsername, User sender) {
         // Create notification message based on chat type
         String notificationMessage;
         Chat chat = chatRepository.findChatById(chatId);
@@ -96,25 +105,33 @@ public class MessageService {
                 NotificationType.CHAT_MESSAGE
         );
 
-        // Send notification to all users in the chat
-        for (String username : usernames) {
-            messagingTemplate.convertAndSendToUser(username, "/notification", notification);
-        }
+        // Send notification to receiver
+        messagingTemplate.convertAndSendToUser(receiverUsername, "/notification", notification);
     }
 
-    public MessageDTO findLastMessageByChatId(Integer chatId) {
-        List<ChatMessage> messages = messageRepository.findMessagesByChatId(chatId);
+    public MessageDTO findChatLastMessage(Chat chat) {
+        List<ChatMessage> messages = messageRepository.findMessagesByChatId(chat.getId());
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
 
         // Check if messages list is not empty
         if (!messages.isEmpty()) {
             // Sort messages by timestamp in descending order to get the last message
             messages.sort(Comparator.comparing(ChatMessage::getTimestamp).reversed());
 
+            // Check if the chat is a group and the current user is left the chat
+            if (chat.isGroup() && chatMember.isLeft()) {
+                // Get last message that sent by authedUser with type ANNOUNCEMENT
+                for (ChatMessage message : messages) {
+                    if (message.getSender().getId().equals(userService.getCurrentUser().getId()) && message.getType().equals(MessageType.ANNOUNCEMENT)) {
+                        return convertToDTO(message);
+                    }
+                }
+            }
+
             // Return the last message as a DTO
             return convertToDTO(messages.get(0));
-        } else {
-            return null;
         }
+        return null;
     }
 
     public MessageDTO convertToDTO(ChatMessage message) {

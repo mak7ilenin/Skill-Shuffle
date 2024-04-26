@@ -24,10 +24,9 @@ public class ChatController {
 
     @Autowired
     private ChatRepository chatRepository;
+
     @Autowired
     private UserService userService;
-    @Autowired
-    private ChatMemberRepository chatMemberRepository;
 
     @GetMapping("/chats")
     public List<ChatPreviewDTO> getChats() {
@@ -36,7 +35,7 @@ public class ChatController {
 
     @PostMapping("/chats")
     public ResponseEntity<Chat> createChat(@RequestParam("chat") String chatStr,
-                                                 @RequestParam(required = false, name = "avatarBlob") MultipartFile avatarBlob) throws IOException {
+                                           @RequestParam(required = false, name = "avatarBlob") MultipartFile avatarBlob) throws IOException {
         // Convert chatStr to NewChatDTO object
         ObjectMapper mapper = new ObjectMapper();
         NewChatDTO chat = mapper.readValue(chatStr, NewChatDTO.class);
@@ -51,7 +50,7 @@ public class ChatController {
 
     @PatchMapping("/chats/{id}/avatar")
     public ResponseEntity<Chat> updateChatAvatar(@PathVariable("id") Integer id,
-                                                @RequestParam("avatarBlob") MultipartFile avatarBlob) {
+                                                 @RequestParam("avatarBlob") MultipartFile avatarBlob) {
         Chat chat = chatRepository.findChatById(id);
         Chat updatedChat = chatService.updateChatAvatar(chat, avatarBlob);
         if (updatedChat != null) {
@@ -76,14 +75,14 @@ public class ChatController {
 
     @PostMapping("/chats/{id}/members")
     public List<ChatMemberDTO> addChatMembers(@PathVariable("id") Integer id,
-                                                        @RequestBody List<String> users) {
+                                              @RequestBody List<String> users) {
         Chat chat = chatRepository.findChatById(id);
         return chatService.inviteMembersToChat(chat, users);
     }
 
     @DeleteMapping("/chats/{id}/remove?nn={nickname}")
     public ResponseEntity<Chat> removeChatMember(@PathVariable("id") Integer id,
-                                             @PathVariable("nickname") String nickname) {
+                                                 @PathVariable("nickname") String nickname) {
         Chat chat = chatRepository.findChatById(id);
         chatService.removeMemberFromChat(chat, userService.getUserByNickname(nickname));
         return ResponseEntity.ok(chat);
@@ -93,5 +92,11 @@ public class ChatController {
     public void leaveChat(@PathVariable("id") Integer id) {
         Chat chat = chatRepository.findChatById(id);
         chatService.leaveChat(chat);
+    }
+
+    @PatchMapping("/chats/{id}/return")
+    public ChatDTO returnToChat(@PathVariable("id") Integer id) {
+        Chat chat = chatRepository.findChatById(id);
+        return chatService.returnToChat(chat);
     }
 }

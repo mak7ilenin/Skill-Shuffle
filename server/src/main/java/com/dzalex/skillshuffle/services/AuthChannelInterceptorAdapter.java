@@ -17,11 +17,14 @@ import java.util.Objects;
 public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
+
     private static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
 
     @Autowired
     private WebSocketAuthenticatorService webSocketAuthenticatorService;
 
+    @Autowired
+    private SessionService sessionService;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) throws AuthenticationException {
@@ -37,6 +40,15 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
             UsernamePasswordAuthenticationToken user = webSocketAuthenticatorService.getAuthenticatedOrFail(token);
             accessor.setUser(user);
         }
+        // Handle user subscriptions
+        if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
+            String username = accessor.getUser().getName();
+            String destination = accessor.getDestination();
+            if (username != null && destination != null) {
+                sessionService.addSession(username, destination, accessor.getSessionId());
+            }
+        }
+
         return message;
     }
 }

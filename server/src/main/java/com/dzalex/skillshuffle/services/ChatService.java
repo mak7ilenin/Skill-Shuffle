@@ -59,7 +59,7 @@ public class ChatService {
                 chatPreviewDTO.setType(chat.getType());
                 chatPreviewDTO.setName(chatInfo.getName());
                 chatPreviewDTO.setAvatarUrl(chatInfo.getAvatarUrl());
-                chatPreviewDTO.setLastMessage(messageService.findLastMessageByChatId(chat.getId()));
+                chatPreviewDTO.setLastMessage(messageService.findChatLastMessage(chat));
 
                 chatPreviewDTOs.add(chatPreviewDTO);
             }
@@ -260,6 +260,7 @@ public class ChatService {
         User authedUser = userService.getCurrentUser();
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authedUser.getId());
         if (chatMember != null) {
+            messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.LEFT, null);
             chatMember.setLeftAt(new Timestamp(System.currentTimeMillis()));
 
             // If the leaving user is the owner, transfer ownership to another member
@@ -282,9 +283,20 @@ public class ChatService {
                 }
             }
 
-            messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.LEFT, null);
             chatMemberRepository.save(chatMember);
         }
+    }
+
+    public ChatDTO returnToChat(Chat chat) {
+        User authedUser = userService.getCurrentUser();
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authedUser.getId());
+        if (chatMember != null) {
+            chatMember.setLeftAt(null);
+            chatMemberRepository.save(chatMember);
+            messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.RETURNED, null);
+            return getChatInfo(chat);
+        }
+        return null;
     }
 
     // Remove member from chat
