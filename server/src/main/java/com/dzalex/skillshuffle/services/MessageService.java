@@ -49,7 +49,7 @@ public class MessageService {
                 .sender(sender)
                 .chat(chatRepository.findChatById(chatId))
                 .content(message.getContent())
-                .timestamp(Timestamp.from(new Date().toInstant()))
+                .timestamp(new Timestamp(System.currentTimeMillis()))
                 .status(MessageStatus.SENT)
                 .type(MessageType.MESSAGE)
                 .build();
@@ -149,7 +149,7 @@ public class MessageService {
                 .sender(sender)
                 .chat(chat)
                 .content(sender.getFirstName() + " " + sender.getLastName() + " has entered the chat")
-                .timestamp(Timestamp.from(new Date().toInstant()))
+                .timestamp(new Timestamp(System.currentTimeMillis()))
                 .status(MessageStatus.SENT)
                 .type(MessageType.ENTRY)
                 .build();
@@ -161,7 +161,7 @@ public class MessageService {
                 .sender(sender)
                 .chat(chat)
                 .content(getAnnouncementMessageContent(sender, chat, announcementType, user))
-                .timestamp(Timestamp.from(new Date().toInstant()))
+                .timestamp(new Timestamp(System.currentTimeMillis()))
                 .status(MessageStatus.SENT)
                 .type(MessageType.ANNOUNCEMENT)
                 .build();

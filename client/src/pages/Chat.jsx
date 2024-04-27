@@ -72,33 +72,36 @@ function Chat() {
     if (isStompClientInitialized && stompClient) {
 
       // Unsubscribe from the previous chat messages
-      if (currentSubscriptionRef.current) {
+      if (currentSubscriptionRef.current != null) {
         currentSubscriptionRef.current.unsubscribe();
+        currentSubscriptionRef.current = null;
       }
 
-      // Subscribe to chat messages
-      const chatEndpoint = `/user/chat/${chatId}`;
-      const newSubscription = stompClient.subscribe(chatEndpoint, receivedMessage => {
-        const message = JSON.parse(receivedMessage.body);
-        updateChatLastMessage(message);
-        setChosenChat(prevChat => ({
-          ...prevChat,
-          messages: [...prevChat.messages, message]
-        }));
-        setTimeout(() => {
-          scrollToPosition(messagesListRef.current.scrollHeight);
-        }, 50);
-      });
+      // If user is in chat, then subscribe to chat messages
+      if (chosenChat.members != null) {
+        const chatEndpoint = `/user/chat/${chatId}`;
+        const newSubscription = stompClient.subscribe(chatEndpoint, receivedMessage => {
+          const message = JSON.parse(receivedMessage.body);
+          updateChatLastMessage(message);
+          setChosenChat(prevChat => ({
+            ...prevChat,
+            messages: [...prevChat.messages, message]
+          }));
+          setTimeout(() => {
+            scrollToPosition(messagesListRef.current.scrollHeight);
+          }, 50);
+        });
 
-      // Update current subscription
-      currentSubscriptionRef.current = newSubscription;
+        // Update current subscription
+        currentSubscriptionRef.current = newSubscription;
 
-      return () => {
-        // Unsubscribe from chat messages when component unmounts
-        newSubscription.unsubscribe();
-      };
+        return () => {
+          // Unsubscribe from chat messages when component unmounts
+          newSubscription.unsubscribe();
+        };
+      }
     }
-  }, [stompClient, updateChatLastMessage, isStompClientInitialized]);
+  }, [stompClient, updateChatLastMessage, isStompClientInitialized, chosenChat.members]);
 
 
   useEffect(() => {

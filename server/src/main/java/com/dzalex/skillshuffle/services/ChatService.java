@@ -45,6 +45,9 @@ public class ChatService {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private SessionService sessionService;
+
     public List<ChatPreviewDTO> getChatList() {
         User authedUser = userService.getCurrentUser();
         List<Chat> chats = chatRepository.findAll();
@@ -92,7 +95,7 @@ public class ChatService {
         messages.sort(Comparator.comparing(ChatMessage::getTimestamp).reversed());
 
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userService.getCurrentUser().getId());
-        // Remove messages sent after the user left the chat
+        // Filter messages that sent before the user left the chat
         if (chatMember != null && chatMember.getLeftAt() != null) {
             messages.removeIf(message -> message.getTimestamp().after(chatMember.getLeftAt()));
         }
@@ -245,22 +248,15 @@ public class ChatService {
         });
     }
 
-    // Delete chat by id
-    public void deleteChatById(Integer id) {
-        Chat chat = chatRepository.findChatById(id);
-        if (chat != null) {
-            messageRepository.deleteAllByChatId(id);
-            chatMemberRepository.deleteAllByChatId(id);
-            chatRepository.delete(chat);
-        }
-    }
-
     // Leave chat
     public void leaveChat(Chat chat) {
         User authedUser = userService.getCurrentUser();
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authedUser.getId());
         if (chatMember != null) {
+            // Send LEFT message to the chat
             messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.LEFT, null);
+
+            // Set the leftAt timestamp
             chatMember.setLeftAt(new Timestamp(System.currentTimeMillis()));
 
             // If the leaving user is the owner, transfer ownership to another member
@@ -284,6 +280,7 @@ public class ChatService {
             }
 
             chatMemberRepository.save(chatMember);
+            sessionService.removeSession(authedUser.getUsername(), "/user/chat/" + chat.getId());
         }
     }
 

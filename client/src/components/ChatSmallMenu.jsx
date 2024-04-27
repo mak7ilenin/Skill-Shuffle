@@ -3,14 +3,13 @@ import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
 import { API_SERVER } from '../config';
-
 import { ReactComponent as Return } from '../assets/icons/return.svg';
 
 function ChatSmallMenu({ chat, setChat }) {
     const handleReturnToChat = () => {
         axios.patch(`${API_SERVER}/chats/${chat.id}/return`, {}, { withCredentials: true })
             .then((response) => {
-                setChat({ ...chat, members: response.data.members });
+                setChat({ ...response.data });
             })
             .catch(error => {
                 console.error(error);
