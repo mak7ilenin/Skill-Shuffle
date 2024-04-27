@@ -64,7 +64,7 @@ function Chat() {
         navigate('/messenger')
         console.error(error.response?.data.message || error.message);
       });
-  }, [setChosenChat, setLoadingMessages, messagesListRef, navigate]);
+  }, [setLoadingMessages, messagesListRef, navigate]);
 
 
   const subscribeToChat = useCallback((chatId) => {
@@ -72,7 +72,7 @@ function Chat() {
     if (isStompClientInitialized && stompClient) {
 
       // Unsubscribe from the previous chat messages
-      if (currentSubscriptionRef.current != null) {
+      if (currentSubscriptionRef.current && currentSubscriptionRef.current.chatId !== chatId) {
         currentSubscriptionRef.current.unsubscribe();
         currentSubscriptionRef.current = null;
       }
@@ -88,9 +88,12 @@ function Chat() {
             messages: [...prevChat.messages, message]
           }));
           setTimeout(() => {
-            scrollToPosition(messagesListRef.current.scrollHeight);
+            if (messagesListRef.current) {
+              scrollToPosition(messagesListRef.current.scrollHeight);
+            }
           }, 50);
         });
+        newSubscription.chatId = chatId;
 
         // Update current subscription
         currentSubscriptionRef.current = newSubscription;

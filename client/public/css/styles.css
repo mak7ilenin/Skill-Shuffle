@@ -1015,11 +1015,13 @@ h1, h2, h3, h4, h5, h6, p {
   flex: 0;
 }
 .small-menu .menu-option .option-icon svg {
-  width: 14px;
+  width: 16px;
 }
-.small-menu .menu-option .option-icon svg path {
-  stroke: #000;
+.small-menu .menu-option .option-icon svg.return-icon path {
   stroke-width: 2px;
+}
+.small-menu .menu-option .option-icon svg.cross-icon path {
+  fill: #000 !important;
 }
 .small-menu .menu-option .option-text {
   font-family: "Manrope", sans-serif;

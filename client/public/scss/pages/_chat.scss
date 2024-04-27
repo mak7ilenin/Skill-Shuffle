@@ -966,11 +966,14 @@
             flex: 0;
 
             svg {
-                width: 14px;
+                width: 16px;
 
-                path {
-                    stroke: #000;
+                &.return-icon path {
                     stroke-width: 2px;
+                }
+
+                &.cross-icon path {
+                    fill: #000 !important;
                 }
             }
         }

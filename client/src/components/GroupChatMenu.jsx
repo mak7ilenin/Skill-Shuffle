@@ -13,7 +13,7 @@ import { ReactComponent as Search } from '../assets/icons/search-icon.svg';
 import { ReactComponent as Cross } from '../assets/icons/cross-icon.svg';
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function GroupChatMenu({ chat, setChat, changeMenu }) {
+function GroupChatMenu({ chat, setChat }) {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [imageURL, setImageURL] = useState(chat.avatarUrl || null);
@@ -50,12 +50,13 @@ function GroupChatMenu({ chat, setChat, changeMenu }) {
         if (selectedFriends.length > 0) {
             axios.post(`${API_SERVER}/chats/${chat.id}/members`, selectedFriends, { withCredentials: true })
                 .then((response) => {
-                    const updatedListOfMembers = [...chat.members, ...response.data];
-                    setChat({ ...chat, members: updatedListOfMembers });
-                    setFilteredMembers(updatedListOfMembers);
+                    setChat({ ...response.data });
+                    setFilteredMembers(response.data.members);
+
+                    // Reset everything and close
+                    setAddMemberVisibility(false);
                     setSelectedFriends([]);
                     setSearch('');
-                    setAddMemberVisibility(false);
                 })
                 .catch(error => {
                     console.error(error);
@@ -238,7 +239,7 @@ function GroupChatMenu({ chat, setChat, changeMenu }) {
                     </Row>
 
                     <Stack className='member-list flex-grow-1' direction='vertical' gap={0}>
-                        {filteredMembers.map((member, index) => (
+                        {filteredMembers && filteredMembers.map((member, index) => (
                             <NavLink
                                 key={index}
                                 href={`/users?nn=${member.nickname}`}

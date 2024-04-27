@@ -74,8 +74,8 @@ public class ChatController {
     }
 
     @PostMapping("/chats/{id}/members")
-    public List<ChatMemberDTO> addChatMembers(@PathVariable("id") Integer id,
-                                              @RequestBody List<String> users) {
+    public ChatDTO addChatMembers(@PathVariable("id") Integer id,
+                                  @RequestBody List<String> users) {
         Chat chat = chatRepository.findChatById(id);
         return chatService.inviteMembersToChat(chat, users);
     }

@@ -45,7 +45,7 @@ function ChatMenu({ chats, chat, setChat, setFilteredChats, filteredChats, handl
             ) : null}
             {activeMenu === 'GROUP_MENU' ? (
                 // Group menu view
-                <GroupChatMenu chat={chat} setChat={setChat} changeMenu={handleMenuChange} />
+                <GroupChatMenu chat={chat} setChat={setChat} />
             ) : null}
 
         </Container>

@@ -56,15 +56,13 @@ public class ChatService {
         for (Chat chat : chats) {
             if (isUserMemberOfChat(chat, authedUser)) {
                 ChatDTO chatInfo = getChatInfo(chat);
-
-                ChatPreviewDTO chatPreviewDTO = new ChatPreviewDTO();
-                chatPreviewDTO.setId(chat.getId());
-                chatPreviewDTO.setType(chat.getType());
-                chatPreviewDTO.setName(chatInfo.getName());
-                chatPreviewDTO.setAvatarUrl(chatInfo.getAvatarUrl());
-                chatPreviewDTO.setLastMessage(messageService.findChatLastMessage(chat));
-
-                chatPreviewDTOs.add(chatPreviewDTO);
+                chatPreviewDTOs.add(ChatPreviewDTO.builder()
+                        .id(chat.getId())
+                        .type(chat.getType())
+                        .name(chatInfo.getName())
+                        .avatarUrl(chatInfo.getAvatarUrl())
+                        .lastMessage(messageService.findChatLastMessage(chat))
+                        .build());
             }
         }
 
@@ -322,17 +320,15 @@ public class ChatService {
         return null;
     }
 
-    public List<ChatMemberDTO> inviteMembersToChat(Chat chat, List<String> users) {
+    public ChatDTO inviteMembersToChat(Chat chat, List<String> users) {
         if (chat.isGroup()) {
-            List<ChatMemberDTO> updatedMembers = new ArrayList<>();
             users.stream()
                  .map(userService::getUserByNickname)
                  .forEach(user -> {
                      addMemberToChat(chat, user, MemberRole.MEMBER);
                      messageService.createAnnouncementMessage(userService.getCurrentUser(), chat, ChatAnnouncementType.ADDED, user);
-                     updatedMembers.add(userService.getChatMemberDTO(user, MemberRole.MEMBER));
                  });
-            return updatedMembers;
+            return getChatInfo(chat);
         }
         return null;
     }
