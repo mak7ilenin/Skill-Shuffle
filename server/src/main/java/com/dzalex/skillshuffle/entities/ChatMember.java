@@ -3,7 +3,6 @@ package com.dzalex.skillshuffle.entities;
 import com.dzalex.skillshuffle.enums.MemberRole;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -38,11 +37,14 @@ public class ChatMember {
     @Column(name = "joined_at")
     private Timestamp joinedAt;
 
+    @Column(name = "notifications")
+    private boolean notifications = true;
+
     @Column(name = "left_at")
     private Timestamp leftAt;
 
-    @Column(name = "notifications")
-    private Boolean notifications = true;
+    @Column(name = "is_kicked")
+    private boolean isKicked = false;
 
     public boolean isOwner() {
         return role == MemberRole.CREATOR;
@@ -58,5 +60,13 @@ public class ChatMember {
 
     public boolean isLeft() {
         return leftAt != null;
+    }
+
+    public boolean isKicked() {
+        return isKicked;
+    }
+
+    public boolean hasNotifications() {
+        return notifications;
     }
 }

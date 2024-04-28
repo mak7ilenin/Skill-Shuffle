@@ -3,6 +3,7 @@ package com.dzalex.skillshuffle.services;
 import com.dzalex.skillshuffle.dtos.ChatMemberDTO;
 import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.entities.ChatMember;
+import com.dzalex.skillshuffle.entities.Friendship;
 import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.enums.MemberRole;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class UserService {
@@ -102,19 +104,20 @@ public class UserService {
         List<PublicUserDTO> friends = new ArrayList<>();
         friendshipRepository.findByUserIdOrFriendId(user.getId(), user.getId())
                 .forEach(friendship -> {
-                    Optional<User> friendRef = userRepo.findById(friendship.getFriend().getId());
-                    if (friendRef.isPresent() && !Objects.equals(friendRef.get().getId(), user.getId())) {
-                        User friend = friendRef.get();
-                        friends.add(getPublicUserDTO(friend));
-                        return;
-                    }
-                    Optional<User> userRef = userRepo.findById(friendship.getUser().getId());
-                    if (userRef.isPresent() && !Objects.equals(userRef.get().getId(), user.getId())) {
-                        User friend = userRef.get();
+                    User friend = getFriendFromFriendship(friendship, user);
+                    if (friend != null) {
                         friends.add(getPublicUserDTO(friend));
                     }
                 });
         return friends;
+    }
+
+    public User getFriendFromFriendship(Friendship friendship, User authUser) {
+        return Stream.of(friendship.getFriend(), friendship.getUser())
+                .map(user -> userRepo.findById(user.getId()).orElse(null))
+                .filter(user -> user != null && !Objects.equals(user.getId(), authUser.getId()))
+                .findFirst()
+                .orElse(null);
     }
 
     public PublicUserDTO getPublicUserDTO(User user) {

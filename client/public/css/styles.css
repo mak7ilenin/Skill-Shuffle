@@ -755,7 +755,12 @@ h1, h2, h3, h4, h5, h6, p {
   font-weight: 500;
 }
 .chat-page .chat-box .messages-list .announcement a {
-  color: #373737;
+  color: #3D00FF;
+  text-decoration: none;
+  font-weight: 700;
+}
+.chat-page .chat-box .messages-list .announcement a:hover {
+  text-decoration: underline;
 }
 .chat-page .chat-box .messages-list .message {
   flex-wrap: wrap;

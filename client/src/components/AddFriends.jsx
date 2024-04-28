@@ -15,22 +15,25 @@ function AddFriends({ selectedFriends, setSelectedFriends, chat }) {
     const [search, setSearch] = useState('');
 
     useEffect(() => {
-        axios.get(`${API_SERVER}/users/${authUser.nickname}/friends`, { withCredentials: true })
-            .then(response => {
-                // If chat is provided, remove chat members from friends list
-                if (chat) {
-                    const chatMembers = chat.members.map(member => member.nickname);
-                    const friends = response.data.filter(friend => !chatMembers.includes(friend.nickname));
-                    setFriends(friends);
-                    setFilteredFriends(friends);
-                    return;
-                }
-                setFriends(response.data);
-                setFilteredFriends(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        if (!chat) {
+            axios.get(`${API_SERVER}/users/${authUser.nickname}/friends`, { withCredentials: true })
+                .then(response => {
+                    setFriends(response.data);
+                    setFilteredFriends(response.data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        } else {
+            axios.get(`${API_SERVER}/chats/${chat.id}/friends`, { withCredentials: true })
+                .then(response => {
+                    setFriends(response.data);
+                    setFilteredFriends(response.data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
     }, [authUser, setFriends, chat]);
 
     const handleFriendSearch = () => {

@@ -6,10 +6,7 @@ import com.dzalex.skillshuffle.enums.ChatAnnouncementType;
 import com.dzalex.skillshuffle.enums.ChatType;
 import com.dzalex.skillshuffle.enums.MemberRole;
 import com.dzalex.skillshuffle.enums.MessageType;
-import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
-import com.dzalex.skillshuffle.repositories.ChatRepository;
-import com.dzalex.skillshuffle.repositories.CommunityChatRepository;
-import com.dzalex.skillshuffle.repositories.MessageRepository;
+import com.dzalex.skillshuffle.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +32,9 @@ public class ChatService {
 
     @Autowired
     private CommunityChatRepository communityChatRepository;
+
+    @Autowired
+    private FriendshipRepository friendshipRepository;
 
     @Autowired
     private CommunityService communityService;
@@ -65,7 +65,6 @@ public class ChatService {
                         .build());
             }
         }
-
         return chatPreviewDTOs;
     }
 
@@ -152,55 +151,61 @@ public class ChatService {
         chatDTO.setName(chat.getName());
     }
 
-    // Create a new chat
     public Chat createChat(NewChatDTO chat, MultipartFile avatarBlob) {
+        setChatNameIfEmpty(chat);
+        Chat newChat = createAndSaveChat(chat);
+        saveAvatarIfProvided(avatarBlob, newChat);
+        User authedUser = userService.getCurrentUser();
+        addMembersToChat(chat, newChat, authedUser);
+        sendEntryMessage(chat, newChat, authedUser);
+        return newChat;
+    }
+
+    private void setChatNameIfEmpty(NewChatDTO chat) {
         if (chat.getName().isEmpty() && chat.isGroup()) {
             List<String> firstNames = userService.getUsersFirstNameInChat(chat.getMembers());
             if (firstNames.size() > 3) {
-                int size = firstNames.size();
                 firstNames = firstNames.subList(0, 3);
-                firstNames.add("and " + (size - 3) + " more");
+                firstNames.add("and " + (firstNames.size() - 3) + " more");
             }
             chat.setName(String.join(", ", firstNames));
         }
+    }
 
+    private Chat createAndSaveChat(NewChatDTO chat) {
         Chat newChat = Chat.builder()
                 .name(chat.getName())
                 .type(chat.getType())
                 .avatarUrl(null)
                 .build();
         chatRepository.save(newChat);
+        return newChat;
+    }
 
-        // Save the avatar image if provided
+    private void saveAvatarIfProvided(MultipartFile avatarBlob, Chat newChat) {
         if (avatarBlob != null) {
-            // Upload the image to the S3 bucket
             String avatarFilePath = "chats/chat-" + newChat.getId() + "/avatar/";
             String avatarUrl = fileService.uploadFile(avatarBlob, avatarFilePath);
             if (avatarUrl != null) {
                 newChat.setAvatarUrl(avatarUrl);
+                chatRepository.save(newChat);
             }
-            chatRepository.save(newChat);
         }
+    }
 
-        // Get the current user
-        User authedUser = userService.getCurrentUser();
-
-        // Add the current user to the chat
+    private void addMembersToChat(NewChatDTO chat, Chat newChat, User authedUser) {
         addMemberToChat(newChat, authedUser, getRoleByChatType(chat.getType()));
-
-        // Add members to the chat
         Arrays.stream(chat.getMembers())
               .map(userService::getUserByNickname)
               .forEach(user -> addMemberToChat(newChat, user, MemberRole.MEMBER));
+    }
 
-        // Send ENTRY message to the chat
+    private void sendEntryMessage(NewChatDTO chat, Chat newChat, User authedUser) {
         if (chat.isGroup()) {
             messageService.createAnnouncementMessage(authedUser, newChat, ChatAnnouncementType.CREATED, null);
         } else {
             messageService.createEntryMessage(authedUser, newChat);
         }
-
-        return newChat;
     }
 
     private void addMemberToChat(Chat chat, User user, MemberRole role) {
@@ -246,40 +251,37 @@ public class ChatService {
         });
     }
 
-    // Leave chat
     public void leaveChat(Chat chat) {
         User authedUser = userService.getCurrentUser();
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authedUser.getId());
-        if (chatMember != null) {
-            // Send LEFT message to the chat
-            messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.LEFT, null);
 
-            // Set the leftAt timestamp
+        if (chatMember != null) {
+            messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.LEFT, null);
             chatMember.setLeftAt(new Timestamp(System.currentTimeMillis()));
 
-            // If the leaving user is the owner, transfer ownership to another member
             if (chatMember.isOwner()) {
-                chatMember.setRole(MemberRole.MEMBER);
-
-                // If there is any admins, transfer ownership to the first admin
-                ChatMember firstAdmin = chatMemberRepository.findFirstByChatIdAndRole(chat.getId(), MemberRole.ADMIN);
-                if (firstAdmin != null) {
-                    firstAdmin.setRole(MemberRole.CREATOR);
-                    chatMemberRepository.save(firstAdmin);
-                    return;
-                }
-
-                // If there is any members, transfer ownership to the first member
-                ChatMember newOwner = chatMemberRepository.findFirstByChatIdAndRole(chat.getId(), MemberRole.MEMBER);
-                if (newOwner != null) {
-                    newOwner.setRole(MemberRole.CREATOR);
-                    chatMemberRepository.save(newOwner);
-                }
+                transferOwnership(chat);
             }
 
             chatMemberRepository.save(chatMember);
             sessionService.removeSession(authedUser.getUsername(), "/user/chat/" + chat.getId());
         }
+    }
+
+    private void transferOwnership(Chat chat) {
+        ChatMember newOwner = findNewOwner(chat);
+        if (newOwner != null) {
+            newOwner.setRole(MemberRole.CREATOR);
+            chatMemberRepository.save(newOwner);
+        }
+    }
+
+    private ChatMember findNewOwner(Chat chat) {
+        ChatMember newOwner = chatMemberRepository.findFirstByChatIdAndRole(chat.getId(), MemberRole.ADMIN);
+        if (newOwner == null) {
+            newOwner = chatMemberRepository.findFirstByChatIdAndRole(chat.getId(), MemberRole.MEMBER);
+        }
+        return newOwner;
     }
 
     public ChatDTO returnToChat(Chat chat) {
@@ -331,5 +333,31 @@ public class ChatService {
             return getChatInfo(chat);
         }
         return null;
+    }
+
+    @Transactional
+    public List<PublicUserDTO> getFriendListForChat(Chat chat) {
+        User authUser = userService.getCurrentUser();
+        List<PublicUserDTO> friends = new ArrayList<>();
+        List<String> chatMembers = userService.getUsernamesInChat(chat.getId());
+
+        friendshipRepository.findByUserIdOrFriendId(authUser.getId(), authUser.getId())
+                .forEach(friendship -> {
+                    User friend = userService.getFriendFromFriendship(friendship, authUser);
+                    if (friend != null && canAddFriendToChat(chat.getId(), authUser.getId(), friend.getId()) && !chatMembers.contains(friend.getUsername())) {
+                        friends.add(userService.getPublicUserDTO(friend));
+                    }
+                });
+        return friends;
+    }
+
+    private boolean canAddFriendToChat(Integer chatId, Integer userId, Integer friendId) {
+        ChatMember authUserMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userId);
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, friendId);
+        return authUserMember != null && (chatMember == null || canAddExistingMemberBackToChat(authUserMember, chatMember));
+    }
+
+    private boolean canAddExistingMemberBackToChat(ChatMember authUserMember, ChatMember chatMember) {
+        return !chatMember.isKicked() || (authUserMember.isOwner() && authUserMember.isAdmin());
     }
 }

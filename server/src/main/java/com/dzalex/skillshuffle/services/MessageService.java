@@ -171,7 +171,7 @@ public class MessageService {
     }
 
     private String getAnnouncementMessageContent(User sender, Chat chat, ChatAnnouncementType announcementType, User user) {
-        String userNameTemplate = "<a href='/users?nn=%s'><b>%s %s</b></a>";
+        String userNameTemplate = "<a href='/users?nn=%s'>%s %s</a>";
         String senderName = userNameTemplate.formatted(sender.getNickname(), sender.getFirstName(), sender.getLastName());
         String userName = "anonymous";
         if (user != null) {

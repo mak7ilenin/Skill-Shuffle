@@ -80,6 +80,13 @@ public class ChatController {
         return chatService.inviteMembersToChat(chat, users);
     }
 
+    // Get friend list for a chat 'add members' modal
+    @GetMapping("/chats/{id}/friends")
+    public List<PublicUserDTO> getFriendListForChat(@PathVariable("id") Integer id) {
+        Chat chat = chatRepository.findChatById(id);
+        return chatService.getFriendListForChat(chat);
+    }
+
     @DeleteMapping("/chats/{id}/remove?nn={nickname}")
     public ResponseEntity<Chat> removeChatMember(@PathVariable("id") Integer id,
                                                  @PathVariable("nickname") String nickname) {
