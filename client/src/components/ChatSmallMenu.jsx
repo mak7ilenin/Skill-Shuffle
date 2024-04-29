@@ -61,20 +61,24 @@ function ChatSmallMenu({ chat, setChat }) {
                 <Col className='option-text'>Clear message history</Col>
             </Row>
 
-            {chat.members == null ? (
-                <Row className='menu-option' onClick={handleReturnToChat}>
-                    <Col className='option-icon'>
-                        <Return className='return-icon' />
-                    </Col>
-                    <Col className='option-text'>Return to chat</Col>
-                </Row>
-            ) : (
-                <Row className='menu-option' onClick={handleLeaveChat}>
-                    <Col className='option-icon'>
-                        <Cross className='cross-icon' />
-                    </Col>
-                    <Col className='option-text'>Leave chat</Col>
-                </Row>
+            {chat.type === 'group' && (
+                <>
+                    {chat.members == null ? (
+                        <Row className='menu-option' onClick={handleReturnToChat}>
+                            <Col className='option-icon'>
+                                <Return className='return-icon' />
+                            </Col>
+                            <Col className='option-text'>Return to chat</Col>
+                        </Row>
+                    ) : (
+                        <Row className='menu-option' onClick={handleLeaveChat}>
+                            <Col className='option-icon'>
+                                <Cross className='cross-icon' />
+                            </Col>
+                            <Col className='option-text'>Leave chat</Col>
+                        </Row>
+                    )}
+                </>
             )}
         </Container>
     )

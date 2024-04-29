@@ -9,6 +9,7 @@ import UploadChatAvatarModal from './UploadChatAvatarModal';
 import AddFriends from './AddFriends';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
+import { ReactComponent as Plus } from '../assets/icons/plus.svg';
 
 function CreateChat({ changeMenu }) {
     const navigate = useNavigate();
@@ -71,6 +72,9 @@ function CreateChat({ changeMenu }) {
 
             <Row className='chat-header d-flex justify-content-start py-3 px-4'>
                 <Col className='me-4 chat-avatar' xs lg={2}>
+                    <div className="img-overlay d-flex align-items-center justify-content-center w-100 h-100 position-absolute top-0 rounded-circle" onClick={handleOpenModal}>
+                        <Plus width={30} height={30} />
+                    </div>
                     <Image
                         src={imageURL || imagePlaceholder}
                         alt='Chat'
@@ -91,7 +95,7 @@ function CreateChat({ changeMenu }) {
                     />
                 </Col>
             </Row>
-            
+
             <AddFriends selectedFriends={selectedFriends} setSelectedFriends={setSelectedFriends} />
 
             {selectedFriends.length > 0 || chatName !== '' ? (

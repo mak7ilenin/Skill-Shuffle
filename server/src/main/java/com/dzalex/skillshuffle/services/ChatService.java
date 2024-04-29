@@ -255,12 +255,13 @@ public class ChatService {
         User authedUser = userService.getCurrentUser();
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authedUser.getId());
 
-        if (chatMember != null) {
+        if (chatMember != null && chat.isGroup()) {
             messageService.createAnnouncementMessage(authedUser, chat, ChatAnnouncementType.LEFT, null);
             chatMember.setLeftAt(new Timestamp(System.currentTimeMillis()));
 
             if (chatMember.isOwner()) {
                 transferOwnership(chat);
+                chatMember.setRole(MemberRole.MEMBER);
             }
 
             chatMemberRepository.save(chatMember);

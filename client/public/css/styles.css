@@ -198,7 +198,6 @@ h1, h2, h3, h4, h5, h6, p {
   min-width: 400px;
   height: 100vh;
   background-color: #fff;
-  border-right: 1px solid #ccc;
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
@@ -390,6 +389,22 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-menu .new-chat .chat-avatar {
   width: -moz-fit-content;
   width: fit-content;
+  position: relative;
+  flex: 0;
+}
+.chat-page .chat-menu .new-chat .chat-avatar .img-overlay {
+  background-color: transparent;
+  cursor: pointer;
+  opacity: 0;
+  transition: ease all 0.15s;
+}
+.chat-page .chat-menu .new-chat .chat-avatar .img-overlay svg path {
+  opacity: 0.75;
+  fill: #fff;
+}
+.chat-page .chat-menu .new-chat .chat-avatar:hover .img-overlay {
+  background-color: rgba(0, 0, 0, 0.548);
+  opacity: 1;
 }
 .chat-page .chat-menu .new-chat input.chat-name {
   max-width: 280px;
@@ -851,7 +866,9 @@ h1, h2, h3, h4, h5, h6, p {
   margin-right: 0;
   position: relative;
   background-color: #fff;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid;
+  border-left: 1px solid;
+  border-color: rgba(143, 143, 143, 0.2549019608);
 }
 .chat-page .chat-box .message-input .icons-container {
   width: -moz-fit-content;

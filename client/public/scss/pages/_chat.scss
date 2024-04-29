@@ -6,7 +6,7 @@
         min-width: 400px;
         height: 100vh;
         background-color: #fff;
-        border-right: 1px solid #ccc;
+        // border-right: 1px solid #ccc;
         flex: 0 0 auto;
         display: flex;
         flex-direction: column;
@@ -228,6 +228,27 @@
 
             .chat-avatar {
                 width: fit-content;
+                position: relative;
+                flex: 0;
+
+                .img-overlay {
+                    background-color: transparent;
+                    cursor: pointer;
+                    opacity: 0;
+                    transition: ease all .15s;
+
+                    svg path {
+                        opacity: 0.75;
+                        fill: #fff;
+                    }
+                }
+
+                &:hover {
+                    .img-overlay {
+                        background-color: rgba(0, 0, 0, 0.548);
+                        opacity: 1;
+                    }
+                }
             }
 
             input.chat-name {
@@ -771,7 +792,9 @@
             margin-right: 0;
             position: relative;
             background-color: #fff;
-            border-top: 1px solid #ccc;
+            border-top: 1px solid;
+            border-left: 1px solid;
+            border-color: #8f8f8f41;
 
             .icons-container {
                 width: fit-content;
