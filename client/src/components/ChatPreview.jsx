@@ -1,9 +1,11 @@
 import React from 'react';
 import { Row, Col, Image } from 'react-bootstrap';
 
+import { AESDecrypt } from '../crypto';
+
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function ChatPreview({ chat, navigate }) {
+function ChatPreview({ chat, chosenChat, navigate }) {
 
     const formatTimestampForChatContainer = (timestamp) => {
         const date = new Date(timestamp);
@@ -25,10 +27,10 @@ function ChatPreview({ chat, navigate }) {
     return (
         <>
             {chat.lastMessage.type !== 'entry' ? (
-                <Row className='chat-preview d-flex align-items-center flex-nowrap'
+                <Row className={`chat-preview d-flex align-items-center flex-nowrap${chosenChat && String(chosenChat.id) === AESDecrypt(chat.id) ? ' active' : ''}`}
                     key={chat.id}
                     role='button'
-                    onClick={() => { navigate(`/messenger?c=${chat.id}`); }}
+                    onClick={() => navigate(`/messenger?c=${chat.id}`)}
                 >
                     <Col className='chat-avatar d-flex justify-content-center'>
                         <Image

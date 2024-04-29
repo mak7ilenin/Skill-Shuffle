@@ -29,9 +29,10 @@ function ChatMenu({ chats, chat, setChat, setFilteredChats, filteredChats, handl
                 <>
                     <ChatTypeFilter setChats={setFilteredChats} chats={chats} />
                     <Stack direction='vertical'>
-                        {filteredChats.map(chat => (
+                        {filteredChats.map(chatElement => (
                             <ChatPreview
-                                chat={chat}
+                                chat={chatElement}
+                                chosenChat={chat}
                                 navigate={navigate}
                                 key={chat.id}
                             />

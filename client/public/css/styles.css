@@ -330,6 +330,9 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-menu .chat-preview:hover {
   background-color: #e5e5e5;
 }
+.chat-page .chat-menu .chat-preview.active {
+  background-color: #F0F0FF;
+}
 .chat-page .chat-menu .chat-preview .chat-avatar {
   width: -moz-fit-content;
   width: fit-content;
