@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 22, 2024 at 01:00 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Generation Time: Apr 29, 2024 at 01:04 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -90,8 +90,10 @@ CREATE TABLE IF NOT EXISTS `chat_members` (
   `chat_id` int(11) NOT NULL,
   `member_id` int(11) NOT NULL,
   `role` enum('CREATOR','ADMIN','MEMBER') NOT NULL,
-  `joined_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `notifications` bit(1) NOT NULL DEFAULT b'1',
+  `joined_at` timestamp(3) NOT NULL DEFAULT current_timestamp(3),
+  `left_at` timestamp(3) NULL DEFAULT NULL,
+  `is_kicked` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`id`),
   KEY `chat_id` (`chat_id`),
   KEY `member_id` (`member_id`)
@@ -101,15 +103,15 @@ CREATE TABLE IF NOT EXISTS `chat_members` (
 -- Dumping data for table `chat_members`
 --
 
-INSERT INTO `chat_members` (`id`, `chat_id`, `member_id`, `role`, `joined_at`, `notifications`) VALUES
-(1, 1, 1, 'CREATOR', '2024-04-22 09:45:49', b'1'),
-(2, 1, 4, 'MEMBER', '2024-04-22 09:45:49', b'1'),
-(3, 1, 2, 'MEMBER', '2024-04-22 09:45:49', b'1'),
-(6, 3, 1, 'CREATOR', '2024-04-22 09:57:26', b'1'),
-(7, 3, 4, 'MEMBER', '2024-04-22 09:57:26', b'1'),
-(8, 3, 2, 'MEMBER', '2024-04-22 09:57:26', b'1'),
-(9, 5, 1, 'MEMBER', '2024-04-22 10:20:04', b'1'),
-(10, 5, 4, 'MEMBER', '2024-04-22 10:20:04', b'1');
+INSERT INTO `chat_members` (`id`, `chat_id`, `member_id`, `role`, `notifications`, `joined_at`, `left_at`, `is_kicked`) VALUES
+(1, 1, 1, 'CREATOR', b'1', '2024-04-22 09:45:49.000', NULL, b'0'),
+(2, 1, 4, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0'),
+(3, 1, 2, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0'),
+(6, 3, 1, 'CREATOR', b'1', '2024-04-22 09:57:26.000', NULL, b'0'),
+(7, 3, 4, 'MEMBER', b'1', '2024-04-22 09:57:26.000', NULL, b'0'),
+(8, 3, 2, 'MEMBER', b'1', '2024-04-22 09:57:26.000', NULL, b'0'),
+(9, 5, 1, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0'),
+(10, 5, 4, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0');
 
 -- --------------------------------------------------------
 
