@@ -2,6 +2,7 @@ package com.dzalex.skillshuffle.controllers;
 
 import com.dzalex.skillshuffle.dtos.*;
 import com.dzalex.skillshuffle.entities.Chat;
+import com.dzalex.skillshuffle.entities.ChatMember;
 import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
@@ -105,5 +106,16 @@ public class ChatController {
     public ChatDTO returnToChat(@PathVariable("id") Integer id) {
         Chat chat = chatRepository.findChatById(id);
         return chatService.returnToChat(chat);
+    }
+
+    @PatchMapping("/chats/{id}/notifications")
+    public ResponseEntity<ChatMemberDTO> updateChatNotifications(@PathVariable("id") Integer id,
+                                                                 @RequestParam("s") boolean state) {
+        Chat chat = chatRepository.findChatById(id);
+        ChatMemberDTO updatedMember = chatService.updateChatNotifications(chat, state);
+        if (updatedMember == null) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok(updatedMember);
     }
 }

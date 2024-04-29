@@ -29,19 +29,19 @@ function Chat() {
   const currentSubscriptionRef = useRef(null);
   const messagesListRef = useRef(null);
   const chatRef = useRef(null);
+  const chatsRef = useRef([]);
   const offsetRef = useRef(0);
   const limit = 30;
 
 
   const updateChatLastMessage = useCallback((message) => {
-    message = message.content === undefined ? message[message.length - 1] : message;
-    setChats(prevChats => {
-      return prevChats.map(chat => {
-        if (AESDecrypt(chat.id) === String(message.chatId)) {
-          chat.lastMessage = message;
-        }
-        return chat;
-      });
+    console.log(message);
+    chatsRef.current = chatsRef.current.map(chat => {
+      if (AESDecrypt(chat.id) === String(message.chatId)) {
+        console.log('updating last message');
+        chat.lastMessage = message;
+      }
+      return chat;
     });
   }, []);
 
@@ -111,16 +111,27 @@ function Chat() {
     if (isStompClientInitialized && stompClient) {
       const chatEndpoint = `/user/chat`;
       const newSubscription = stompClient.subscribe(chatEndpoint, receivedMessage => {
-        const message = JSON.parse(receivedMessage.body);
+        // [0] is notification, [1] is message
+        const parsedMessage = JSON.parse(receivedMessage.body);
+        const notification = parsedMessage[0];
+        const message = parsedMessage[1];
+
+        // Update chat last message
         updateChatLastMessage(message);
-        setMessageNotification({ visible: true, notification: message });
+
+        // Check if received message is not from muted chat (each chat has field isMuted)
+        chats.forEach(chat => {
+          if (AESDecrypt(chat.id) === String(notification.chat.id) && !chat.muted) {
+            setMessageNotification({ visible: true, notification: notification });
+          }
+        });
       });
 
       return () => {
         newSubscription.unsubscribe();
       };
     }
-  }, [stompClient, updateChatLastMessage, isStompClientInitialized]);
+  }, [stompClient, isStompClientInitialized, updateChatLastMessage, chats]);
 
 
   useEffect(() => {
@@ -283,6 +294,7 @@ function Chat() {
         // Set the chats and filtered chats
         setChats(response.data);
         setFilteredChats(response.data);
+        chatsRef.current = response.data;
       })
       .catch(error => {
         console.error(error.response?.data.message || error.message);

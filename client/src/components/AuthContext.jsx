@@ -3,12 +3,14 @@ import axios from 'axios';
 import { Client } from '@stomp/stompjs';
 
 import { API_SERVER, WEBSOCKET_URL } from '../config';
+import MessageNotification from './MessageNotification';
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const [stompClient, setStompClient] = useState(null);
     const [isStompClientInitialized, setIsStompClientInitialized] = useState(false);
+    const [messageNotification, setMessageNotification] = useState({ visible: false, notification: {} });
     const [authUser, setAuthUser] = useState(() => {
         return JSON.parse(sessionStorage.getItem('auth-user'));
     });
@@ -38,7 +40,7 @@ const AuthProvider = ({ children }) => {
 
         stompClient.subscribe('/user/notification', receivedNotification => {
             // Process the received noitification
-            // const notification = JSON.parse(receivedNotification.body);
+            const notification = JSON.parse(receivedNotification.body);
         });
     }, [isStompClientInitialized, stompClient]);
 
@@ -105,6 +107,10 @@ const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ authUser, setAuthUser, stompClient, isStompClientInitialized }}>
+            <MessageNotification
+                setMessageNotification={setMessageNotification}
+                messageNotification={messageNotification}
+            />
             {children}
         </AuthContext.Provider>
     );

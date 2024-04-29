@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -61,7 +60,7 @@ public class UserService {
         List<ChatMemberDTO> users = new ArrayList<>();
         for (ChatMember chatMember : chatMembers) {
             if (chatMember.getLeftAt() == null) {
-                users.add(getChatMemberDTO(chatMember.getMember(), chatMember.getRole()));
+                users.add(getChatMemberDTO(chatMember));
             }
         }
         return users;
@@ -130,14 +129,15 @@ public class UserService {
                 .build();
     }
 
-    public ChatMemberDTO getChatMemberDTO(User user, MemberRole role) {
+    public ChatMemberDTO getChatMemberDTO(ChatMember chatMember) {
         return ChatMemberDTO.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .nickname(user.getNickname())
-                .avatarUrl(user.getAvatarUrl())
-                .lastSeen(user.getLastSeen())
-                .role(role)
+                .firstName(chatMember.getMember().getFirstName())
+                .lastName(chatMember.getMember().getLastName())
+                .nickname(chatMember.getMember().getNickname())
+                .avatarUrl(chatMember.getMember().getAvatarUrl())
+                .role(chatMember.getRole())
+                .lastSeen(chatMember.getMember().getLastSeen())
+                .hasNotifications(chatMember.hasNotifications())
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.dzalex.skillshuffle.entities;
 
 import com.dzalex.skillshuffle.enums.MessageStatus;
 import com.dzalex.skillshuffle.enums.MessageType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,14 +41,17 @@ public class ChatMessage {
     @Column(name = "type", nullable = false)
     private MessageType type;
 
+    @JsonIgnore
     public boolean isMessage() {
         return this.type == MessageType.MESSAGE;
     }
 
+    @JsonIgnore
     public boolean isAnnouncement() {
         return this.type == MessageType.ANNOUNCEMENT;
     }
 
+    @JsonIgnore
     public boolean isEntry() {
         return this.type == MessageType.ENTRY;
     }

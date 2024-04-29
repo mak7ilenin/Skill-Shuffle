@@ -62,6 +62,7 @@ public class ChatService {
                         .name(chatInfo.getName())
                         .avatarUrl(chatInfo.getAvatarUrl())
                         .lastMessage(messageService.findChatLastMessage(chat))
+                        .isMuted(isChatMuted(chat.getId(), authedUser.getId()))
                         .build());
             }
         }
@@ -140,7 +141,7 @@ public class ChatService {
                 User chatPartner = chatMember.getMember();
                 chatDTO.setAvatarUrl(chatPartner.getAvatarUrl());
                 chatDTO.setName(chatPartner.getFirstName() + " " + chatPartner.getLastName());
-                chatDTO.setMembers(List.of(userService.getChatMemberDTO(chatPartner, MemberRole.MEMBER)));
+                chatDTO.setMembers(List.of(userService.getChatMemberDTO(chatMember)));
             });
     }
 
@@ -230,6 +231,11 @@ public class ChatService {
             ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), user.getId());
             return chatMember != null;
         }
+    }
+
+    private boolean isChatMuted(Integer chatId, Integer userId) {
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userId);
+        return chatMember != null && !chatMember.hasNotifications();
     }
 
     @Transactional
@@ -360,5 +366,15 @@ public class ChatService {
 
     private boolean canAddExistingMemberBackToChat(ChatMember authUserMember, ChatMember chatMember) {
         return !chatMember.isKicked() || (authUserMember.isOwner() && authUserMember.isAdmin());
+    }
+
+    public ChatMemberDTO updateChatNotifications(Chat chat, boolean state) {
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
+        if (chatMember != null) {
+            chatMember.setNotifications(state);
+            ChatMember newChatMember = chatMemberRepository.save(chatMember);
+            return userService.getChatMemberDTO(newChatMember);
+        }
+        return null;
     }
 }

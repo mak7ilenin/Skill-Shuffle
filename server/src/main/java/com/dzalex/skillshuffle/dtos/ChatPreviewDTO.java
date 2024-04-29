@@ -14,4 +14,5 @@ public class ChatPreviewDTO {
     private ChatType type;
     private String avatarUrl;
     private MessageDTO lastMessage;
+    private boolean isMuted;
 }

@@ -74,7 +74,13 @@ public class MessageService {
             message = saveMessage(message, chatId, sender);
         }
 
+        returnMessageToUser(message, sender);
+    }
+
+    private void returnMessageToUser(ChatMessage message, User sender) {
+        Integer chatId = message.getChat().getId();
         List<String> usernames = userService.getUsernamesInChat(chatId);
+
         for (String username : usernames) {
             if (sessionService.isUserSubscribed(username, "/user/chat/" + chatId)) {
                 // Send the message to all users who subscribed to chat
@@ -85,13 +91,19 @@ public class MessageService {
 
                 // Send new message notification to the user, for the chat list
                 if (message.getType().equals(MessageType.MESSAGE) && sessionService.isUserSubscribed(username, "/user/chat")) {
-                    messagingTemplate.convertAndSendToUser(username, "/chat", notification);
-                    return;
+                    Object[] notificationAndMessage = {notification, convertToDTO(message)};
+                    messagingTemplate.convertAndSendToUser(username, "/chat", notificationAndMessage);
+                    continue;
                 }
+
                 // Send notification to user who is currently not subscribed to any chat endpoint
-                messagingTemplate.convertAndSendToUser(username, "/notification", notification);
+                ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userRepository.findByUsername(username).getId());
+                if (chatMember.hasNotifications()) {
+                    messagingTemplate.convertAndSendToUser(username, "/notification", notification);
+                }
             }
         }
+
     }
 
     // Create new message notification based on chat type

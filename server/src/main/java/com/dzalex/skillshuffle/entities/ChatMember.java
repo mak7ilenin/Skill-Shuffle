@@ -1,6 +1,7 @@
 package com.dzalex.skillshuffle.entities;
 
 import com.dzalex.skillshuffle.enums.MemberRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -46,26 +47,32 @@ public class ChatMember {
     @Column(name = "is_kicked")
     private boolean isKicked = false;
 
+    @JsonIgnore
     public boolean isOwner() {
         return role == MemberRole.CREATOR;
     }
 
+    @JsonIgnore
     public boolean isAdmin() {
         return role == MemberRole.ADMIN;
     }
 
+    @JsonIgnore
     public boolean isMember() {
         return role == MemberRole.MEMBER;
     }
 
+    @JsonIgnore
     public boolean isLeft() {
         return leftAt != null;
     }
 
+    @JsonIgnore
     public boolean isKicked() {
         return isKicked;
     }
 
+    @JsonIgnore
     public boolean hasNotifications() {
         return notifications;
     }

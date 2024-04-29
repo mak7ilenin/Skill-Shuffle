@@ -15,6 +15,7 @@ public class ChatMemberDTO {
     private String lastName;
     private String nickname;
     private String avatarUrl;
-    private Timestamp lastSeen;
     private MemberRole role;
+    private Timestamp lastSeen;
+    private boolean hasNotifications;
 }

@@ -15,6 +15,7 @@ import { ReactComponent as Trash } from '../assets/icons/trash.svg';
 function ChatSmallMenu({ chat, setChat }) {
     const { authUser } = useAuth();
     const navigate = useNavigate();
+    const [notifications, setNotifications] = useState(chat.members.find(member => member.nickname === authUser.nickname).hasNotifications);
 
     // Return the user to the chat
     const handleReturnToChat = () => {
@@ -38,8 +39,24 @@ function ChatSmallMenu({ chat, setChat }) {
             });
     };
 
-    const handleDisableNotifications = () => {
-        // TODO: Implement the functionality to disable notifications
+    const toggleNotifications = (state) => {
+        axios.patch(`${API_SERVER}/chats/${chat.id}/notifications?s=${state}`, {}, { withCredentials: true })
+            .then((response) => {
+                const updatedMember = response.data;
+                setNotifications(updatedMember.hasNotifications);
+                setChat({
+                    ...chat,
+                    members: chat.members.map(member => {
+                        if (member.nickname === updatedMember.nickname) {
+                            return updatedMember;
+                        }
+                        return member;
+                    })
+                });
+            })
+            .catch(error => {
+                console.error(error);
+            });
     };
 
     const handleClearHistory = () => {
@@ -48,12 +65,21 @@ function ChatSmallMenu({ chat, setChat }) {
 
     return (
         <Container className='small-menu d-flex flex-column py-3 px-4'>
-            <Row className='menu-option' onClick={handleDisableNotifications}>
-                <Col className='option-icon'>
-                    <NoSound className='nosound-icon' />
-                </Col>
-                <Col className='option-text'>Disable notifications</Col>
-            </Row>
+            {notifications ? (
+                <Row className='menu-option' onClick={() => toggleNotifications(false)}>
+                    <Col className='option-icon'>
+                        <NoSound className='nosound-icon' />
+                    </Col>
+                    <Col className='option-text'>Disable notifications</Col>
+                </Row>
+            ) : (
+                <Row className='menu-option' onClick={() => toggleNotifications(true)}>
+                    <Col className='option-icon'>
+                        <Sound className='sound-icon' />
+                    </Col>
+                    <Col className='option-text'>Enable notifications</Col>
+                </Row>
+            )}
             <Row className='menu-option' onClick={handleClearHistory}>
                 <Col className='option-icon'>
                     <Trash className='trash-icon' />

@@ -1,6 +1,7 @@
 package com.dzalex.skillshuffle.entities;
 
 import com.dzalex.skillshuffle.enums.ChatType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,14 +26,17 @@ public class Chat {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
+    @JsonIgnore
     public boolean isPrivate() {
         return type == ChatType.PRIVATE;
     }
 
+    @JsonIgnore
     public boolean isGroup() {
         return type == ChatType.GROUP;
     }
 
+    @JsonIgnore
     public boolean isCommunity() {
         return type == ChatType.COMMUNITY;
     }
