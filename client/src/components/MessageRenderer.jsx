@@ -67,7 +67,7 @@ function MessageRenderer({ message, index, authUser, messageList }) {
             ) : (
                 <>
                     {message.sender.nickname !== authUser.nickname ? (
-                        <div className='message-content-container d-flex flex-wrap'>
+                        <div className='message-content-container d-flex'>
                             <div className='sender-avatar d-flex mb-2'>
                                 <Image
                                     src={message.sender.avatarUrl !== null ? message.sender.avatarUrl : imagePlaceholder}

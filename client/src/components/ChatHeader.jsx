@@ -31,22 +31,21 @@ function ChatHeader({ chat, setChat, handleMenuChange }) {
         const currentDate = new Date();
         const difference = currentDate - date;
 
-        // dd/mmm/yyyy if the message was sent more than a year ago
-        // dd/mmm if the message was sent less than a year ago but more than a day ago
-        // hh:mm if the message was sent less than a day ago and more than an hour ago
-        // mm ago if the message was sent less than an hour ago
-        // If the message was sent less than a minute ago then return 'few seconds ago'
-
         if (difference > 31536000000) {
+            // dd/mmm/yyyy if the message was sent more than a year ago
             return `last seen ${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`;
         } else if (difference > 86400000) {
+            // dd/mmm if the message was sent less than a year ago but more than a day ago
             return `last seen ${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
         } else if (difference > 3600000) {
+            // hh:mm if the message was sent less than a day ago and more than an hour ago
             return `last seen at ${date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' })}`;
-        } else if (difference > 60000) {
+        } else if (difference > 300000) {
+            // mm ago if message was sent more than 5 minutes
             return `last seen ${Math.floor(difference / 60000)} minutes ago`;
         } else {
-            return 'few seconds ago'
+            // If the message was sent less than 5 minutes ago then return 'Online'
+            return 'Online';
         }
     }
 
@@ -72,8 +71,17 @@ function ChatHeader({ chat, setChat, handleMenuChange }) {
                                 <span className='text-secondary'>Community</span>
                             ) : (
                                 <p className='user-activity'>
-                                    <NetworkIcon className='network-icon' />
-                                    <span className='text-secondary'>{formatLastSeenTimestamp(chat.members[0].lastSeen)}</span>
+                                    {formatLastSeenTimestamp(chat.members[0].lastSeen) === 'Online' ? (
+                                        <>
+                                            <div className="online-icon rounded-circle"></div>
+                                            <span>Online</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <NetworkIcon className='network-icon' />
+                                            <span className='text-secondary'>{formatLastSeenTimestamp(chat.members[0].lastSeen)}</span>
+                                        </>
+                                    )}
                                 </p>
                             )}
                         </Col>
@@ -121,7 +129,7 @@ function ChatHeader({ chat, setChat, handleMenuChange }) {
                 )}
             </Col>
 
-        </Row>
+        </Row >
     )
 }
 

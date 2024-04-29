@@ -39,7 +39,10 @@ public class RefreshTokenService {
         return refreshTokenRepository.findByToken(token);
     }
 
-    public RefreshToken verifyExpiration(RefreshToken token, HttpServletResponse response){
+    public RefreshToken verifyExpiration(RefreshToken token, HttpServletResponse response) {
+        if (token == null) {
+            throw new RuntimeException("Invalid refresh token. Please make a new login..!");
+        }
         if (token.getExpiresAt().compareTo(Timestamp.from(Instant.now())) < 0) {
             refreshTokenRepository.delete(token);
             helper.deleteRefreshTokenCookie(response);

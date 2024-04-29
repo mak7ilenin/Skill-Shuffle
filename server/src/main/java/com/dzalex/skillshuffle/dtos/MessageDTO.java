@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 @Builder
 public class MessageDTO {
     private Integer id;
+    private Integer chatId;
     private PublicUserDTO sender;
     private String content;
     private Timestamp timestamp;

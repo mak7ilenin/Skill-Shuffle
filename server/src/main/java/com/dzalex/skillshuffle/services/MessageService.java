@@ -2,6 +2,7 @@ package com.dzalex.skillshuffle.services;
 
 import com.dzalex.skillshuffle.dtos.ChatNotificationDTO;
 import com.dzalex.skillshuffle.dtos.MessageDTO;
+import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.entities.Chat;
 import com.dzalex.skillshuffle.entities.ChatMember;
 import com.dzalex.skillshuffle.enums.*;
@@ -17,11 +18,11 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class MessageService {
+
     @Autowired
     private MessageRepository messageRepository;
 
@@ -77,16 +78,24 @@ public class MessageService {
         for (String username : usernames) {
             if (sessionService.isUserSubscribed(username, "/user/chat/" + chatId)) {
                 // Send the message to all users who subscribed to chat
-                messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, message);
+                messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, convertToDTO(message));
             } else {
-                // Send notifications to users who are not currently subscribed to the chat
-                sendNotification(chatId, message, username, sender);
+                // Generate notification for the user
+                ChatNotificationDTO notification = generateMessageNotification(chatId, message, userService.getPublicUserDTO(sender));
+
+                // Send new message notification to the user, for the chat list
+                if (message.getType().equals(MessageType.MESSAGE) && sessionService.isUserSubscribed(username, "/user/chat")) {
+                    messagingTemplate.convertAndSendToUser(username, "/chat", notification);
+                    return;
+                }
+                // Send notification to user who is currently not subscribed to any chat endpoint
+                messagingTemplate.convertAndSendToUser(username, "/notification", notification);
             }
         }
     }
 
-    public void sendNotification(Integer chatId, ChatMessage message, String receiverUsername, User sender) {
-        // Create notification message based on chat type
+    // Create new message notification based on chat type
+    public ChatNotificationDTO generateMessageNotification(Integer chatId, ChatMessage message, PublicUserDTO sender) {
         String notificationMessage;
         Chat chat = chatRepository.findChatById(chatId);
 
@@ -96,17 +105,14 @@ public class MessageService {
             notificationMessage = "New message in " + chat.getName();
         }
 
-        // Create notification object
-        ChatNotificationDTO notification = new ChatNotificationDTO(
+        // Return notification object
+        return new ChatNotificationDTO(
                 chat,
-                userService.getPublicUserDTO(sender),
+                sender,
                 notificationMessage,
                 message.getContent(),
                 NotificationType.CHAT_MESSAGE
         );
-
-        // Send notification to receiver
-        messagingTemplate.convertAndSendToUser(receiverUsername, "/notification", notification);
     }
 
     public MessageDTO findChatLastMessage(Chat chat) {
@@ -137,6 +143,7 @@ public class MessageService {
     public MessageDTO convertToDTO(ChatMessage message) {
         return new MessageDTO(
                 message.getId(),
+                message.getChat().getId(),
                 userService.getPublicUserDTO(message.getSender()),
                 message.getContent(),
                 message.getTimestamp(),
@@ -184,11 +191,5 @@ public class MessageService {
             case RETURNED -> senderName + " returned to the chat";
             case ADDED -> senderName + " added " + userName;
         };
-    }
-
-    public void markMessageAsSeen(ChatMessage message) {
-        ChatMessage messageToUpdate = messageRepository.findMessageById(message.getId());
-        messageToUpdate.setStatus(MessageStatus.SEEN);
-        messageRepository.save(messageToUpdate);
     }
 }

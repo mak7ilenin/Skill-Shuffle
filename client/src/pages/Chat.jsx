@@ -9,6 +9,7 @@ import { useAuth } from '../components/AuthContext';
 import MessageRenderer from '../components/MessageRenderer';
 import ChatHeader from '../components/ChatHeader';
 import ChatMenu from '../components/ChatMenu';
+import MessageNotification from '../components/MessageNotification';
 
 import EmojiGifPicker from '../components/EmojiGifPicker';
 import ChatBackground from '../assets/images/chat-background.jpg'
@@ -23,6 +24,7 @@ function Chat() {
   const [filteredChats, setFilteredChats] = useState([]);
   const [chosenChat, setChosenChat] = useState({});
   const [messageContent, setMessageContent] = useState('');
+  const [messageNotification, setMessageNotification] = useState({ visible: false, notification: {} });
   const [activeMenu, setActiveMenu] = useState('DEFAULT'); // 'CREATE_CHAT', 'GROUP_MENU', or 'DEFAULT'
   const currentSubscriptionRef = useRef(null);
   const messagesListRef = useRef(null);
@@ -35,11 +37,8 @@ function Chat() {
     message = message.content === undefined ? message[message.length - 1] : message;
     setChats(prevChats => {
       return prevChats.map(chat => {
-        if (AESDecrypt(chat.id) === message.chat.id.toString()) {
-          return {
-            ...chat,
-            lastMessage: { ...chat.lastMessage, content: message.content }
-          };
+        if (AESDecrypt(chat.id) === String(message.chatId)) {
+          chat.lastMessage = message;
         }
         return chat;
       });
@@ -107,11 +106,33 @@ function Chat() {
   }, [stompClient, updateChatLastMessage, isStompClientInitialized, chosenChat.members]);
 
 
+  const subscribeToAllChats = useCallback(() => {
+    // Ensure stompClient is initialized before attempting to subscribe
+    if (isStompClientInitialized && stompClient) {
+      const chatEndpoint = `/user/chat`;
+      const newSubscription = stompClient.subscribe(chatEndpoint, receivedMessage => {
+        const message = JSON.parse(receivedMessage.body);
+        updateChatLastMessage(message);
+        setMessageNotification({ visible: true, notification: message });
+      });
+
+      return () => {
+        newSubscription.unsubscribe();
+      };
+    }
+  }, [stompClient, updateChatLastMessage, isStompClientInitialized]);
+
+
   useEffect(() => {
     if (chosenChat.id !== undefined) {
       subscribeToChat(chosenChat.id);
     }
   }, [chosenChat.id, subscribeToChat]);
+
+
+  useEffect(() => {
+    return subscribeToAllChats();
+  }, [subscribeToAllChats]);
 
 
   const sendMessage = (gif) => {
@@ -271,6 +292,12 @@ function Chat() {
 
   return (
     <div className="chat-page w-100 d-flex">
+
+      <MessageNotification
+        setMessageNotification={setMessageNotification}
+        messageNotification={messageNotification}
+        chatId={chosenChat.id}
+      />
 
       <ChatMenu
         chats={chats}

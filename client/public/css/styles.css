@@ -128,71 +128,31 @@ h1, h2, h3, h4, h5, h6, p {
   padding-left: 16px;
 }
 
-.alert-notification {
+.toast-notification {
   width: 255px !important;
-  box-shadow: 0 0 5px #ccc;
-  position: fixed !important;
+  position: fixed;
   bottom: 20px;
   right: 20px;
-  padding: 10px !important;
   z-index: 1000;
   cursor: pointer;
-  margin-bottom: 0 !important;
-  transition: opacity 0.3s ease-in-out;
-  opacity: 1;
 }
-.alert-notification hr {
-  width: 100%;
-  margin: 3px 0;
-  margin-top: 7px;
-  border: 0;
-  border-top: 1px solid #b8b8b8;
-}
-.alert-notification:hover {
-  background-color: #f7f7f7;
-}
-.alert-notification .btn-close {
-  padding: 5px !important;
-  top: 13.5px !important;
-  right: 10px !important;
-  width: 5px;
-  height: 5px;
-}
-.alert-notification .alert-heading {
-  height: -moz-fit-content;
-  height: fit-content;
-  font-weight: 400;
-  font-size: 14px;
-  position: relative;
-  padding-right: 20px;
-  color: #434343;
-}
-.alert-notification .alert-message > div {
-  max-width: calc(100% - 40px);
-}
-.alert-notification .alert-message h5 {
-  width: 100%;
-  padding-bottom: 2px;
-  font-size: 14px;
+.toast-notification .toast-header h5 {
+  font-size: 16px;
   font-weight: 500;
-  color: #4f4f4f;
+  color: #373737;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.alert-notification .alert-message span {
-  font-size: 13px;
+.toast-notification .toast-body {
+  font-size: 14px;
   font-weight: 400;
-  color: #848484;
-  padding-right: 8px;
+  color: #8F8F8F;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.chat-page {
-  background-color: #EFEBFF;
-}
 .chat-page .chat-menu {
   width: 27.61%;
   min-width: 400px;
@@ -331,7 +291,7 @@ h1, h2, h3, h4, h5, h6, p {
   background-color: #e5e5e5;
 }
 .chat-page .chat-menu .chat-preview.active {
-  background-color: #F0F0FF;
+  background-color: #EFEBFF;
 }
 .chat-page .chat-menu .chat-preview .chat-avatar {
   width: -moz-fit-content;
@@ -365,11 +325,15 @@ h1, h2, h3, h4, h5, h6, p {
 .chat-page .chat-menu .chat-preview .chat-info {
   flex: auto;
 }
-.chat-page .chat-menu .chat-preview .chat-info .chat-name {
+.chat-page .chat-menu .chat-preview .chat-info .chat-name .name {
   font-weight: 600;
   font-size: 18px;
+  color: #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.chat-page .chat-menu .chat-preview .chat-info .chat-name span {
+.chat-page .chat-menu .chat-preview .chat-info .chat-name .timestamp {
   color: #8F8F8F;
   font-size: 16px;
   font-weight: 500;
@@ -545,17 +509,12 @@ h1, h2, h3, h4, h5, h6, p {
   font-size: 14px;
   color: #8F8F8F;
 }
-.chat-page .chat-menu .group-menu .member-list .member-activity .online-icon {
-  width: 13px;
-  height: 13px;
-  background-color: #7FFF31;
-  margin-top: 2px;
-}
 .chat-page .chat-menu .group-menu .member-list .member-activity span {
   font-size: 14px;
   font-weight: 500;
   color: #8F8F8F;
   margin-left: 5px;
+  line-height: 20px;
 }
 .chat-page .chat-menu .group-menu .leave-chat-footer {
   background-color: #E3E3E3;
@@ -660,6 +619,7 @@ h1, h2, h3, h4, h5, h6, p {
   width: 72.39%;
   height: 100vh;
   flex: 1;
+  background-color: #EFEBFF;
 }
 .chat-page .chat-box.non-selected {
   display: flex;
@@ -751,7 +711,6 @@ h1, h2, h3, h4, h5, h6, p {
   position: relative;
   overflow-y: auto;
   flex: 1;
-  margin-right: 0;
 }
 .chat-page .chat-box .messages-list .date-separator {
   width: -moz-fit-content;
@@ -781,8 +740,6 @@ h1, h2, h3, h4, h5, h6, p {
   text-decoration: underline;
 }
 .chat-page .chat-box .messages-list .message {
-  flex-wrap: wrap;
-  position: relative;
   font-family: "Manrope", sans-serif;
   color: #373737;
   font-weight: 500;
@@ -830,7 +787,7 @@ h1, h2, h3, h4, h5, h6, p {
   font-size: 16px;
 }
 .chat-page .chat-box .messages-list .message .message-content-container {
-  max-width: 70%;
+  max-width: 85%;
 }
 .chat-page .chat-box .messages-list .message .message-content {
   padding: 10px 14px;
@@ -841,6 +798,7 @@ h1, h2, h3, h4, h5, h6, p {
   word-break: break-all;
 }
 .chat-page .chat-box .messages-list .message .message-content img {
+  width: 100%;
   height: auto;
   border-radius: 5px;
 }
@@ -967,6 +925,12 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .emoji-picker.closed {
   display: none;
+}
+
+.online-icon {
+  width: 14px;
+  height: 14px;
+  background-color: #7FFF31;
 }
 
 .gif-picker {

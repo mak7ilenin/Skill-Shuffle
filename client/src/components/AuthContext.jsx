@@ -3,17 +3,16 @@ import axios from 'axios';
 import { Client } from '@stomp/stompjs';
 
 import { API_SERVER, WEBSOCKET_URL } from '../config';
-import MessageNotification from './MessageNotification';
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const [stompClient, setStompClient] = useState(null);
     const [isStompClientInitialized, setIsStompClientInitialized] = useState(false);
-    const [messageNotification, setMessageNotification] = useState({ visible: false, notification: {} });
     const [authUser, setAuthUser] = useState(() => {
         return JSON.parse(sessionStorage.getItem('auth-user'));
     });
+
 
     // Send heartbeat to the server
     const sendHeartbeat = useCallback(() => {
@@ -28,9 +27,10 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         const interval = setInterval(() => {
             sendHeartbeat();
-        }, 240000);
+        }, 300000);
         return () => clearInterval(interval);
     }, [sendHeartbeat]);
+
 
     // Subscribe to notifications
     const subscribeToNotifications = useCallback(() => {
@@ -38,10 +38,10 @@ const AuthProvider = ({ children }) => {
 
         stompClient.subscribe('/user/notification', receivedNotification => {
             // Process the received noitification
-            const notification = JSON.parse(receivedNotification.body);
-            setMessageNotification({ visible: true, notification: notification });
+            // const notification = JSON.parse(receivedNotification.body);
         });
-    }, [isStompClientInitialized, stompClient, setMessageNotification]);
+    }, [isStompClientInitialized, stompClient]);
+
 
     // Initialize the WebSocket connection
     const initializeStompClient = useCallback(() => {
@@ -77,7 +77,7 @@ const AuthProvider = ({ children }) => {
                 client.activate();
                 setStompClient(client);
             })
-            .catch(error => {
+            .catch(() => {
                 // console.error('Error while initializing STOMP client:', error);
                 setAuthUser(null);
             });
@@ -86,6 +86,7 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         initializeStompClient();
     }, [initializeStompClient]);
+
 
     useEffect(() => {
         // Store authUser in sessionStorage whenever it changes
@@ -101,14 +102,9 @@ const AuthProvider = ({ children }) => {
         }
     }, [authUser, stompClient]);
 
+
     return (
         <AuthContext.Provider value={{ authUser, setAuthUser, stompClient, isStompClientInitialized }}>
-            {messageNotification.visible && (
-                <MessageNotification
-                    messageNotification={messageNotification}
-                    onDismiss={() => setMessageNotification({ visible: false, notification: {} })}
-                />
-            )}
             {children}
         </AuthContext.Provider>
     );

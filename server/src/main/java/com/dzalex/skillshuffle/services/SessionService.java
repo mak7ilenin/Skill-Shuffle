@@ -27,6 +27,10 @@ public class SessionService {
         }
     }
 
+    public ConcurrentHashMap<String, Map<String, String>> getUserSessions() {
+        return userSessions;
+    }
+
     public void removeAllUserSessions(String username) {
         userSessions.remove(username);
     }

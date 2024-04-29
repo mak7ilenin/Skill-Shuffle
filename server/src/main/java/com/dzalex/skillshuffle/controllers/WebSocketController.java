@@ -7,6 +7,7 @@ import com.dzalex.skillshuffle.repositories.UserRepository;
 import com.dzalex.skillshuffle.services.ChatService;
 import com.dzalex.skillshuffle.services.MessageService;
 import com.dzalex.skillshuffle.services.SessionService;
+import com.dzalex.skillshuffle.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -34,6 +35,8 @@ public class WebSocketController {
 
     @Autowired
     private SessionService sessionService;
+    @Autowired
+    private UserService userService;
 
     @MessageMapping("/chat")
     public void sendMessage(@Payload ChatMessage message) {
@@ -54,14 +57,18 @@ public class WebSocketController {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         // Close status 1000 means normal disconnect, 1001 means browser/tab closed
         if (event.getCloseStatus().getCode() == 1000 || event.getCloseStatus().getCode() == 1001) {
-            // Check the chats(private/community) user created without any messages and delete them
             String username = Objects.requireNonNull(event.getUser()).getName();
             if (username != null) {
                 User user = userRepository.findByUsername(username);
+
+                // Check the chats(private/community) user created without any messages and delete them
                 chatService.deleteEmptyChatsByAuthedUser(user);
 
-                // Remove the user's websocket sessions
+                // Clear the user's websocket sessions
                 sessionService.removeAllUserSessions(username);
+
+                // Update the user's last activity timestamp
+                user.setLastSeen(new Timestamp(System.currentTimeMillis()));
             }
         }
     }

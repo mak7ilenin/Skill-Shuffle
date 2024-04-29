@@ -1,79 +1,42 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Alert, Image } from 'react-bootstrap';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Toast, Image } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
-import { AESEncrypt, AESDecrypt } from '../crypto';
+import { AESEncrypt } from '../crypto';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function MessageNotification({ messageNotification, onDismiss }) {
+function MessageNotification({ setMessageNotification, messageNotification, chatId }) {
     const navigate = useNavigate();
-    const location = useLocation();
-
     const [visible, setVisible] = useState(false);
     const [notification, setNotification] = useState(null);
-    const debounceTimeout = useRef(null);
-
-    const getCurrentChat = useCallback(() => {
-        const encryptedChatId = new URLSearchParams(location.search).get('c');
-        if (encryptedChatId) {
-            try {
-                const decryptedChatId = AESDecrypt(encryptedChatId);
-                if (decryptedChatId !== '' && !isNaN(decryptedChatId)) {
-                    return parseInt(decryptedChatId);
-                }
-            } catch (error) {
-                console.error("Error decrypting chat: ", error);
-            }
-        }
-        return null;
-    }, [location.search]);
-
-    const handleNotification = useCallback(() => {
-        const chatId = getCurrentChat();
-        if (notification && notification.type === 'CHAT_MESSAGE') {
-            if (chatId && notification.chat.id !== chatId) {
-                // updateChatLastMessage(notification);
-                clearTimeout(debounceTimeout.current);
-                debounceTimeout.current = setTimeout(() => {
-                    setVisible(true);
-                    debounceTimeout.current = null;
-                }, 1000);
-            }
-        }
-    }, [getCurrentChat, notification]);
 
     useEffect(() => {
         if (messageNotification && messageNotification.visible) {
             setNotification(messageNotification.notification);
-            handleNotification();
-            const timeoutId = setTimeout(() => {
-                setVisible(false);
-                onDismiss();
-            }, 5000);
-
-            return () => {
-                clearTimeout(timeoutId);
-            };
+            if (messageNotification.notification.type === 'CHAT_MESSAGE' && messageNotification.notification.chat.id !== chatId) {
+                setVisible(true);
+                setMessageNotification({ visible: false, notification: null });
+            }
         }
-    }, [onDismiss, handleNotification, messageNotification]);
+    }, [messageNotification, setMessageNotification, chatId]);
 
     return (
         visible && (
-            <Alert
-                variant="light"
-                show={visible}
-                onClose={() => setVisible(false)}
+            <Toast
+                className='toast-notification d-flex flex-column align-items-center p-2'
+                onClose={(e) => {
+                    if (e) e.stopPropagation();
+                    setVisible(false)
+                }}
                 onClick={() => {
                     setVisible(false);
                     navigate(`/messenger?c=${AESEncrypt(notification.chat.id.toString())}`);
                 }}
-                dismissible
-                className='alert-notification d-flex flex-column align-items-center'
+                delay={5000}
+                autohide
             >
-                <Alert.Heading className='w-100 mb-1'>{notification.message}</Alert.Heading>
-                <hr />
-                <div className="alert-message w-100 mt-2 d-flex flex-column flex-md-row align-items-center">
+                <Toast.Header className='w-100'>
                     <Image
                         src={notification.chat.avatarUrl ? notification.chat.avatarUrl : imagePlaceholder}
                         width={35}
@@ -82,13 +45,12 @@ function MessageNotification({ messageNotification, onDismiss }) {
                         style={{ objectFit: 'cover', marginRight: '10px' }}
                         roundedCircle
                     />
-                    <div className='flex-grow-1 d-flex align-items-center flex-wrap flex-shrink-1'>
-                        <h5>{notification.sender.firstName}</h5>
-                        <span>{notification.content}</span>
-                    </div>
-                    <div className="flex-grow-1"></div>
-                </div>
-            </Alert>
+                    <h5>{notification.message}</h5>
+                </Toast.Header>
+                <Toast.Body className='w-100 pe-2 text-lg-start'>
+                    {notification.content}
+                </Toast.Body>
+            </Toast>
         )
     );
 }

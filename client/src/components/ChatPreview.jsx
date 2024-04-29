@@ -44,8 +44,8 @@ function ChatPreview({ chat, chosenChat, navigate }) {
                     </Col>
                     <Col className='chat-info w-75 ps-3'>
                         <p className='chat-name d-flex justify-content-between'>
-                            {chat.name}
-                            <span>{formatTimestampForChatContainer(chat.lastMessage.timestamp)}</span>
+                            <span className='name'>{chat.name}</span>
+                            <span className='timestamp'>{formatTimestampForChatContainer(chat.lastMessage.timestamp)}</span>
                         </p>
                         {chat.lastMessage.type === 'announcement' ? (
                             // Remove the HTML tags from the announcement message

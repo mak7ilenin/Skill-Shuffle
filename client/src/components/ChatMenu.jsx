@@ -34,7 +34,7 @@ function ChatMenu({ chats, chat, setChat, setFilteredChats, filteredChats, handl
                                 chat={chatElement}
                                 chosenChat={chat}
                                 navigate={navigate}
-                                key={chat.id}
+                                key={chatElement.id}
                             />
                         ))}
                     </Stack>

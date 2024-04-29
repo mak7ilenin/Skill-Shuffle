@@ -31,6 +31,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public void doFilterInternal(@NonNull HttpServletRequest request,
                                  @NonNull HttpServletResponse response,
@@ -53,6 +56,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String refreshTokenString = jwtHelper.getRefreshTokenFromCookies(request);
             if (refreshTokenString != null) {
                 RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenString);
+                // If refresh token is not found, remove refresh token cookie
+                if (refreshToken == null) {
+                    jwtHelper.deleteRefreshTokenCookie(response);
+                }
+                // If refresh token is found, verify expiration and generate new access token
                 if (refreshTokenService.verifyExpiration(refreshToken, response) != null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(refreshToken.getUser().getUsername());
                     accessToken = jwtHelper.createAccessTokenCookie(response, userDetails);

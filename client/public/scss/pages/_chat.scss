@@ -1,6 +1,4 @@
 .chat-page {
-    background-color: #EFEBFF;
-
     .chat-menu {
         width: 27.61%;
         min-width: 400px;
@@ -161,7 +159,7 @@
             }
 
             &.active {
-                background-color: $light-purple;
+                background-color: #EFEBFF;
             }
 
             .chat-avatar {
@@ -200,10 +198,16 @@
                 flex: auto;
 
                 .chat-name {
-                    font-weight: 600;
-                    font-size: 18px;
+                    .name {
+                        font-weight: 600;
+                        font-size: 18px;
+                        color: #000;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
 
-                    span {
+                    .timestamp {
                         color: #8F8F8F;
                         font-size: 16px;
                         font-weight: 500;
@@ -408,20 +412,12 @@
                     color: $light-gray;
                 }
 
-                .member-activity {
-                    .online-icon {
-                        width: 13px;
-                        height: 13px;
-                        background-color: $green;
-                        margin-top: 2px;
-                    }
-
-                    span {
-                        font-size: 14px;
-                        font-weight: 500;
-                        color: $light-gray;
-                        margin-left: 5px;
-                    }
+                .member-activity span {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: $light-gray;
+                    margin-left: 5px;
+                    line-height: 20px;
                 }
             }
 
@@ -537,6 +533,7 @@
         width: 72.39%;
         height: 100vh;
         flex: 1;
+        background-color: #EFEBFF;
 
         &.non-selected {
             display: flex;
@@ -645,7 +642,6 @@
             position: relative;
             overflow-y: auto;
             flex: 1;
-            margin-right: 0;
 
             .date-separator {
                 width: fit-content;
@@ -679,9 +675,6 @@
             }
 
             .message {
-                flex-wrap: wrap;
-                position: relative;
-
                 font-family: $main-font;
                 color: $dark-gray;
                 font-weight: 500;
@@ -741,7 +734,7 @@
                 }
 
                 .message-content-container {
-                    max-width: 70%;
+                    max-width: 85%;
                 }
 
                 .message-content {
@@ -754,6 +747,7 @@
                     word-break: break-all;
 
                     img {
+                        width: 100%;
                         height: auto;
                         border-radius: 5px;
                     }
@@ -922,6 +916,11 @@
     }
 }
 
+.online-icon {
+    width: 14px;
+    height: 14px;
+    background-color: $green;
+}
 
 .gif-picker {
     position: absolute;
