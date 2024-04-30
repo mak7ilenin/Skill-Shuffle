@@ -137,10 +137,10 @@ CREATE TABLE IF NOT EXISTS `chat_messages` (
 --
 
 INSERT INTO `chat_messages` (`id`, `sender_id`, `chat_id`, `content`, `timestamp`, `status`, `type`) VALUES
-(1, 1, 1, '<b>Test test The testuser</b> created \'Lebron Fans\'', '2024-04-16 09:45:49.886', 'SENT', 'ANNOUNCEMENT'),
-(3, 1, 3, '<b>Test test The testuser</b> created \'Test test, Test test3, Test test1\'', '2024-04-22 09:57:26.302', 'SENT', 'ANNOUNCEMENT'),
+(1, 1, 1, '<a href="/users?nn=test">Test test The testuser</a> created <i>\'Lebron Fans\''</i>, '2024-04-16 09:45:49.886', 'SENT', 'ANNOUNCEMENT'),
+(3, 1, 3, '<a href="/users?nn=test">Test test The testuser</a> created <i>\'Test test, Test test3, Test test1\''</i>, '2024-04-22 09:57:26.302', 'SENT', 'ANNOUNCEMENT'),
 (4, 1, 4, 'Alo', '2024-04-22 10:17:53.000', 'SENT', 'MESSAGE'),
-(5, 1, 5, 'Test test The testuser has entered the chat', '2024-04-22 10:20:04.900', 'SENT', 'ENTRY'),
+(5, 1, 5, '<a href="/users?nn=test">Test test The testuser</a> has entered the chat', '2024-04-22 10:20:04.900', 'SENT', 'ENTRY'),
 (6, 1, 5, 'https://media.tenor.com/SBxgk-Kf42IAAAAC/crip.gif', '2024-04-22 10:20:21.540', 'SENT', 'MESSAGE'),
 (7, 1, 1, 'Lebron scored 23 in the last match😬', '2024-04-17 10:21:42.411', 'SENT', 'MESSAGE'),
 (8, 1, 1, '💀💀💀💀💀💀💀💀💀💀💀💀💀💀', '2024-04-17 10:21:53.691', 'SENT', 'MESSAGE'),
