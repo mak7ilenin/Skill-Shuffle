@@ -422,6 +422,7 @@
             }
 
             .leave-chat-footer {
+                height: 60px;
                 background-color: #E3E3E3;
 
                 &:hover {
@@ -505,7 +506,7 @@
 
         .create-chat-footer,
         .add-members-footer {
-            max-height: 83px;
+            height: 60px;
             background-color: #E3E3E3;
 
             button {

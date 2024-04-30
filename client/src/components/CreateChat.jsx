@@ -99,7 +99,7 @@ function CreateChat({ changeMenu }) {
             <AddFriends selectedFriends={selectedFriends} setSelectedFriends={setSelectedFriends} />
 
             {selectedFriends.length > 0 || chatName !== '' ? (
-                <Row className='create-chat-footer d-flex justify-content-end align-items-center py-3 px-4'>
+                <Row className='create-chat-footer d-flex justify-content-end align-items-center px-4'>
                     <Button variant='light' className='w-auto' onClick={() => changeMenu('DEFAULT')}>Cancel</Button>
                     {chatName !== '' ? (
                         <Button variant='primary' className='w-auto ms-3' onClick={handleCreateChat}>Create chat</Button>

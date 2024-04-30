@@ -285,14 +285,14 @@ function GroupChatMenu({ chat, setChat }) {
                         ))}
                     </Stack>
                     <Row className='leave-chat-footer d-flex justify-content-center align-items-center'>
-                        <Button variant='danger' className='w-100 h-100 py-3 px-4 border-0' onClick={handleOpenLeaveModal}>Leave chat</Button>
+                        <Button variant='danger' className='w-100 h-100 px-4 border-0' onClick={handleOpenLeaveModal}>Leave chat</Button>
                     </Row>
                 </>
             ) : (
                 <>
                     <AddFriends selectedFriends={selectedFriends} setSelectedFriends={setSelectedFriends} chat={chat} />
 
-                    <Row className='add-members-footer d-flex justify-content-end align-items-center py-3 px-4'>
+                    <Row className='add-members-footer d-flex justify-content-end align-items-center px-4'>
                         <Button variant='light' className='w-auto' onClick={() => setAddMemberVisibility(false)}>Cancel</Button>
 
                         {selectedFriends.length === 1 ? (

@@ -14,9 +14,10 @@ function MessageNotification({ setMessageNotification, messageNotification, chat
     useEffect(() => {
         if (messageNotification && messageNotification.visible) {
             setNotification(messageNotification.notification);
+            console.log("ms: " + messageNotification.notification.chat.id);
+            console.log("ch: " + chatId);
             if (messageNotification.notification.type === 'CHAT_MESSAGE' && messageNotification.notification.chat.id !== chatId) {
                 setVisible(true);
-                setMessageNotification({ visible: false, notification: null });
             }
         }
     }, [messageNotification, setMessageNotification, chatId]);
@@ -28,6 +29,7 @@ function MessageNotification({ setMessageNotification, messageNotification, chat
                 onClose={(e) => {
                     if (e) e.stopPropagation();
                     setVisible(false)
+                    setMessageNotification({ visible: false, notification: null });
                 }}
                 onClick={() => {
                     setVisible(false);

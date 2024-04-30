@@ -40,12 +40,22 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
             UsernamePasswordAuthenticationToken user = webSocketAuthenticatorService.getAuthenticatedOrFail(token);
             accessor.setUser(user);
         }
-        // Handle user subscriptions
+
+        // Handle user subscription
         if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             String username = accessor.getUser().getName();
             String destination = accessor.getDestination();
             if (username != null && destination != null) {
                 sessionService.addSession(username, destination, accessor.getSessionId());
+            }
+        }
+
+        // Handle user unsubscription
+        if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) {
+            String username = accessor.getUser().getName();
+            String destination = accessor.getDestination();
+            if (username != null && destination != null) {
+                sessionService.removeSession(username, destination);
             }
         }
 

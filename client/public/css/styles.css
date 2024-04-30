@@ -517,6 +517,7 @@ h1, h2, h3, h4, h5, h6, p {
   line-height: 20px;
 }
 .chat-page .chat-menu .group-menu .leave-chat-footer {
+  height: 60px;
   background-color: #E3E3E3;
 }
 .chat-page .chat-menu .group-menu .leave-chat-footer:hover {
@@ -593,7 +594,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .chat-page .chat-menu .create-chat-footer,
 .chat-page .chat-menu .add-members-footer {
-  max-height: 83px;
+  height: 60px;
   background-color: #E3E3E3;
 }
 .chat-page .chat-menu .create-chat-footer button,

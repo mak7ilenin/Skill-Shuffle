@@ -41,6 +41,7 @@ const AuthProvider = ({ children }) => {
         stompClient.subscribe('/user/notification', receivedNotification => {
             // Process the received noitification
             const notification = JSON.parse(receivedNotification.body);
+            setMessageNotification({ visible: true, notification: notification });
         });
     }, [isStompClientInitialized, stompClient]);
 

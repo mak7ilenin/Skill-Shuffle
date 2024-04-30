@@ -27,6 +27,7 @@ function Chat() {
   const [messageNotification, setMessageNotification] = useState({ visible: false, notification: {} });
   const [activeMenu, setActiveMenu] = useState('DEFAULT'); // 'CREATE_CHAT', 'GROUP_MENU', or 'DEFAULT'
   const currentSubscriptionRef = useRef(null);
+  const activeChatsSubscription = useRef(null);
   const messagesListRef = useRef(null);
   const chatRef = useRef(null);
   const chatsRef = useRef([]);
@@ -35,10 +36,8 @@ function Chat() {
 
 
   const updateChatLastMessage = useCallback((message) => {
-    console.log(message);
     chatsRef.current = chatsRef.current.map(chat => {
       if (AESDecrypt(chat.id) === String(message.chatId)) {
-        console.log('updating last message');
         chat.lastMessage = message;
       }
       return chat;
@@ -66,19 +65,19 @@ function Chat() {
   }, [setLoadingMessages, messagesListRef, navigate]);
 
 
-  const subscribeToChat = useCallback((chatId) => {
+  const subscribeToChat = useCallback(() => {
     // Ensure stompClient is initialized before attempting to subscribe
     if (isStompClientInitialized && stompClient) {
 
       // Unsubscribe from the previous chat messages
-      if (currentSubscriptionRef.current && currentSubscriptionRef.current.chatId !== chatId) {
+      if (currentSubscriptionRef.current && currentSubscriptionRef.current.chatId !== chosenChat.id) {
         currentSubscriptionRef.current.unsubscribe();
         currentSubscriptionRef.current = null;
       }
 
       // If user is in chat, then subscribe to chat messages
-      if (chosenChat.members != null) {
-        const chatEndpoint = `/user/chat/${chatId}`;
+      if (chosenChat.members != null && !currentSubscriptionRef.current) {
+        const chatEndpoint = `/user/chat/${chosenChat.id}`;
         const newSubscription = stompClient.subscribe(chatEndpoint, receivedMessage => {
           const message = JSON.parse(receivedMessage.body);
           updateChatLastMessage(message);
@@ -92,7 +91,7 @@ function Chat() {
             }
           }, 50);
         });
-        newSubscription.chatId = chatId;
+        newSubscription.chatId = chosenChat.id;
 
         // Update current subscription
         currentSubscriptionRef.current = newSubscription;
@@ -103,7 +102,7 @@ function Chat() {
         };
       }
     }
-  }, [stompClient, updateChatLastMessage, isStompClientInitialized, chosenChat.members]);
+  }, [stompClient, updateChatLastMessage, isStompClientInitialized, chosenChat.members, chosenChat.id]);
 
 
   const subscribeToAllChats = useCallback(() => {
@@ -121,11 +120,14 @@ function Chat() {
 
         // Check if received message is not from muted chat (each chat has field isMuted)
         chats.forEach(chat => {
+          console.log(chat);
           if (AESDecrypt(chat.id) === String(notification.chat.id) && !chat.muted) {
+            console.log('yesss');
             setMessageNotification({ visible: true, notification: notification });
           }
         });
       });
+      activeChatsSubscription.current = newSubscription;
 
       return () => {
         newSubscription.unsubscribe();
@@ -135,14 +137,16 @@ function Chat() {
 
 
   useEffect(() => {
-    if (chosenChat.id !== undefined) {
-      subscribeToChat(chosenChat.id);
+    if (chosenChat.id) {
+      subscribeToChat();
     }
   }, [chosenChat.id, subscribeToChat]);
 
 
   useEffect(() => {
-    return subscribeToAllChats();
+    if (!activeChatsSubscription.current) {
+      subscribeToAllChats();
+    }
   }, [subscribeToAllChats]);
 
 
