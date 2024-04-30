@@ -9,16 +9,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionService {
     private final ConcurrentHashMap<String, Map<String, String>> userSessions = new ConcurrentHashMap<>();
 
-    public void addSession(String username, String endpoint, String sessionId) {
+    public void addSession(String username, String endpoint, String subscriptionId) {
         Map<String, String> userEndpoints = userSessions.getOrDefault(username, new ConcurrentHashMap<>());
-        userEndpoints.put(endpoint, sessionId);
+        userEndpoints.put(endpoint, subscriptionId);
         userSessions.put(username, userEndpoints);
     }
 
-    public void removeSession(String username, String endpoint) {
+    public void removeSession(String username, String subscriptionId) {
         Map<String, String> userEndpoints = userSessions.get(username);
         if (userEndpoints != null) {
-            userEndpoints.remove(endpoint);
+            userEndpoints.values().remove(subscriptionId);
             if (userEndpoints.isEmpty()) {
                 userSessions.remove(username);
             } else {

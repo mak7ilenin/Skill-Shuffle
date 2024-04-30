@@ -21,7 +21,6 @@ function Chat() {
   const navigate = useNavigate();
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [chats, setChats] = useState([]);
-  const [filteredChats, setFilteredChats] = useState([]);
   const [chosenChat, setChosenChat] = useState({});
   const [messageContent, setMessageContent] = useState('');
   const [messageNotification, setMessageNotification] = useState({ visible: false, notification: {} });
@@ -30,19 +29,20 @@ function Chat() {
   const activeChatsSubscription = useRef(null);
   const messagesListRef = useRef(null);
   const chatRef = useRef(null);
-  const chatsRef = useRef([]);
+  const chatsRef = useRef(null);
   const offsetRef = useRef(0);
   const limit = 30;
 
 
   const updateChatLastMessage = useCallback((message) => {
-    chatsRef.current = chatsRef.current.map(chat => {
+    const updatedChats = chats.map(chat => {
       if (AESDecrypt(chat.id) === String(message.chatId)) {
         chat.lastMessage = message;
       }
       return chat;
     });
-  }, []);
+    setChats(updatedChats); // Update the chats state as well
+  }, [chats]);
 
 
   const getChatMessages = useCallback((chatId) => {
@@ -119,10 +119,8 @@ function Chat() {
         updateChatLastMessage(message);
 
         // Check if received message is not from muted chat (each chat has field isMuted)
-        chats.forEach(chat => {
-          console.log(chat);
+        chatsRef.current.forEach(chat => {
           if (AESDecrypt(chat.id) === String(notification.chat.id) && !chat.muted) {
-            console.log('yesss');
             setMessageNotification({ visible: true, notification: notification });
           }
         });
@@ -133,7 +131,7 @@ function Chat() {
         newSubscription.unsubscribe();
       };
     }
-  }, [stompClient, isStompClientInitialized, updateChatLastMessage, chats]);
+  }, [stompClient, isStompClientInitialized, updateChatLastMessage]);
 
 
   useEffect(() => {
@@ -149,6 +147,9 @@ function Chat() {
     }
   }, [subscribeToAllChats]);
 
+  useEffect(() => {
+    chatsRef.current = chats;
+  }, [chats]);
 
   const sendMessage = (gif) => {
     if (messageContent === '' && !gif) return;
@@ -297,13 +298,11 @@ function Chat() {
 
         // Set the chats and filtered chats
         setChats(response.data);
-        setFilteredChats(response.data);
-        chatsRef.current = response.data;
       })
       .catch(error => {
         console.error(error.response?.data.message || error.message);
       });
-  }, []);
+  }, [setChats]);
 
 
   return (
@@ -319,8 +318,6 @@ function Chat() {
         chats={chats}
         chat={chosenChat}
         setChat={setChosenChat}
-        setFilteredChats={setFilteredChats}
-        filteredChats={filteredChats}
         handleMenuChange={handleMenuChange}
         activeMenu={activeMenu}
       />
@@ -334,7 +331,12 @@ function Chat() {
         // If a chat is selected, display:
         <div className='chat-box d-flex flex-nowrap flex-column'>
 
-          <ChatHeader chat={chosenChat} setChat={setChosenChat} handleMenuChange={handleMenuChange} />
+          <ChatHeader
+            chat={chosenChat}
+            setChat={setChosenChat}
+            setChats={setChats}
+            handleMenuChange={handleMenuChange}
+          />
 
           <Row className='messages-list p-0 py-3' ref={chatRef} onScroll={handleScroll}>
             {loadingMessages ? (

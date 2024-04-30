@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Stack, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,12 +8,17 @@ import ChatTypeFilter from './ChatTypeFilter';
 import CreateChat from './CreateChat';
 import GroupChatMenu from './GroupChatMenu';
 
-function ChatMenu({ chats, chat, setChat, setFilteredChats, filteredChats, handleMenuChange, activeMenu }) {
+function ChatMenu({ chats, chat, setChat, handleMenuChange, activeMenu }) {
     const navigate = useNavigate();
+    const [filteredChats, setFilteredChats] = useState([]);
 
     const getSearch = (search) => {
         setFilteredChats(chats.filter(chat => chat.name.toLowerCase().includes(search.toLowerCase())));
     };
+
+    useEffect(() => {
+        setFilteredChats(chats);
+    }, [chats]);
 
     return (
         <Container className='chat-menu'>

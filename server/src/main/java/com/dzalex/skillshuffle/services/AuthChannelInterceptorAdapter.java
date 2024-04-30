@@ -45,17 +45,18 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
         if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             String username = accessor.getUser().getName();
             String destination = accessor.getDestination();
-            if (username != null && destination != null) {
-                sessionService.addSession(username, destination, accessor.getSessionId());
+            String subscriptionId = accessor.getSubscriptionId();
+            if (username != null && destination != null && subscriptionId != null) {
+                sessionService.addSession(username, destination, subscriptionId);
             }
         }
 
         // Handle user unsubscription
         if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) {
             String username = accessor.getUser().getName();
-            String destination = accessor.getDestination();
-            if (username != null && destination != null) {
-                sessionService.removeSession(username, destination);
+            String subscriptionId = accessor.getSubscriptionId();
+            if (username != null && subscriptionId != null) {
+                sessionService.removeSession(username, subscriptionId);
             }
         }
 

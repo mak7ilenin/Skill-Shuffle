@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -11,8 +11,9 @@ import { ReactComponent as Cross } from '../assets/icons/cross-icon.svg';
 import { ReactComponent as NoSound } from '../assets/icons/no-sound.svg';
 import { ReactComponent as Sound } from '../assets/icons/sound.svg';
 import { ReactComponent as Trash } from '../assets/icons/trash.svg';
+import {AESDecrypt} from "../crypto";
 
-function ChatSmallMenu({ chat, setChat }) {
+function ChatSmallMenu({ chat, setChat, setChats }) {
     const { authUser } = useAuth();
     const navigate = useNavigate();
     const [notifications, setNotifications] = useState(chat.members.find(member => member.nickname === authUser.nickname).hasNotifications);
@@ -39,25 +40,36 @@ function ChatSmallMenu({ chat, setChat }) {
             });
     };
 
-    const toggleNotifications = (state) => {
+    const toggleNotifications = useCallback((state) => {
         axios.patch(`${API_SERVER}/chats/${chat.id}/notifications?s=${state}`, {}, { withCredentials: true })
             .then((response) => {
                 const updatedMember = response.data;
                 setNotifications(updatedMember.hasNotifications);
-                setChat({
-                    ...chat,
-                    members: chat.members.map(member => {
-                        if (member.nickname === updatedMember.nickname) {
-                            return updatedMember;
-                        }
-                        return member;
-                    })
+                setChat(prevChat => {
+                    return {
+                        ...prevChat,
+                        members: prevChat.members.map(member => {
+                            if (member.nickname === updatedMember.nickname) {
+                                return updatedMember;
+                            }
+                            return member;
+                        })
+                    };
                 });
+                setChats(prevChats => prevChats.map(prevChat => {
+                    if (AESDecrypt(prevChat.id) === String(chat.id)) {
+                        return {
+                            ...prevChat,
+                            muted: !updatedMember.hasNotifications
+                        };
+                    }
+                    return prevChat;
+                }));
             })
             .catch(error => {
                 console.error(error);
             });
-    };
+    }, [chat, setChat, setChats]);
 
     const handleClearHistory = () => {
         // TODO: Implement the functionality to clear the chat history

@@ -90,7 +90,7 @@ public class MessageService {
                 ChatNotificationDTO notification = generateMessageNotification(chatId, message, userService.getPublicUserDTO(sender));
 
                 // Send new message notification to the user, for the chat list
-                if (message.getType().equals(MessageType.MESSAGE) && sessionService.isUserSubscribed(username, "/user/chat")) {
+                if (sessionService.isUserSubscribed(username, "/user/chat")) {
                     Object[] notificationAndMessage = {notification, convertToDTO(message)};
                     messagingTemplate.convertAndSendToUser(username, "/chat", notificationAndMessage);
                     continue;

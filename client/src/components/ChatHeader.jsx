@@ -7,7 +7,7 @@ import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 import { ReactComponent as NetworkIcon } from '../assets/icons/network.svg';
 import { ReactComponent as Menu } from '../assets/icons/post-menu.svg';
 
-function ChatHeader({ chat, setChat, handleMenuChange }) {
+function ChatHeader({ chat, setChat, setChats, handleMenuChange }) {
     const [smallMenuVisibility, setSmallMenuVisibility] = useState(false);
 
     const generateLink = () => {
@@ -70,7 +70,7 @@ function ChatHeader({ chat, setChat, handleMenuChange }) {
                             {chat.type === 'community' ? (
                                 <span className='text-secondary'>Community</span>
                             ) : (
-                                <p className='user-activity'>
+                                <div className='user-activity'>
                                     {formatLastSeenTimestamp(chat.members[0].lastSeen) === 'Online' ? (
                                         <>
                                             <div className="online-icon rounded-circle"></div>
@@ -82,7 +82,7 @@ function ChatHeader({ chat, setChat, handleMenuChange }) {
                                             <span className='text-secondary'>{formatLastSeenTimestamp(chat.members[0].lastSeen)}</span>
                                         </>
                                     )}
-                                </p>
+                                </div>
                             )}
                         </Col>
                     </NavLink>
@@ -122,9 +122,9 @@ function ChatHeader({ chat, setChat, handleMenuChange }) {
                 </Button>
                 {smallMenuVisibility && (
                     <ChatSmallMenu
-                        setSmallMenuVisibility={setSmallMenuVisibility}
                         chat={chat}
                         setChat={setChat}
+                        setChats={setChats}
                     />
                 )}
             </Col>
