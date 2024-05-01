@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2024 at 01:04 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: May 01, 2024 at 10:39 PM
+-- Server version: 10.4.22-MariaDB
+-- PHP Version: 8.1.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -47,37 +47,23 @@ CREATE TABLE IF NOT EXISTS `blocked_users` (
 
 CREATE TABLE IF NOT EXISTS `chats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(75) DEFAULT NULL,
-  `type` enum('PRIVATE','COMMUNITY','GROUP') NOT NULL,
-  `avatar_url` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  `name` varchar(75) COLLATE utf8mb4_bin DEFAULT NULL,
+  `type` enum('PRIVATE','COMMUNITY','GROUP') COLLATE utf8mb4_bin NOT NULL,
+  `avatar_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `community_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `community_id` (`community_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `chats`
 --
 
-INSERT INTO `chats` (`id`, `name`, `type`, `avatar_url`) VALUES
-(1, 'Lebron Fans', 'GROUP', 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/chats/chat-1/avatar/1713779149315-da78f776-e46f-4894-b317-022e000c5c51-2544.webp'),
-(3, 'Test test, Test test3, Test test1', 'GROUP', NULL),
-(4, 'Quantum Hub', 'COMMUNITY', 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/communities/community-1/avatar/diguyewhuyt39jkdnifnoisdjgfosdjoi.jpg'),
-(5, '', 'PRIVATE', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `chat_history`
---
-
-CREATE TABLE IF NOT EXISTS `chat_history` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `chat_id` int(11) NOT NULL,
-  `hidden_before` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `chat_id` (`chat_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+INSERT INTO `chats` (`id`, `name`, `type`, `avatar_url`, `community_id`) VALUES
+(1, 'Lebron Fans', 'GROUP', 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/chats/chat-1/avatar/1713779149315-da78f776-e46f-4894-b317-022e000c5c51-2544.webp', NULL),
+(3, 'Test test, Test test3, Test test1', 'GROUP', NULL, NULL),
+(4, 'Quantum Hub', 'COMMUNITY', 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/communities/community-1/avatar/diguyewhuyt39jkdnifnoisdjgfosdjoi.jpg', 1),
+(5, '', 'PRIVATE', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -89,29 +75,31 @@ CREATE TABLE IF NOT EXISTS `chat_members` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `chat_id` int(11) NOT NULL,
   `member_id` int(11) NOT NULL,
-  `role` enum('CREATOR','ADMIN','MEMBER') NOT NULL,
+  `role` enum('CREATOR','ADMIN','MEMBER') COLLATE utf8mb4_bin NOT NULL,
   `notifications` bit(1) NOT NULL DEFAULT b'1',
   `joined_at` timestamp(3) NOT NULL DEFAULT current_timestamp(3),
   `left_at` timestamp(3) NULL DEFAULT NULL,
   `is_kicked` bit(1) NOT NULL DEFAULT b'0',
+  `cleared_at` timestamp(3) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `chat_id` (`chat_id`),
   KEY `member_id` (`member_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `chat_members`
 --
 
-INSERT INTO `chat_members` (`id`, `chat_id`, `member_id`, `role`, `notifications`, `joined_at`, `left_at`, `is_kicked`) VALUES
-(1, 1, 1, 'CREATOR', b'1', '2024-04-22 09:45:49.000', NULL, b'0'),
-(2, 1, 4, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0'),
-(3, 1, 2, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0'),
-(6, 3, 1, 'CREATOR', b'1', '2024-04-22 09:57:26.000', NULL, b'0'),
-(7, 3, 4, 'MEMBER', b'1', '2024-04-22 09:57:26.000', NULL, b'0'),
-(8, 3, 2, 'MEMBER', b'1', '2024-04-22 09:57:26.000', NULL, b'0'),
-(9, 5, 1, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0'),
-(10, 5, 4, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0');
+INSERT INTO `chat_members` (`id`, `chat_id`, `member_id`, `role`, `notifications`, `joined_at`, `left_at`, `is_kicked`, `cleared_at`) VALUES
+(1, 1, 1, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0', '2024-05-01 18:52:38.818'),
+(2, 1, 4, 'CREATOR', b'1', '2024-04-22 09:45:49.000', NULL, b'0', NULL),
+(3, 1, 2, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0', NULL),
+(6, 3, 1, 'CREATOR', b'1', '2024-04-22 09:57:26.000', NULL, b'0', '2024-05-01 17:55:41.050'),
+(7, 3, 4, 'MEMBER', b'0', '2024-04-22 09:57:26.000', NULL, b'0', NULL),
+(8, 3, 2, 'MEMBER', b'1', '2024-04-22 09:57:26.000', NULL, b'0', NULL),
+(9, 5, 1, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL),
+(10, 5, 4, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL),
+(46, 4, 1, 'MEMBER', b'1', '0000-00-00 00:00:00.000', NULL, b'0', NULL);
 
 -- --------------------------------------------------------
 
@@ -123,28 +111,33 @@ CREATE TABLE IF NOT EXISTS `chat_messages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sender_id` int(11) NOT NULL,
   `chat_id` int(11) NOT NULL,
-  `content` varchar(1024) NOT NULL,
+  `content` varchar(1024) COLLATE utf8mb4_bin NOT NULL,
   `timestamp` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3),
-  `status` enum('SENT','SEEN') NOT NULL DEFAULT 'SENT',
-  `type` enum('MESSAGE','ANNOUNCEMENT','ENTRY') NOT NULL,
+  `status` enum('SENT','SEEN') COLLATE utf8mb4_bin NOT NULL DEFAULT 'SENT',
+  `type` enum('MESSAGE','ANNOUNCEMENT','ENTRY') COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`sender_id`),
   KEY `chat_id` (`chat_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=549 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `chat_messages`
 --
 
 INSERT INTO `chat_messages` (`id`, `sender_id`, `chat_id`, `content`, `timestamp`, `status`, `type`) VALUES
-(1, 1, 1, '<a href="/users?nn=test">Test test The testuser</a> created <i>\'Lebron Fans\'</i>', '2024-04-16 09:45:49.886', 'SENT', 'ANNOUNCEMENT'),
-(3, 1, 3, '<a href="/users?nn=test">Test test The testuser</a> created <i>\'Test test, Test test3, Test test1\'</i>', '2024-04-22 09:57:26.302', 'SENT', 'ANNOUNCEMENT'),
+(1, 1, 1, '<a href=\'/users?nn=testuser\'>Test test The testuser</a> created <i>\'Lebron Fans\'</i>', '2024-04-16 10:14:57.985', 'SENT', 'ANNOUNCEMENT'),
+(3, 1, 3, '<a href=\'/users?nn=testuser\'>Test test The testuser</a> created <i>\'Test test, Test test3, Test test1\'</i>', '2024-04-17 10:21:47.411', 'SENT', 'ANNOUNCEMENT'),
 (4, 1, 4, 'Alo', '2024-04-22 10:17:53.000', 'SENT', 'MESSAGE'),
-(5, 1, 5, '<a href="/users?nn=test">Test test The testuser</a> has entered the chat', '2024-04-22 10:20:04.900', 'SENT', 'ENTRY'),
+(5, 1, 5, 'Test test The testuser has entered the chat', '2024-04-22 10:20:04.900', 'SENT', 'ENTRY'),
 (6, 1, 5, 'https://media.tenor.com/SBxgk-Kf42IAAAAC/crip.gif', '2024-04-22 10:20:21.540', 'SENT', 'MESSAGE'),
 (7, 1, 1, 'Lebron scored 23 in the last match😬', '2024-04-17 10:21:42.411', 'SENT', 'MESSAGE'),
 (8, 1, 1, '💀💀💀💀💀💀💀💀💀💀💀💀💀💀', '2024-04-17 10:21:53.691', 'SENT', 'MESSAGE'),
-(9, 1, 1, 'LAKERS WON THE NBA FINALS!!!!😎😎🤓🤓🤓', '2024-04-22 10:23:50.524', 'SENT', 'MESSAGE');
+(9, 1, 1, 'LAKERS WON THE NBA FINALS!!!!😎😎🤓🤓🤓', '2024-04-22 10:23:50.524', 'SENT', 'MESSAGE'),
+(544, 1, 1, 'heyyyy', '2024-05-01 18:52:32.725', 'SENT', 'MESSAGE'),
+(545, 4, 1, 'test r u here?', '2024-05-01 20:26:26.119', 'SENT', 'MESSAGE'),
+(546, 4, 1, '??', '2024-05-01 20:27:37.360', 'SENT', 'MESSAGE'),
+(547, 1, 1, 'what do you want nigga', '2024-05-01 20:27:45.252', 'SENT', 'MESSAGE'),
+(548, 4, 1, 'https://media.tenor.com/BG-84cOdq20AAAAC/fr-fr-fr.gif', '2024-05-01 20:27:53.794', 'SENT', 'MESSAGE');
 
 -- --------------------------------------------------------
 
@@ -176,7 +169,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `user_id` int(11) NOT NULL,
   `post_id` int(11) NOT NULL,
   `likes` int(11) NOT NULL,
-  `content` varchar(512) NOT NULL,
+  `content` varchar(512) COLLATE utf8mb4_bin NOT NULL,
   `parent_id` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
@@ -212,15 +205,15 @@ CREATE TABLE IF NOT EXISTS `comment_attachments` (
 
 CREATE TABLE IF NOT EXISTS `communities` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(75) NOT NULL,
-  `nickname` varchar(50) NOT NULL,
-  `description` varchar(275) DEFAULT NULL,
+  `name` varchar(75) COLLATE utf8mb4_bin NOT NULL,
+  `nickname` varchar(50) COLLATE utf8mb4_bin NOT NULL,
+  `description` varchar(275) COLLATE utf8mb4_bin DEFAULT NULL,
   `subject_id` int(11) NOT NULL,
-  `avatar_url` varchar(255) DEFAULT NULL,
-  `banner_url` varchar(255) DEFAULT NULL,
-  `banner_color` varchar(7) NOT NULL DEFAULT '#bdbdbd',
+  `avatar_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `banner_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `banner_color` varchar(7) COLLATE utf8mb4_bin NOT NULL DEFAULT '#bdbdbd',
   `creator_id` int(11) NOT NULL,
-  `privacy` enum('OPEN','CLOSED','PRIVATE') NOT NULL DEFAULT 'OPEN',
+  `privacy` enum('OPEN','CLOSED','PRIVATE') COLLATE utf8mb4_bin NOT NULL DEFAULT 'OPEN',
   `allow_comments` bit(1) NOT NULL DEFAULT b'1',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
@@ -255,30 +248,6 @@ CREATE TABLE IF NOT EXISTS `community_banned_users` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `community_chats`
---
-
-CREATE TABLE IF NOT EXISTS `community_chats` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `chat_id` int(11) NOT NULL,
-  `community_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `chat_id` (`chat_id`),
-  KEY `community_id` (`community_id`),
-  KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
---
--- Dumping data for table `community_chats`
---
-
-INSERT INTO `community_chats` (`id`, `chat_id`, `community_id`, `user_id`) VALUES
-(1, 4, 1, 1);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `community_followers`
 --
 
@@ -301,7 +270,7 @@ CREATE TABLE IF NOT EXISTS `community_members` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `community_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `role` enum('admin','moderator','member','creator') NOT NULL,
+  `role` enum('admin','moderator','member','creator') COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `community_id` (`community_id`) USING BTREE
@@ -330,7 +299,7 @@ CREATE TABLE IF NOT EXISTS `community_posts` (
 
 CREATE TABLE IF NOT EXISTS `community_subjects` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(75) NOT NULL,
+  `name` varchar(75) COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -350,7 +319,7 @@ INSERT INTO `community_subjects` (`id`, `name`) VALUES
 CREATE TABLE IF NOT EXISTS `confirmation_code` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `reset_code` varchar(5) NOT NULL,
+  `reset_code` varchar(5) COLLATE utf8mb4_bin NOT NULL,
   `expires_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
@@ -364,10 +333,10 @@ CREATE TABLE IF NOT EXISTS `confirmation_code` (
 
 CREATE TABLE IF NOT EXISTS `events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` enum('WEBINAR','COMPETITION') NOT NULL,
-  `title` varchar(75) NOT NULL,
-  `description` varchar(1024) NOT NULL,
-  `banner_url` varchar(255) NOT NULL,
+  `type` enum('WEBINAR','COMPETITION') COLLATE utf8mb4_bin NOT NULL,
+  `title` varchar(75) COLLATE utf8mb4_bin NOT NULL,
+  `description` varchar(1024) COLLATE utf8mb4_bin NOT NULL,
+  `banner_url` varchar(255) COLLATE utf8mb4_bin NOT NULL,
   `starts_at` datetime NOT NULL,
   `ends_at` datetime NOT NULL,
   `community_id` int(11) NOT NULL,
@@ -399,7 +368,7 @@ CREATE TABLE IF NOT EXISTS `event_participants` (
 CREATE TABLE IF NOT EXISTS `event_topics` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `event_id` int(11) NOT NULL,
-  `topic` varchar(50) NOT NULL,
+  `topic` varchar(50) COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`id`),
   KEY `event_id` (`event_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -413,10 +382,10 @@ CREATE TABLE IF NOT EXISTS `event_topics` (
 CREATE TABLE IF NOT EXISTS `files` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `data` mediumblob NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `type` varchar(50) NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `type` varchar(50) COLLATE utf8mb4_bin NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `file_path` varchar(255) DEFAULT NULL,
+  `file_path` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -453,7 +422,7 @@ CREATE TABLE IF NOT EXISTS `friend_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sender_id` int(11) NOT NULL,
   `receiver_id` int(11) NOT NULL,
-  `status` enum('pending','accepted','rejected','ignored') NOT NULL DEFAULT 'pending',
+  `status` enum('pending','accepted','rejected','ignored') COLLATE utf8mb4_bin NOT NULL DEFAULT 'pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `receiver_id` (`receiver_id`),
@@ -470,8 +439,8 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `receiver_id` int(11) NOT NULL,
   `sender_id` int(11) NOT NULL,
-  `message` varchar(155) NOT NULL,
-  `type` enum('like','comment','friend-request') NOT NULL,
+  `message` varchar(155) COLLATE utf8mb4_bin NOT NULL,
+  `type` enum('like','comment','friend-request') COLLATE utf8mb4_bin NOT NULL,
   `is_read` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
@@ -487,9 +456,9 @@ CREATE TABLE IF NOT EXISTS `notifications` (
 
 CREATE TABLE IF NOT EXISTS `photos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `file_path` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `type` varchar(50) NOT NULL,
+  `file_path` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `type` varchar(50) COLLATE utf8mb4_bin NOT NULL,
   `created_at` datetime(6) NOT NULL DEFAULT current_timestamp(6),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -503,7 +472,7 @@ CREATE TABLE IF NOT EXISTS `photos` (
 CREATE TABLE IF NOT EXISTS `posts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `text` varchar(1024) NOT NULL,
+  `text` varchar(1024) COLLATE utf8mb4_bin NOT NULL,
   `likes` int(11) NOT NULL DEFAULT 0,
   `shares` int(11) NOT NULL DEFAULT 0,
   `allow_comments` bit(1) NOT NULL DEFAULT b'1',
@@ -540,19 +509,21 @@ CREATE TABLE IF NOT EXISTS `post_attachments` (
 
 CREATE TABLE IF NOT EXISTS `refresh_token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `token` varchar(255) NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_bin NOT NULL,
   `expires_at` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3),
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `refresh_token`
 --
 
 INSERT INTO `refresh_token` (`id`, `token`, `expires_at`, `user_id`) VALUES
-(2, '79bf984e-5987-4cc1-8a98-68532e443e2b', '2024-04-29 09:42:16.575', 1);
+(2, '79bf984e-5987-4cc1-8a98-68532e443e2b', '2024-04-29 09:42:16.575', 1),
+(5, '7306d893-c652-4946-b18d-397d5f8f9d0c', '2024-05-06 14:39:43.272', 1),
+(6, 'a03ac042-054d-4638-8464-05f6d68c0bc0', '2024-05-06 16:34:40.050', 4);
 
 -- --------------------------------------------------------
 
@@ -562,21 +533,21 @@ INSERT INTO `refresh_token` (`id`, `token`, `expires_at`, `user_id`) VALUES
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(30) NOT NULL,
-  `last_name` varchar(30) NOT NULL,
-  `username` varchar(75) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `nickname` varchar(40) NOT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `gender` enum('MALE','FEMALE','OTHER') NOT NULL,
-  `birth_date` datetime(6) DEFAULT NULL,
-  `bio` varchar(275) DEFAULT NULL,
+  `first_name` varchar(30) COLLATE utf8mb4_bin NOT NULL,
+  `last_name` varchar(30) COLLATE utf8mb4_bin NOT NULL,
+  `username` varchar(75) COLLATE utf8mb4_bin NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `nickname` varchar(40) COLLATE utf8mb4_bin NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `gender` enum('MALE','FEMALE','OTHER') COLLATE utf8mb4_bin NOT NULL,
+  `birth_date` datetime(6) NOT NULL,
+  `bio` varchar(275) COLLATE utf8mb4_bin DEFAULT NULL,
   `points` int(7) NOT NULL DEFAULT 0,
-  `avatar_url` varchar(255) DEFAULT NULL,
-  `banner_url` varchar(255) DEFAULT NULL,
-  `banner_color` varchar(255) DEFAULT NULL,
-  `is_public` bit(1) DEFAULT NULL,
-  `auto_follow` bit(1) DEFAULT NULL,
+  `avatar_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `banner_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `banner_color` varchar(7) COLLATE utf8mb4_bin NOT NULL DEFAULT '#bdbdbd',
+  `is_public` bit(1) NOT NULL DEFAULT b'1',
+  `auto_follow` bit(1) NOT NULL DEFAULT b'0',
   `last_seen` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -592,10 +563,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `password`, `nickname`, `email`, `gender`, `birth_date`, `bio`, `points`, `avatar_url`, `banner_url`, `banner_color`, `is_public`, `auto_follow`, `last_seen`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Test test', 'The testuser', 'test', '$2a$10$JEg8WMqgkd4mbM20o7vOSu9mlCogeiqA6ECGLza4KBg1gzUV/6iru', 'testuser', 'test@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test', 0, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/user-1/avatar/2023-10-27_183115.png', NULL, NULL, NULL, NULL, '2024-04-22 10:26:51', '2024-04-22 09:35:00', '2024-04-22 10:26:51', NULL),
-(2, 'Test test1', 'The test1', 'test1', '$2a$10$sRN8k2KLY8xHO7sec08zOe2/MLjlQgDtkX/jdyadSqfIce1aJEJVq', 'test1', 'test1@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test1', 0, NULL, NULL, NULL, NULL, NULL, '2023-03-09 10:40:59', '2024-04-22 09:40:59', '2024-04-22 10:19:00', NULL),
-(3, 'Test test2', 'The test2', 'test2', '$2a$10$QycMomHz4iW9PrWfHtucX.antDp4iLeHtAS1FVZbO0EBmV1fEok56', 'test2', 'test2@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test2', 0, NULL, NULL, NULL, NULL, NULL, '2024-04-22 09:41:14', '2024-04-22 09:41:14', '2024-04-22 09:41:14', NULL),
-(4, 'Test test3', 'The test3', 'test3', '$2a$10$Yn99CbLOCqoMG5HPXRNkYOm8AImK3.UPS9tUcAyNOlff0MvgaJv1W', 'test3', 'test3@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test3', 0, NULL, NULL, NULL, NULL, NULL, '2024-04-10 09:42:13', '2024-04-22 09:42:13', '2024-04-22 10:18:48', NULL);
+(1, 'Test test', 'The testuser', 'test', '$2a$10$JEg8WMqgkd4mbM20o7vOSu9mlCogeiqA6ECGLza4KBg1gzUV/6iru', 'testuser', 'test@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test', 0, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/user-1/avatar/2023-10-27_183115.png', NULL, '#bdbdbd', b'1', b'0', '2024-05-01 20:33:58', '2024-04-22 09:35:00', '2024-05-01 20:33:58', NULL),
+(2, 'Test test1', 'The test1', 'test1', '$2a$10$sRN8k2KLY8xHO7sec08zOe2/MLjlQgDtkX/jdyadSqfIce1aJEJVq', 'test1', 'test1@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test1', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-01 16:17:42', '2024-04-22 09:40:59', '2024-05-01 16:17:42', NULL),
+(3, 'Test test2', 'The test2', 'test2', '$2a$10$QycMomHz4iW9PrWfHtucX.antDp4iLeHtAS1FVZbO0EBmV1fEok56', 'test2', 'test2@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test2', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-01 16:17:43', '2024-04-22 09:41:14', '2024-05-01 16:17:43', NULL),
+(4, 'Test test3', 'The test3', 'test3', '$2a$10$Yn99CbLOCqoMG5HPXRNkYOm8AImK3.UPS9tUcAyNOlff0MvgaJv1W', 'test3', 'test3@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test3', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-01 20:33:27', '2024-04-22 09:42:13', '2024-05-01 20:33:27', NULL);
 
 -- --------------------------------------------------------
 
@@ -673,7 +644,7 @@ CREATE TABLE IF NOT EXISTS `user_post_interactions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `post_id` int(11) NOT NULL,
-  `interaction_type` enum('BOOKMARKED','LIKED') NOT NULL,
+  `interaction_type` enum('BOOKMARKED','LIKED') COLLATE utf8mb4_bin NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `post_id` (`post_id`),
@@ -703,16 +674,16 @@ CREATE TABLE IF NOT EXISTS `user_privacy` (
 
 CREATE TABLE IF NOT EXISTS `user_privacy_options` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `view_main_information` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
-  `view_followings` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
-  `view_photos_videos` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
-  `view_friends` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
-  `birthday_settings` enum('do not show','month and day','full birthday') NOT NULL DEFAULT 'full birthday',
-  `view_post_comments` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
-  `comment_on_posts` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
-  `send_private_messages` enum('all users','friends only','no one') NOT NULL DEFAULT 'all users',
-  `add_to_chats` enum('all users','friends only','no one') NOT NULL DEFAULT 'all users',
-  `invite_to_communities` enum('all users','friends only','no one') NOT NULL DEFAULT 'all users',
+  `view_main_information` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
+  `view_followings` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
+  `view_photos_videos` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
+  `view_friends` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
+  `birthday_settings` enum('do not show','month and day','full birthday') COLLATE utf8mb4_bin NOT NULL DEFAULT 'full birthday',
+  `view_post_comments` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
+  `comment_on_posts` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
+  `send_private_messages` enum('all users','friends only','no one') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
+  `add_to_chats` enum('all users','friends only','no one') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
+  `invite_to_communities` enum('all users','friends only','no one') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -740,17 +711,17 @@ CREATE TABLE IF NOT EXISTS `user_videos` (
 CREATE TABLE IF NOT EXISTS `videos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `creator_id` int(11) NOT NULL,
-  `file_name` varchar(255) NOT NULL,
-  `file_path` varchar(255) NOT NULL,
+  `file_name` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `file_path` varchar(255) COLLATE utf8mb4_bin NOT NULL,
   `duration` time NOT NULL,
-  `resolution` varchar(50) NOT NULL,
-  `title` varchar(100) NOT NULL,
-  `description` mediumtext DEFAULT NULL,
-  `thumbnail_url` varchar(255) DEFAULT NULL,
+  `resolution` varchar(50) COLLATE utf8mb4_bin NOT NULL,
+  `title` varchar(100) COLLATE utf8mb4_bin NOT NULL,
+  `description` mediumtext COLLATE utf8mb4_bin DEFAULT NULL,
+  `thumbnail_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
   `views` int(11) NOT NULL DEFAULT 0,
   `created_at` datetime(6) NOT NULL DEFAULT current_timestamp(6),
-  `name` varchar(255) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `type` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `creator_id` (`creator_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -767,11 +738,10 @@ ALTER TABLE `blocked_users`
   ADD CONSTRAINT `blocked_users_ibfk_2` FOREIGN KEY (`blocked_user`) REFERENCES `users` (`id`);
 
 --
--- Constraints for table `chat_history`
+-- Constraints for table `chats`
 --
-ALTER TABLE `chat_history`
-  ADD CONSTRAINT `chat_history_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `chat_history_ibfk_2` FOREIGN KEY (`chat_id`) REFERENCES `chats` (`id`);
+ALTER TABLE `chats`
+  ADD CONSTRAINT `chats_ibfk_1` FOREIGN KEY (`community_id`) REFERENCES `communities` (`id`);
 
 --
 -- Constraints for table `chat_members`
@@ -826,14 +796,6 @@ ALTER TABLE `communities`
 ALTER TABLE `community_banned_users`
   ADD CONSTRAINT `community_banned_users_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `community_banned_users_ibfk_2` FOREIGN KEY (`community_id`) REFERENCES `communities` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `community_chats`
---
-ALTER TABLE `community_chats`
-  ADD CONSTRAINT `community_chats_ibfk_1` FOREIGN KEY (`chat_id`) REFERENCES `chats` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `community_chats_ibfk_2` FOREIGN KEY (`community_id`) REFERENCES `communities` (`id`),
-  ADD CONSTRAINT `community_chats_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `community_followers`
