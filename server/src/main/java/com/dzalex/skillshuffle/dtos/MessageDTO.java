@@ -2,6 +2,7 @@ package com.dzalex.skillshuffle.dtos;
 
 import com.dzalex.skillshuffle.enums.MessageStatus;
 import com.dzalex.skillshuffle.enums.MessageType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -19,4 +20,19 @@ public class MessageDTO {
     private Timestamp timestamp;
     private MessageStatus status;
     private MessageType type;
+
+    @JsonIgnore
+    public boolean isMessage() {
+        return this.type == MessageType.MESSAGE;
+    }
+
+    @JsonIgnore
+    public boolean isAnnouncement() {
+        return this.type == MessageType.ANNOUNCEMENT;
+    }
+
+    @JsonIgnore
+    public boolean isEntry() {
+        return this.type == MessageType.ENTRY;
+    }
 }

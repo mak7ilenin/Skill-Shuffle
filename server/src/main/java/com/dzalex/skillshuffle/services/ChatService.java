@@ -5,7 +5,6 @@ import com.dzalex.skillshuffle.entities.*;
 import com.dzalex.skillshuffle.enums.ChatAnnouncementType;
 import com.dzalex.skillshuffle.enums.ChatType;
 import com.dzalex.skillshuffle.enums.MemberRole;
-import com.dzalex.skillshuffle.enums.MessageType;
 import com.dzalex.skillshuffle.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,9 +30,6 @@ public class ChatService {
     private UserService userService;
 
     @Autowired
-    private CommunityChatRepository communityChatRepository;
-
-    @Autowired
     private FriendshipRepository friendshipRepository;
 
     @Autowired
@@ -49,64 +45,32 @@ public class ChatService {
     private SessionService sessionService;
 
     public List<ChatPreviewDTO> getChatList() {
-        User authedUser = userService.getCurrentUser();
         List<Chat> chats = chatRepository.findAll();
         List<ChatPreviewDTO> chatPreviewDTOs = new ArrayList<>();
 
+        User authedUser = userService.getCurrentUser();
         for (Chat chat : chats) {
-            if (isUserMemberOfChat(chat, authedUser)) {
-                ChatDTO chatInfo = getChatInfo(chat);
-                chatPreviewDTOs.add(ChatPreviewDTO.builder()
-                        .id(chat.getId())
-                        .type(chat.getType())
-                        .name(chatInfo.getName())
-                        .avatarUrl(chatInfo.getAvatarUrl())
-                        .lastMessage(messageService.findChatLastMessage(chat))
-                        .isMuted(isChatMuted(chat.getId(), authedUser.getId()))
-                        .build());
+            ChatPreviewDTO chatPreviewDTO = getChatPreview(chat, authedUser);
+            if (chatPreviewDTO != null) {
+                chatPreviewDTO.setLastMessage(messageService.findChatLastMessage(chat));
+                chatPreviewDTOs.add(chatPreviewDTO);
             }
         }
         return chatPreviewDTOs;
     }
 
     public ChatDTO getChatWithMessages(Chat chat) {
-        if (!isUserMemberOfChat(chat, userService.getCurrentUser())) {
+        User authedUser = userService.getCurrentUser();
+
+        if (!isUserMemberOfChat(chat.getId(), authedUser.getId())) {
             throw new IllegalArgumentException("User is not a member of this chat");
         }
 
         ChatDTO chatDTO = getChatInfo(chat);
-        chatDTO.setMessages(getChatMessages(chat.getId(), 30, 0));
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authedUser.getId());
+        chatDTO.setMessages(messageService.getChatMessages(chat.getId(), chatMember, 30, 0));
 
         return chatDTO;
-    }
-
-    // Get chat messages with limit and offset parameters
-    public List<MessageDTO> getChatMessages(Integer chatId, int limit, int offset) {
-        if (limit < 0 || offset < 0) {
-            throw new IllegalArgumentException("Limit and offset must be non-negative");
-        }
-
-        List<ChatMessage> messages = messageRepository.findMessagesByChatId(chatId);
-        List<MessageDTO> messageDTOs = new ArrayList<>();
-
-        // Sort messages by latest timestamp
-        messages.sort(Comparator.comparing(ChatMessage::getTimestamp).reversed());
-
-        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userService.getCurrentUser().getId());
-        // Filter messages that sent before the user left the chat
-        if (chatMember != null && chatMember.getLeftAt() != null) {
-            messages.removeIf(message -> message.getTimestamp().after(chatMember.getLeftAt()));
-        }
-
-        // Add messages to the list with limit and offset
-        for (int i = offset; i < messages.size() && i < offset + limit; i++) {
-            messageDTOs.add(messageService.convertToDTO(messages.get(i)));
-        }
-
-        // Sort messages by timestamp in ascending order
-        messageDTOs.sort(Comparator.comparing(MessageDTO::getTimestamp));
-
-        return messageDTOs;
     }
 
     // Get chat info based on the chat type
@@ -114,26 +78,65 @@ public class ChatService {
         ChatDTO chatDTO = new ChatDTO();
         chatDTO.setId(chat.getId());
         chatDTO.setType(chat.getType());
-        chatDTO.setMessages(getChatMessages(chat.getId(), 30, 0));
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
+        chatDTO.setMessages(messageService.getChatMessages(chat.getId(), chatMember, 30, 0));
+        chatDTO.setMuted(isChatMuted(chat.getId(), chatMember.getMember().getId()));
 
         switch (chat.getType()) {
-            case COMMUNITY -> setCommunityChatInfo(chat, chatDTO);
-            case PRIVATE -> setPrivateChatInfo(chat, chatDTO);
-            case GROUP -> setGroupChatInfo(chat, chatDTO);
+            case COMMUNITY -> getCommunityChatInfo(chat, chatDTO);
+            case PRIVATE -> getPrivateChatInfo(chat, chatDTO);
+            case GROUP -> getGroupChatInfo(chat, chatDTO);
         }
 
         return chatDTO;
     }
 
-    private void setCommunityChatInfo(Chat chat, ChatDTO chatDTO) {
-        CommunityChat communityChat = communityChatRepository.findCommunityChatByChatId(chat.getId());
-        CommunityPreviewDTO community = communityService.convertToPreviewDTO(communityChat.getCommunity());
+    private ChatPreviewDTO getChatPreview(Chat chat, User authedUser) {
+        if (isUserMemberOfChat(chat.getId(), authedUser.getId())) {
+            Chat chatInfo = getShortChatInfo(chat);
+            return ChatPreviewDTO.builder()
+                    .id(chat.getId())
+                    .type(chat.getType())
+                    .name(chatInfo.getName())
+                    .avatarUrl(chatInfo.getAvatarUrl())
+                    .lastMessage(messageService.findChatLastMessage(chat))
+                    .isMuted(isChatMuted(chat.getId(), authedUser.getId()))
+                    .build();
+        }
+        return null;
+    }
+
+    private Chat getShortChatInfo(Chat chat) {
+        switch (chat.getType()) {
+            case COMMUNITY -> {
+                chat.setAvatarUrl(chat.getCommunity().getAvatarUrl());
+                chat.setName(chat.getCommunity().getName());
+            }
+            case PRIVATE -> chatMemberRepository.findAllByChatId(chat.getId()).stream()
+                .filter(chatMember -> !chatMember.getMember().getUsername().equals(userService.getCurrentUser().getUsername()))
+                .findFirst()
+                .ifPresent(chatMember -> {
+                    User chatPartner = chatMember.getMember();
+                    chat.setAvatarUrl(chatPartner.getAvatarUrl());
+                    chat.setName(chatPartner.getFirstName() + " " + chatPartner.getLastName());
+                });
+            case GROUP -> {
+                chat.setAvatarUrl(chat.getAvatarUrl());
+                chat.setName(chat.getName());
+            }
+        }
+
+        return chat;
+    }
+
+    private void getCommunityChatInfo(Chat chat, ChatDTO chatDTO) {
+        CommunityPreviewDTO community = communityService.convertToPreviewDTO(chat.getCommunity());
         chatDTO.setAvatarUrl(community.getAvatarUrl());
         chatDTO.setName(community.getName());
         chatDTO.setCommunity(community);
     }
 
-    private void setPrivateChatInfo(Chat chat, ChatDTO chatDTO) {
+    private void getPrivateChatInfo(Chat chat, ChatDTO chatDTO) {
         chatMemberRepository.findAllByChatId(chat.getId()).stream()
             .filter(chatMember -> !chatMember.getMember().getUsername().equals(userService.getCurrentUser().getUsername()))
             .findFirst()
@@ -145,7 +148,7 @@ public class ChatService {
             });
     }
 
-    private void setGroupChatInfo(Chat chat, ChatDTO chatDTO) {
+    private void getGroupChatInfo(Chat chat, ChatDTO chatDTO) {
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
         chatDTO.setMembers(!chatMember.isLeft() ? userService.getUsersInChat(chat.getId()) : null);
         chatDTO.setAvatarUrl(chat.getAvatarUrl());
@@ -223,14 +226,9 @@ public class ChatService {
         return chatType == ChatType.GROUP ? MemberRole.CREATOR : MemberRole.MEMBER;
     }
 
-    private boolean isUserMemberOfChat(Chat chat, User user) {
-        if (chat.isCommunity()) {
-            CommunityChat communityChat = communityChatRepository.findCommunityChatByChatId(chat.getId());
-            return communityChat != null && Objects.equals(communityChat.getUser().getId(), user.getId());
-        } else {
-            ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), user.getId());
-            return chatMember != null;
-        }
+    public boolean isUserMemberOfChat(Integer chatId, Integer userId) {
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userId);
+        return chatMember != null;
     }
 
     private boolean isChatMuted(Integer chatId, Integer userId) {
@@ -243,14 +241,10 @@ public class ChatService {
         // Delete chats with only one ENTRY type message
         chatRepository.findAll().forEach(chat -> {
             List<ChatMessage> messages = messageRepository.findMessagesByChatId(chat.getId());
-            if (messages.size() == 1 && messages.get(0).getType() == MessageType.ENTRY
+            if (messages.size() == 1 && messages.get(0).isEntry()
                     && Objects.equals(messages.get(0).getSender().getId(), authedUser.getId()))
             {
-                if (chat.isCommunity()) {
-                    communityChatRepository.deleteAllByChatId(chat.getId());
-                } else {
-                    chatMemberRepository.deleteAllByChatId(chat.getId());
-                }
+                chatMemberRepository.deleteAllByChatId(chat.getId());
                 messageRepository.delete(messages.get(0));
                 chatRepository.delete(chat);
             }
@@ -323,8 +317,7 @@ public class ChatService {
         }
         if (avatarUrl != null) {
             chat.setAvatarUrl(avatarUrl);
-            chatRepository.save(chat);
-            return chat;
+            return chatRepository.save(chat);
         }
         return null;
     }
@@ -368,13 +361,19 @@ public class ChatService {
         return !chatMember.isKicked() || (authUserMember.isOwner() && authUserMember.isAdmin());
     }
 
-    public ChatMemberDTO updateChatNotifications(Chat chat, boolean state) {
+    public void updateChatNotifications(Chat chat, boolean state) {
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
         if (chatMember != null) {
             chatMember.setNotifications(state);
             ChatMember newChatMember = chatMemberRepository.save(chatMember);
-            return userService.getChatMemberDTO(newChatMember);
         }
-        return null;
+    }
+
+    public void clearChatHistory(Chat chat) {
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
+        if (chatMember != null) {
+            chatMember.setClearedAt(new Timestamp(System.currentTimeMillis()));
+            chatMemberRepository.save(chatMember);
+        }
     }
 }

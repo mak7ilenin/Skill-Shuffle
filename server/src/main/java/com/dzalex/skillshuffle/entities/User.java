@@ -1,18 +1,17 @@
 package com.dzalex.skillshuffle.entities;
 
 import com.dzalex.skillshuffle.enums.Gender;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "users")
 public class User {
@@ -48,6 +47,7 @@ public class User {
     @Column(name = "bio", length = 275)
     private String bio;
 
+    @Builder.Default
     @Column(name = "points", nullable = false)
     private Integer points = 0;
 
@@ -57,14 +57,17 @@ public class User {
     @Column(name = "banner_url")
     private String bannerUrl;
 
+    @Builder.Default
     @Column(name = "banner_color")
-    private String bannerColor;
+    private String bannerColor = "#bdbdbd";
 
+    @Builder.Default
     @Column(name = "is_public")
-    private Boolean isPublic;
+    private boolean isPublic = true;
 
+    @Builder.Default
     @Column(name = "auto_follow")
-    private Boolean autoFollow;
+    private boolean autoFollow = false;
 
     @CreationTimestamp
     @Column(name = "last_seen")

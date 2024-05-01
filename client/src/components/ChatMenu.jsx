@@ -11,13 +11,25 @@ import GroupChatMenu from './GroupChatMenu';
 function ChatMenu({ chats, chat, setChat, handleMenuChange, activeMenu }) {
     const navigate = useNavigate();
     const [filteredChats, setFilteredChats] = useState([]);
+    const [selectedChatType, setSelectedChatType] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const getSearch = (search) => {
-        setFilteredChats(chats.filter(chat => chat.name.toLowerCase().includes(search.toLowerCase())));
+        setSearchQuery(search);
+        if (search === '') {
+            return setFilteredChats(chats.filter(chat => {
+                return chat.lastMessage !== null && (selectedChatType === 'all' || chat.type === selectedChatType)
+            }));
+        }
+        const filteredChatList = chats.filter(chat => {
+            return chat.name.toLowerCase().includes(search.toLowerCase()) && (selectedChatType === 'all' || chat.type === selectedChatType)
+        });
+        setFilteredChats(filteredChatList);
     };
 
     useEffect(() => {
-        setFilteredChats(chats);
+        const filteredChatList = chats.filter(chat => chat.lastMessage !== null);
+        setFilteredChats(filteredChatList);
     }, [chats]);
 
     return (
@@ -32,7 +44,13 @@ function ChatMenu({ chats, chat, setChat, handleMenuChange, activeMenu }) {
             {activeMenu === 'DEFAULT' ? (
                 // Default view with chat previews
                 <>
-                    <ChatTypeFilter setChats={setFilteredChats} chats={chats} />
+                    <ChatTypeFilter
+                        setFilteredChats={setFilteredChats}
+                        setSelectedChatType={setSelectedChatType}
+                        chats={chats}
+                        searchQuery={searchQuery}
+                    />
+
                     <Stack direction='vertical'>
                         {filteredChats.map(chatElement => (
                             <ChatPreview

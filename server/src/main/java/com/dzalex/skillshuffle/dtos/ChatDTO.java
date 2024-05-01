@@ -18,4 +18,5 @@ public class ChatDTO {
     private List<MessageDTO> messages;
     private List<ChatMemberDTO> members;
     private CommunityPreviewDTO community;
+    private boolean isMuted;
 }

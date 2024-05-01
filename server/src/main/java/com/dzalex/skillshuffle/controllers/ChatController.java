@@ -7,6 +7,7 @@ import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.services.ChatService;
+import com.dzalex.skillshuffle.services.MessageService;
 import com.dzalex.skillshuffle.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,19 @@ public class ChatController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MessageService messageService;
+
+    @Autowired
+    private ChatMemberRepository chatMemberRepository;
+
+    // Get chat list
     @GetMapping("/chats")
     public List<ChatPreviewDTO> getChats() {
         return chatService.getChatList();
     }
 
+    // Create chat
     @PostMapping("/chats")
     public ResponseEntity<Chat> createChat(@RequestParam("chat") String chatStr,
                                            @RequestParam(required = false, name = "avatarBlob") MultipartFile avatarBlob) throws IOException {
@@ -49,6 +58,7 @@ public class ChatController {
         }
     }
 
+    // Update chat avatar
     @PatchMapping("/chats/{id}/avatar")
     public ResponseEntity<Chat> updateChatAvatar(@PathVariable("id") Integer id,
                                                  @RequestParam("avatarBlob") MultipartFile avatarBlob) {
@@ -61,19 +71,23 @@ public class ChatController {
         }
     }
 
+    // Get chat info with messages and members
     @GetMapping("/chats/{id}")
     public ChatDTO getChat(@PathVariable("id") Integer id) {
         Chat chat = chatRepository.findChatById(id);
         return chatService.getChatWithMessages(chat);
     }
 
+    // Get chat messages
     @GetMapping("/chats/{id}/messages")
     public List<MessageDTO> getChatMessages(@PathVariable("id") Integer id,
                                             @RequestParam(defaultValue = "30") int limit,
                                             @RequestParam(defaultValue = "0") int offset) {
-        return chatService.getChatMessages(id, limit, offset);
+        ChatMember member = chatMemberRepository.findChatMemberByChatIdAndMemberId(id, userService.getCurrentUser().getId());
+        return messageService.getChatMessages(id, member, limit, offset);
     }
 
+    // Invite members to chat
     @PostMapping("/chats/{id}/members")
     public ChatDTO addChatMembers(@PathVariable("id") Integer id,
                                   @RequestBody List<String> users) {
@@ -88,6 +102,7 @@ public class ChatController {
         return chatService.getFriendListForChat(chat);
     }
 
+    // Remove chat member
     @DeleteMapping("/chats/{id}/remove?nn={nickname}")
     public ResponseEntity<Chat> removeChatMember(@PathVariable("id") Integer id,
                                                  @PathVariable("nickname") String nickname) {
@@ -96,26 +111,32 @@ public class ChatController {
         return ResponseEntity.ok(chat);
     }
 
+    // Leave chat
     @DeleteMapping("/chats/{id}/leave")
     public void leaveChat(@PathVariable("id") Integer id) {
         Chat chat = chatRepository.findChatById(id);
         chatService.leaveChat(chat);
     }
 
+    // Return to chat
     @PatchMapping("/chats/{id}/return")
     public ChatDTO returnToChat(@PathVariable("id") Integer id) {
         Chat chat = chatRepository.findChatById(id);
         return chatService.returnToChat(chat);
     }
 
+    // Update chat notifications
     @PatchMapping("/chats/{id}/notifications")
-    public ResponseEntity<ChatMemberDTO> updateChatNotifications(@PathVariable("id") Integer id,
-                                                                 @RequestParam("s") boolean state) {
+    public void updateChatNotifications(@PathVariable("id") Integer id,
+                                        @RequestParam("s") boolean state) {
         Chat chat = chatRepository.findChatById(id);
-        ChatMemberDTO updatedMember = chatService.updateChatNotifications(chat, state);
-        if (updatedMember == null) {
-            return ResponseEntity.internalServerError().build();
-        }
-        return ResponseEntity.ok(updatedMember);
+        chatService.updateChatNotifications(chat, state);
+    }
+
+    // Clear chat history
+    @PatchMapping("/chats/{id}/clear")
+    public void clearChatHistory(@PathVariable("id") Integer id) {
+        Chat chat = chatRepository.findChatById(id);
+        chatService.clearChatHistory(chat);
     }
 }

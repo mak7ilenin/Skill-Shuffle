@@ -38,6 +38,7 @@ public class Community {
     @Column(name = "banner_url")
     private String bannerUrl;
 
+    @Builder.Default
     @Column(name = "banner_color", length = 7)
     private String bannerColor = "#bdbdbd";
 
@@ -45,12 +46,14 @@ public class Community {
     @JoinColumn(name = "creator_id", nullable = false)
     private User creator;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "privacy")
     private CommunityPrivacy privacy = CommunityPrivacy.OPEN;
 
+    @Builder.Default
     @Column(name = "allow_comments", nullable = false)
-    private Boolean allowComments = true;
+    private boolean allowComments = true;
 
     @CreationTimestamp
     @Column(name = "created_at")

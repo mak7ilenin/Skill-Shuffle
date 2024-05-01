@@ -26,6 +26,10 @@ public class Chat {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "community_id")
+    private Community community;
+
     @JsonIgnore
     public boolean isPrivate() {
         return type == ChatType.PRIVATE;

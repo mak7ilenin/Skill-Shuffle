@@ -713,6 +713,12 @@ h1, h2, h3, h4, h5, h6, p {
   overflow-y: auto;
   flex: 1;
 }
+.chat-page .chat-box .messages-list .no-messages {
+  font-family: "Manrope", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #8F8F8F;
+}
 .chat-page .chat-box .messages-list .date-separator {
   width: -moz-fit-content;
   width: fit-content;

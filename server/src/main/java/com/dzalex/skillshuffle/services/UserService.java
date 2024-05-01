@@ -137,7 +137,6 @@ public class UserService {
                 .avatarUrl(chatMember.getMember().getAvatarUrl())
                 .role(chatMember.getRole())
                 .lastSeen(chatMember.getMember().getLastSeen())
-                .hasNotifications(chatMember.hasNotifications())
                 .build();
     }
 }

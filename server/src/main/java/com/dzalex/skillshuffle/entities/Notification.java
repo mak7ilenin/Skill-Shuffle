@@ -2,18 +2,17 @@ package com.dzalex.skillshuffle.entities;
 
 import com.dzalex.skillshuffle.enums.NotificationType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Timestamp;
 
-@Getter
-@Setter
-@Entity
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "notifications")
 public class Notification {
     @Id
@@ -36,8 +35,9 @@ public class Notification {
     @Column(name = "type", nullable = false)
     private NotificationType type;
 
+    @Builder.Default
     @Column(name = "is_read")
-    private Boolean isRead = false;
+    private boolean isRead = false;
 
     @CreationTimestamp
     @Column(name = "created_at")

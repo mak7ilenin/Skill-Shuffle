@@ -34,18 +34,23 @@ public class ChatMember {
     @Column(name = "role", nullable = false)
     private MemberRole role;
 
+    @Builder.Default
+    @Column(name = "notifications")
+    private boolean notifications = true;
+
     @CreationTimestamp
     @Column(name = "joined_at")
     private Timestamp joinedAt;
 
-    @Column(name = "notifications")
-    private boolean notifications = true;
-
     @Column(name = "left_at")
     private Timestamp leftAt;
 
+    @Builder.Default
     @Column(name = "is_kicked")
     private boolean isKicked = false;
+
+    @Column(name = "cleared_at")
+    private Timestamp clearedAt;
 
     @JsonIgnore
     public boolean isOwner() {

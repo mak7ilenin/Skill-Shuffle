@@ -17,6 +17,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -128,26 +129,30 @@ public class MessageService {
     }
 
     public MessageDTO findChatLastMessage(Chat chat) {
-        List<ChatMessage> messages = messageRepository.findMessagesByChatId(chat.getId());
-        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
+        User user = userService.getCurrentUser();
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), user.getId());
+        List<MessageDTO> messages = getChatMessages(chat.getId(), chatMember, -1, 0);
 
         // Check if messages list is not empty
         if (!messages.isEmpty()) {
-            // Sort messages by timestamp in descending order to get the last message
-            messages.sort(Comparator.comparing(ChatMessage::getTimestamp).reversed());
+
+            // Reverse the list to get the last message
+            messages = messages
+                    .stream()
+                    .sorted(Comparator.comparing(MessageDTO::getTimestamp).reversed())
+                    .toList();
 
             // Check if the chat is a group and the current user is left the chat
             if (chat.isGroup() && chatMember.isLeft()) {
                 // Get last message that sent by authedUser with type ANNOUNCEMENT
-                for (ChatMessage message : messages) {
-                    if (message.getSender().getId().equals(userService.getCurrentUser().getId()) && message.getType().equals(MessageType.ANNOUNCEMENT)) {
-                        return convertToDTO(message);
-                    }
-                }
+                return messages.stream()
+                        .filter(message -> message.getSender().getNickname().equals(user.getNickname()) && message.isAnnouncement())
+                        .findFirst()
+                        .orElse(messages.get(0));
             }
 
             // Return the last message as a DTO
-            return convertToDTO(messages.get(0));
+            return messages.get(0);
         }
         return null;
     }
@@ -203,5 +208,31 @@ public class MessageService {
             case RETURNED -> senderName + " returned to the chat";
             case ADDED -> senderName + " added " + userName;
         };
+    }
+
+    public List<MessageDTO> getChatMessages(Integer chatId, ChatMember chatMember, int limit, int offset) {
+        if (offset < 0) {
+            throw new IllegalArgumentException("Offset must be non-negative");
+        }
+
+        if (chatMember != null) {
+            List<ChatMessage> messages = messageRepository.findMessagesByChatId(chatId)
+                    .stream()
+                    .filter(message -> !chatMember.isLeft() || message.getTimestamp().before(chatMember.getLeftAt()))
+                    .filter(message -> chatMember.getClearedAt() == null || message.getTimestamp().after(chatMember.getClearedAt()))
+                    .skip(offset)
+                    .toList();
+
+            if (limit > 0) {
+                messages = messages.stream().limit(limit).toList();
+            }
+
+            return messages.stream()
+                    .map(this::convertToDTO)
+                    .sorted(Comparator.comparing(MessageDTO::getTimestamp))
+                    .toList();
+        }
+
+        return new ArrayList<>();
     }
 }

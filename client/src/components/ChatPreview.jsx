@@ -25,38 +25,40 @@ function ChatPreview({ chat, chosenChat, navigate }) {
     }
 
     return (
-        <>
-            {chat.lastMessage.type !== 'entry' ? (
-                <Row className={`chat-preview d-flex align-items-center flex-nowrap${chosenChat && String(chosenChat.id) === AESDecrypt(chat.id) ? ' active' : ''}`}
-                    key={chat.id}
-                    role='button'
-                    onClick={() => navigate(`/messenger?c=${chat.id}`)}
-                >
-                    <Col className='chat-avatar d-flex justify-content-center'>
-                        <Image
-                            src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
-                            alt={chat.name}
-                            width='55'
-                            height='55'
-                            style={{ objectFit: 'cover' }}
-                            roundedCircle
-                        />
-                    </Col>
-                    <Col className='chat-info w-75 ps-3'>
-                        <p className='chat-name d-flex justify-content-between'>
-                            <span className='name'>{chat.name}</span>
-                            <span className='timestamp'>{formatTimestampForChatContainer(chat.lastMessage.timestamp)}</span>
-                        </p>
+        <Row className={`chat-preview d-flex align-items-center flex-nowrap${chosenChat && String(chosenChat.id) === AESDecrypt(chat.id) ? ' active' : ''}`}
+            key={chat.id}
+            role='button'
+            onClick={() => navigate(`/messenger?c=${chat.id}`)}
+        >
+            <Col className='chat-avatar d-flex justify-content-center'>
+                <Image
+                    src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
+                    alt={chat.name}
+                    width='55'
+                    height='55'
+                    style={{ objectFit: 'cover' }}
+                    roundedCircle
+                />
+            </Col>
+            <Col className='chat-info w-75 ps-3'>
+                <p className='chat-name d-flex justify-content-between'>
+                    <span className='name'>{chat.name}</span>
+                    {chat.lastMessage !== null && (
+                        <span className='timestamp'>{formatTimestampForChatContainer(chat.lastMessage.timestamp)}</span>
+                    )}
+                </p>
+                {chat.lastMessage !== null && (
+                    <>
                         {chat.lastMessage.type === 'announcement' ? (
                             // Remove the HTML tags from the announcement message
                             <p className='last-message text-truncate'>{chat.lastMessage.content.replace(/<[^>]*>/g, '')}</p>
                         ) : (
                             <p className='last-message text-truncate'>{chat.lastMessage.content}</p>
                         )}
-                    </Col>
-                </Row>
-            ) : null}
-        </>
+                    </>
+                )}
+            </Col>
+        </Row>
     )
 }
 

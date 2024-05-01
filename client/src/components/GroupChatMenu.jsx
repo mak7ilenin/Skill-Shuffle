@@ -138,15 +138,13 @@ function GroupChatMenu({ chat, setChat }) {
 
             <Modal className='leave-chat-modal' show={leaveChatModalVisibility} onHide={handleCloseLeaveModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title className='w-100'>
-                        <h3 className='text-center'>Leave chat?</h3>
+                    <Modal.Title>
+                        Leave chat?
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>
-                        If you leave, you won’t receive any new messages from this chat.
-                        You can only return if there is enough room.
-                    </p>
+                    If you leave, you won’t receive any new messages from this chat.
+                    You can only return if there is enough room.
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant='light' onClick={handleCloseLeaveModal}>Cancel</Button>

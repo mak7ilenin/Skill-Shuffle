@@ -35,14 +35,14 @@ function Chat() {
 
 
   const updateChatLastMessage = useCallback((message) => {
-    const updatedChats = chats.map(chat => {
+    const updatedChats = chatsRef.current.map(chat => {
       if (AESDecrypt(chat.id) === String(message.chatId)) {
         chat.lastMessage = message;
       }
       return chat;
     });
-    setChats(updatedChats); // Update the chats state as well
-  }, [chats]);
+    setChats(updatedChats);
+  }, []);
 
 
   const getChatMessages = useCallback((chatId) => {
@@ -288,9 +288,6 @@ function Chat() {
   useEffect(() => {
     axios.get(`${API_SERVER}/chats`, { withCredentials: true })
       .then(response => {
-        // If last message is null, then not include it in the chats
-        response.data = response.data.filter(chat => chat.lastMessage !== null);
-
         // Encrypt the chat IDs before storing them
         response.data.forEach(chat => {
           chat.id = AESEncrypt(chat.id.toString());
@@ -302,7 +299,7 @@ function Chat() {
       .catch(error => {
         console.error(error.response?.data.message || error.message);
       });
-  }, [setChats]);
+  }, []);
 
 
   return (
@@ -339,6 +336,11 @@ function Chat() {
           />
 
           <Row className='messages-list p-0 py-3' ref={chatRef} onScroll={handleScroll}>
+            {messagesByDay.length === 0 && !loadingMessages && (
+              <div className='no-messages d-flex justify-content-center align-items-center w-100 h-100'>
+                Your message history will be displayed here.
+              </div>
+            )}
             {loadingMessages ? (
               <div className='d-flex justify-content-center align-items-center w-100'>
                 <Spinner animation='border' variant='secondary' />

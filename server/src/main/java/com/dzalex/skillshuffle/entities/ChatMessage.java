@@ -33,6 +33,7 @@ public class ChatMessage {
     @Column(name = "timestamp", nullable = false)
     private Timestamp timestamp;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private MessageStatus status = MessageStatus.SENT;

@@ -644,6 +644,13 @@
             overflow-y: auto;
             flex: 1;
 
+            .no-messages {
+                font-family: $main-font;
+                font-size: 14px;
+                font-weight: 500;
+                color: $light-gray;
+            }
+
             .date-separator {
                 width: fit-content;
                 margin: 0 auto;

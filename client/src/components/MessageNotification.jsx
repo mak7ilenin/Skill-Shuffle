@@ -13,10 +13,9 @@ function MessageNotification({ setMessageNotification, messageNotification, chat
 
     useEffect(() => {
         if (messageNotification && messageNotification.visible) {
-            setNotification(messageNotification.notification);
-            console.log("ms: " + messageNotification.notification.chat.id);
-            console.log("ch: " + chatId);
-            if (messageNotification.notification.type === 'CHAT_MESSAGE' && messageNotification.notification.chat.id !== chatId) {
+            const msgNotification = messageNotification.notification;
+            setNotification(msgNotification);
+            if (msgNotification.type === 'CHAT_MESSAGE' && msgNotification.chat.id !== chatId) {
                 setVisible(true);
             }
         }
@@ -34,6 +33,7 @@ function MessageNotification({ setMessageNotification, messageNotification, chat
                 onClick={() => {
                     setVisible(false);
                     navigate(`/messenger?c=${AESEncrypt(notification.chat.id.toString())}`);
+                    setMessageNotification({ visible: false, notification: null });
                 }}
                 delay={5000}
                 autohide
