@@ -57,7 +57,7 @@ function ChatPreview({ chat, chosenChat, navigate }) {
                     )}
                 </p>
                 {chat.lastMessage !== null && (
-                    <>
+                    <Row className='d-flex justify-content-between'>
                         {chat.lastMessage.type === 'announcement' ? (
                             // Remove the HTML tags from the announcement message
                             <p className='last-message text-truncate'>{chat.lastMessage.content.replace(/<[^>]*>/g, '')}</p>
@@ -67,7 +67,12 @@ function ChatPreview({ chat, chosenChat, navigate }) {
                                 {chat.lastMessage.content}
                             </p>
                         )}
-                    </>
+                        {chat.unreadMessages > 0 && (
+                            <div className={`unread-messages p-0 rounded-circle d-flex justify-content-center align-items-center ${chat.muted ? 'muted' : ''}`}>
+                                {chat.unreadMessages}
+                            </div>
+                        )}
+                    </Row>
                 )}
             </Col>
         </Row>

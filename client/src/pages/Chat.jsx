@@ -36,13 +36,22 @@ function Chat() {
 
   const updateChatLastMessage = useCallback((message) => {
     const updatedChats = chatsRef.current.map(chat => {
-      if (AESDecrypt(chat.id) === String(message.chatId)) {
+      // Decrypted chat ID
+      const chatId = AESDecrypt(chat.id);
+
+      // If the message is from this chat, update the last message
+      if (chatId === String(message.chatId)) {
         chat.lastMessage = message;
+
+        // If the chat is not the chosen chat, increment the unreadMessages
+        if (chatId !== String(chosenChat.id)) {
+          chat.unreadMessages += 1;
+        }
       }
       return chat;
     });
     setChats(updatedChats);
-  }, []);
+  }, [chosenChat.id]);
 
 
   const getChatMessages = useCallback((chatId) => {
@@ -51,6 +60,16 @@ function Chat() {
         setChosenChat(response.data);
         offsetRef.current = 0;
 
+        // Set the chat unreadMessages to 0
+        const updatedChats = chatsRef.current.map(chat => {
+          if (AESDecrypt(chat.id) === String(chatId)) {
+            chat.unreadMessages = 0;
+          }
+          return chat;
+        });
+        setChats(updatedChats);
+
+        // Hide loading spinner
         setLoadingMessages(false);
 
         setTimeout(() => {
@@ -120,7 +139,7 @@ function Chat() {
 
         // Check if received message is not from muted chat (each chat has field isMuted)
         chatsRef.current.forEach(chat => {
-          if (AESDecrypt(chat.id) === String(notification.chat.id) && !chat.muted) {
+          if (AESDecrypt(chat.id) === String(notification.chat.id)) {
             setMessageNotification({ visible: true, notification: notification });
           }
         });

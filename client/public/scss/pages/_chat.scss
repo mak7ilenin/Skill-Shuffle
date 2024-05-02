@@ -208,10 +208,26 @@
                     overflow: hidden;
                     font-size: 16px;
                     font-weight: 500;
+                    padding: 0;
 
                     .me {
                         color: $light-gray;
                     
+                    }
+                }
+
+                .unread-messages {
+                    width: 24px;
+                    height: 24px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: #fff;
+                    background-color: $primary-color;
+                    padding-bottom: 1px !important;
+                    border: 1px solid $light-gray;
+
+                    &.muted {
+                        background-color: $light-gray;
                     }
                 }
             }

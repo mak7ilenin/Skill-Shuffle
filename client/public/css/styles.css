@@ -333,9 +333,23 @@ h1, h2, h3, h4, h5, h6, p {
   overflow: hidden;
   font-size: 16px;
   font-weight: 500;
+  padding: 0;
 }
 .chat-page .chat-menu .chat-preview .chat-info .last-message .me {
   color: #8F8F8F;
+}
+.chat-page .chat-menu .chat-preview .chat-info .unread-messages {
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #3D00FF;
+  padding-bottom: 1px !important;
+  border: 1px solid #8F8F8F;
+}
+.chat-page .chat-menu .chat-preview .chat-info .unread-messages.muted {
+  background-color: #8F8F8F;
 }
 .chat-page .chat-menu .new-chat {
   font-family: "Manrope", sans-serif;
