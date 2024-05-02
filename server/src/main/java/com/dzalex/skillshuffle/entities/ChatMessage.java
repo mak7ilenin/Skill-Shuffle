@@ -1,6 +1,5 @@
 package com.dzalex.skillshuffle.entities;
 
-import com.dzalex.skillshuffle.enums.MessageStatus;
 import com.dzalex.skillshuffle.enums.MessageType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -32,11 +31,6 @@ public class ChatMessage {
 
     @Column(name = "timestamp", nullable = false)
     private Timestamp timestamp;
-
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private MessageStatus status = MessageStatus.SENT;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)

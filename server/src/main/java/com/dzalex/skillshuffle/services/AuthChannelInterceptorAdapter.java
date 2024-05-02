@@ -1,5 +1,6 @@
 package com.dzalex.skillshuffle.services;
 
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -23,13 +24,15 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
     @Autowired
     private WebSocketAuthenticatorService webSocketAuthenticatorService;
 
-    @Autowired
-    private SessionService sessionService;
+    private final SessionService sessionService = new SessionService();
+
+    private final ChatService chatService = new ChatService();
 
     @Override
-    public Message<?> preSend(Message<?> message, MessageChannel channel) throws AuthenticationException {
+    public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) throws AuthenticationException {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
+        // Handle user connection
         if (StompCommand.CONNECT == Objects.requireNonNull(accessor).getCommand()) {
             // Get token from the header and remove the prefix
             String token = accessor.getFirstNativeHeader(AUTHORIZATION_HEADER);
@@ -39,11 +42,21 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
 
             UsernamePasswordAuthenticationToken user = webSocketAuthenticatorService.getAuthenticatedOrFail(token);
             accessor.setUser(user);
+
+            sessionService.addConnectedUser(user.getName(), accessor.getSessionId());
         }
 
+//        // Handle user disconnect
+//        if (StompCommand.DISCONNECT == Objects.requireNonNull(accessor.getCommand())) {
+//            String username = Objects.requireNonNull(accessor.getUser()).getName();
+//            if (username != null) {
+//                sessionService.removeConnectedUser(username);
+//            }
+//        }
+
         // Handle user subscription
-        if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
-            String username = accessor.getUser().getName();
+        if (StompCommand.SUBSCRIBE == Objects.requireNonNull(accessor.getCommand())) {
+            String username = Objects.requireNonNull(accessor.getUser()).getName();
             String destination = accessor.getDestination();
             String subscriptionId = accessor.getSubscriptionId();
             if (username != null && destination != null && subscriptionId != null) {
@@ -52,10 +65,24 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
         }
 
         // Handle user unsubscription
-        if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) {
-            String username = accessor.getUser().getName();
+        if (StompCommand.UNSUBSCRIBE == Objects.requireNonNull(accessor.getCommand())) {
+            String username = Objects.requireNonNull(accessor.getUser()).getName();
             String subscriptionId = accessor.getSubscriptionId();
             if (username != null && subscriptionId != null) {
+
+                // TODO: Fix stomp error
+//                // Check if the destination is a chat room (pattern: /user/chat/{chatId})
+//                String destination = sessionService.getSubscriptionEndpoint(subscriptionId);
+//                if (destination.startsWith("/user/chat/")) {
+//                    // Get the chat ID from the destination
+//                    String[] destinationParts = destination.split("/");
+//                    String chatId = destinationParts[destinationParts.length - 1];
+//                    if (chatId != null) {
+//                        chatService.closeChat(Integer.parseInt(chatId));
+//                    }
+//                }
+
+                // Remove the subscription
                 sessionService.removeSession(username, subscriptionId);
             }
         }

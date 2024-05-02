@@ -66,11 +66,7 @@ public class ChatService {
             throw new IllegalArgumentException("User is not a member of this chat");
         }
 
-        ChatDTO chatDTO = getChatInfo(chat);
-        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authedUser.getId());
-        chatDTO.setMessages(messageService.getChatMessages(chat.getId(), chatMember, 30, 0));
-
-        return chatDTO;
+        return getChatInfo(chat);
     }
 
     // Get chat info based on the chat type
@@ -79,7 +75,7 @@ public class ChatService {
         chatDTO.setId(chat.getId());
         chatDTO.setType(chat.getType());
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
-        chatDTO.setMessages(messageService.getChatMessages(chat.getId(), chatMember, 30, 0));
+        chatDTO.setMessages(messageService.getFirstChatMessages(chat.getId(), chatMember));
         chatDTO.setMuted(isChatMuted(chat.getId(), chatMember.getMember().getId()));
 
         switch (chat.getType()) {
@@ -93,7 +89,7 @@ public class ChatService {
 
     private ChatPreviewDTO getChatPreview(Chat chat, User authedUser) {
         if (isUserMemberOfChat(chat.getId(), authedUser.getId())) {
-            Chat chatInfo = getShortChatInfo(chat);
+            ChatPreviewDTO chatInfo = getShortChatInfo(chat);
             return ChatPreviewDTO.builder()
                     .id(chat.getId())
                     .type(chat.getType())
@@ -101,32 +97,36 @@ public class ChatService {
                     .avatarUrl(chatInfo.getAvatarUrl())
                     .lastMessage(messageService.findChatLastMessage(chat))
                     .isMuted(isChatMuted(chat.getId(), authedUser.getId()))
+                    .isOnline(chatInfo.isOnline())
+                    .unreadMessages(messageService.getUnreadMessagesCount(chat.getId(), authedUser.getId()))
                     .build();
         }
         return null;
     }
 
-    private Chat getShortChatInfo(Chat chat) {
+    private ChatPreviewDTO getShortChatInfo(Chat chat) {
+        ChatPreviewDTO chatDTO = new ChatPreviewDTO();
         switch (chat.getType()) {
             case COMMUNITY -> {
-                chat.setAvatarUrl(chat.getCommunity().getAvatarUrl());
-                chat.setName(chat.getCommunity().getName());
+                chatDTO.setAvatarUrl(chat.getCommunity().getAvatarUrl());
+                chatDTO.setName(chat.getCommunity().getName());
             }
             case PRIVATE -> chatMemberRepository.findAllByChatId(chat.getId()).stream()
                 .filter(chatMember -> !chatMember.getMember().getUsername().equals(userService.getCurrentUser().getUsername()))
                 .findFirst()
                 .ifPresent(chatMember -> {
                     User chatPartner = chatMember.getMember();
-                    chat.setAvatarUrl(chatPartner.getAvatarUrl());
-                    chat.setName(chatPartner.getFirstName() + " " + chatPartner.getLastName());
+                    chatDTO.setAvatarUrl(chatPartner.getAvatarUrl());
+                    chatDTO.setName(chatPartner.getFirstName() + " " + chatPartner.getLastName());
+                    chatDTO.setOnline(chatPartner.isOnline());
                 });
             case GROUP -> {
-                chat.setAvatarUrl(chat.getAvatarUrl());
-                chat.setName(chat.getName());
+                chatDTO.setAvatarUrl(chat.getAvatarUrl());
+                chatDTO.setName(chat.getName());
             }
         }
 
-        return chat;
+        return chatDTO;
     }
 
     private void getCommunityChatInfo(Chat chat, ChatDTO chatDTO) {
@@ -365,7 +365,7 @@ public class ChatService {
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
         if (chatMember != null) {
             chatMember.setNotifications(state);
-            ChatMember newChatMember = chatMemberRepository.save(chatMember);
+            chatMemberRepository.save(chatMember);
         }
     }
 
@@ -373,6 +373,14 @@ public class ChatService {
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
         if (chatMember != null) {
             chatMember.setClearedAt(new Timestamp(System.currentTimeMillis()));
+            chatMemberRepository.save(chatMember);
+        }
+    }
+
+    public void closeChat(Integer chatId) {
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userService.getCurrentUser().getId());
+        if (chatMember != null) {
+            chatMember.setClosedAt(new Timestamp(System.currentTimeMillis()));
             chatMemberRepository.save(chatMember);
         }
     }

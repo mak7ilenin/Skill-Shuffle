@@ -58,6 +58,13 @@ public class ChatController {
         }
     }
 
+    // Get chat info with messages and members
+    @GetMapping("/chats/{id}")
+    public ChatDTO getChat(@PathVariable("id") Integer id) {
+        Chat chat = chatRepository.findChatById(id);
+        return chatService.getChatWithMessages(chat);
+    }
+
     // Update chat avatar
     @PatchMapping("/chats/{id}/avatar")
     public ResponseEntity<Chat> updateChatAvatar(@PathVariable("id") Integer id,
@@ -69,13 +76,6 @@ public class ChatController {
         } else {
             return ResponseEntity.internalServerError().build();
         }
-    }
-
-    // Get chat info with messages and members
-    @GetMapping("/chats/{id}")
-    public ChatDTO getChat(@PathVariable("id") Integer id) {
-        Chat chat = chatRepository.findChatById(id);
-        return chatService.getChatWithMessages(chat);
     }
 
     // Get chat messages

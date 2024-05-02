@@ -52,7 +52,6 @@ public class MessageService {
                 .chat(chatRepository.findChatById(chatId))
                 .content(message.getContent())
                 .timestamp(new Timestamp(System.currentTimeMillis()))
-                .status(MessageStatus.SENT)
                 .type(MessageType.MESSAGE)
                 .build();
 
@@ -75,18 +74,22 @@ public class MessageService {
             message = saveMessage(message, chatId, sender);
         }
 
-        returnMessageToUser(message, sender);
+        returnMessageToUsers(message, sender);
     }
 
-    private void returnMessageToUser(ChatMessage message, User sender) {
+    private void returnMessageToUsers(ChatMessage message, User sender) {
         Integer chatId = message.getChat().getId();
         List<String> usernames = userService.getUsernamesInChat(chatId);
 
         for (String username : usernames) {
-            if (sessionService.isUserSubscribed(username, "/user/chat/" + chatId)) {
+            if (sessionService.isConnected(username)) {
+
                 // Send the message to all users who subscribed to chat
-                messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, convertToDTO(message));
-            } else {
+                if (sessionService.isUserSubscribed(username, "/user/chat/" + chatId)) {
+                    messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, convertToDTO(message));
+                    continue;
+                }
+
                 // Generate notification for the user
                 ChatNotificationDTO notification = generateMessageNotification(chatId, message, userService.getPublicUserDTO(sender));
 
@@ -104,7 +107,6 @@ public class MessageService {
                 }
             }
         }
-
     }
 
     // Create new message notification based on chat type
@@ -164,7 +166,6 @@ public class MessageService {
                 userService.getPublicUserDTO(message.getSender()),
                 message.getContent(),
                 message.getTimestamp(),
-                message.getStatus(),
                 message.getType());
     }
 
@@ -174,7 +175,6 @@ public class MessageService {
                 .chat(chat)
                 .content(sender.getFirstName() + " " + sender.getLastName() + " has entered the chat")
                 .timestamp(new Timestamp(System.currentTimeMillis()))
-                .status(MessageStatus.SENT)
                 .type(MessageType.ENTRY)
                 .build();
         messageRepository.save(entryMessage);
@@ -186,7 +186,6 @@ public class MessageService {
                 .chat(chat)
                 .content(getAnnouncementMessageContent(sender, chat, announcementType, user))
                 .timestamp(new Timestamp(System.currentTimeMillis()))
-                .status(MessageStatus.SENT)
                 .type(MessageType.ANNOUNCEMENT)
                 .build();
 
@@ -208,6 +207,56 @@ public class MessageService {
             case RETURNED -> senderName + " returned to the chat";
             case ADDED -> senderName + " added " + userName;
         };
+    }
+
+    public int getUnreadMessagesCount(Integer chatId, Integer userId) {
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userId);
+        if (chatMember == null) {
+            throw new IllegalArgumentException("User is not a member of this chat");
+        }
+
+        if (chatMember.getClosedAt() == null) {
+            return messageRepository.findMessagesByChatId(chatId)
+                    .stream()
+                    .mapToInt(message -> 1)
+                    .sum();
+        }
+
+        return (int) messageRepository.findMessagesByChatId(chatId)
+                .stream()
+                .filter(message -> message.getTimestamp().after(chatMember.getClosedAt()))
+                .count();
+    }
+
+    public List<MessageDTO> getFirstChatMessages(Integer chatId, ChatMember chatMember) {
+        List<ChatMessage> messages;
+        if (chatMember.getClosedAt() == null) {
+            // All messages are unread. Retrieve the first 30 messages.
+            messages = messageRepository.findMessagesByChatId(chatId)
+                    .stream()
+                    .limit(30)
+                    .toList();
+        } else {
+            // Some messages are read, some are unread. Retrieve 15 read and 15 unread messages.
+            List<ChatMessage> readMessages = messageRepository.findMessagesByChatId(chatId)
+                    .stream()
+                    .filter(message -> message.getTimestamp().before(chatMember.getClosedAt()))
+                    .limit(15)
+                    .toList();
+            List<ChatMessage> unreadMessages = messageRepository.findMessagesByChatId(chatId)
+                    .stream()
+                    .filter(message -> message.getTimestamp().after(chatMember.getClosedAt()))
+                    .limit(15)
+                    .toList();
+            messages = new ArrayList<>();
+            messages.addAll(readMessages);
+            messages.addAll(unreadMessages);
+        }
+        // Convert the ChatMessage entities to MessageDTO objects and return the list.
+        return messages.stream()
+                .map(this::convertToDTO)
+                .sorted(Comparator.comparing(MessageDTO::getTimestamp))
+                .toList();
     }
 
     public List<MessageDTO> getChatMessages(Integer chatId, ChatMember chatMember, int limit, int offset) {

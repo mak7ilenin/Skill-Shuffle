@@ -135,6 +135,7 @@ function Chat() {
 
 
   useEffect(() => {
+    console.log('chosenChat.id:', chosenChat.id);
     if (chosenChat.id) {
       subscribeToChat();
     }

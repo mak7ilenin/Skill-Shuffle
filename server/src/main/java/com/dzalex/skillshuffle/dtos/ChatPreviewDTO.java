@@ -15,4 +15,6 @@ public class ChatPreviewDTO {
     private String avatarUrl;
     private MessageDTO lastMessage;
     private boolean isMuted;
+    private boolean isOnline;
+    private int unreadMessages;
 }

@@ -60,8 +60,9 @@ public class WebSocketController {
                 // Check the chats(private/community) user created without any messages and delete them
                 chatService.deleteEmptyChatsByAuthedUser(user);
 
-                // Clear the user's websocket sessions
+                // Clear user's websocket sessions
                 sessionService.removeAllUserSessions(username);
+                sessionService.removeConnectedUser(username);
 
                 // Update the user's last activity timestamp
                 user.setLastSeen(new Timestamp(System.currentTimeMillis()));

@@ -297,35 +297,24 @@ h1, h2, h3, h4, h5, h6, p {
   width: -moz-fit-content;
   width: fit-content;
   flex: 0 !important;
+  position: relative;
 }
 .chat-page .chat-menu .chat-preview .chat-avatar img {
   position: relative;
 }
-.chat-page .chat-menu .chat-preview .chat-avatar img.online::after {
-  content: "";
+.chat-page .chat-menu .chat-preview .chat-avatar .online-icon {
+  width: 16px;
+  height: 16px;
   position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #00ff00;
   bottom: 0;
-  right: 0;
-}
-.chat-page .chat-menu .chat-preview .chat-avatar img.offline::after {
-  content: "";
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #fff;
-  border: 1px solid #b2b2b2;
-  bottom: 0;
-  right: 0;
+  right: 2px;
+  border: 2px solid #fff;
 }
 .chat-page .chat-menu .chat-preview .chat-info {
   flex: auto;
 }
 .chat-page .chat-menu .chat-preview .chat-info .chat-name .name {
+  flex: 1;
   font-weight: 600;
   font-size: 18px;
   color: #000;
@@ -339,11 +328,14 @@ h1, h2, h3, h4, h5, h6, p {
   font-weight: 500;
 }
 .chat-page .chat-menu .chat-preview .chat-info .last-message {
-  width: calc(100% - 60px);
+  max-width: calc(100% - 45px);
   white-space: nowrap;
   overflow: hidden;
   font-size: 16px;
   font-weight: 500;
+}
+.chat-page .chat-menu .chat-preview .chat-info .last-message .me {
+  color: #8F8F8F;
 }
 .chat-page .chat-menu .new-chat {
   font-family: "Manrope", sans-serif;

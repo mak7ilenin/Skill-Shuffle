@@ -2,10 +2,12 @@ import React from 'react';
 import { Row, Col, Image } from 'react-bootstrap';
 
 import { AESDecrypt } from '../crypto';
+import { useAuth } from './AuthContext';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function ChatPreview({ chat, chosenChat, navigate }) {
+    const { authUser } = useAuth();
 
     const formatTimestampForChatContainer = (timestamp) => {
         const date = new Date(timestamp);
@@ -22,7 +24,11 @@ function ChatPreview({ chat, chosenChat, navigate }) {
             // hh:mm if the message was sent less than a day ago
             return date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' });
         }
-    }
+    };
+
+    const isMessageOwner = () => {
+        return chat.lastMessage.sender.nickname === authUser.nickname;
+    };
 
     return (
         <Row className={`chat-preview d-flex align-items-center flex-nowrap${chosenChat && String(chosenChat.id) === AESDecrypt(chat.id) ? ' active' : ''}`}
@@ -39,6 +45,9 @@ function ChatPreview({ chat, chosenChat, navigate }) {
                     style={{ objectFit: 'cover' }}
                     roundedCircle
                 />
+                {chat.type === 'private' && chat.online && (
+                    <div className="online-icon rounded-circle"></div>
+                )}
             </Col>
             <Col className='chat-info w-75 ps-3'>
                 <p className='chat-name d-flex justify-content-between'>
@@ -53,7 +62,10 @@ function ChatPreview({ chat, chosenChat, navigate }) {
                             // Remove the HTML tags from the announcement message
                             <p className='last-message text-truncate'>{chat.lastMessage.content.replace(/<[^>]*>/g, '')}</p>
                         ) : (
-                            <p className='last-message text-truncate'>{chat.lastMessage.content}</p>
+                            <p className='last-message text-truncate'>
+                                {isMessageOwner() ? (<span className='me'>You: </span>) : null}
+                                {chat.lastMessage.content}
+                            </p>
                         )}
                     </>
                 )}

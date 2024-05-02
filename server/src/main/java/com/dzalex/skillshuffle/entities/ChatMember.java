@@ -52,6 +52,9 @@ public class ChatMember {
     @Column(name = "cleared_at")
     private Timestamp clearedAt;
 
+    @Column(name = "closed_at")
+    private Timestamp closedAt;
+
     @JsonIgnore
     public boolean isOwner() {
         return role == MemberRole.CREATOR;

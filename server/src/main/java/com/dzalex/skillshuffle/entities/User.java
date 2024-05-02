@@ -1,6 +1,7 @@
 package com.dzalex.skillshuffle.entities;
 
 import com.dzalex.skillshuffle.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -84,4 +85,8 @@ public class User {
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
+    @JsonIgnore
+    public boolean isOnline() {
+        return lastSeen.after(new Timestamp(System.currentTimeMillis() - 300000));
+    }
 }
