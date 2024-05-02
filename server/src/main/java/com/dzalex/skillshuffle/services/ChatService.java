@@ -62,6 +62,12 @@ public class ChatService {
     public ChatDTO getChatWithMessages(Chat chat) {
         User authedUser = userService.getCurrentUser();
 
+        // Close previous chat
+        String chatId = sessionService.getPreviouslySubscribedChatId(authedUser.getUsername());
+        if (chatId != null) {
+            closeChat(Integer.parseInt(chatId), authedUser.getUsername());
+        }
+
         if (!isUserMemberOfChat(chat.getId(), authedUser.getId())) {
             throw new IllegalArgumentException("User is not a member of this chat");
         }
@@ -377,8 +383,8 @@ public class ChatService {
         }
     }
 
-    public void closeChat(Integer chatId) {
-        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userService.getCurrentUser().getId());
+    public void closeChat(Integer chatId, String username) {
+        ChatMember chatMember = chatMemberRepository.findFirstByChatIdAndMemberUsername(chatId, username);
         if (chatMember != null) {
             chatMember.setClosedAt(new Timestamp(System.currentTimeMillis()));
             chatMemberRepository.save(chatMember);

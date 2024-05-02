@@ -5,7 +5,6 @@ import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.entities.ChatMember;
 import com.dzalex.skillshuffle.entities.Friendship;
 import com.dzalex.skillshuffle.entities.User;
-import com.dzalex.skillshuffle.enums.MemberRole;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.FriendshipRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;

@@ -7,9 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class SessionService {
-    private final ConcurrentHashMap<String, Map<String, String>> userSessions = new ConcurrentHashMap<>();
 
-    private final Map<String, String> connectedUsers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Map<String, String>> userSessions = new ConcurrentHashMap<>();
 
     public void addSession(String username, String endpoint, String subscriptionId) {
         Map<String, String> userEndpoints = userSessions.getOrDefault(username, new ConcurrentHashMap<>());
@@ -33,31 +32,27 @@ public class SessionService {
         userSessions.remove(username);
     }
 
-    public String getSubscriptionEndpoint(String subscriptionId) {
-        for (Map.Entry<String, Map<String, String>> userSession : userSessions.entrySet()) {
-            for (Map.Entry<String, String> endpointSubscription : userSession.getValue().entrySet()) {
-                if (endpointSubscription.getValue().equals(subscriptionId)) {
-                    return endpointSubscription.getKey();
-                }
-            }
-        }
-        return null;
-    }
-
     public boolean isUserSubscribed(String username, String endpoint) {
         Map<String, String> userEndpoints = userSessions.get(username);
         return userEndpoints != null && userEndpoints.containsKey(endpoint);
     }
 
-    public void addConnectedUser(String username, String sessionId) {
-        connectedUsers.put(username, sessionId);
+    public boolean isConnectionActive(String username) {
+        return userSessions.containsKey(username);
     }
 
-    public void removeConnectedUser(String username) {
-        connectedUsers.remove(username);
+    public String getPreviouslySubscribedChatId(String username) {
+        Map<String, String> userEndpoints = userSessions.get(username);
+        return userEndpoints != null ? userEndpoints.get("prev-chat") : null;
     }
 
-    public boolean isConnected(String username) {
-        return connectedUsers.containsKey(username);
-    }
+//    public String getCurrentlySubscribedChatId(String username) {
+//        Map<String, String> userEndpoints = userSessions.get(username);
+//        // Get the chat ID from the destination with patter: /user/chat/{chatId}
+//        return userEndpoints != null ? userEndpoints.keySet().stream()
+//                .filter(s -> s.startsWith("/user/chat/"))
+//                .map(s -> s.split("/")[3])
+//                .findFirst()
+//                .orElse(null) : null;
+//    }
 }

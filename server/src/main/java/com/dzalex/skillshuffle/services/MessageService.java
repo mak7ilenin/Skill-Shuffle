@@ -82,7 +82,7 @@ public class MessageService {
         List<String> usernames = userService.getUsernamesInChat(chatId);
 
         for (String username : usernames) {
-            if (sessionService.isConnected(username)) {
+            if (sessionService.isConnectionActive(username)) {
 
                 // Send the message to all users who subscribed to chat
                 if (sessionService.isUserSubscribed(username, "/user/chat/" + chatId)) {
@@ -234,6 +234,7 @@ public class MessageService {
             // All messages are unread. Retrieve the first 30 messages.
             messages = messageRepository.findMessagesByChatId(chatId)
                     .stream()
+                    .filter(message -> chatMember.getClearedAt() == null || message.getTimestamp().after(chatMember.getClearedAt()))
                     .limit(30)
                     .toList();
         } else {
@@ -241,11 +242,13 @@ public class MessageService {
             List<ChatMessage> readMessages = messageRepository.findMessagesByChatId(chatId)
                     .stream()
                     .filter(message -> message.getTimestamp().before(chatMember.getClosedAt()))
+                    .filter(message -> chatMember.getClearedAt() == null || message.getTimestamp().after(chatMember.getClearedAt()))
                     .limit(15)
                     .toList();
             List<ChatMessage> unreadMessages = messageRepository.findMessagesByChatId(chatId)
                     .stream()
                     .filter(message -> message.getTimestamp().after(chatMember.getClosedAt()))
+                    .filter(message -> chatMember.getClearedAt() == null || message.getTimestamp().after(chatMember.getClearedAt()))
                     .limit(15)
                     .toList();
             messages = new ArrayList<>();

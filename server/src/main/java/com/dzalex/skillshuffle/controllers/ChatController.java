@@ -8,6 +8,7 @@ import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.services.ChatService;
 import com.dzalex.skillshuffle.services.MessageService;
+import com.dzalex.skillshuffle.services.SessionService;
 import com.dzalex.skillshuffle.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

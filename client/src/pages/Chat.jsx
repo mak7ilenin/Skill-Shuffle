@@ -76,7 +76,7 @@ function Chat() {
       }
 
       // If user is in chat, then subscribe to chat messages
-      if (chosenChat.members != null && !currentSubscriptionRef.current) {
+      if (!currentSubscriptionRef.current) {
         const chatEndpoint = `/user/chat/${chosenChat.id}`;
         const newSubscription = stompClient.subscribe(chatEndpoint, receivedMessage => {
           const message = JSON.parse(receivedMessage.body);
@@ -102,7 +102,7 @@ function Chat() {
         };
       }
     }
-  }, [stompClient, updateChatLastMessage, isStompClientInitialized, chosenChat.members, chosenChat.id]);
+  }, [stompClient, updateChatLastMessage, isStompClientInitialized, chosenChat.id]);
 
 
   const subscribeToAllChats = useCallback(() => {
@@ -135,7 +135,6 @@ function Chat() {
 
 
   useEffect(() => {
-    console.log('chosenChat.id:', chosenChat.id);
     if (chosenChat.id) {
       subscribeToChat();
     }

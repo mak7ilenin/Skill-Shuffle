@@ -24,9 +24,8 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
     @Autowired
     private WebSocketAuthenticatorService webSocketAuthenticatorService;
 
-    private final SessionService sessionService = new SessionService();
-
-    private final ChatService chatService = new ChatService();
+    @Autowired
+    private SessionService sessionService;
 
     @Override
     public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) throws AuthenticationException {
@@ -42,17 +41,7 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
 
             UsernamePasswordAuthenticationToken user = webSocketAuthenticatorService.getAuthenticatedOrFail(token);
             accessor.setUser(user);
-
-            sessionService.addConnectedUser(user.getName(), accessor.getSessionId());
         }
-
-//        // Handle user disconnect
-//        if (StompCommand.DISCONNECT == Objects.requireNonNull(accessor.getCommand())) {
-//            String username = Objects.requireNonNull(accessor.getUser()).getName();
-//            if (username != null) {
-//                sessionService.removeConnectedUser(username);
-//            }
-//        }
 
         // Handle user subscription
         if (StompCommand.SUBSCRIBE == Objects.requireNonNull(accessor.getCommand())) {
@@ -61,6 +50,12 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
             String subscriptionId = accessor.getSubscriptionId();
             if (username != null && destination != null && subscriptionId != null) {
                 sessionService.addSession(username, destination, subscriptionId);
+
+                // Add previous chat ID to the user's session
+                if (destination.startsWith("/user/chat/")) {
+                    String chatId = destination.split("/")[3];
+                    sessionService.addSession(username, "prev-chat", chatId);
+                }
             }
         }
 
@@ -69,20 +64,6 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
             String username = Objects.requireNonNull(accessor.getUser()).getName();
             String subscriptionId = accessor.getSubscriptionId();
             if (username != null && subscriptionId != null) {
-
-                // TODO: Fix stomp error
-//                // Check if the destination is a chat room (pattern: /user/chat/{chatId})
-//                String destination = sessionService.getSubscriptionEndpoint(subscriptionId);
-//                if (destination.startsWith("/user/chat/")) {
-//                    // Get the chat ID from the destination
-//                    String[] destinationParts = destination.split("/");
-//                    String chatId = destinationParts[destinationParts.length - 1];
-//                    if (chatId != null) {
-//                        chatService.closeChat(Integer.parseInt(chatId));
-//                    }
-//                }
-
-                // Remove the subscription
                 sessionService.removeSession(username, subscriptionId);
             }
         }
