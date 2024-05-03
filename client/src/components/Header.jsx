@@ -23,6 +23,7 @@ function Header() {
         await axios.post(`${API_SERVER}/auth/logout`, {}, { withCredentials: true });
         navigate('/sign-in');
         setAuthUser(null);
+        document.querySelector('.default-header').classList.add('closed');
     };
 
     useEffect(() => {

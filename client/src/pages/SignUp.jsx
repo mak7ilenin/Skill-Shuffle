@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Container, Row } from 'react-bootstrap';
+import { Container, Row, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -7,6 +7,7 @@ import { API_SERVER } from '../config';
 import SignUpSteps from '../components/SignUpSteps';
 
 import { ReactComponent as Logo } from '../assets/icons/logo.svg';
+import { ReactComponent as Arrow } from '../assets/icons/arrow-back.svg';
 
 function SignUp() {
     const [showArrow, setShowArrow] = useState(false);
@@ -46,37 +47,58 @@ function SignUp() {
         };
     };
 
-    const changeStep = useCallback((step) => {
-        if (step > 1) {
+    const changeStep = useCallback(step => {
+        if (step > 1 && step <= 6) {
             navigate(`/sign-up?step=${step}`)
+            setCurrentStep(step);
+            setShowArrow(true);
+        } else {
+            navigate('/sign-up');
+            setCurrentStep(1);
+            setShowArrow(false);
         }
-        setCurrentStep(step);
         setTitle(getStepTitle(step));
-        step > 1 && step <= 6 ? setShowArrow(true) : setShowArrow(false);
     }, [navigate]);
+
+    const toPrevoisStep = () => {
+        const prevStep = currentStep - 1;
+        setCurrentStep(prevStep);
+        changeStep(prevStep);
+
+        if (prevStep === 1) {
+            navigate(`/sign-up`);
+        } else {
+            navigate(`/sign-up?step=${prevStep}`);
+        }
+    };
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        let step = urlParams.get('step');
-        !step && (step = 1);
-        changeStep(parseInt(step));
-    }, [changeStep, currentStep]); // Include currentStep in the dependency array
+        let step = parseInt(urlParams.get('step')) || 1;
+        changeStep(step);
+    }, [changeStep]);
 
     return (
         <Container className='sign-up d-flex flex-column justify-content-center align-items-center'>
-            {showArrow && (
-                <i
-                    className='fas fa-arrow-left fa-2x text-primary position-absolute top-0 start-0 m-3'
-                    onClick={() => navigate('/sign-up')}
-                />
-            )}
             <div className="sign-up__container">
+                {showArrow && (
+                    <Button
+                        variant='none'
+                        className='arrow-back'
+                        onClick={toPrevoisStep}
+                    >
+                        <Arrow
+                            className='arrow-icon'
+                            width={22}
+                        />
+                    </Button>
+                )}
                 <Row className='logo-container'>
                     <Logo height={90} />
                 </Row>
                 <Row className='sign-up__title mt-3 mb-4'>
                     <h2 className='text-uppercase text-center'>Sign up</h2>
-                    <hr className='w-25 my-0 mx-auto' />
+                    <hr className='w-50 mb-1 mx-auto' />
                     <p className='text-muted text-center'>{title}</p>
                 </Row>
 
@@ -84,6 +106,7 @@ function SignUp() {
                     setFormData={setFormData}
                     register={register}
                     currentStep={currentStep}
+                    setCurrentStep={setCurrentStep}
                     changeStep={changeStep}
                 />
             </div>

@@ -159,11 +159,13 @@ h1, h2, h3, h4, h5, h6, p {
 }
 .sign-up__container {
   width: 550px;
-  min-height: 550px;
+  min-height: 600px;
   background-color: #fff;
+  box-shadow: 0 7px 12px rgba(0, 0, 0, 0.1450980392);
   border-radius: 60px;
-  padding: 50px 120px 50px 120px;
+  padding: 70px 110px 70px 110px;
   margin-top: 125px;
+  position: relative;
 }
 .sign-up__container hr {
   color: #373737;
@@ -177,74 +179,160 @@ h1, h2, h3, h4, h5, h6, p {
   font-weight: 300;
   font-size: 14px;
 }
+.sign-up__container .arrow-back {
+  top: 40px;
+  left: 40px;
+  position: absolute;
+  outline: none;
+  border: none;
+}
+.sign-up__container .arrow-back .arrow-icon path {
+  fill: #8F8F8F;
+}
+.sign-up__container .arrow-back:hover .arrow-icon path {
+  fill: #373737;
+}
 .sign-up__title h2 {
   color: #373737;
   font-size: 3rem;
   font-weight: 400;
 }
-.sign-up__form .field-container {
-  width: 100%;
-  margin-bottom: 13px;
+.sign-up__form input.invalid,
+.sign-up__form select.invalid {
+  box-shadow: 0 0 0 0.15rem rgba(230, 70, 70, 0.1450980392) !important;
 }
-.sign-up__form input, .sign-up__form select {
+.sign-up__form .form-text.error-message {
+  color: #E64646;
+  font-size: 13px;
+  font-weight: 400;
+}
+.sign-up__form .form-floating {
   width: 100%;
+}
+.sign-up__form .form-floating label::after {
+  background-color: transparent !important;
+}
+.sign-up__form .form-floating textarea {
+  min-height: 120px;
+}
+.sign-up__form .input-group span {
+  font-family: "Mitr", sans-serif;
+}
+.sign-up__form .input-group input {
+  font-family: "Lexend", "sans-serif";
+  font-weight: 400;
+  padding: 1rem 0.75rem;
+}
+.sign-up__form .input-group input::-moz-placeholder {
+  font-weight: 300;
+}
+.sign-up__form .input-group input::placeholder {
+  font-weight: 300;
+}
+.sign-up__form input,
+.sign-up__form select,
+.sign-up__form label,
+.sign-up__form textarea {
   font-family: "Lexend", "sans-serif";
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 400;
   color: #373737;
+  line-height: 25px;
+}
+.sign-up__form input::-moz-placeholder, .sign-up__form select::-moz-placeholder, .sign-up__form label::-moz-placeholder, .sign-up__form textarea::-moz-placeholder {
+  color: #8F8F8F;
+  -moz-user-select: none;
+       user-select: none;
+}
+.sign-up__form input::placeholder,
+.sign-up__form select::placeholder,
+.sign-up__form label::placeholder,
+.sign-up__form textarea::placeholder {
+  color: #8F8F8F;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.sign-up__form label {
+  color: #8F8F8F;
+  font-weight: 300;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.sign-up__form input,
+.sign-up__form select,
+.sign-up__form textarea {
+  width: 100%;
   border: none;
   background-color: #F0F0FF;
   border-radius: 5px;
-  padding: 12px 13px;
 }
-.sign-up__form input::-moz-placeholder, .sign-up__form select::-moz-placeholder {
-  color: #8F8F8F;
-}
-.sign-up__form input::placeholder, .sign-up__form select::placeholder {
-  color: #8F8F8F;
-}
-.sign-up__form input:focus, .sign-up__form select:focus {
+.sign-up__form input:focus,
+.sign-up__form select:focus,
+.sign-up__form textarea:focus {
   box-shadow: 0 0 0.25rem rgba(61, 0, 255, 0.25);
   background-color: rgba(240, 240, 255, 0.6156862745);
 }
 .sign-up__form select {
-  color: #8F8F8F;
-}
-.sign-up__form select option {
-  width: calc(100% - 20px);
+  color: #373737;
+  font-weight: 300;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
 }
 .sign-up__form select option:not(.default) {
   color: #373737;
-}
-.sign-up__form .next-btn {
-  height: 40px;
-  background-color: #5D6BE4;
-  border: none;
-  border-radius: 7px;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-.sign-up__form .next-btn span {
-  color: #fff;
-  font-family: "Mitr", sans-serif;
-  font-family: "Lexend", "sans-serif";
-  font-size: 16px;
-  font-weight: 400;
-}
-.sign-up__form .next-btn:hover {
-  background-color: #3D00FF;
 }
 .sign-up__form .form-text {
   font-family: "Lexend", "sans-serif";
   font-weight: 300;
   font-size: 13px;
   color: #000;
+}
+.sign-up__form .buttons-group button {
+  height: 50px;
+  border-radius: 7px;
+  flex-grow: 1;
+}
+.sign-up__form .buttons-group button span {
+  color: #fff;
+  font-family: "Mitr", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+.sign-up__form .buttons-group button.btn-primary {
+  background-color: #5D6BE4;
+}
+.sign-up__form .buttons-group button.btn-secondary {
+  background-color: #929292;
+}
+.sign-up__form .avatar-container {
+  cursor: pointer;
+}
+.sign-up__form .avatar-container .mid-column {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.sign-up__form .avatar-container .left-column, .sign-up__form .avatar-container .right-column {
+  height: -moz-fit-content;
+  height: fit-content;
+}
+.sign-up__form .avatar-container .avatar-decoration {
+  font-family: "Lexend", "sans-serif";
+  font-weight: 300;
+  font-size: 14px;
+  color: #373737;
+  text-align: center;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.sign-up__form .avatar-container .avatar-decoration::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #373737;
+  margin-top: 5px;
 }
 
 .chat-page .chat-menu {
