@@ -153,6 +153,85 @@ h1, h2, h3, h4, h5, h6, p {
   text-overflow: ellipsis;
 }
 
+.sign-up {
+  font-family: "Mitr", sans-serif;
+  margin: 0 auto !important;
+}
+.sign-up__container {
+  width: 550px;
+  min-height: 550px;
+  background-color: #fff;
+  border-radius: 60px;
+  padding: 50px 120px 50px 120px;
+  margin-top: 125px;
+}
+.sign-up__container hr {
+  color: #373737;
+  border-color: #373737;
+  background-color: #373737;
+  opacity: 0.5;
+}
+.sign-up__container p {
+  font-family: "Lexend", "sans-serif";
+  color: #373737;
+  font-weight: 300;
+  font-size: 14px;
+}
+.sign-up__title h2 {
+  color: #373737;
+  font-size: 3rem;
+  font-weight: 400;
+}
+.sign-up__form input {
+  width: 100%;
+  font-family: "Lexend", "sans-serif";
+  font-size: 14px;
+  font-weight: 300;
+  color: #373737;
+  border: none;
+  background-color: #F0F0FF;
+  border-radius: 5px;
+  padding: 12px 13px;
+  margin-bottom: 13px;
+}
+.sign-up__form input::-moz-placeholder {
+  color: #8F8F8F;
+}
+.sign-up__form input::placeholder {
+  color: #8F8F8F;
+}
+.sign-up__form input:focus {
+  box-shadow: 0 0 0.25rem rgba(61, 0, 255, 0.25);
+  background-color: rgba(240, 240, 255, 0.6156862745);
+}
+.sign-up__form .next-btn {
+  height: 40px;
+  background-color: #5D6BE4;
+  border: none;
+  border-radius: 7px;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.sign-up__form .next-btn span {
+  color: #fff;
+  font-family: "Mitr", sans-serif;
+  font-family: "Lexend", "sans-serif";
+  font-size: 16px;
+  font-weight: 400;
+}
+.sign-up__form .next-btn:hover {
+  background-color: #3D00FF;
+}
+.sign-up__form .form-text {
+  font-family: "Lexend", "sans-serif";
+  font-weight: 300;
+  font-size: 13px;
+  color: #000;
+}
+
 .chat-page .chat-menu {
   width: 27.61%;
   min-width: 400px;

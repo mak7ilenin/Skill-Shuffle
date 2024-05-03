@@ -235,6 +235,7 @@ public class MessageService {
             messages = messageRepository.findMessagesByChatId(chatId)
                     .stream()
                     .filter(message -> chatMember.getClearedAt() == null || message.getTimestamp().after(chatMember.getClearedAt()))
+                    .filter(message -> !chatMember.isLeft() || message.getTimestamp().before(chatMember.getLeftAt()))
                     .limit(30)
                     .toList();
         } else {
@@ -243,12 +244,14 @@ public class MessageService {
                     .stream()
                     .filter(message -> message.getTimestamp().before(chatMember.getClosedAt()))
                     .filter(message -> chatMember.getClearedAt() == null || message.getTimestamp().after(chatMember.getClearedAt()))
+                    .filter(message -> !chatMember.isLeft() || message.getTimestamp().before(chatMember.getLeftAt()))
                     .limit(15)
                     .toList();
             List<ChatMessage> unreadMessages = messageRepository.findMessagesByChatId(chatId)
                     .stream()
                     .filter(message -> message.getTimestamp().after(chatMember.getClosedAt()))
                     .filter(message -> chatMember.getClearedAt() == null || message.getTimestamp().after(chatMember.getClearedAt()))
+                    .filter(message -> !chatMember.isLeft() || message.getTimestamp().before(chatMember.getLeftAt()))
                     .limit(15)
                     .toList();
             messages = new ArrayList<>();

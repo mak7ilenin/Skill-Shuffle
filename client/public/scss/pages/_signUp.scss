@@ -1,0 +1,90 @@
+.sign-up {
+    font-family: $secondary-font;
+    margin: 0 auto !important;
+
+    @extend .sign-up;
+
+    &__container {
+        width: 550px;
+        min-height: 550px;
+        background-color: #fff;
+        border-radius: 60px;
+        padding: 50px 120px 50px 120px;
+        margin-top: 125px;
+
+        hr {
+            color: $dark-gray;
+            border-color: $dark-gray;
+            background-color: $dark-gray;
+            opacity: .5;
+        }
+        
+        p {
+            font-family: $third-font;
+            color: $dark-gray;
+            font-weight: 300;
+            font-size: 14px;
+        }
+    }
+
+    &__title h2 {
+        color: $dark-gray;
+        font-size: 3rem;
+        font-weight: 400;
+    }
+
+    &__form {
+        input {
+            width: 100%;
+            font-family: $third-font;
+            font-size: 14px;
+            font-weight: 300;
+            color: $dark-gray;
+            border: none;
+            background-color: $light-purple;
+            border-radius: 5px;
+            padding: 12px 13px;
+            margin-bottom: 13px;
+
+            &::placeholder {
+                color: $light-gray;
+            }
+
+            &:focus {
+                box-shadow: 0 0 .25rem rgb(61, 0, 255, .25);
+                background-color: #f0f0ff9d;
+            }
+        }
+
+        .next-btn {
+            height: 40px;
+            background-color: $primary-button;
+            border: none;
+            border-radius: 7px;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            
+            span {
+                color: #fff;
+                font-family: $secondary-font;
+                font-family: $third-font;
+                font-size: 16px;
+                font-weight: 400;
+            }
+
+            &:hover {
+                background-color: $primary-color;
+            }
+        }
+
+        .form-text {
+            font-family: $third-font;
+            font-weight: 300;
+            font-size: 13px;
+            color: #000;
+        }
+    }
+}

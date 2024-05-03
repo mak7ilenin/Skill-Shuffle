@@ -1,74 +1,44 @@
 import React, { useState } from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
-import { useNavigate, Link } from 'react-router-dom';
+import { Container, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { API_SERVER } from '../config';
+import SignUpSteps from '../components/SignUpSteps';
+
+import { ReactComponent as Logo } from '../assets/icons/logo.svg';
 
 function SignUp() {
-    const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [nickname, setNickname] = useState('');
+    const [formData, setFormData] = useState(new FormData());
+    const [title, setTitle] = useState('Enter your name');
     const navigate = useNavigate();
 
-    const register = async (e) => {
-        e.preventDefault();
-        const body = {
-            firstName: "Test " + username,
-            lastName: "The " + nickname,
-            username: username,
-            password: password,
-            nickname: nickname,
-            email: email,
-            gender: "other",
-            birthDate: "2004-12-22",
-            bio: "Test " + username,
-            avatarUrl: null
-        };
-        try {
-            await axios.post(`${API_SERVER}/auth/register`, body)
-                .then(() => {
-                    navigate('/sign-in');
-                });
-        } catch (error) {
-            if (error.response) {
-                console.error(error.response.data.message);
-            }
-        }
+    const register = () => {
+        axios.post(`${API_SERVER}/auth/register`, formData)
+            .then(() => {
+                navigate('/sign-in');
+            })
+            .catch(error => {
+                if (error.response) {
+                    console.error(error.response.data.message);
+                }
+            });
     };
 
+
     return (
-        <Container className='d-flex justify-content-center align-items-center'>
-            <Form onSubmit={register}>
-                <Form.Group controlId='formBasicUsername'>
-                    <Form.Control type='text' name='username' placeholder='Username'
-                        onChange={e => setUsername(e.target.value)} autoComplete='username' />
-                </Form.Group>
-
-                <Form.Group controlId='formBasicEmail'>
-                    <Form.Control type='email' name='email' placeholder='E-mail'
-                        onChange={e => setEmail(e.target.value)} autoComplete='email' />
-                </Form.Group>
-
-                <Form.Group controlId='formBasicNickname'>
-                    <Form.Control type='text' name='nickname' placeholder='Nickname'
-                        onChange={e => setNickname(e.target.value)} autoComplete='nickname' />
-                </Form.Group>
-
-                <Form.Group controlId='formBasicPassword'>
-                    <Form.Control type='password' name='password' placeholder='Password'
-                        onChange={e => setPassword(e.target.value)} autoComplete='password' />
-                </Form.Group>
-
-                <Button variant='primary' type='submit'>
-                    Sign Up
-                </Button>
-
-                <Form.Text className='text-muted'>
-                    Already have an account? <Link to='/sign-in'>Sign In</Link>
-                </Form.Text>
-            </Form>
+        <Container className='sign-up d-flex flex-column justify-content-center align-items-center'>
+            <div className="sign-up__container">
+                <Row className='logo-container'>
+                    <Logo height={90} />
+                </Row>
+                <Row className='sign-up__title mt-3 mb-4'>
+                    <h2 className='text-uppercase text-center'>Sign up</h2>
+                    <hr className='w-25 my-0 mx-auto' />
+                    <p className='text-muted text-center'>{title}</p>
+                </Row>
+                <SignUpSteps setFormData={setFormData} register={register} setTitle={setTitle} />
+            </div>
         </Container>
     )
 }

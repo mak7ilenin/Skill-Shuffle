@@ -45,14 +45,4 @@ public class SessionService {
         Map<String, String> userEndpoints = userSessions.get(username);
         return userEndpoints != null ? userEndpoints.get("prev-chat") : null;
     }
-
-//    public String getCurrentlySubscribedChatId(String username) {
-//        Map<String, String> userEndpoints = userSessions.get(username);
-//        // Get the chat ID from the destination with patter: /user/chat/{chatId}
-//        return userEndpoints != null ? userEndpoints.keySet().stream()
-//                .filter(s -> s.startsWith("/user/chat/"))
-//                .map(s -> s.split("/")[3])
-//                .findFirst()
-//                .orElse(null) : null;
-//    }
 }
