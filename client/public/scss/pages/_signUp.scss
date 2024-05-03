@@ -34,7 +34,12 @@
     }
 
     &__form {
-        input {
+        .field-container {
+            width: 100%;
+            margin-bottom: 13px;
+        }
+
+        input, select {
             width: 100%;
             font-family: $third-font;
             font-size: 14px;
@@ -44,7 +49,6 @@
             background-color: $light-purple;
             border-radius: 5px;
             padding: 12px 13px;
-            margin-bottom: 13px;
 
             &::placeholder {
                 color: $light-gray;
@@ -53,6 +57,21 @@
             &:focus {
                 box-shadow: 0 0 .25rem rgb(61, 0, 255, .25);
                 background-color: #f0f0ff9d;
+            }
+        }
+
+        select {
+            color: $light-gray;
+
+            option {
+                width: calc(100% - 20px);
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+
+                &:not(.default) {
+                    color: $dark-gray;
+                }
             }
         }
 

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Container, Form, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 
-function SignUpSteps({ setFormData, register, setTitle }) {
+function SignUpSteps({ setFormData, register, currentStep, changeStep }) {
     const [error, setError] = useState('');
-    const [currentStep, setCurrentStep] = useState(1);
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -24,6 +23,8 @@ function SignUpSteps({ setFormData, register, setTitle }) {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
+    const navigate = useNavigate();
+
     const submitForm = () => {
         setFormData(formData => {
             formData.set('firstName', firstName); // required
@@ -39,7 +40,7 @@ function SignUpSteps({ setFormData, register, setTitle }) {
         });
     };
 
-    const validateForm = () => {
+    const validateFormSubmiting = () => {
         // Check required fields
         if (!firstName || !lastName || !gender || !birthDate || !nickname || !username || !password) {
             setError('Please fill required fields');
@@ -55,59 +56,79 @@ function SignUpSteps({ setFormData, register, setTitle }) {
         return true;
     };
 
-    const getStepTitle = (step) => {
-        switch (step) {
-            case '1':
-                return 'Enter your name';
-            case '2':
-                return 'Enter your birthday and gender';
-            case '3':
-                return 'Add your biography and avatar';
-            case '4':
-                return 'Enter your short name so that others can easily find you or mention you in posts';
-            case '5':
-                return 'Enter your username and e-mail';
-            case '6':
-                return 'Create a strong password with a mix of letters, numbers and symbols'
-            default:
-                return 'Enter your name';
-        };
-    };
-
     const checkForNativeErrors = (e) => {
-        const form = e.target.form;
-        // Loop over them and prevent submission
-        form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-            }
+        // Prevent from form submiting
+        e.preventDefault();
+        e.stopPropagation();
 
-            form.classList.add('was-validated')
-            setCurrentStep(currentStep + 1);
-            window.history.pushState({}, '', `/sign-up?step=${currentStep + 1}`);
-        }, false)
+        const form = e.target.form;
+        if (form && !form.checkValidity()) {
+            form.classList.add('was-validated');
+        } else {
+            form.classList.remove('was-validated');
+            changeStep(currentStep + 1);
+        }
     };
 
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const step = urlParams.get('step');
-        setTitle(getStepTitle(step));
-        setCurrentStep(Number(step));
-    }, [setTitle]);
+    const daysInMonth = (month, year) => {
+        return new Date(year, month, 0).getDate();
+    };
 
     return (
-        // href='/sign-up?step=2'
-        <Form className='sign-up__form'>
-            <Form.Group controlId='formFirstName'>
-                <Form.Control type='text' name='firstName' placeholder='First name'
-                    onChange={e => setFirstName(e.target.value)} autoComplete='firstName' required />
-            </Form.Group>
+        <Form className='sign-up__form' >
+            {currentStep === 1 && (
+                <>
+                    <Form.Group className='field-container' controlId='formFirstName'>
+                        <Form.Control type='text' name='firstName' placeholder='First name'
+                            onChange={e => setFirstName(e.target.value)} autoComplete='firstName' required />
+                    </Form.Group>
 
-            <Form.Group controlId='formLastName'>
-                <Form.Control type='lastName' name='lastName' placeholder='Last name'
-                    onChange={e => setLastName(e.target.value)} autoComplete='lastName' required />
-            </Form.Group>
+                    <Form.Group className='field-container' controlId='formLastName'>
+                        <Form.Control type='text' name='lastName' placeholder='Last name'
+                            onChange={e => setLastName(e.target.value)} autoComplete='lastName' required />
+                    </Form.Group>
+                </>
+            )}
+            {currentStep === 2 && (
+                <>
+                    <Form.Group className='field-container' controlId='formGender'>
+                        <Form.Select name='gender' onChange={e => setGender(e.target.value)} required>
+                            <option className='default' defaultValue={null}>Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </Form.Select>
+                    </Form.Group>
+
+                    {/* Birthday Date Selection */}
+                    <Form.Group className='field-container d-flex justify-content-between gap-2' controlId='formBirthDate'>
+                        {/* Day Selection */}
+                        <Form.Select name='day' onChange={e => setBirthDate(prevState => ({ ...prevState, day: e.target.value }))} required disabled={!birthDate.month || !birthDate.year}>
+                            <option className='default' defaultValue={null}>Day</option>
+                            {/* Generate options for days based on selected month and year */}
+                            {birthDate.month && birthDate.year && Array.from({ length: daysInMonth(birthDate.month, birthDate.year) }, (_, index) => (
+                                <option key={index + 1} value={index + 1}>{index + 1}</option>
+                            ))}
+                        </Form.Select>
+                        {/* Month Selection */}
+                        <Form.Select name='month' onChange={e => setBirthDate(prevState => ({ ...prevState, month: e.target.value }))} required>
+                            <option className='default' defaultValue={null}>Month</option>
+                            {/* Generate options for months */}
+                            {Array.from({ length: 12 }, (_, index) => (
+                                <option key={index + 1} value={index + 1}>{new Date(0, index).toLocaleString('default', { month: 'long' })}</option>
+                            ))}
+                        </Form.Select>
+                        {/* Year Selection */}
+                        <Form.Select name='year' onChange={e => setBirthDate(prevState => ({ ...prevState, year: e.target.value }))} required>
+                            <option className='default' defaultValue={null}>Year</option>
+                            {/* Generate options for years (current year - 14) to (current year - 100) */}
+                            {Array.from({ length: 100 }, (_, index) => (
+                                <option key={index + 1} value={new Date().getFullYear() - index - 14}>{new Date().getFullYear() - index - 14}</option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                </>
+            )}
 
             <Form.Group className='mt-3 w-100'>
                 <Button variant='primary' type='link' className='next-btn w-100' onClick={checkForNativeErrors}>
