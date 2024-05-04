@@ -45,12 +45,13 @@ function CreateChat({ changeMenu }) {
             formData.append('avatarBlob', imageBlob);
         }
 
-        axios.post(`${API_SERVER}/chats`, formData, {
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
+        axios.post(`${API_SERVER}/chats`, formData,
+            {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
             .then(response => {
                 navigate(`/messenger?c=${AESEncrypt(response.data.id)}`);
                 changeMenu('DEFAULT');

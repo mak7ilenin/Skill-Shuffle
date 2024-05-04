@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Form, InputGroup, Button, FloatingLabel, Image, Row, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 import AddAvatarIcon from '../assets/images/add-avatar.png';
 
-function SignUpSteps({ setFormData, register, currentStep, setCurrentStep, changeStep }) {
+function SignUpSteps({ register, currentStep, setCurrentStep, changeStep }) {
+    const navigate = useNavigate();
     const [error, setError] = useState('');
 
     const [firstName, setFirstName] = useState('');
@@ -24,7 +26,9 @@ function SignUpSteps({ setFormData, register, currentStep, setCurrentStep, chang
     const [email, setEmail] = useState('');
 
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const { getRootProps, getInputProps } = useDropzone({
         accept: {
@@ -43,33 +47,55 @@ function SignUpSteps({ setFormData, register, currentStep, setCurrentStep, chang
         }
     });
 
-    const submitForm = () => {
-        if (!validateFormSubmitting()) return;
+    const submitForm = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-        setFormData(formData => {
-            formData.set('firstName', firstName); // required
-            formData.set('lastName', lastName); // required
-            formData.set('gender', gender); // required
-            formData.set('birthDate', birthDate); // required
-            formData.set('avatarBlob', avatarBlob);
-            formData.set('bio', bio);
-            formData.set('nickname', nickname); // required
-            formData.set('username', username); // required
-            formData.set('email', email);
-            formData.set('password', password); // required
-        });
+        if (validateFormSubmitting()) {
+            // how to parse birthDate obj to Date?
+            const formattedBirthDate = new Date(birthDate.year, birthDate.month - 1, birthDate.day);
+            const user = {
+                firstName,
+                lastName,
+                gender,
+                birthDate: formattedBirthDate,
+                bio,
+                nickname,
+                username,
+                email,
+                password
+            };
+
+            const formData = new FormData();
+            if (avatarBlob) {
+                formData.append('avatarBlob', avatarBlob);
+            }
+            formData.append('user', JSON.stringify(user));
+
+            register(formData);
+        };
+
+        return;
     };
 
     const validateFormSubmitting = () => {
-        // Check required fields
-        if (!firstName || !lastName || !gender || Object.keys(birthDate).length !== 0 || !nickname || !username || !password) {
-            setError('Please fill required fields');
-            return false;
-        }
+        // Validate current step
+        if (!validateCurrentStep()) return;
 
-        // Check if passwords match
-        if (password !== confirmPassword) {
-            setError('Passwords do not match');
+        // Check required fields
+        if (!firstName || !lastName || !gender || !birthDate.day || !birthDate.month
+            || !birthDate.year || !nickname || !username || !password) {
+
+            setError('Please fill required fields');
+            if (!firstName || !lastName) {
+                changeStep(1);
+            } else if (!gender || !birthDate.day || !birthDate.month || !birthDate.year) {
+                changeStep(2);
+            } else if (!nickname) {
+                changeStep(4);
+            } else if (!username) {
+                changeStep(5);
+            }
             return false;
         }
 
@@ -107,13 +133,11 @@ function SignUpSteps({ setFormData, register, currentStep, setCurrentStep, chang
                 }
                 return true;
             case 2:
-                console.log(gender);
-                console.log(birthDate);
-                if (!gender || Object.keys(birthDate).length === 0) {
-                    if (!gender) invalidFields.push('gender');
-                    if (!birthDate.day) invalidFields.push('day');
-                    if (!birthDate.month) invalidFields.push('month');
-                    if (!birthDate.year) invalidFields.push('year');
+                if (!gender) invalidFields.push('gender');
+                if (!birthDate.day) invalidFields.push('day');
+                if (!birthDate.month) invalidFields.push('month');
+                if (!birthDate.year) invalidFields.push('year');
+                if (invalidFields.length !== 0) {
                     markInvalidFields(invalidFields);
                     setError('Please fill required fields');
                     return false;
@@ -137,6 +161,16 @@ function SignUpSteps({ setFormData, register, currentStep, setCurrentStep, chang
                     setError('Please fill required fields');
                     return false;
                 }
+                if (email) {
+                    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                    if (!emailPattern.test(email)) {
+                        invalidFields.push('email');
+                        markInvalidFields(invalidFields);
+                        setError('Invalid e-mail format');
+                        return false;
+                    }
+                }
+
                 return true;
             case 6:
                 if (!password || !confirmPassword) {
@@ -220,7 +254,7 @@ function SignUpSteps({ setFormData, register, currentStep, setCurrentStep, chang
                 {currentStep === 2 && (
                     <>
                         <FloatingLabel controlId='floatingGender' label='Gender'>
-                            <Form.Select name='gender' onChange={e => setGender(e.target.value)} value={gender} required>
+                            <Form.Select name='gender' onChange={e => setGender(e.target.value)} defaultValue={gender || ''} required>
                                 <option className='default' value={''}>Choose your gender</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
@@ -235,14 +269,11 @@ function SignUpSteps({ setFormData, register, currentStep, setCurrentStep, chang
                             <FloatingLabel controlId='floatingYear' label='Year'>
                                 <Form.Select
                                     name='year'
+                                    defaultValue={birthDate.year || ''}
                                     onChange={e => setBirthDate(prevState => ({ ...prevState, year: e.target.value }))}
                                     required
                                 >
-                                    {birthDate.year ? (
-                                        <option value={birthDate.year}>{birthDate.year}</option>
-                                    ) : (
-                                        <option className='default' value={''}>Year</option>
-                                    )}
+                                    <option className='default' value={''}>Year</option>
 
                                     {/* Year list (100 options) 14 years is the min age */}
                                     {Array.from({ length: 100 }, (_, index) => (
@@ -255,14 +286,11 @@ function SignUpSteps({ setFormData, register, currentStep, setCurrentStep, chang
                             <FloatingLabel controlId='floatingMonth' label='Month'>
                                 <Form.Select
                                     name='month'
+                                    defaultValue={birthDate.month || ''}
                                     onChange={e => setBirthDate(prevState => ({ ...prevState, month: e.target.value }))}
                                     required
                                 >
-                                    {birthDate.month ? (
-                                        <option value={birthDate.month}>{birthDate.month}</option>
-                                    ) : (
-                                        <option className='default' value={''}>Month</option>
-                                    )}
+                                    <option className='default' value={''}>Month</option>
 
                                     {/* Month list */}
                                     {Array.from({ length: 12 }, (_, index) => (
@@ -275,15 +303,12 @@ function SignUpSteps({ setFormData, register, currentStep, setCurrentStep, chang
                             <FloatingLabel controlId='floatingDay' label='Day'>
                                 <Form.Select
                                     name='day'
+                                    defaultValue={birthDate.day || ''}
                                     onChange={e => setBirthDate(prevState => ({ ...prevState, day: e.target.value }))}
-                                    required
                                     disabled={!birthDate.month || !birthDate.year}
+                                    required
                                 >
-                                    {birthDate.day ? (
-                                        <option value={birthDate.day}>{birthDate.day}</option>
-                                    ) : (
-                                        <option className='default' value={''}>Day</option>
-                                    )}
+                                    <option className='default' value={''}>Day</option>
 
                                     {/* Available days based on month */}
                                     {birthDate.month && birthDate.year && Array.from({ length: daysInMonth(birthDate.month, birthDate.year) }, (_, index) => (
@@ -351,6 +376,77 @@ function SignUpSteps({ setFormData, register, currentStep, setCurrentStep, chang
                         />
                     </InputGroup>
                 )}
+                {currentStep === 5 && (
+                    <>
+                        <FloatingLabel controlId='floatingUsername' label='Username'>
+                            <Form.Control
+                                type='text'
+                                name='username'
+                                onChange={e => setUsername(e.target.value)}
+                                value={username}
+                                placeholder='Username'
+                                autoComplete='username'
+                                required
+                            />
+                        </FloatingLabel>
+
+                        <FloatingLabel controlId='floatingEmail' label='E-mail'>
+                            <Form.Control
+                                type='email'
+                                name='email'
+                                onChange={e => setEmail(e.target.value)}
+                                value={email}
+                                placeholder='E-mail'
+                                autoComplete='email'
+                            />
+                        </FloatingLabel>
+                    </>
+                )}
+                {currentStep === 6 && (
+                    <>
+                        <InputGroup className='position-relative'>
+                            <FloatingLabel controlId='floatingPassword' label='Password'>
+                                <Form.Control
+                                    type={showPassword ? 'text' : 'password'}
+                                    name='password'
+                                    onChange={e => setPassword(e.target.value)}
+                                    value={password}
+                                    placeholder='Password'
+                                    autoComplete='new-password'
+                                    required
+                                />
+                                <Button
+                                    variant='light'
+                                    className='show-password position-absolute end-0 top-0 h-100 border border-start-0 rounded-start-0'
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                </Button>
+                            </FloatingLabel>
+                        </InputGroup>
+
+                        <InputGroup className='position-relative'>
+                            <FloatingLabel controlId='floatingConfirmPassword' label='Confirm password'>
+                                <Form.Control
+                                    type={showConfirmPassword ? 'text' : 'password'}
+                                    name='confirmPassword'
+                                    onChange={e => setConfirmPassword(e.target.value)}
+                                    value={confirmPassword}
+                                    placeholder='Confirm password'
+                                    autoComplete='new-password'
+                                    required
+                                />
+                                <Button
+                                    variant='light'
+                                    className='show-password position-absolute end-0 top-0 h-100 border border-start-0 rounded-start-0'
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                >
+                                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                                </Button>
+                            </FloatingLabel>
+                        </InputGroup>
+                    </>
+                )}
             </div>
 
             {error && (
@@ -363,14 +459,25 @@ function SignUpSteps({ setFormData, register, currentStep, setCurrentStep, chang
 
             <Form.Group className={`buttons-group w-100 d-flex gap-2 ${error ? 'mt-0' : 'mt-3'}`}>
                 {currentStep === 3 && (
-                    // Button to skip
                     <Button variant='secondary' type='button' className='skip-btn' onClick={nextStep}>
                         <span>Skip</span>
                     </Button>
                 )}
-                <Button variant='primary' type='submit' className='next-btn' onClick={checkForNativeErrors}>
-                    <span>Next</span>
-                </Button>
+                {currentStep === 6 && (
+                    <Button variant='primary' type='submit' className='next-btn' onClick={submitForm}>
+                        <span>Register</span>
+                    </Button>
+                )}
+                {currentStep === 7 && (
+                    <Button variant='primary' type='submit' className='next-btn' onClick={submitForm}>
+                        <span>Login</span>
+                    </Button>
+                )}
+                {currentStep < 6 && (
+                    <Button variant='primary' type='submit' className='next-btn' onClick={checkForNativeErrors}>
+                        <span>Next</span>
+                    </Button>
+                )}
             </Form.Group>
 
             <hr className='mt-3 mb-0' />

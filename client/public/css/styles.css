@@ -186,11 +186,11 @@ h1, h2, h3, h4, h5, h6, p {
   outline: none;
   border: none;
 }
-.sign-up__container .arrow-back .arrow-icon path {
-  fill: #8F8F8F;
+.sign-up__container .arrow-back .arrow-icon {
+  color: #8F8F8F;
 }
-.sign-up__container .arrow-back:hover .arrow-icon path {
-  fill: #373737;
+.sign-up__container .arrow-back:hover .arrow-icon {
+  color: #373737;
 }
 .sign-up__title h2 {
   color: #373737;

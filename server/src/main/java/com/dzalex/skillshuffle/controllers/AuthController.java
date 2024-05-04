@@ -9,6 +9,7 @@ import com.dzalex.skillshuffle.repositories.UserRepository;
 import com.dzalex.skillshuffle.services.JwtHelper;
 import com.dzalex.skillshuffle.services.RefreshTokenService;
 import com.dzalex.skillshuffle.services.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 
@@ -80,13 +82,19 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User registrationUser) {
+    public ResponseEntity<?> register(@RequestPart("user") String userStr,
+                                      @RequestPart(value = "avatarBlob", required = false) MultipartFile avatarBlob) {
         try {
+            // Convert userStr to User object
+            ObjectMapper mapper = new ObjectMapper();
+            User registrationUser = mapper.readValue(userStr, User.class);
+
             if (userService.checkUserDuplicate(registrationUser.getUsername(), registrationUser.getEmail())) {
                 return new ResponseEntity<>("User with username " + registrationUser.getUsername()
                         + " or email " + registrationUser.getEmail() + " already exists", HttpStatus.CONFLICT);
             }
-            User user = userService.saveUser(registrationUser);
+
+            User user = userService.saveUser(registrationUser, avatarBlob);
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Exception occurred while registering user:" + e.getMessage(), HttpStatus.BAD_REQUEST);

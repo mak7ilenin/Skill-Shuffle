@@ -35,13 +35,13 @@
             outline: none;
             border: none;
 
-            .arrow-icon path {
-                fill: $light-gray;
+            .arrow-icon {
+                color: $light-gray;
             }
 
             &:hover {
-                .arrow-icon path {
-                    fill: $dark-gray
+                .arrow-icon {
+                    color: $dark-gray
                 }
             }
         }

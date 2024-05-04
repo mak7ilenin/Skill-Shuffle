@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,9 @@ public class UserService {
     @Autowired
     private FriendshipRepository friendshipRepository;
 
+    @Autowired
+    private FileService fileService;
+
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -44,9 +48,23 @@ public class UserService {
         return user != null || userByEmail != null;
     }
 
-    public User saveUser(User user) {
+    public User saveUser(User user, MultipartFile avatarBlob) {
         user.setPassword(passwordEncoder().encode(user.getPassword()));
-        return userRepo.save(user);
+        User savedUser = userRepo.save(user);
+        User updatedUser = saveAvatar(savedUser, avatarBlob);
+        return updatedUser != null ? updatedUser : savedUser;
+    }
+
+    private User saveAvatar(User user, MultipartFile avatarBlob) {
+        if (avatarBlob != null) {
+            String avatarFilePath = "users/user-" + user.getId() + "/avatar/";
+            String avatarUrl = fileService.uploadFile(avatarBlob, avatarFilePath);
+            if (avatarUrl != null) {
+                user.setAvatarUrl(avatarUrl);
+                return userRepo.save(user);
+            }
+        }
+        return null;
     }
 
     public User getUserByNickname(String nickname) {

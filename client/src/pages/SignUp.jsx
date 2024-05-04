@@ -2,24 +2,31 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Container, Row, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { GoArrowLeft } from "react-icons/go";
 
 import { API_SERVER } from '../config';
 import SignUpSteps from '../components/SignUpSteps';
 
 import { ReactComponent as Logo } from '../assets/icons/logo.svg';
-import { ReactComponent as Arrow } from '../assets/icons/arrow-back.svg';
 
 function SignUp() {
     const [showArrow, setShowArrow] = useState(false);
-    const [formData, setFormData] = useState(new FormData());
-    const [currentStep, setCurrentStep] = useState(1); // [1, 2, 3, 4, 5, 6]
+    const [successfullRegistration, setSuccessfullRegistration] = useState(false);
+    const [currentStep, setCurrentStep] = useState(1); // [1, 2, 3, 4, 5, 6, 7]
     const [title, setTitle] = useState('');
     const navigate = useNavigate();
 
-    const register = () => {
-        axios.post(`${API_SERVER}/auth/register`, formData)
+    const register = (formData) => {
+        axios.post(`${API_SERVER}/auth/register`, formData,
+            {
+                withCredentials: false,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
             .then(() => {
-                navigate('/sign-in');
+                setSuccessfullRegistration(true);
+                changeStep(7);
             })
             .catch(error => {
                 if (error.response) {
@@ -42,13 +49,15 @@ function SignUp() {
                 return 'Enter your username and e-mail';
             case 6:
                 return 'Create a strong password with a mix of letters, numbers and symbols'
+            case 7:
+                return 'Congratulations! Your account has been successfully created'
             default:
                 return 'Enter your name';
         };
     };
 
     const changeStep = useCallback(step => {
-        if (step > 1 && step <= 6) {
+        if (step > 1 && step <= 7) {
             navigate(`/sign-up?step=${step}`)
             setCurrentStep(step);
             setShowArrow(true);
@@ -57,8 +66,13 @@ function SignUp() {
             setCurrentStep(1);
             setShowArrow(false);
         }
+        if (step === 7 && successfullRegistration) {
+            navigate(`/sign-up?step=${step}`)
+            setShowArrow(false);
+            setCurrentStep(step);
+        }
         setTitle(getStepTitle(step));
-    }, [navigate]);
+    }, [navigate, successfullRegistration]);
 
     const toPrevoisStep = () => {
         const prevStep = currentStep - 1;
@@ -87,9 +101,10 @@ function SignUp() {
                         className='arrow-back'
                         onClick={toPrevoisStep}
                     >
-                        <Arrow
+                        <GoArrowLeft
                             className='arrow-icon'
-                            width={22}
+                            size={25}
+                            strokeWidth={0.5}
                         />
                     </Button>
                 )}
@@ -103,7 +118,6 @@ function SignUp() {
                 </Row>
 
                 <SignUpSteps
-                    setFormData={setFormData}
                     register={register}
                     currentStep={currentStep}
                     setCurrentStep={setCurrentStep}

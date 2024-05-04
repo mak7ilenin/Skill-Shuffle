@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 @Data
@@ -43,7 +44,7 @@ public class User {
     private Gender gender;
 
     @Column(name = "birth_date")
-    private Timestamp birthDate;
+    private Date birthDate;
 
     @Column(name = "bio", length = 275)
     private String bio;
