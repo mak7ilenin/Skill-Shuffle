@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 01, 2024 at 10:39 PM
+-- Generation Time: May 04, 2024 at 11:13 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.0
 
@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS `chat_members` (
   `left_at` timestamp(3) NULL DEFAULT NULL,
   `is_kicked` bit(1) NOT NULL DEFAULT b'0',
   `cleared_at` timestamp(3) NULL DEFAULT NULL,
+  `closed_at` timestamp(3) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `chat_id` (`chat_id`),
   KEY `member_id` (`member_id`)
@@ -90,16 +91,16 @@ CREATE TABLE IF NOT EXISTS `chat_members` (
 -- Dumping data for table `chat_members`
 --
 
-INSERT INTO `chat_members` (`id`, `chat_id`, `member_id`, `role`, `notifications`, `joined_at`, `left_at`, `is_kicked`, `cleared_at`) VALUES
-(1, 1, 1, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0', '2024-05-01 18:52:38.818'),
-(2, 1, 4, 'CREATOR', b'1', '2024-04-22 09:45:49.000', NULL, b'0', NULL),
-(3, 1, 2, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0', NULL),
-(6, 3, 1, 'CREATOR', b'1', '2024-04-22 09:57:26.000', NULL, b'0', '2024-05-01 17:55:41.050'),
-(7, 3, 4, 'MEMBER', b'0', '2024-04-22 09:57:26.000', NULL, b'0', NULL),
-(8, 3, 2, 'MEMBER', b'1', '2024-04-22 09:57:26.000', NULL, b'0', NULL),
-(9, 5, 1, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL),
-(10, 5, 4, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL),
-(46, 4, 1, 'MEMBER', b'1', '0000-00-00 00:00:00.000', NULL, b'0', NULL);
+INSERT INTO `chat_members` (`id`, `chat_id`, `member_id`, `role`, `notifications`, `joined_at`, `left_at`, `is_kicked`, `cleared_at`, `closed_at`) VALUES
+(1, 1, 1, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0', '2024-05-01 18:52:38.818', '2024-05-04 21:09:42.692'),
+(2, 1, 4, 'CREATOR', b'1', '2024-04-22 09:45:49.000', NULL, b'0', NULL, '2024-05-02 21:47:31.253'),
+(3, 1, 2, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0', NULL, NULL),
+(6, 3, 1, 'CREATOR', b'1', '2024-04-22 09:57:26.000', NULL, b'0', '2024-05-01 17:55:41.050', '2024-05-04 21:09:49.291'),
+(7, 3, 4, 'MEMBER', b'0', '2024-04-22 09:57:26.000', NULL, b'0', NULL, '2024-05-02 21:47:23.790'),
+(8, 3, 2, 'MEMBER', b'1', '2024-04-22 09:57:26.000', NULL, b'0', NULL, NULL),
+(9, 5, 1, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL, '2024-05-02 21:47:44.451'),
+(10, 5, 4, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL, '2024-05-02 21:51:29.386'),
+(46, 4, 1, 'MEMBER', b'1', '2024-05-02 16:35:30.901', NULL, b'0', NULL, '2024-05-02 21:47:40.849');
 
 -- --------------------------------------------------------
 
@@ -113,31 +114,33 @@ CREATE TABLE IF NOT EXISTS `chat_messages` (
   `chat_id` int(11) NOT NULL,
   `content` varchar(1024) COLLATE utf8mb4_bin NOT NULL,
   `timestamp` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3),
-  `status` enum('SENT','SEEN') COLLATE utf8mb4_bin NOT NULL DEFAULT 'SENT',
   `type` enum('MESSAGE','ANNOUNCEMENT','ENTRY') COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`sender_id`),
   KEY `chat_id` (`chat_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=549 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=610 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `chat_messages`
 --
 
-INSERT INTO `chat_messages` (`id`, `sender_id`, `chat_id`, `content`, `timestamp`, `status`, `type`) VALUES
-(1, 1, 1, '<a href=\'/users?nn=testuser\'>Test test The testuser</a> created <i>\'Lebron Fans\'</i>', '2024-04-16 10:14:57.985', 'SENT', 'ANNOUNCEMENT'),
-(3, 1, 3, '<a href=\'/users?nn=testuser\'>Test test The testuser</a> created <i>\'Test test, Test test3, Test test1\'</i>', '2024-04-17 10:21:47.411', 'SENT', 'ANNOUNCEMENT'),
-(4, 1, 4, 'Alo', '2024-04-22 10:17:53.000', 'SENT', 'MESSAGE'),
-(5, 1, 5, 'Test test The testuser has entered the chat', '2024-04-22 10:20:04.900', 'SENT', 'ENTRY'),
-(6, 1, 5, 'https://media.tenor.com/SBxgk-Kf42IAAAAC/crip.gif', '2024-04-22 10:20:21.540', 'SENT', 'MESSAGE'),
-(7, 1, 1, 'Lebron scored 23 in the last match😬', '2024-04-17 10:21:42.411', 'SENT', 'MESSAGE'),
-(8, 1, 1, '💀💀💀💀💀💀💀💀💀💀💀💀💀💀', '2024-04-17 10:21:53.691', 'SENT', 'MESSAGE'),
-(9, 1, 1, 'LAKERS WON THE NBA FINALS!!!!😎😎🤓🤓🤓', '2024-04-22 10:23:50.524', 'SENT', 'MESSAGE'),
-(544, 1, 1, 'heyyyy', '2024-05-01 18:52:32.725', 'SENT', 'MESSAGE'),
-(545, 4, 1, 'test r u here?', '2024-05-01 20:26:26.119', 'SENT', 'MESSAGE'),
-(546, 4, 1, '??', '2024-05-01 20:27:37.360', 'SENT', 'MESSAGE'),
-(547, 1, 1, 'what do you want nigga', '2024-05-01 20:27:45.252', 'SENT', 'MESSAGE'),
-(548, 4, 1, 'https://media.tenor.com/BG-84cOdq20AAAAC/fr-fr-fr.gif', '2024-05-01 20:27:53.794', 'SENT', 'MESSAGE');
+INSERT INTO `chat_messages` (`id`, `sender_id`, `chat_id`, `content`, `timestamp`, `type`) VALUES
+(1, 1, 1, '<a href=\'/users?nn=testuser\'>Test test The testuser</a> created <i>\'Lebron Fans\'</i>', '2024-04-16 10:14:57.985', 'ANNOUNCEMENT'),
+(3, 1, 3, '<a href=\'/users?nn=testuser\'>Test test The testuser</a> created <i>\'Test test, Test test3, Test test1\'</i>', '2024-04-17 10:21:47.411', 'ANNOUNCEMENT'),
+(4, 1, 4, 'Alo', '2024-04-22 10:17:53.000', 'MESSAGE'),
+(5, 1, 5, 'Test test The testuser has entered the chat', '2024-04-22 10:20:04.900', 'ENTRY'),
+(6, 1, 5, 'https://media.tenor.com/SBxgk-Kf42IAAAAC/crip.gif', '2024-04-22 10:20:21.540', 'MESSAGE'),
+(7, 1, 1, 'Lebron scored 23 in the last match😬', '2024-04-17 10:21:42.411', 'MESSAGE'),
+(8, 1, 1, '💀💀💀💀💀💀💀💀💀💀💀💀💀💀', '2024-04-17 10:21:53.691', 'MESSAGE'),
+(9, 1, 1, 'LAKERS WON THE NBA FINALS!!!!😎😎🤓🤓🤓', '2024-04-22 10:23:50.524', 'MESSAGE'),
+(544, 1, 1, 'heyyyy', '2024-05-01 18:52:32.725', 'MESSAGE'),
+(545, 4, 1, 'test r u here?', '2024-05-01 20:26:26.119', 'MESSAGE'),
+(546, 4, 1, '??', '2024-05-01 20:27:37.360', 'MESSAGE'),
+(547, 1, 1, 'what do you want nigga', '2024-05-01 20:27:45.252', 'MESSAGE'),
+(548, 4, 1, 'https://media.tenor.com/BG-84cOdq20AAAAC/fr-fr-fr.gif', '2024-05-01 20:27:53.794', 'MESSAGE'),
+(549, 1, 1, 'no shit', '2024-05-02 06:35:13.998', 'MESSAGE'),
+(550, 4, 1, 'hey', '2024-05-02 21:07:04.449', 'MESSAGE'),
+(551, 4, 1, 'huh??', '2024-05-02 21:07:15.662', 'MESSAGE');
 
 -- --------------------------------------------------------
 
@@ -514,7 +517,7 @@ CREATE TABLE IF NOT EXISTS `refresh_token` (
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `refresh_token`
@@ -522,8 +525,8 @@ CREATE TABLE IF NOT EXISTS `refresh_token` (
 
 INSERT INTO `refresh_token` (`id`, `token`, `expires_at`, `user_id`) VALUES
 (2, '79bf984e-5987-4cc1-8a98-68532e443e2b', '2024-04-29 09:42:16.575', 1),
-(5, '7306d893-c652-4946-b18d-397d5f8f9d0c', '2024-05-06 14:39:43.272', 1),
-(6, 'a03ac042-054d-4638-8464-05f6d68c0bc0', '2024-05-06 16:34:40.050', 4);
+(7, '0c4ac0ac-5401-481c-ade0-3cfbd936cc0d', '2024-05-09 05:22:22.220', 1),
+(8, '20fe582f-e36d-4e31-bd28-130ca47aaeb9', '2024-05-09 05:39:06.886', 4);
 
 -- --------------------------------------------------------
 
@@ -540,7 +543,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `nickname` varchar(40) COLLATE utf8mb4_bin NOT NULL,
   `email` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
   `gender` enum('MALE','FEMALE','OTHER') COLLATE utf8mb4_bin NOT NULL,
-  `birth_date` datetime(6) NOT NULL,
+  `birth_date` date NOT NULL,
   `bio` varchar(275) COLLATE utf8mb4_bin DEFAULT NULL,
   `points` int(7) NOT NULL DEFAULT 0,
   `avatar_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
@@ -556,17 +559,17 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `nickname` (`nickname`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `password`, `nickname`, `email`, `gender`, `birth_date`, `bio`, `points`, `avatar_url`, `banner_url`, `banner_color`, `is_public`, `auto_follow`, `last_seen`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Test test', 'The testuser', 'test', '$2a$10$JEg8WMqgkd4mbM20o7vOSu9mlCogeiqA6ECGLza4KBg1gzUV/6iru', 'testuser', 'test@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test', 0, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/user-1/avatar/2023-10-27_183115.png', NULL, '#bdbdbd', b'1', b'0', '2024-05-01 20:33:58', '2024-04-22 09:35:00', '2024-05-01 20:33:58', NULL),
-(2, 'Test test1', 'The test1', 'test1', '$2a$10$sRN8k2KLY8xHO7sec08zOe2/MLjlQgDtkX/jdyadSqfIce1aJEJVq', 'test1', 'test1@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test1', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-01 16:17:42', '2024-04-22 09:40:59', '2024-05-01 16:17:42', NULL),
-(3, 'Test test2', 'The test2', 'test2', '$2a$10$QycMomHz4iW9PrWfHtucX.antDp4iLeHtAS1FVZbO0EBmV1fEok56', 'test2', 'test2@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test2', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-01 16:17:43', '2024-04-22 09:41:14', '2024-05-01 16:17:43', NULL),
-(4, 'Test test3', 'The test3', 'test3', '$2a$10$Yn99CbLOCqoMG5HPXRNkYOm8AImK3.UPS9tUcAyNOlff0MvgaJv1W', 'test3', 'test3@gmail.com', 'OTHER', '2004-12-22 02:00:00.000000', 'Test test3', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-01 20:33:27', '2024-04-22 09:42:13', '2024-05-01 20:33:27', NULL);
+(1, 'Test test', 'The testuser', 'test', '$2a$10$JEg8WMqgkd4mbM20o7vOSu9mlCogeiqA6ECGLza4KBg1gzUV/6iru', 'testuser', 'test@gmail.com', 'OTHER', '2004-12-22', 'Test test', 0, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/user-1/avatar/2023-10-27_183115.png', NULL, '#bdbdbd', b'1', b'0', '2024-05-04 21:09:49', '2024-04-22 09:35:00', '2024-05-04 21:09:49', NULL),
+(2, 'Test test1', 'The test1', 'test1', '$2a$10$sRN8k2KLY8xHO7sec08zOe2/MLjlQgDtkX/jdyadSqfIce1aJEJVq', 'test1', 'test1@gmail.com', 'OTHER', '2004-12-22', 'Test test1', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-01 16:17:42', '2024-04-22 09:40:59', '2024-05-01 16:17:42', NULL),
+(3, 'Test test2', 'The test2', 'test2', '$2a$10$QycMomHz4iW9PrWfHtucX.antDp4iLeHtAS1FVZbO0EBmV1fEok56', 'test2', 'test2@gmail.com', 'OTHER', '2004-12-22', 'Test test2', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-01 16:17:43', '2024-04-22 09:41:14', '2024-05-01 16:17:43', NULL),
+(4, 'Test test3', 'The test3', 'test3', '$2a$10$Yn99CbLOCqoMG5HPXRNkYOm8AImK3.UPS9tUcAyNOlff0MvgaJv1W', 'test3', 'test3@gmail.com', 'OTHER', '2004-12-22', 'Test test3', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-03 17:51:54', '2024-04-22 09:42:13', '2024-05-03 17:51:54', NULL);
 
 -- --------------------------------------------------------
 
