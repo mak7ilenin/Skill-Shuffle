@@ -1,23 +1,35 @@
 package com.dzalex.skillshuffle.services;
 
+import com.dzalex.skillshuffle.dtos.AuthRequestDTO;
 import com.dzalex.skillshuffle.dtos.ChatMemberDTO;
+import com.dzalex.skillshuffle.dtos.JwtResponseDTO;
 import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.entities.ChatMember;
 import com.dzalex.skillshuffle.entities.Friendship;
+import com.dzalex.skillshuffle.entities.RefreshToken;
 import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.FriendshipRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +39,19 @@ import java.util.stream.Stream;
 public class UserService {
 
     @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private AuthenticationManager manager;
+
+    @Autowired
+    private JwtHelper helper;
 
     @Autowired
     private ChatMemberRepository chatMemberRepository;
@@ -42,10 +66,12 @@ public class UserService {
         return new BCryptPasswordEncoder();
     }
 
+    public boolean checkNicknameDuplicate(String nickname) {
+        return userRepo.findByNickname(nickname) != null;
+    }
+
     public boolean checkUserDuplicate(String username, String email) {
-        User user = userRepo.findByUsername(username);
-        User userByEmail = userRepo.findByEmail(email);
-        return user != null || userByEmail != null;
+        return userRepo.findByUsername(username) != null || (email != null && userRepo.findByEmail(email) != null);
     }
 
     public User saveUser(User user, MultipartFile avatarBlob) {
@@ -53,6 +79,71 @@ public class UserService {
         User savedUser = userRepo.save(user);
         User updatedUser = saveAvatar(savedUser, avatarBlob);
         return updatedUser != null ? updatedUser : savedUser;
+    }
+
+    public JwtResponseDTO authenticateUser(AuthRequestDTO request, HttpServletResponse response) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+        if (userDetails != null) {
+            // If user clicked remember me, create refresh token and save it in the database and in the cookie
+            if (request.isRememberMe()) {
+                RefreshToken refreshToken = refreshTokenService.generateRefreshToken(request.getUsername());
+                helper.createRefreshTokenCookie(response, refreshToken);
+            }
+
+            // Create access token and save it in the cookie
+            String accessToken = helper.createAccessTokenCookie(response, userDetails);
+
+            User user = userRepo.findByUsername(request.getUsername());
+            return JwtResponseDTO.builder()
+                    .username(request.getUsername())
+                    .accessToken(accessToken)
+                    .user(getPublicUserDTO(user))
+                    .build();
+        }
+        return null;
+    }
+
+    public JwtResponseDTO confirmAuthentication(HttpServletRequest request) {
+        String token = helper.getAccessTokenFromCookies(request);
+        if (token != null) {
+            String username = helper.getUsernameFromToken(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (helper.validateToken(token, userDetails)) {
+                User user = userRepo.findByUsername(username);
+                user.setLastSeen(new Timestamp(System.currentTimeMillis()));
+                userRepo.save(user);
+
+                return JwtResponseDTO.builder()
+                        .username(userDetails.getUsername())
+                        .accessToken(token)
+                        .user(getPublicUserDTO(user))
+                        .build();
+            }
+        }
+        return null;
+    }
+
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        // Invalidate session and clear authentication
+        request.getSession().invalidate();
+        SecurityContextHolder.clearContext();
+
+        // Clear access and refresh tokens from the cookies
+        helper.deleteAccessTokenCookie(response);
+        String refreshToken = helper.getRefreshTokenFromCookies(request);
+        if (refreshToken != null) {
+            refreshTokenService.deleteByToken(refreshToken);
+            helper.deleteRefreshTokenCookie(response);
+        }
+    }
+
+    public void doAuthenticate(String username, String password) {
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, password);
+        try {
+            manager.authenticate(authentication);
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Invalid Username or Password!");
+        }
     }
 
     private User saveAvatar(User user, MultipartFile avatarBlob) {
@@ -155,5 +246,10 @@ public class UserService {
                 .role(chatMember.getRole())
                 .lastSeen(chatMember.getMember().getLastSeen())
                 .build();
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public String exceptionHandler() {
+        return "Credentials Invalid!";
     }
 }

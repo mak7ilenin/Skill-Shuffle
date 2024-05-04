@@ -153,13 +153,130 @@ h1, h2, h3, h4, h5, h6, p {
   text-overflow: ellipsis;
 }
 
+.sign-in {
+  font-family: "Mitr", sans-serif;
+  margin: 0 auto !important;
+}
+.sign-in__container {
+  width: 550px;
+  background-color: #fff;
+  box-shadow: 0 7px 12px rgba(0, 0, 0, 0.1450980392);
+  border-radius: 60px;
+  padding: 70px 110px 70px 110px;
+  margin-top: 125px;
+  position: relative;
+}
+.sign-in__container hr {
+  color: #373737;
+  border-color: #373737;
+  background-color: #373737;
+  opacity: 0.5;
+}
+.sign-in__container p {
+  font-family: "Lexend", "sans-serif";
+  color: #373737;
+  font-weight: 300;
+  font-size: 14px;
+}
+.sign-in__title h2 {
+  color: #373737;
+  font-size: 3rem;
+  font-weight: 400;
+}
+.sign-in__form .form-text.error-message {
+  color: #E64646;
+  font-size: 13px;
+  font-weight: 400;
+}
+.sign-in__form .form-floating {
+  width: 100%;
+}
+.sign-in__form .form-floating label::after {
+  background-color: transparent !important;
+}
+.sign-in__form .form-floating textarea {
+  min-height: 120px;
+}
+.sign-in__form .input-group span {
+  font-family: "Mitr", sans-serif;
+}
+.sign-in__form .input-group input {
+  font-family: "Lexend", "sans-serif";
+  font-weight: 400;
+  padding: 1rem 0.75rem;
+}
+.sign-in__form .input-group input::-moz-placeholder {
+  font-weight: 300;
+}
+.sign-in__form .input-group input::placeholder {
+  font-weight: 300;
+}
+.sign-in__form input,
+.sign-in__form label {
+  font-family: "Lexend", "sans-serif";
+  font-size: 14px;
+  font-weight: 400;
+  color: #373737;
+  line-height: 25px;
+}
+.sign-in__form input::-moz-placeholder, .sign-in__form label::-moz-placeholder {
+  color: #8F8F8F;
+  -moz-user-select: none;
+       user-select: none;
+}
+.sign-in__form input::placeholder,
+.sign-in__form label::placeholder {
+  color: #8F8F8F;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.sign-in__form label {
+  color: #8F8F8F;
+  font-weight: 300;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.sign-in__form input {
+  border: none;
+  background-color: #F0F0FF;
+  border-radius: 5px;
+}
+.sign-in__form input:not([type=checkbox]) {
+  width: 100%;
+}
+.sign-in__form input:focus {
+  box-shadow: 0 0 0.25rem rgba(61, 0, 255, 0.25);
+  background-color: rgba(240, 240, 255, 0.6156862745);
+}
+.sign-in__form .form-text {
+  font-family: "Lexend", "sans-serif";
+  font-weight: 300;
+  font-size: 13px;
+  color: #000;
+}
+.sign-in__form button {
+  height: 50px;
+  border-radius: 7px;
+  flex-grow: 1;
+}
+.sign-in__form button span {
+  color: #fff;
+  font-family: "Mitr", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+.sign-in__form button.btn-primary {
+  background-color: #5D6BE4;
+}
+
 .sign-up {
   font-family: "Mitr", sans-serif;
   margin: 0 auto !important;
 }
 .sign-up__container {
   width: 550px;
-  min-height: 600px;
   background-color: #fff;
   box-shadow: 0 7px 12px rgba(0, 0, 0, 0.1450980392);
   border-radius: 60px;

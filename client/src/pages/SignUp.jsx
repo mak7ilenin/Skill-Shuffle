@@ -10,8 +10,9 @@ import SignUpSteps from '../components/SignUpSteps';
 import { ReactComponent as Logo } from '../assets/icons/logo.svg';
 
 function SignUp() {
+    const [error, setError] = useState('');
     const [showArrow, setShowArrow] = useState(false);
-    const [successfullRegistration, setSuccessfullRegistration] = useState(false);
+    const [successfulRegistration, setSuccessfulRegistration] = useState(false);
     const [currentStep, setCurrentStep] = useState(1); // [1, 2, 3, 4, 5, 6, 7]
     const [title, setTitle] = useState('');
     const navigate = useNavigate();
@@ -25,12 +26,21 @@ function SignUp() {
                 }
             })
             .then(() => {
-                setSuccessfullRegistration(true);
-                changeStep(7);
+                setSuccessfulRegistration(true);
             })
             .catch(error => {
                 if (error.response) {
-                    console.error(error.response.data.message);
+                    if (error.response.status === 400) {
+                        return setError('Something went wrong. Try again');
+                    }
+                    if (error.response.status === 409) {
+                        if (error.response.data.reason === 'nickname') {
+                            changeStep(4);
+                        } else if (error.response.data.reason === 'credentials') {
+                            changeStep(5);
+                        }
+                    }
+                    setError(error.response.data.message);
                 }
             });
     };
@@ -58,33 +68,50 @@ function SignUp() {
 
     const changeStep = useCallback(step => {
         if (step > 1 && step <= 7) {
-            navigate(`/sign-up?step=${step}`)
-            setCurrentStep(step);
-            setShowArrow(true);
+            if (step === 7) {
+                setShowArrow(false);
+                if (successfulRegistration) {
+                    // If user successfully completed registration
+                    navigate(`/sign-up?step=${step}`)
+                    setCurrentStep(step);
+                } else {
+                    // User can't access step 7 without completing registartion
+                    navigate(`/sign-up`)
+                    setCurrentStep(1);
+                }
+            } else {
+                navigate(`/sign-up?step=${step}`)
+                setCurrentStep(step);
+                setShowArrow(true);
+            }
         } else {
+            // If step is invalid, then navigate to first step
             navigate('/sign-up');
             setCurrentStep(1);
             setShowArrow(false);
         }
-        if (step === 7 && successfullRegistration) {
-            navigate(`/sign-up?step=${step}`)
-            setShowArrow(false);
-            setCurrentStep(step);
-        }
+        // Set step title
         setTitle(getStepTitle(step));
-    }, [navigate, successfullRegistration]);
+    }, [navigate, successfulRegistration]);
 
-    const toPrevoisStep = () => {
+    const toPreviousStep = () => {
         const prevStep = currentStep - 1;
         setCurrentStep(prevStep);
         changeStep(prevStep);
 
         if (prevStep === 1) {
+            // Hide param from URL if step = 1
             navigate(`/sign-up`);
         } else {
             navigate(`/sign-up?step=${prevStep}`);
         }
     };
+
+    useEffect(() => {
+        if (successfulRegistration) {
+            changeStep(7);
+        }
+    }, [successfulRegistration, changeStep]);
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -99,7 +126,7 @@ function SignUp() {
                     <Button
                         variant='none'
                         className='arrow-back'
-                        onClick={toPrevoisStep}
+                        onClick={toPreviousStep}
                     >
                         <GoArrowLeft
                             className='arrow-icon'
@@ -112,7 +139,13 @@ function SignUp() {
                     <Logo height={90} />
                 </Row>
                 <Row className='sign-up__title mt-3 mb-4'>
-                    <h2 className='text-uppercase text-center'>Sign up</h2>
+                    {currentStep === 7 ? (
+                        <h2 className='text-center mb-3' style={{ lineHeight: '90%' }}>
+                            Registration completed!
+                        </h2>
+                    ) : (
+                        <h2 className='text-uppercase text-center'>Sign up</h2>
+                    )}
                     <hr className='w-50 mb-1 mx-auto' />
                     <p className='text-muted text-center'>{title}</p>
                 </Row>
@@ -122,6 +155,8 @@ function SignUp() {
                     currentStep={currentStep}
                     setCurrentStep={setCurrentStep}
                     changeStep={changeStep}
+                    error={error}
+                    setError={setError}
                 />
             </div>
         </Container>

@@ -93,14 +93,6 @@ public class JwtHelper {
         return null;
     }
 
-    public String getTokenFromHeader(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
-        if (authorizationHeader != null && authorizationHeader.startsWith(AUTHORIZATION_HEADER_PREFIX)) {
-            return authorizationHeader.substring(7);
-        }
-        return null;
-    }
-
     public String createCookie(HttpServletResponse response, String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);

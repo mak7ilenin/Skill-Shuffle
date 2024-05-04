@@ -6,9 +6,8 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 import AddAvatarIcon from '../assets/images/add-avatar.png';
 
-function SignUpSteps({ register, currentStep, setCurrentStep, changeStep }) {
+function SignUpSteps({ register, currentStep, setCurrentStep, changeStep, error, setError }) {
     const navigate = useNavigate();
-    const [error, setError] = useState('');
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -52,17 +51,16 @@ function SignUpSteps({ register, currentStep, setCurrentStep, changeStep }) {
         e.stopPropagation();
 
         if (validateFormSubmitting()) {
-            // how to parse birthDate obj to Date?
             const formattedBirthDate = new Date(birthDate.year, birthDate.month - 1, birthDate.day);
             const user = {
                 firstName,
                 lastName,
                 gender,
                 birthDate: formattedBirthDate,
-                bio,
+                bio: !bio ? null : bio,
                 nickname,
                 username,
-                email,
+                email: !email ? null : email,
                 password
             };
 
@@ -154,9 +152,8 @@ function SignUpSteps({ register, currentStep, setCurrentStep, changeStep }) {
                 }
                 return true;
             case 5:
-                if (!username || !email) {
-                    if (!username) invalidFields.push('username');
-                    if (!email) invalidFields.push('email');
+                if (!username) {
+                    invalidFields.push('username');
                     markInvalidFields(invalidFields);
                     setError('Please fill required fields');
                     return false;
@@ -216,6 +213,12 @@ function SignUpSteps({ register, currentStep, setCurrentStep, changeStep }) {
     }, [currentStep, setCurrentStep]);
 
     useEffect(() => {
+        if (error) {
+            setError(error);
+        }
+    }, [error, setError]);
+
+    useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         let step = parseInt(urlParams.get('step')) || 1;
         setCurrentStep(step);
@@ -223,231 +226,233 @@ function SignUpSteps({ register, currentStep, setCurrentStep, changeStep }) {
 
     return (
         <Form className='sign-up__form' >
-            <div className="d-flex flex-column gap-2">
-                {currentStep === 1 && (
-                    <>
-                        <FloatingLabel controlId='floatingFirstName' label='First name'>
-                            <Form.Control
-                                type='text'
-                                name='firstName'
-                                onChange={e => setFirstName(e.target.value)}
-                                value={firstName}
-                                placeholder='First name'
-                                autoComplete='firstName'
-                                required
-                            />
-                        </FloatingLabel>
-
-                        <FloatingLabel controlId='floatingLastName' label='Last name'>
-                            <Form.Control
-                                type='text'
-                                name='lastName'
-                                placeholder='Last name'
-                                onChange={e => setLastName(e.target.value)}
-                                value={lastName}
-                                autoComplete='lastName'
-                                required
-                            />
-                        </FloatingLabel>
-                    </>
-                )}
-                {currentStep === 2 && (
-                    <>
-                        <FloatingLabel controlId='floatingGender' label='Gender'>
-                            <Form.Select name='gender' onChange={e => setGender(e.target.value)} defaultValue={gender || ''} required>
-                                <option className='default' value={''}>Choose your gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
-                            </Form.Select>
-                        </FloatingLabel>
-
-                        {/* Birthday Date Selection */}
-                        <Form.Group className='d-flex justify-content-between gap-2' controlId='formBirthDate'>
-
-                            {/* Year Selection */}
-                            <FloatingLabel controlId='floatingYear' label='Year'>
-                                <Form.Select
-                                    name='year'
-                                    defaultValue={birthDate.year || ''}
-                                    onChange={e => setBirthDate(prevState => ({ ...prevState, year: e.target.value }))}
-                                    required
-                                >
-                                    <option className='default' value={''}>Year</option>
-
-                                    {/* Year list (100 options) 14 years is the min age */}
-                                    {Array.from({ length: 100 }, (_, index) => (
-                                        <option key={index + 1} value={new Date().getFullYear() - index - 14}>{new Date().getFullYear() - index - 14}</option>
-                                    ))}
-                                </Form.Select>
-                            </FloatingLabel>
-
-                            {/* Month Selection */}
-                            <FloatingLabel controlId='floatingMonth' label='Month'>
-                                <Form.Select
-                                    name='month'
-                                    defaultValue={birthDate.month || ''}
-                                    onChange={e => setBirthDate(prevState => ({ ...prevState, month: e.target.value }))}
-                                    required
-                                >
-                                    <option className='default' value={''}>Month</option>
-
-                                    {/* Month list */}
-                                    {Array.from({ length: 12 }, (_, index) => (
-                                        <option key={index + 1} value={index + 1}>{new Date(0, index).toLocaleString('default', { month: 'long' })}</option>
-                                    ))}
-                                </Form.Select>
-                            </FloatingLabel>
-
-                            {/* Day Selection */}
-                            <FloatingLabel controlId='floatingDay' label='Day'>
-                                <Form.Select
-                                    name='day'
-                                    defaultValue={birthDate.day || ''}
-                                    onChange={e => setBirthDate(prevState => ({ ...prevState, day: e.target.value }))}
-                                    disabled={!birthDate.month || !birthDate.year}
-                                    required
-                                >
-                                    <option className='default' value={''}>Day</option>
-
-                                    {/* Available days based on month */}
-                                    {birthDate.month && birthDate.year && Array.from({ length: daysInMonth(birthDate.month, birthDate.year) }, (_, index) => (
-                                        <option key={index + 1} value={index + 1}>{index + 1}</option>
-                                    ))}
-                                </Form.Select>
-                            </FloatingLabel>
-
-                        </Form.Group>
-                    </>
-                )}
-                {currentStep === 3 && (
-                    <>
-                        <Form.Group controlId='formAvatar'>
-                            <Row className="avatar-container w-100 d-flex align-items-center mb-2" {...getRootProps()}>
-                                <input {...getInputProps()} />
-
-                                <Col className="left-column pe-4">
-                                    <div className="avatar-decoration">Upload</div>
-                                </Col>
-
-                                <Col className="mid-column">
-                                    {avatarUrl ? (
-                                        <Image
-                                            src={avatarUrl}
-                                            width={120}
-                                            height={120}
-                                            className='object-fit-cover'
-                                            roundedCircle
-                                        />
-                                    ) : (
-                                        <Image src={AddAvatarIcon} width={120} />
-                                    )}
-                                </Col>
-
-                                <Col className="right-column ps-4">
-                                    <div className="avatar-decoration">Image</div>
-                                </Col>
-                            </Row>
-                        </Form.Group>
-
-                        <FloatingLabel controlId='floatingBio' label='Biography (optional)'>
-                            <Form.Control
-                                as='textarea'
-                                name='bio'
-                                onChange={e => setBio(e.target.value)}
-                                value={bio}
-                                maxLength={275}
-                                placeholder='Biography (optional)'
-                                autoComplete='bio'
-                            />
-                        </FloatingLabel>
-                    </>
-                )}
-                {currentStep === 4 && (
-                    <InputGroup>
-                        <InputGroup.Text id="at-addon">@</InputGroup.Text>
-                        <Form.Control
-                            name='nickname'
-                            placeholder="Nickname"
-                            aria-label="Nickname"
-                            aria-describedby="at-addon"
-                            value={nickname}
-                            onChange={e => setNickname(e.target.value)}
-                        />
-                    </InputGroup>
-                )}
-                {currentStep === 5 && (
-                    <>
-                        <FloatingLabel controlId='floatingUsername' label='Username'>
-                            <Form.Control
-                                type='text'
-                                name='username'
-                                onChange={e => setUsername(e.target.value)}
-                                value={username}
-                                placeholder='Username'
-                                autoComplete='username'
-                                required
-                            />
-                        </FloatingLabel>
-
-                        <FloatingLabel controlId='floatingEmail' label='E-mail'>
-                            <Form.Control
-                                type='email'
-                                name='email'
-                                onChange={e => setEmail(e.target.value)}
-                                value={email}
-                                placeholder='E-mail'
-                                autoComplete='email'
-                            />
-                        </FloatingLabel>
-                    </>
-                )}
-                {currentStep === 6 && (
-                    <>
-                        <InputGroup className='position-relative'>
-                            <FloatingLabel controlId='floatingPassword' label='Password'>
+            {currentStep < 7 && (
+                <div className="d-flex flex-column gap-2">
+                    {currentStep === 1 && (
+                        <>
+                            <FloatingLabel controlId='floatingFirstName' label='First name'>
                                 <Form.Control
-                                    type={showPassword ? 'text' : 'password'}
-                                    name='password'
-                                    onChange={e => setPassword(e.target.value)}
-                                    value={password}
-                                    placeholder='Password'
-                                    autoComplete='new-password'
+                                    type='text'
+                                    name='firstName'
+                                    onChange={e => setFirstName(e.target.value)}
+                                    value={firstName}
+                                    placeholder='First name'
+                                    autoComplete='firstName'
                                     required
                                 />
-                                <Button
-                                    variant='light'
-                                    className='show-password position-absolute end-0 top-0 h-100 border border-start-0 rounded-start-0'
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                                </Button>
                             </FloatingLabel>
-                        </InputGroup>
 
-                        <InputGroup className='position-relative'>
-                            <FloatingLabel controlId='floatingConfirmPassword' label='Confirm password'>
+                            <FloatingLabel controlId='floatingLastName' label='Last name'>
                                 <Form.Control
-                                    type={showConfirmPassword ? 'text' : 'password'}
-                                    name='confirmPassword'
-                                    onChange={e => setConfirmPassword(e.target.value)}
-                                    value={confirmPassword}
-                                    placeholder='Confirm password'
-                                    autoComplete='new-password'
+                                    type='text'
+                                    name='lastName'
+                                    placeholder='Last name'
+                                    onChange={e => setLastName(e.target.value)}
+                                    value={lastName}
+                                    autoComplete='lastName'
                                     required
                                 />
-                                <Button
-                                    variant='light'
-                                    className='show-password position-absolute end-0 top-0 h-100 border border-start-0 rounded-start-0'
-                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                >
-                                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                                </Button>
                             </FloatingLabel>
+                        </>
+                    )}
+                    {currentStep === 2 && (
+                        <>
+                            <FloatingLabel controlId='floatingGender' label='Gender'>
+                                <Form.Select name='gender' onChange={e => setGender(e.target.value)} defaultValue={gender || ''} required>
+                                    <option className='default' value={''}>Choose your gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </Form.Select>
+                            </FloatingLabel>
+
+                            {/* Birthday Date Selection */}
+                            <Form.Group className='d-flex justify-content-between gap-2' controlId='formBirthDate'>
+
+                                {/* Year Selection */}
+                                <FloatingLabel controlId='floatingYear' label='Year'>
+                                    <Form.Select
+                                        name='year'
+                                        defaultValue={birthDate.year || ''}
+                                        onChange={e => setBirthDate(prevState => ({ ...prevState, year: e.target.value }))}
+                                        required
+                                    >
+                                        <option className='default' value={''}>Year</option>
+
+                                        {/* Year list (100 options) 14 years is the min age */}
+                                        {Array.from({ length: 100 }, (_, index) => (
+                                            <option key={index + 1} value={new Date().getFullYear() - index - 14}>{new Date().getFullYear() - index - 14}</option>
+                                        ))}
+                                    </Form.Select>
+                                </FloatingLabel>
+
+                                {/* Month Selection */}
+                                <FloatingLabel controlId='floatingMonth' label='Month'>
+                                    <Form.Select
+                                        name='month'
+                                        defaultValue={birthDate.month || ''}
+                                        onChange={e => setBirthDate(prevState => ({ ...prevState, month: e.target.value }))}
+                                        required
+                                    >
+                                        <option className='default' value={''}>Month</option>
+
+                                        {/* Month list */}
+                                        {Array.from({ length: 12 }, (_, index) => (
+                                            <option key={index + 1} value={index + 1}>{new Date(0, index).toLocaleString('default', { month: 'long' })}</option>
+                                        ))}
+                                    </Form.Select>
+                                </FloatingLabel>
+
+                                {/* Day Selection */}
+                                <FloatingLabel controlId='floatingDay' label='Day'>
+                                    <Form.Select
+                                        name='day'
+                                        defaultValue={birthDate.day || ''}
+                                        onChange={e => setBirthDate(prevState => ({ ...prevState, day: e.target.value }))}
+                                        disabled={!birthDate.month || !birthDate.year}
+                                        required
+                                    >
+                                        <option className='default' value={''}>Day</option>
+
+                                        {/* Available days based on month */}
+                                        {birthDate.month && birthDate.year && Array.from({ length: daysInMonth(birthDate.month, birthDate.year) }, (_, index) => (
+                                            <option key={index + 1} value={index + 1}>{index + 1}</option>
+                                        ))}
+                                    </Form.Select>
+                                </FloatingLabel>
+
+                            </Form.Group>
+                        </>
+                    )}
+                    {currentStep === 3 && (
+                        <>
+                            <Form.Group controlId='formAvatar'>
+                                <Row className="avatar-container w-100 d-flex align-items-center mb-2" {...getRootProps()}>
+                                    <input {...getInputProps()} />
+
+                                    <Col className="left-column pe-4">
+                                        <div className="avatar-decoration">Upload</div>
+                                    </Col>
+
+                                    <Col className="mid-column">
+                                        {avatarUrl ? (
+                                            <Image
+                                                src={avatarUrl}
+                                                width={120}
+                                                height={120}
+                                                className='object-fit-cover'
+                                                roundedCircle
+                                            />
+                                        ) : (
+                                            <Image src={AddAvatarIcon} width={120} />
+                                        )}
+                                    </Col>
+
+                                    <Col className="right-column ps-4">
+                                        <div className="avatar-decoration">Image</div>
+                                    </Col>
+                                </Row>
+                            </Form.Group>
+
+                            <FloatingLabel controlId='floatingBio' label='Biography (optional)'>
+                                <Form.Control
+                                    as='textarea'
+                                    name='bio'
+                                    onChange={e => setBio(e.target.value)}
+                                    value={bio}
+                                    maxLength={275}
+                                    placeholder='Biography (optional)'
+                                    autoComplete='bio'
+                                />
+                            </FloatingLabel>
+                        </>
+                    )}
+                    {currentStep === 4 && (
+                        <InputGroup>
+                            <InputGroup.Text id="at-addon">@</InputGroup.Text>
+                            <Form.Control
+                                name='nickname'
+                                placeholder="Nickname"
+                                aria-label="Nickname"
+                                aria-describedby="at-addon"
+                                value={nickname}
+                                onChange={e => setNickname(e.target.value)}
+                            />
                         </InputGroup>
-                    </>
-                )}
-            </div>
+                    )}
+                    {currentStep === 5 && (
+                        <>
+                            <FloatingLabel controlId='floatingUsername' label='Username'>
+                                <Form.Control
+                                    type='text'
+                                    name='username'
+                                    onChange={e => setUsername(e.target.value)}
+                                    value={username}
+                                    placeholder='Username'
+                                    autoComplete='username'
+                                    required
+                                />
+                            </FloatingLabel>
+
+                            <FloatingLabel controlId='floatingEmail' label='E-mail (optional)'>
+                                <Form.Control
+                                    type='email'
+                                    name='email'
+                                    onChange={e => setEmail(e.target.value)}
+                                    value={email}
+                                    placeholder='E-mail (optional)'
+                                    autoComplete='email'
+                                />
+                            </FloatingLabel>
+                        </>
+                    )}
+                    {currentStep === 6 && (
+                        <>
+                            <InputGroup className='position-relative'>
+                                <FloatingLabel controlId='floatingPassword' label='Password'>
+                                    <Form.Control
+                                        type={showPassword ? 'text' : 'password'}
+                                        name='password'
+                                        onChange={e => setPassword(e.target.value)}
+                                        value={password}
+                                        placeholder='Password'
+                                        autoComplete='new-password'
+                                        required
+                                    />
+                                    <Button
+                                        variant='light'
+                                        className='show-password position-absolute end-0 top-0 h-100 border border-start-0 rounded-start-0'
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                    </Button>
+                                </FloatingLabel>
+                            </InputGroup>
+
+                            <InputGroup className='position-relative'>
+                                <FloatingLabel controlId='floatingConfirmPassword' label='Confirm password'>
+                                    <Form.Control
+                                        type={showConfirmPassword ? 'text' : 'password'}
+                                        name='confirmPassword'
+                                        onChange={e => setConfirmPassword(e.target.value)}
+                                        value={confirmPassword}
+                                        placeholder='Confirm password'
+                                        autoComplete='new-password'
+                                        required
+                                    />
+                                    <Button
+                                        variant='light'
+                                        className='show-password position-absolute end-0 top-0 h-100 border border-start-0 rounded-start-0'
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    >
+                                        {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                                    </Button>
+                                </FloatingLabel>
+                            </InputGroup>
+                        </>
+                    )}
+                </div>
+            )}
 
             {error && (
                 <Form.Group className='w-100 d-flex align-content-center my-2'>
@@ -469,7 +474,7 @@ function SignUpSteps({ register, currentStep, setCurrentStep, changeStep }) {
                     </Button>
                 )}
                 {currentStep === 7 && (
-                    <Button variant='primary' type='submit' className='next-btn' onClick={submitForm}>
+                    <Button variant='primary' type='button' className='next-btn' onClick={() => navigate('/sign-in')}>
                         <span>Login</span>
                     </Button>
                 )}
@@ -480,12 +485,16 @@ function SignUpSteps({ register, currentStep, setCurrentStep, changeStep }) {
                 )}
             </Form.Group>
 
-            <hr className='mt-3 mb-0' />
-            <Form.Group className='w-100 d-flex justify-content-center align-items-center'>
-                <Form.Text>
-                    Already have an account? <Link to='/sign-in'>Sign in</Link>
-                </Form.Text>
-            </Form.Group>
+            {currentStep < 7 && (
+                <>
+                    <hr className='mt-3 mb-0' />
+                    <Form.Group className='w-100 d-flex justify-content-center align-items-center'>
+                        <Form.Text>
+                            Already have an account? <Link to='/sign-in'>Sign in</Link>
+                        </Form.Text>
+                    </Form.Group>
+                </>
+            )}
         </Form>
     )
 }

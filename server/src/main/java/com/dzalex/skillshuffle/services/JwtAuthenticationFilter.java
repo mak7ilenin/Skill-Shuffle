@@ -31,21 +31,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
-    @Autowired
-    private UserService userService;
-
     @Override
     public void doFilterInternal(@NonNull HttpServletRequest request,
                                  @NonNull HttpServletResponse response,
                                  @NonNull FilterChain chain) throws IOException, ServletException
     {
         String username = null;
-
-//        Get access token from the header
-//        token = jwtHelper.getTokenFromHeader(request);
-//        if (token != null) {
-//            username = tryToGetUsernameFromToken(token, response);
-//        }
 
         // Get access token from cookies
         String accessToken = jwtHelper.getAccessTokenFromCookies(request);
