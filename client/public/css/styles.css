@@ -246,6 +246,9 @@ h1, h2, h3, h4, h5, h6, p {
 .sign-in__form input:not([type=checkbox]) {
   width: 100%;
 }
+.sign-in__form input[type=checkbox]:checked {
+  background-color: #3D00FF;
+}
 .sign-in__form input:focus {
   box-shadow: 0 0 0.25rem rgba(61, 0, 255, 0.25);
   background-color: rgba(240, 240, 255, 0.6156862745);

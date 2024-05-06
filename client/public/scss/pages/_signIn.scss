@@ -99,6 +99,10 @@
                 width: 100%;
             }
 
+            &[type=checkbox]:checked {
+                background-color: $primary-color;
+            }
+
             &:focus {
                 box-shadow: 0 0 .25rem rgb(61, 0, 255, .25);
                 background-color: #f0f0ff9d;
