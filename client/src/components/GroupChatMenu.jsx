@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Container, Image, Stack, Button, NavLink, Modal } from 'react-bootstrap';
+import { Row, Col, Container, Image, Stack, Button, NavLink, Modal, Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+import { useAuth } from './AuthContext';
 import UploadChatAvatarModal from './UploadChatAvatarModal';
 import AddFriends from './AddFriends';
 import { API_SERVER } from '../config';
@@ -12,9 +13,11 @@ import { ReactComponent as Plus } from '../assets/icons/plus.svg';
 import { ReactComponent as Search } from '../assets/icons/search-icon.svg';
 import { ReactComponent as Cross } from '../assets/icons/cross-icon.svg';
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
+import { SlArrowDown } from "react-icons/sl";
 
 function GroupChatMenu({ chat, setChat }) {
     const navigate = useNavigate();
+    const { authUser } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [imageURL, setImageURL] = useState(chat.avatarUrl || null);
     const [imageBlob, setImageBlob] = useState(null);
@@ -97,6 +100,12 @@ function GroupChatMenu({ chat, setChat }) {
             return 'Online';
         }
     }
+
+    const isAdminOrCreator = () => {
+        const isAdmin = chat.members.find(member => member.nickname === authUser.nickname && member.role === 'admin');
+        const isCreator = chat.members.find(member => member.nickname === authUser.nickname && member.role === 'creator');
+        return isAdmin || isCreator;
+    };
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -277,6 +286,21 @@ function GroupChatMenu({ chat, setChat }) {
                                                 </>
                                             )}
                                         </div>
+                                        {isAdminOrCreator() && (
+                                            <div className="member-action d-flex align-items-center justify-content-center flex-row">
+                                                <Dropdown>
+                                                    <Dropdown.Toggle>
+                                                        <Button variant='none' onClick={(e) => {e.stopPropagation(); e.preventDefault()}}>
+                                                            <SlArrowDown width={22} />
+                                                        </Button>
+                                                    </Dropdown.Toggle>
+                                                    <Dropdown.Menu>
+                                                        <Dropdown.Item href='#'>Appoint as administrator</Dropdown.Item>
+                                                        <Dropdown.Item href='#'>Appoint as member</Dropdown.Item>
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </NavLink>
