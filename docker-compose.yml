@@ -10,9 +10,7 @@ services:
     restart: always
     env_file:
       - ./server/.env
-    depends_on:
-      - database
-      
+
   client:
     image: public.ecr.aws/i2t4w1a3/skill-shuffle:client
     # build: ./client

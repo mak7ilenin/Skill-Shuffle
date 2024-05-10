@@ -12,12 +12,12 @@ RUN gradle clean build
 # --------
 
 FROM openjdk:17
+
 # Set the working directory
 WORKDIR /app
+
 # Copy the JAR file
 COPY --from=build /usr/src/app/build/libs/*.jar app.jar
-# Copy the uploads directory
-COPY --from=build /usr/src/app/src/main/resources/static /app/static
 
 # Expose the port and run the app on it
 EXPOSE 8080
