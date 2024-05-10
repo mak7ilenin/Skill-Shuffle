@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 @RestController
 public class FileController {
 
-    @GetMapping("/{category}/{id}/{subCategory}/{filename:.+}")
+    @GetMapping("/static/{category}/{id}/{subCategory}/{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String category,
                                               @PathVariable String id,
                                               @PathVariable String subCategory,
@@ -37,8 +37,8 @@ public class FileController {
     }
 
     private String getResourceDirectory() {
-        // String userDir = System.getProperty("user.dir");
-        // return userDir + "/src/main/resources/uploads/";
-        return "/app/uploads/";
+         String userDir = System.getProperty("user.dir");
+         return userDir + "/src/main/resources/static/";
+//        return "/app/static/";
     }
 }

@@ -9,9 +9,12 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ChatPreviewDTO {
-    private Long id;
+    private Integer id;
     private String name;
     private ChatType type;
-    private String avatar_url;
-    private MessageDTO last_message;
+    private String avatarUrl;
+    private MessageDTO lastMessage;
+    private boolean isMuted;
+    private boolean isOnline;
+    private int unreadMessages;
 }

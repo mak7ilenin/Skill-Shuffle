@@ -1,17 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-function ChatTypeFilter({ setChats, chats }) {
+function ChatTypeFilter({ setFilteredChats, setSelectedChatType, chats, searchQuery }) {
+    const [chatList, setChatList] = useState([]);
+
+    useEffect(() => {
+        setChatList(chats.filter(chat => chat.lastMessage !== null));
+    }, [chats]);
+
     const filterChatsByType = (type, e) => {
+        setSelectedChatType(type);
         const chatTypes = document.querySelectorAll('.chat-type');
         chatTypes.forEach(chatType => chatType.classList.remove('active'));
         e.target.parentElement.classList.add('active');
 
         if (type === 'all') {
-            setChats(chats);
+            if (searchQuery === '') {
+                return setFilteredChats(chatList);
+            }
+            setFilteredChats(chats.filter(chat => chat.name.toLowerCase().includes(searchQuery.toLowerCase())));
         } else {
-            const filteredChats = chats.filter(chat => chat.type === type);
-            setChats(filteredChats);
+            setFilteredChats(chatList.filter(chat => chat.type === type && chat.name.toLowerCase().includes(searchQuery.toLowerCase())));
         }
     };
 
@@ -21,12 +30,12 @@ function ChatTypeFilter({ setChats, chats }) {
         { type: 'community', name: 'Communities' }
     ];
 
-    const existingChatTypes = defaultChatTypes.filter(chatType => chats.some(chat => chat.type === chatType.type));
+    const existingChatTypes = defaultChatTypes.filter(chatType => chatList.some(chat => chat.type === chatType.type));
 
     return (
         <Row className='chat-types d-flex'>
             <Col className='chat-type active' onClick={(e) => filterChatsByType('all', e)}>
-                <p>All&nbsp;({chats.length})</p>
+                <p>All</p>
             </Col>
             {existingChatTypes.map((chatType, index) => (
                 <Col key={index} className='chat-type' onClick={(e) => filterChatsByType(chatType.type, e)}>

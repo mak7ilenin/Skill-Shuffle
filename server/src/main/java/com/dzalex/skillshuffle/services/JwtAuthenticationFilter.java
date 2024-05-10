@@ -1,6 +1,6 @@
 package com.dzalex.skillshuffle.services;
 
-import com.dzalex.skillshuffle.models.RefreshToken;
+import com.dzalex.skillshuffle.entities.RefreshToken;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
@@ -38,12 +38,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     {
         String username = null;
 
-//        Get access token from the header
-//        token = jwtHelper.getTokenFromHeader(request);
-//        if (token != null) {
-//            username = tryToGetUsernameFromToken(token, response);
-//        }
-
         // Get access token from cookies
         String accessToken = jwtHelper.getAccessTokenFromCookies(request);
         if (accessToken != null) {
@@ -53,6 +47,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String refreshTokenString = jwtHelper.getRefreshTokenFromCookies(request);
             if (refreshTokenString != null) {
                 RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenString);
+                // If refresh token is not found, remove refresh token cookie
+                if (refreshToken == null) {
+                    jwtHelper.deleteRefreshTokenCookie(response);
+                }
+                // If refresh token is found, verify expiration and generate new access token
                 if (refreshTokenService.verifyExpiration(refreshToken, response) != null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(refreshToken.getUser().getUsername());
                     accessToken = jwtHelper.createAccessTokenCookie(response, userDetails);

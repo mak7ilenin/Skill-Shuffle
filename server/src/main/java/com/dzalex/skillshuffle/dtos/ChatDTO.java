@@ -11,9 +11,12 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ChatDTO {
-    private Long id;
+    private Integer id;
     private String name;
     private ChatType type;
-    private String avatar_url;
+    private String avatarUrl;
     private List<MessageDTO> messages;
+    private List<ChatMemberDTO> members;
+    private CommunityPreviewDTO community;
+    private boolean isMuted;
 }

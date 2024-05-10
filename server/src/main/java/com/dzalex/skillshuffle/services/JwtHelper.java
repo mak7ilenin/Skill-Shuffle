@@ -1,6 +1,6 @@
 package com.dzalex.skillshuffle.services;
 
-import com.dzalex.skillshuffle.models.RefreshToken;
+import com.dzalex.skillshuffle.entities.RefreshToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -89,14 +89,6 @@ public class JwtHelper {
                     return cookie.getValue();
                 }
             }
-        }
-        return null;
-    }
-
-    public String getTokenFromHeader(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
-        if (authorizationHeader != null && authorizationHeader.startsWith(AUTHORIZATION_HEADER_PREFIX)) {
-            return authorizationHeader.substring(7);
         }
         return null;
     }

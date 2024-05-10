@@ -7,7 +7,10 @@ services:
     container_name: server
     ports:
       - "8080:8080"
-
+    restart: always
+    depends_on:
+      - database
+      
   client:
     # image: public.ecr.aws/i2t4w1a3/skill-shuffle:client
     build: ./client

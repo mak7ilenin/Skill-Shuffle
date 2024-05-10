@@ -1,0 +1,136 @@
+.sign-in {
+    font-family: $secondary-font;
+    margin: 0 auto !important;
+
+    @extend .sign-in;
+
+    &__container {
+        width: 550px;
+        // min-height: 600px;
+        background-color: #fff;
+        box-shadow: 0 7px 12px #00000025;
+        border-radius: 60px;
+        padding: 70px 110px 70px 110px;
+        margin-top: 125px;
+        position: relative;
+
+        hr {
+            color: $dark-gray;
+            border-color: $dark-gray;
+            background-color: $dark-gray;
+            opacity: .5;
+        }
+
+        p {
+            font-family: $third-font;
+            color: $dark-gray;
+            font-weight: 300;
+            font-size: 14px;
+        }
+    }
+
+    &__title h2 {
+        color: $dark-gray;
+        font-size: 3rem;
+        font-weight: 400;
+    }
+
+    &__form {
+        .form-text.error-message {
+            color: $red;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .form-floating {
+            width: 100%;
+
+            label::after {
+                background-color: transparent !important;
+            }
+
+            textarea {
+                min-height: 120px;
+            }
+        }
+
+        .input-group {
+            span {
+                font-family: $secondary-font;
+            }
+            
+            input {
+                font-family: $third-font;
+                font-weight: 400;
+                padding: 1rem .75rem;
+
+                &::placeholder {
+                    font-weight: 300;
+                }
+            }
+        }
+
+        input,
+        label {
+            font-family: $third-font;
+            font-size: 14px;
+            font-weight: 400;
+            color: $dark-gray;
+            line-height: 25px;
+
+            &::placeholder {
+                color: $light-gray;
+                user-select: none;
+            }
+        }
+
+        label {
+            color: $light-gray;
+            font-weight: 300;
+            user-select: none;
+        }
+
+        input {
+            border: none;
+            background-color: $light-purple;
+            border-radius: 5px;
+
+            &:not([type=checkbox]) {
+                width: 100%;
+            }
+
+            &[type=checkbox]:checked {
+                background-color: $primary-color;
+            }
+
+            &:focus {
+                box-shadow: 0 0 .25rem rgb(61, 0, 255, .25);
+                background-color: #f0f0ff9d;
+            }
+        }
+
+        .form-text {
+            font-family: $third-font;
+            font-weight: 300;
+            font-size: 13px;
+            color: #000;
+        }
+
+        button {
+            height: 50px;
+            border-radius: 7px;
+            flex-grow: 1;
+
+            span {
+                color: #fff;
+                font-family: $secondary-font;
+                font-size: 16px;
+                font-weight: 400;
+            }
+
+            &.btn-primary {
+                background-color: $primary-button;
+            }
+        }
+    }
+}

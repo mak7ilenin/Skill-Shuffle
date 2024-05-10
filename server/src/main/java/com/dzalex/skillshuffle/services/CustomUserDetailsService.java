@@ -1,6 +1,6 @@
 package com.dzalex.skillshuffle.services;
 
-import com.dzalex.skillshuffle.models.User;
+import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

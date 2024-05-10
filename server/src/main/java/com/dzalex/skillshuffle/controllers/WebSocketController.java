@@ -1,24 +1,23 @@
 package com.dzalex.skillshuffle.controllers;
 
 import com.dzalex.skillshuffle.dtos.PublicUserDTO;
-import com.dzalex.skillshuffle.enums.ChatType;
-import com.dzalex.skillshuffle.enums.NotificationType;
-import com.dzalex.skillshuffle.models.Chat;
-import com.dzalex.skillshuffle.models.Message;
-import com.dzalex.skillshuffle.models.ChatNotification;
-import com.dzalex.skillshuffle.models.User;
-import com.dzalex.skillshuffle.repositories.ChatRepository;
+import com.dzalex.skillshuffle.entities.ChatMessage;
+import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.UserRepository;
+import com.dzalex.skillshuffle.services.ChatService;
 import com.dzalex.skillshuffle.services.MessageService;
+import com.dzalex.skillshuffle.services.SessionService;
 import com.dzalex.skillshuffle.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.util.List;
+import java.sql.Timestamp;
+import java.util.Objects;
 
 @Slf4j
 @Controller
@@ -28,63 +27,55 @@ public class WebSocketController {
     private MessageService messageService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ChatRepository chatRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private ChatService chatService;
+
+    @Autowired
+    private SessionService sessionService;
+
+    @Autowired
+    private UserService userService;
 
     @MessageMapping("/chat")
-    public void sendMessage(@Payload Message message) {
-        String chatId = message.getChat().getId().toString();
-        Message savedMessage = messageService.saveMessage(message, chatId);
-
-        // Get all users in this chat
-        List<String> usernames = userService.getUsersInChat(Long.parseLong(chatId));
-        User sender = userRepository.findByNickname(message.getSender().getNickname());
-        String senderUsername = sender.getUsername();
-
-        // Send the message to all users who subscribed to chat
-        for (String username : usernames) {
-            messagingTemplate.convertAndSendToUser(username, "/chat/" + chatId, savedMessage);
-        }
-
-        usernames.remove(senderUsername); // Remove sender from the list of usernames
-        sendNotification(chatId, savedMessage, usernames, sender);
+    public void sendMessage(@Payload ChatMessage message) {
+        messageService.sendMessage(message);
     }
 
-    public void sendNotification(String chatId, Message message, List<String> usernames, User sender) {
-        // Create notification message based on chat type
-        String notificationMessage = "";
-        Chat chat = chatRepository.findChatById(Long.parseLong(chatId));
-        if (chat.getType() == ChatType.PRIVATE) {
-            notificationMessage = sender.getFirst_name() + " sent you a message";
-        } else if (chat.getType() == ChatType.GROUP) {
-            notificationMessage = "New message in " + chat.getName();
-        }
+    // Event listener for heartbeat messages
+    @MessageMapping("/heartbeat")
+    public void handleHeartbeat(@Payload PublicUserDTO user) {
+        // Update the user's last activity timestamp
+        User authUser = userRepository.findByNickname(user.getNickname());
+        authUser.setLastSeen(new Timestamp(System.currentTimeMillis()));
+        userRepository.save(authUser);
+    }
 
-        // Create notification object
-        ChatNotification notification = new ChatNotification(
-                chat,
-                new PublicUserDTO(
-                        sender.getFirst_name(),
-                        sender.getLast_name(),
-                        sender.getNickname(),
-                        sender.getAvatar_url()
-                ),
-                notificationMessage,
-                message.getContent(),
-                NotificationType.CHAT_MESSAGE
-        );
+    // Event listener for disconnecting from the WebSocket
+    @EventListener
+    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+        // Close status 1000 means normal disconnect, 1001 means browser/tab closed
+        if (event.getCloseStatus().getCode() == 1000 || event.getCloseStatus().getCode() == 1001) {
+            String username = Objects.requireNonNull(event.getUser()).getName();
+            if (username != null) {
+                User user = userRepository.findByUsername(username);
 
-        // Send notifications to users who are not currently subscribed to the chat
-        for (String username : usernames) {
-            messagingTemplate.convertAndSendToUser(username, "/notification", notification);
+                // Check if user still subscribed to a chat and close the chat
+                String chatId = sessionService.getPreviouslySubscribedChatId(username);
+                if (chatId != null) {
+                    chatService.closeChat(Integer.parseInt(chatId), username);
+                }
+
+                // Check the chats(private/community) user created without any messages and delete them
+                chatService.deleteEmptyChatsByAuthedUser(user);
+
+                // Clear user's websocket sessions
+                sessionService.removeAllUserSessions(username);
+
+                // Update the user's last activity timestamp
+                user.setLastSeen(new Timestamp(System.currentTimeMillis()));
+            }
         }
     }
 

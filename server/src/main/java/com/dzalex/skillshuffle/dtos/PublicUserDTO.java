@@ -2,14 +2,17 @@ package com.dzalex.skillshuffle.dtos;
 
 import lombok.*;
 
+import java.sql.Timestamp;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class PublicUserDTO {
-    private String first_name;
-    private String last_name;
+    private String firstName;
+    private String lastName;
     private String nickname;
-    private String avatar_url;
+    private String avatarUrl;
+    private Timestamp lastSeen;
 }

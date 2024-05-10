@@ -10,10 +10,39 @@
 
     &.closed {
         width: 69px;
+
+        .list-group-item p,
+        .dropdown-container p,
+        .logo-text {
+            display: none;
+        }
     }
+
     .logo-container {
-        margin-top: 45px !important;
-        margin-left: 13px !important;
+        margin-top: 45px;
+        margin-left: 13px;
+
+        .logo-text {
+            p {
+                display: flex;
+                align-items: center;
+                color: #000;
+                text-decoration: none;
+                font-family: 'Russo One', sans-serif;
+            }
+
+            p:first-child {
+                font-size: 28px;
+                height: 28px;
+                letter-spacing: 6px;
+            }
+
+            p:last-child {
+                font-size: 16px;
+                margin-top: 5px;
+                height: 19px;
+            }
+        }
     }
 
     .list-group {
@@ -31,10 +60,7 @@
             padding-left: 21px;
             align-items: center;
             justify-content: flex-start;
-            &.opened {
-                justify-content: flex-start;
-                padding-left: 21px;
-            }
+
             &:hover {
                 background-color: #f4f4f4;
             }
@@ -42,6 +68,7 @@
             &.dropdown-container {
                 margin-top: auto;
                 margin-bottom: 35px;
+
                 button {
                     width: 100%;
                     height: 100%;
@@ -51,7 +78,7 @@
                     margin: 0;
 
                     &[aria-expanded="true"] {
-                        .more-icon > path {
+                        .more-icon>path {
                             stroke: $primary-color;
                             stroke-width: 3.5;
                         }
@@ -62,17 +89,13 @@
                     }
                 }
             }
-            span {
-                display: block;
-            }
         }
-        .list-group-item p, .dropdown-container p {
+
+        .list-group-item p,
+        .dropdown-container p {
             font-weight: 500;
             font-size: 16px;
-            display: none;
             padding-left: 16px;
         }
     }
 }
-
-
