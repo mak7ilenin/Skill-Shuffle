@@ -796,21 +796,32 @@ h1, h2, h3, h4, h5, h6, p {
   color: #3D00FF;
 }
 .chat-page .chat-menu .group-menu .member-list .member-container {
-  cursor: pointer;
   border-radius: 0;
   border-bottom: 1px solid rgba(143, 143, 143, 0.2509803922);
   background-color: transparent;
   transition: ease all 0.1s;
 }
-.chat-page .chat-menu .group-menu .member-list .member-container:hover {
-  background-color: #f5f5f5;
-}
-.chat-page .chat-menu .group-menu .member-list .member-name span {
+.chat-page .chat-menu .group-menu .member-list .member-name > .name {
   width: -moz-fit-content;
   width: fit-content;
   font-weight: 500;
   font-size: 16px;
   color: #000;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chat-page .chat-menu .group-menu .member-list .member-name > .name:hover {
+  color: #3D00FF;
+}
+.chat-page .chat-menu .group-menu .member-list .member-name i {
+  margin-top: 1px;
+  font-size: 14px;
+  color: #8F8F8F;
+}
+.chat-page .chat-menu .group-menu .member-list .member-name > .member-role {
+  margin-top: 2px;
 }
 .chat-page .chat-menu .group-menu .member-list .member-role {
   font-weight: 500;
@@ -823,6 +834,68 @@ h1, h2, h3, h4, h5, h6, p {
   color: #8F8F8F;
   margin-left: 5px;
   line-height: 20px;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown button {
+  border: none;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown button:hover svg {
+  color: #3D00FF;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown button::after {
+  display: none;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu {
+  padding: 15px 21px;
+  background-color: #F0F0FF;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item {
+  width: 100%;
+  padding: 0;
+  margin-bottom: 13px;
+  background-color: transparent !important;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item:last-child {
+  margin-bottom: 0;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item:hover .grade-icon ~ span {
+  color: #3D00FF;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item:hover .grade-icon path {
+  fill: #3D00FF;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item:hover .downgrade ~ span {
+  color: #E64646;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item:hover .downgrade path {
+  fill: #E64646;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item:hover .cross-icon {
+  color: #E64646;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item:hover .cross-icon ~ span {
+  color: #E64646;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item:hover .cross-icon path {
+  fill: #E64646 !important;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item svg {
+  margin-right: 7px;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item svg.cross-icon path {
+  fill: #000 !important;
+  stroke-width: 0.4;
+}
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu .dropdown-item svg.downgrade {
+  transform: rotate(180deg);
 }
 .chat-page .chat-menu .group-menu .leave-chat-footer {
   height: 60px;
@@ -881,9 +954,9 @@ h1, h2, h3, h4, h5, h6, p {
   position: absolute;
   right: 0;
 }
-.chat-page .chat-menu .members-filter .icon-btn svg path,
-.chat-page .chat-menu .search-friend .icon-btn svg path {
-  fill: #8F8F8F;
+.chat-page .chat-menu .members-filter .icon-btn.cross-btn .cross-icon,
+.chat-page .chat-menu .search-friend .icon-btn.cross-btn .cross-icon {
+  color: #8F8F8F;
 }
 .chat-page .chat-menu .friend-list .friend-container {
   cursor: pointer;

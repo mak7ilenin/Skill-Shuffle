@@ -75,7 +75,7 @@ function SignUp() {
                     navigate(`/sign-up?step=${step}`)
                     setCurrentStep(step);
                 } else {
-                    // User can't access step 7 without completing registartion
+                    // User can't access step 7 without completing registration
                     navigate(`/sign-up`)
                     setCurrentStep(1);
                 }

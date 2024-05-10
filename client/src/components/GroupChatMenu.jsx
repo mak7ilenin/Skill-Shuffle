@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Container, Image, Stack, Button, NavLink, Modal, Dropdown } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Row, Col, Container, Image, Stack, Button, Modal, Dropdown } from 'react-bootstrap';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 import { useAuth } from './AuthContext';
@@ -11,8 +11,9 @@ import { API_SERVER } from '../config';
 import { ReactComponent as NetworkIcon } from '../assets/icons/network.svg';
 import { ReactComponent as Plus } from '../assets/icons/plus.svg';
 import { ReactComponent as Search } from '../assets/icons/search-icon.svg';
-import { ReactComponent as Cross } from '../assets/icons/cross-icon.svg';
+import { ReactComponent as Grade } from '../assets/icons/grade.svg';
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
+import { RxCross1 } from "react-icons/rx";
 import { SlArrowDown } from "react-icons/sl";
 
 function GroupChatMenu({ chat, setChat }) {
@@ -78,6 +79,39 @@ function GroupChatMenu({ chat, setChat }) {
             });
     };
 
+    const handleChangeMemberRole = (nickname, role) => {
+        axios.patch(`${API_SERVER}/chats/${chat.id}/members?nickname=${nickname}&role=${role}`, {}, { withCredentials: true })
+            .then(() => {
+                const updatedMembers = chat.members.map(member => {
+                    if (member.nickname === nickname) {
+                        member.role = role;
+                    }
+                    return member;
+                });
+                setChat({ ...chat, members: updatedMembers });
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
+
+    const handleRemoveMember = (nickname) => {
+        axios.delete(`${API_SERVER}/chats/${chat.id}/members?nickname=${nickname}`, { withCredentials: true })
+            .then(() => {
+                const updatedMembers = chat.members.filter(member => member.nickname !== nickname);
+                setChat(prevChat => {
+                    return {
+                        ...prevChat,
+                        members: updatedMembers
+                    };
+                });
+                setFilteredMembers(updatedMembers);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
+
     const formatLastSeenTimestamp = (timestamp) => {
         const date = new Date(timestamp);
         const currentDate = new Date();
@@ -105,6 +139,10 @@ function GroupChatMenu({ chat, setChat }) {
         const isAdmin = chat.members.find(member => member.nickname === authUser.nickname && member.role === 'admin');
         const isCreator = chat.members.find(member => member.nickname === authUser.nickname && member.role === 'creator');
         return isAdmin || isCreator;
+    };
+
+    const isOwner = () => {
+        return chat.members.find(member => member.nickname === authUser.nickname && member.role === 'creator');
     };
 
     const handleOpenModal = () => {
@@ -231,7 +269,7 @@ function GroupChatMenu({ chat, setChat }) {
                                         setFilteredMembers(chat.members);
                                     }}
                                 >
-                                    <Cross className='cross-icon' width={10} height={10} />
+                                    <RxCross1 className='cross-icon' width={10} height={10} />
                                 </Button>
                             </>
                         )}
@@ -248,9 +286,8 @@ function GroupChatMenu({ chat, setChat }) {
 
                     <Stack className='member-list flex-grow-1' direction='vertical' gap={0}>
                         {filteredMembers && filteredMembers.map((member, index) => (
-                            <NavLink
+                            <div
                                 key={index}
-                                href={`/users?nn=${member.nickname}`}
                                 className="member-container d-flex align-items-center m-0 py-2 px-3"
                             >
                                 <div className="member-info w-100 d-flex align-items-center px-0">
@@ -259,51 +296,85 @@ function GroupChatMenu({ chat, setChat }) {
                                         alt={'Member'}
                                         width='55'
                                         height='55'
-                                        style={{ objectFit: 'cover' }}
+                                        style={{ objectFit: 'cover', cursor: 'pointer' }}
+                                        onClick={() => navigate(`/user?nn=${member.nickname}`)}
                                         roundedCircle
                                     />
-                                    <div className='d-flex flex-column w-100 ms-3'>
-                                        <div className='d-flex flex-row'>
-                                            <div className="member-name w-75">
-                                                <span>{member.firstName} {member.lastName}</span>
+                                    <div className='d-flex flex-row w-100 ms-3'>
+                                        <div className='d-flex flex-column w-100'>
+                                            <div className='d-flex flex-row'>
+                                                <div className="member-name d-flex flex-row">
+                                                    <Link to={`/users?nn=${member.nickname}`} className='name'>
+                                                        {member.firstName} {member.lastName}
+                                                    </Link>
+                                                    {isOwner() && member.role !== 'creator' && (
+                                                        <>
+                                                            <i className='ms-1 me-2'>•</i>
+                                                            <span className='member-role'>{member.role === 'admin' ? 'Administrator' : 'Member'}</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                                {!isAdminOrCreator() || member.role === 'creator' ? (
+                                                    <>
+                                                        {member.role === 'creator' || member.role === 'admin' ? (
+                                                            <Col className="w-25 d-flex justify-content-end align-items-center">
+                                                                <span className='member-role'>{member.role === 'creator' ? 'Creator' : 'Administrator'}</span>
+                                                            </Col>
+                                                        ) : null}
+                                                    </>
+                                                ) : null}
                                             </div>
-                                            {member.role === 'creator' || member.role === 'admin' ? (
-                                                <Col className="member-role w-25 d-flex justify-content-end align-items-center">
-                                                    <span>{member.role === 'creator' ? 'Creator' : 'Administrator'}</span>
-                                                </Col>
-                                            ) : null}
+                                            <div className='member-activity d-flex align-items-center justify-content-start flex-row'>
+                                                {formatLastSeenTimestamp(member.lastSeen) === 'Online' ? (
+                                                    <>
+                                                        <div className="online-icon rounded-circle"></div>
+                                                        <span>Online</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <NetworkIcon width={13} height={13} />
+                                                        <span>{formatLastSeenTimestamp(member.lastSeen)}</span>
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className='member-activity d-flex align-items-center justify-content-start flex-row'>
-                                            {formatLastSeenTimestamp(member.lastSeen) === 'Online' ? (
-                                                <>
-                                                    <div className="online-icon rounded-circle"></div>
-                                                    <span>Online</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <NetworkIcon width={13} height={13} />
-                                                    <span>{formatLastSeenTimestamp(member.lastSeen)}</span>
-                                                </>
-                                            )}
-                                        </div>
-                                        {isAdminOrCreator() && (
+
+                                        {isAdminOrCreator() && member.role !== 'creator' && member.nickname !== authUser.nickname && (
                                             <div className="member-action d-flex align-items-center justify-content-center flex-row">
-                                                <Dropdown>
-                                                    <Dropdown.Toggle>
-                                                        <Button variant='none' onClick={(e) => {e.stopPropagation(); e.preventDefault()}}>
-                                                            <SlArrowDown width={22} />
-                                                        </Button>
+                                                <Dropdown autoClose>
+                                                    <Dropdown.Toggle variant='none'>
+                                                        <SlArrowDown width={22} />
                                                     </Dropdown.Toggle>
-                                                    <Dropdown.Menu>
-                                                        <Dropdown.Item href='#'>Appoint as administrator</Dropdown.Item>
-                                                        <Dropdown.Item href='#'>Appoint as member</Dropdown.Item>
+                                                    <Dropdown.Menu align={'end'}>
+                                                        {isOwner() && (
+                                                            <>
+                                                                {member.role === 'admin' ? (
+                                                                    <Dropdown.Item onClick={() => handleChangeMemberRole(member.nickname, 'member')}>
+                                                                        <Grade className='grade-icon downgrade' />
+                                                                        <span>Appoint as member</span>
+                                                                    </Dropdown.Item>
+                                                                ) : (
+                                                                    <Dropdown.Item onClick={() => handleChangeMemberRole(member.nickname, 'admin')}>
+                                                                        <Grade className='grade-icon' />
+                                                                        <span>Appoint as administrator</span>
+                                                                    </Dropdown.Item>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                        <Dropdown.Item onClick={() => handleRemoveMember(member.nickname)}>
+                                                            <RxCross1
+                                                                className='cross-icon'
+                                                                width={12}
+                                                            />
+                                                            <span>Remove from chat</span>
+                                                        </Dropdown.Item>
                                                     </Dropdown.Menu>
                                                 </Dropdown>
                                             </div>
                                         )}
                                     </div>
                                 </div>
-                            </NavLink>
+                            </div>
                         ))}
                     </Stack>
                     <Row className='leave-chat-footer d-flex justify-content-center align-items-center'>

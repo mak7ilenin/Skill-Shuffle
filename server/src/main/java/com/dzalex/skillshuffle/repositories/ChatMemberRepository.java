@@ -11,5 +11,6 @@ public interface ChatMemberRepository extends JpaRepository<ChatMember, Integer>
     void deleteAllByChatId(Integer id);
     ChatMember findChatMemberByChatIdAndMemberId(Integer id, Integer id1);
     ChatMember findFirstByChatIdAndMemberUsername(Integer id, String username);
+    ChatMember findFirstByChatIdAndMemberNickname(Integer id, String nickname);
     ChatMember findFirstByChatIdAndRole(Integer id, MemberRole memberRole);
 }

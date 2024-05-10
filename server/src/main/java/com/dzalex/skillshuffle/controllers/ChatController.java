@@ -88,6 +88,22 @@ public class ChatController {
         return messageService.getChatMessages(id, member, limit, offset);
     }
 
+    // Get friend list for a chat 'add members' modal
+    @GetMapping("/chats/{id}/friends")
+    public List<PublicUserDTO> getFriendListForChat(@PathVariable("id") Integer id) {
+        Chat chat = chatRepository.findChatById(id);
+        return chatService.getFriendListForChat(chat);
+    }
+
+    // Change member role
+    @PatchMapping("/chats/{id}/members")
+    public void changeMemberRole(@PathVariable("id") Integer id,
+                                                @RequestParam("nickname") String nickname,
+                                                @RequestParam("role") String role) {
+        Chat chat = chatRepository.findChatById(id);
+        chatService.changeMemberRole(chat, nickname, role);
+    }
+
     // Invite members to chat
     @PostMapping("/chats/{id}/members")
     public ChatDTO addChatMembers(@PathVariable("id") Integer id,
@@ -96,19 +112,12 @@ public class ChatController {
         return chatService.inviteMembersToChat(chat, users);
     }
 
-    // Get friend list for a chat 'add members' modal
-    @GetMapping("/chats/{id}/friends")
-    public List<PublicUserDTO> getFriendListForChat(@PathVariable("id") Integer id) {
-        Chat chat = chatRepository.findChatById(id);
-        return chatService.getFriendListForChat(chat);
-    }
-
     // Remove chat member
-    @DeleteMapping("/chats/{id}/remove?nn={nickname}")
+    @DeleteMapping("/chats/{id}/members")
     public ResponseEntity<Chat> removeChatMember(@PathVariable("id") Integer id,
-                                                 @PathVariable("nickname") String nickname) {
+                                                 @RequestParam("nickname") String nickname) {
         Chat chat = chatRepository.findChatById(id);
-        chatService.removeMemberFromChat(chat, userService.getUserByNickname(nickname));
+        chatService.removeMemberFromChat(chat, nickname);
         return ResponseEntity.ok(chat);
     }
 

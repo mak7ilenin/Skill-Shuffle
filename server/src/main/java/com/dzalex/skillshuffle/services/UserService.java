@@ -167,7 +167,7 @@ public class UserService {
         List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);
         List<ChatMemberDTO> users = new ArrayList<>();
         for (ChatMember chatMember : chatMembers) {
-            if (chatMember.getLeftAt() == null) {
+            if (!chatMember.isLeft() && !chatMember.isKicked()) {
                 users.add(getChatMemberDTO(chatMember));
             }
         }
@@ -179,7 +179,7 @@ public class UserService {
         List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);
         List<String> usernames = new ArrayList<>();
         for (ChatMember chatMember : chatMembers) {
-            if (!chatMember.isLeft()) {
+            if (!chatMember.isLeft() && !chatMember.isKicked()) {
                 usernames.add(chatMember.getMember().getUsername());
             }
         }

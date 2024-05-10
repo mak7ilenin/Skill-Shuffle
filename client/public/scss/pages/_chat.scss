@@ -212,7 +212,7 @@
 
                     .me {
                         color: $light-gray;
-                    
+
                     }
                 }
 
@@ -397,22 +397,41 @@
 
             .member-list {
                 .member-container {
-                    cursor: pointer;
                     border-radius: 0;
                     border-bottom: 1px solid #8f8f8f40;
                     background-color: transparent;
                     transition: ease all .1s;
 
-                    &:hover {
-                        background-color: #f5f5f5;
+                    // &:hover {
+                    //     background-color: #f5f5f5;
+                    // }
+                }
+
+                .member-name {
+                    &>.name {
+                        width: fit-content;
+                        font-weight: 500;
+                        font-size: 16px;
+                        color: #000;
+                        text-decoration: none;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+
+                        &:hover {
+                            color: $primary-color;
+                        }
+                    }
+
+                    i {
+                        margin-top: 1px;
+                        font-size: 14px;
+                        color: $light-gray;
                     }
                 }
 
-                .member-name span {
-                    width: fit-content;
-                    font-weight: 500;
-                    font-size: 16px;
-                    color: #000;
+                .member-name>.member-role {
+                    margin-top: 2px;
                 }
 
                 .member-role {
@@ -427,6 +446,94 @@
                     color: $light-gray;
                     margin-left: 5px;
                     line-height: 20px;
+                }
+
+                .member-action {
+                    width: fit-content;
+
+                    .dropdown button {
+                        border: none;
+
+                        &:hover {
+                            svg {
+                                color: $primary-color;
+                            }
+                        }
+
+                        &::after {
+                            display: none;
+                        }
+                    }
+
+                    .dropdown-menu {
+                        padding: 15px 21px;
+                        background-color: $light-purple;
+
+                        .dropdown-item {
+                            width: 100%;
+                            padding: 0;
+                            margin-bottom: 13px;
+                            background-color: transparent !important;
+
+                            &:last-child {
+                                margin-bottom: 0;
+                            }
+
+                            span {
+                                font-size: 14px;
+                                font-weight: 600;
+                                color: #000;
+                            }
+
+                            &:hover {
+
+                                .grade-icon {
+                                    &~span {
+                                        color: $primary-color;
+                                    }
+
+                                    path {
+                                        fill: $primary-color;
+                                    }
+                                }
+
+                                .downgrade {
+                                    &~span {
+                                        color: $red;
+                                    }
+
+                                    path {
+                                        fill: $red;
+                                    }
+                                }
+
+                                .cross-icon {
+                                    &~span {
+                                        color: $red;
+                                    }
+
+                                    color: $red;
+
+                                    path {
+                                        fill: $red !important;
+                                    }
+                                }
+                            }
+
+                            svg {
+                                margin-right: 7px;
+
+                                &.cross-icon path {
+                                    fill: #000 !important;
+                                    stroke-width: 0.4;
+                                }
+
+                                &.downgrade {
+                                    transform: rotate(180deg);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -485,10 +592,10 @@
                     width: fit-content;
                     position: absolute;
                     right: 0;
-                }
 
-                svg path {
-                    fill: $light-gray;
+                    .cross-icon {
+                        color: $light-gray;
+                    }
                 }
             }
         }

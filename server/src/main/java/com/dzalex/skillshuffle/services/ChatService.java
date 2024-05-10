@@ -81,7 +81,7 @@ public class ChatService {
         chatDTO.setId(chat.getId());
         chatDTO.setType(chat.getType());
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
-        chatDTO.setMessages(messageService.getFirstChatMessages(chat.getId(), chatMember));
+        chatDTO.setMessages(messageService.getChatMessages(chat.getId(), chatMember, 30, 0));
         chatDTO.setMuted(isChatMuted(chat.getId(), chatMember.getMember().getId()));
 
         switch (chat.getType()) {
@@ -156,7 +156,10 @@ public class ChatService {
 
     private void getGroupChatInfo(Chat chat, ChatDTO chatDTO) {
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
-        chatDTO.setMembers(!chatMember.isLeft() ? userService.getUsersInChat(chat.getId()) : null);
+        // If chat member is kicked or left the chat, return members as null
+        if (chatMember != null && !chatMember.isKicked() && chatMember.getLeftAt() == null) {
+            chatDTO.setMembers(userService.getUsersInChat(chat.getId()));
+        }
         chatDTO.setAvatarUrl(chat.getAvatarUrl());
         chatDTO.setName(chat.getName());
     }
@@ -219,6 +222,14 @@ public class ChatService {
     }
 
     private void addMemberToChat(Chat chat, User user, MemberRole role) {
+        // Check if the user is already was a member of the chat
+        ChatMember existingMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), user.getId());
+        if (existingMember != null) {
+            existingMember.setKicked(false);
+            existingMember.setLeftAt(null);
+            chatMemberRepository.save(existingMember);
+            return;
+        }
         ChatMember chatMember = ChatMember.builder()
                 .chat(chat)
                 .member(user)
@@ -304,11 +315,16 @@ public class ChatService {
     }
 
     // Remove member from chat
-    public void removeMemberFromChat(Chat chat, User user) {
-        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), user.getId());
-        if (chatMember != null) {
-            chatMemberRepository.delete(chatMember);
-            messageService.createAnnouncementMessage(userService.getCurrentUser(), chat, ChatAnnouncementType.REMOVED, user);
+    public void removeMemberFromChat(Chat chat, String nickname) {
+        User authUser = userService.getCurrentUser();
+        ChatMember authUserMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), authUser.getId());
+        ChatMember chatMember = chatMemberRepository.findFirstByChatIdAndMemberNickname(chat.getId(), nickname);
+
+        // Check if the user is the owner or admin of the chat and the kicked user is not the owner
+        if (authUserMember != null && chatMember != null && !chatMember.isOwner()) {
+            chatMember.setKicked(true);
+            chatMemberRepository.save(chatMember);
+            messageService.createAnnouncementMessage(authUser, chat, ChatAnnouncementType.REMOVED, chatMember.getMember());
         }
     }
 
@@ -364,7 +380,8 @@ public class ChatService {
     }
 
     private boolean canAddExistingMemberBackToChat(ChatMember authUserMember, ChatMember chatMember) {
-        return !chatMember.isKicked() || (authUserMember.isOwner() && authUserMember.isAdmin());
+        // If user is owner and member is kicked or left the chat then return true. If user is admin and member is not kicked but left the chat then return true
+        return authUserMember.isOwner() && (chatMember.isKicked() || chatMember.getLeftAt() != null) || authUserMember.isAdmin() && chatMember.getLeftAt() != null;
     }
 
     public void updateChatNotifications(Chat chat, boolean state) {
@@ -387,6 +404,16 @@ public class ChatService {
         ChatMember chatMember = chatMemberRepository.findFirstByChatIdAndMemberUsername(chatId, username);
         if (chatMember != null) {
             chatMember.setClosedAt(new Timestamp(System.currentTimeMillis()));
+            chatMemberRepository.save(chatMember);
+        }
+    }
+
+    public void changeMemberRole(Chat chat, String nickname, String role) {
+        ChatMember authUserMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
+        ChatMember chatMember = chatMemberRepository.findFirstByChatIdAndMemberNickname(chat.getId(), nickname);
+
+        if (authUserMember != null && chatMember != null && authUserMember.isOwner() && !chatMember.isOwner() && !chatMember.isKicked()) {
+            chatMember.setRole(MemberRole.valueOf(role.toUpperCase()));
             chatMemberRepository.save(chatMember);
         }
     }

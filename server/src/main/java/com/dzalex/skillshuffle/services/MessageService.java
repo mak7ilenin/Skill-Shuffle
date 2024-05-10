@@ -228,43 +228,6 @@ public class MessageService {
                 .count();
     }
 
-    public List<MessageDTO> getFirstChatMessages(Integer chatId, ChatMember chatMember) {
-        List<ChatMessage> messages;
-        if (chatMember.getClosedAt() == null) {
-            // All messages are unread. Retrieve the first 30 messages.
-            messages = messageRepository.findMessagesByChatId(chatId)
-                    .stream()
-                    .filter(message -> chatMember.getClearedAt() == null || message.getTimestamp().after(chatMember.getClearedAt()))
-                    .filter(message -> !chatMember.isLeft() || message.getTimestamp().before(chatMember.getLeftAt()))
-                    .limit(30)
-                    .toList();
-        } else {
-            // Some messages are read, some are unread. Retrieve 15 read and 15 unread messages.
-            List<ChatMessage> readMessages = messageRepository.findMessagesByChatId(chatId)
-                    .stream()
-                    .filter(message -> message.getTimestamp().before(chatMember.getClosedAt()))
-                    .filter(message -> chatMember.getClearedAt() == null || message.getTimestamp().after(chatMember.getClearedAt()))
-                    .filter(message -> !chatMember.isLeft() || message.getTimestamp().before(chatMember.getLeftAt()))
-                    .limit(15)
-                    .toList();
-            List<ChatMessage> unreadMessages = messageRepository.findMessagesByChatId(chatId)
-                    .stream()
-                    .filter(message -> message.getTimestamp().after(chatMember.getClosedAt()))
-                    .filter(message -> chatMember.getClearedAt() == null || message.getTimestamp().after(chatMember.getClearedAt()))
-                    .filter(message -> !chatMember.isLeft() || message.getTimestamp().before(chatMember.getLeftAt()))
-                    .limit(15)
-                    .toList();
-            messages = new ArrayList<>();
-            messages.addAll(readMessages);
-            messages.addAll(unreadMessages);
-        }
-        // Convert the ChatMessage entities to MessageDTO objects and return the list.
-        return messages.stream()
-                .map(this::convertToDTO)
-                .sorted(Comparator.comparing(MessageDTO::getTimestamp))
-                .toList();
-    }
-
     public List<MessageDTO> getChatMessages(Integer chatId, ChatMember chatMember, int limit, int offset) {
         if (offset < 0) {
             throw new IllegalArgumentException("Offset must be non-negative");
