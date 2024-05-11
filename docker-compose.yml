@@ -15,12 +15,14 @@ services:
     container_name: database
     volumes:
       - ./database/skill_shuffle.sql:/docker-entrypoint-initdb.d/skill_shuffle.sql
+    env_file:
+      - ./server/.env
     environment:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
       MARIADB_USERNAME: root
-      MARIADB_DATABASE: skill_shuffle
+      MARIADB_DATABASE: ${AWS_RDS_DB_NAME}
     ports:
-      - "3306:3306"
+      - "${AWS_RDS_PORT:AWS_RDS_PORT}"
 
   client:
     build: ./client
