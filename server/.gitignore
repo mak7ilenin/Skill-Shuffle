@@ -34,7 +34,7 @@ out/
 /nbdist/
 /.nb-gradle/
 
-### Env ###
+### Environments ###
 .env
 
 ### VS Code ###

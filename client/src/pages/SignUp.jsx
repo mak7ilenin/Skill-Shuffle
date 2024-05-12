@@ -121,7 +121,7 @@ function SignUp() {
 
     return (
         <Container className='sign-up d-flex flex-column justify-content-center align-items-center'>
-            <div className="sign-up__container">
+            <div className="form-container">
                 {showArrow && (
                     <Button
                         variant='none'
@@ -138,7 +138,7 @@ function SignUp() {
                 <Row className='logo-container'>
                     <Logo height={90} />
                 </Row>
-                <Row className='sign-up__title mt-3 mb-4'>
+                <Row className='form-container__title mt-3 mb-4'>
                     {currentStep === 7 ? (
                         <h2 className='text-center mb-3' style={{ lineHeight: '90%' }}>
                             Registration completed!

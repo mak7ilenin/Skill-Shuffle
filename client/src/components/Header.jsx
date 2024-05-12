@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ListGroup, Image, Dropdown, NavLink } from 'react-bootstrap';
+import { ListGroup, Image, Dropdown, NavLink, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -14,6 +14,7 @@ import { ReactComponent as Search } from '../assets/icons/search.svg';
 import { ReactComponent as Chats } from '../assets/icons/chats.svg';
 import { ReactComponent as Notifications } from '../assets/icons/notification-bell.svg';
 import { ReactComponent as Create } from '../assets/icons/create.svg';
+import { SlArrowLeft } from "react-icons/sl";
 
 function Header() {
     const { authUser, setAuthUser } = useAuth();
@@ -23,28 +24,54 @@ function Header() {
         await axios.post(`${API_SERVER}/auth/logout`, {}, { withCredentials: true });
         navigate('/sign-in');
         setAuthUser(null);
-        document.querySelector('.default-header').classList.add('closed');
     };
 
     useEffect(() => {
-        const currentPathName = window.location.pathname;
         const pathsWithOpenHeader = ['/my-profile'];
-        if (!pathsWithOpenHeader.includes(currentPathName)) {
-            document.querySelector('.default-header').classList.add('closed');
+        if (!pathsWithOpenHeader.includes(window.location.pathname) && authUser) {
+            document.querySelector('.header').classList.add('closed');
         }
-    }, []);
+    }, [authUser]);
 
     return (
-        <div className='default-header d-flex flex-column closed'>
-            <NavLink href='/' className='logo-container w-100 d-flex align-items-center flex-row'>
-                <div className='logo'>
-                    <Logo width={37.5} height={51} />
+        <div className={`header d-flex flex-column ${authUser ? 'authorized' : ''}`}>
+            <div className="burger-exit h-100">
+                <Button
+                    variant='none'
+                    className='px-3 rounded-0 border-0'
+                    onClick={e => {
+                        e.preventDefault();
+                        document.querySelector('.header').classList.remove('opened');
+                        document.querySelector('body').removeAttribute('style');
+                    }}
+                >
+                    <SlArrowLeft />
+                </Button>
+            </div>
+            <div className='logo-block w-100 d-flex'>
+                <NavLink href='/' className="logo-container d-flex flex-row align-items-center">
+                    <div className='logo'>
+                        <Logo width={37.5} height={51} />
+                    </div>
+                    <div className='logo-text ms-2'>
+                        <p>SKILL</p>
+                        <p>SHUFFLE</p>
+                    </div>
+                </NavLink>
+                <div className="burger-menu h-100">
+                    <Button
+                        variant='none'
+                        className='px-3 rounded-0 border-0'
+                        onClick={e => {
+                            e.preventDefault();
+                            document.querySelector('.header').classList.toggle('opened');
+                            document.querySelector('body').style.overflow = 'hidden';
+                        }}
+                    >
+                        <More width={30} />
+                    </Button>
                 </div>
-                <div className='logo-text ms-2'>
-                    <p>SKILL</p>
-                    <p>SHUFFLE</p>
-                </div>
-            </NavLink>
+            </div>
             <ListGroup className='flex-grow-1'>
                 <ListGroup.Item>
                     <Home className='home-icon' />
@@ -68,7 +95,7 @@ function Header() {
                 </ListGroup.Item>
                 {authUser && (
                     <>
-                        <ListGroup.Item action href='/my-profile'>
+                        <ListGroup.Item href='/my-profile' className='profile-link' action>
                             <div className='avatar-container d-flex justify-content-center align-items-center flex-column'>
                                 <Image
                                     src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
@@ -82,10 +109,11 @@ function Header() {
                             </div>
                             <p>Profile</p>
                         </ListGroup.Item>
-                        <ListGroup.Item className='dropdown-container'>
-                            <Dropdown className='d-flex justify-content-center align-items-center' drop='end'>
-                                <Dropdown.Toggle title='More' >
+                        <ListGroup.Item className='more-link'>
+                            <Dropdown className='w-100 h-100 d-flex justify-content-center align-items-center'>
+                                <Dropdown.Toggle className='w-100 h-100 border-0 p-0 d-flex align-items-center flex-row' title='More' >
                                     <More className='more-icon' />
+                                    <p>More</p>
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
                                     <Dropdown.Item href="#/action-1">Saved</Dropdown.Item>
@@ -95,12 +123,11 @@ function Header() {
                                     <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
-                            <p>More</p>
                         </ListGroup.Item>
                     </>
                 )}
             </ListGroup>
-        </div>
+        </div >
     );
 }
 

@@ -39,6 +39,7 @@ function ChatMenu({ chats, chat, setChat, handleMenuChange, activeMenu }) {
                 getSearch={getSearch}
                 changeMenu={handleMenuChange}
                 activeMenu={activeMenu}
+                setChat={setChat}
             />
 
             {activeMenu === 'DEFAULT' ? (

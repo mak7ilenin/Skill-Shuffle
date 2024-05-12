@@ -1,13 +1,40 @@
 .chat-page {
+    position: relative;
+    
+    @media (max-width: 958px) {
+        width: 100vw;
+        overflow-x: hidden;
+
+        .chat-menu {
+            flex: 1;
+            width: 100%;
+            max-width: unset;
+        }
+
+        .chat-box {
+            width: 100%;
+            max-width: unset;
+
+            &:not(.active) {
+                display: none;
+            }
+        }
+    }
+
     .chat-menu {
-        width: 27.61%;
-        min-width: 400px;
+        width: 511px;
         height: 100vh;
         background-color: #fff;
-        // border-right: 1px solid #ccc;
-        flex: 0 0 auto;
         display: flex;
         flex-direction: column;
+
+        @media (max-width: 1280px) {
+            width: 415px;
+        }
+
+        @media (max-width: 520px) {
+            width: 100%;
+        }
 
         .chat-menu-header {
             height: 80px;
@@ -26,6 +53,12 @@
 
             .search-bar-container {
                 height: 32px;
+                justify-content: center;
+
+                @media (max-width: 1280px) {
+                    justify-content: flex-end;
+                    margin-left: 30px;
+                }
 
                 .search-bar {
                     max-width: 215px;
@@ -647,15 +680,25 @@
     }
 
     .chat-box {
-        width: 72.39%;
         height: 100vh;
         flex: 1;
         background-color: #EFEBFF;
+        transition: ease all .2s;
+
+        @media (max-width: 958px) {
+            position: absolute;
+            left: 0;
+
+            &.non-selected {
+                left: 100vw;
+            }
+        }
+
+        @media (max-width: 520px) {
+            height: calc(100% - 75px);
+        }
 
         &.non-selected {
-            display: flex;
-            justify-content: center;
-            align-items: center;
             background-repeat: no-repeat;
             background-position: center;
             background-size: cover;
@@ -670,7 +713,6 @@
                 padding: 9px 36px;
                 cursor: pointer;
 
-                // Make text non selectable
                 user-select: none;
                 -webkit-user-select: none;
                 -moz-user-select: none;
@@ -681,16 +723,39 @@
 
         .chat-header {
             height: 80px;
-            display: flex;
-            align-items: center;
             position: relative;
             padding: 12.5px 14px !important;
             border-bottom: 1px solid #ccc;
             background-color: #fff;
             font-family: $main-font;
 
-            .chat-info {
+            .back-btn-col {
                 width: fit-content;
+                display: none;
+                flex: 0;
+
+                @media (max-width: 958px) {
+                    display: block;
+                }
+
+                .back-btn {
+                    width: 35px;
+                    height: 35px;
+
+                    svg {
+                        width: 30px;
+                        height: 30px;
+                        stroke: $light-gray !important;
+                    }
+
+                    &:hover {
+                        background-color: rgba(232, 236, 238, 0.5);
+                    }
+                }
+            }
+
+            .chat-info {
+                flex: 1;
 
                 .chat-name {
                     text-decoration: none;
@@ -953,7 +1018,7 @@
             .input-container {
                 height: 60px;
                 width: auto;
-                flex-grow: 1;
+                flex: 1;
 
                 input[type="text"] {
                     border: none;
@@ -1050,6 +1115,12 @@
     position: absolute;
     right: 0;
     bottom: 60px;
+
+    @media (max-width: 520px) {
+        .gpr-main {
+            width: 100vw !important;
+        }
+    }
 
     &.closed {
         display: none;

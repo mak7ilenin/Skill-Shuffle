@@ -1,26 +1,110 @@
-.default-header {
+.header {
     background-color: #ffffff;
     position: sticky;
     left: 0;
     top: 0;
+    bottom: 0;
+    z-index: 100;
     height: 100vh;
     width: 244px;
-    border-right: 1px solid #8f8f8f;
+    min-width: 244px;
+    border-right: 1px solid $light-gray;
     font-family: $main-font;
+    transition: ease all .4s;
+
+    @media (max-width: 1565px) {
+        @include closed-header;
+    }
+
+    @media (max-width: 520px) {
+        @include mobile-header;
+    }
 
     &.closed {
-        width: 69px;
+        @include closed-header;
+    }
 
-        .list-group-item p,
-        .dropdown-container p,
-        .logo-text {
-            display: none;
+    &:not(.authorized) {
+        @include mobile-header;
+
+        .logo-block {
+            margin: 0 auto !important;
+
+            .burger-menu {
+                display: none !important;
+            }
         }
     }
 
-    .logo-container {
+    &.opened {
+        height: 100vh;
+
+        .logo-block {
+            margin-top: 30px !important;
+            padding-left: 22px !important;
+
+            .logo-container {
+                transform: scale(1.1);
+            }
+        }
+
+        .burger-menu {
+            display: none !important;
+        }
+
+        .list-group {
+            width: calc(100% - 60px);
+            display: flex;
+            margin-top: 20px;
+
+            .list-group-item p {
+                display: block;
+            }
+        }
+    }
+
+    .burger-exit {
+        display: none;
+        width: 60px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 15;
+
+        button {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(217, 217, 217, .2);
+            border: none;
+
+            svg {
+                width: 23px;
+                height: 23px;
+            }
+        }
+    }
+
+    .logo-block {
+        min-height: 75px;
+        height: 75px;
         margin-top: 45px;
-        margin-left: 13px;
+        padding-left: 15px;
+        transition: ease all .5s;
+        
+        .logo-container {
+            width: fit-content;
+            transition: ease all .5s;
+        }
+
+        .burger-menu {
+            display: none;
+            align-self: center;
+
+            button:hover {
+                background-color: $super-light-gray;
+            }
+        }
 
         .logo-text {
             p {
@@ -60,22 +144,28 @@
             padding-left: 21px;
             align-items: center;
             justify-content: flex-start;
-
-            &:hover {
-                background-color: #f4f4f4;
+            
+            &.active {
+                background-color: $light-purple !important;
             }
 
-            &.dropdown-container {
+            &:hover {
+                background-color: $light-purple;
+            }
+
+            p {
+                color: $dark-gray;
+                font-weight: 500;
+                font-size: 16px;
+                padding-left: 16px;
+            }
+
+            &.more-link {
                 margin-top: auto;
                 margin-bottom: 35px;
 
                 button {
-                    width: 100%;
-                    height: 100%;
                     background-color: transparent;
-                    border: none;
-                    padding: 0;
-                    margin: 0;
 
                     &[aria-expanded="true"] {
                         .more-icon>path {
@@ -88,14 +178,11 @@
                         display: none;
                     }
                 }
-            }
-        }
 
-        .list-group-item p,
-        .dropdown-container p {
-            font-weight: 500;
-            font-size: 16px;
-            padding-left: 16px;
+                .dropdown-menu {
+                    inset: auto auto 0px 40px !important;
+                }
+            }
         }
     }
 }

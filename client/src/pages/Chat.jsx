@@ -10,8 +10,8 @@ import MessageRenderer from '../components/MessageRenderer';
 import ChatHeader from '../components/ChatHeader';
 import ChatMenu from '../components/ChatMenu';
 import MessageNotification from '../components/MessageNotification';
-
 import EmojiGifPicker from '../components/EmojiGifPicker';
+
 import ChatBackground from '../assets/images/chat-background.jpg'
 import { ReactComponent as Send } from '../assets/icons/send.svg';
 
@@ -21,7 +21,7 @@ function Chat() {
   const navigate = useNavigate();
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [chats, setChats] = useState([]);
-  const [chosenChat, setChosenChat] = useState({});
+  const [chosenChat, setChosenChat] = useState(null);
   const [messageContent, setMessageContent] = useState('');
   const [messageNotification, setMessageNotification] = useState({ visible: false, notification: {} });
   const [activeMenu, setActiveMenu] = useState('DEFAULT'); // 'CREATE_CHAT', 'GROUP_MENU', or 'DEFAULT'
@@ -44,14 +44,14 @@ function Chat() {
         chat.lastMessage = message;
 
         // If the chat is not the chosen chat, increment the unreadMessages
-        if (chatId !== String(chosenChat.id)) {
+        if (chosenChat && chatId !== String(chosenChat.id)) {
           chat.unreadMessages += 1;
         }
       }
       return chat;
     });
     setChats(updatedChats);
-  }, [chosenChat.id]);
+  }, [chosenChat]);
 
 
   const getChatMessages = useCallback((chatId) => {
@@ -89,7 +89,7 @@ function Chat() {
     if (isStompClientInitialized && stompClient) {
 
       // Unsubscribe from the previous chat messages
-      if (currentSubscriptionRef.current && currentSubscriptionRef.current.chatId !== chosenChat.id) {
+      if (currentSubscriptionRef.current && chosenChat && currentSubscriptionRef.current.chatId !== chosenChat.id) {
         currentSubscriptionRef.current.unsubscribe();
         currentSubscriptionRef.current = null;
       }
@@ -115,13 +115,16 @@ function Chat() {
         // Update current subscription
         currentSubscriptionRef.current = newSubscription;
 
+        // Remove horizontal scrolling in document
+        document.body.style.overflowX = 'hidden';
+
         return () => {
           // Unsubscribe from chat messages when component unmounts
           newSubscription.unsubscribe();
         };
       }
     }
-  }, [stompClient, updateChatLastMessage, isStompClientInitialized, chosenChat.id]);
+  }, [stompClient, updateChatLastMessage, isStompClientInitialized, chosenChat]);
 
 
   const subscribeToAllChats = useCallback(() => {
@@ -154,10 +157,10 @@ function Chat() {
 
 
   useEffect(() => {
-    if (chosenChat.id) {
+    if (chosenChat && chosenChat.id) {
       subscribeToChat();
     }
-  }, [chosenChat.id, subscribeToChat]);
+  }, [chosenChat, subscribeToChat]);
 
 
   useEffect(() => {
@@ -166,9 +169,21 @@ function Chat() {
     }
   }, [subscribeToAllChats]);
 
+
+  const overflowBody = useCallback(() => {
+    if (window.innerWidth < 958) {
+      document.body.style.overflow = 'hidden';
+    }
+  }, []);
+
+
   useEffect(() => {
     chatsRef.current = chats;
-  }, [chats]);
+    overflowBody();
+  }, [chats, overflowBody]);
+
+
+  window.addEventListener('resize', overflowBody);
 
   const sendMessage = (gif) => {
     if (messageContent === '' && !gif) return;
@@ -236,6 +251,10 @@ function Chat() {
 
   // Group messages by day for better readability
   const messagesByDay = useMemo(() => {
+    if (!chosenChat) {
+      return;
+    }
+
     if (chosenChat.messages === undefined) {
       return [];
     }
@@ -322,12 +341,12 @@ function Chat() {
 
 
   return (
-    <div className="chat-page w-100 d-flex">
+    <div className="chat-page w-100 h-100 d-flex">
 
       <MessageNotification
         setMessageNotification={setMessageNotification}
         messageNotification={messageNotification}
-        chatId={chosenChat.id}
+        chat={chosenChat}
       />
 
       <ChatMenu
@@ -338,9 +357,9 @@ function Chat() {
         activeMenu={activeMenu}
       />
 
-      {chosenChat.id === undefined ? (
+      {!chosenChat ? (
         // If no chat is selected, display:
-        <div className='chat-box non-selected' style={{ backgroundImage: `url(${ChatBackground})` }}>
+        <div className='chat-box non-selected d-flex justify-content-center align-items-center' style={{ backgroundImage: `url(${ChatBackground})` }}>
           <p className='no-chat-selected'>Select chat</p>
         </div>
       ) :
@@ -355,7 +374,7 @@ function Chat() {
           />
 
           <Row className='messages-list p-0 py-3' ref={chatRef} onScroll={handleScroll}>
-            {messagesByDay.length === 0 && !loadingMessages && (
+            {messagesByDay && messagesByDay.length === 0 && !loadingMessages && (
               <div className='no-messages d-flex justify-content-center align-items-center w-100 h-100'>
                 Your message history will be displayed here.
               </div>

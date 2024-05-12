@@ -1,57 +1,9 @@
 .sign-up {
     font-family: $secondary-font;
     margin: 0 auto !important;
+    height: calc(100vh - 75px);
 
-    @extend .sign-up;
-
-    &__container {
-        width: 550px;
-        // min-height: 600px;
-        background-color: #fff;
-        box-shadow: 0 7px 12px #00000025;
-        border-radius: 60px;
-        padding: 70px 110px 70px 110px;
-        margin-top: 125px;
-        position: relative;
-
-        hr {
-            color: $dark-gray;
-            border-color: $dark-gray;
-            background-color: $dark-gray;
-            opacity: .5;
-        }
-
-        p {
-            font-family: $third-font;
-            color: $dark-gray;
-            font-weight: 300;
-            font-size: 14px;
-        }
-
-        .arrow-back {
-            top: 40px;
-            left: 40px;
-            position: absolute;
-            outline: none;
-            border: none;
-
-            .arrow-icon {
-                color: $light-gray;
-            }
-
-            &:hover {
-                .arrow-icon {
-                    color: $dark-gray
-                }
-            }
-        }
-    }
-
-    &__title h2 {
-        color: $dark-gray;
-        font-size: 3rem;
-        font-weight: 400;
-    }
+    @include form-container;
 
     &__form {
 
@@ -82,7 +34,7 @@
             span {
                 font-family: $secondary-font;
             }
-            
+
             input {
                 font-family: $third-font;
                 font-weight: 400;
@@ -177,7 +129,8 @@
                 width: fit-content;
             }
 
-            .left-column, .right-column {
+            .left-column,
+            .right-column {
                 height: fit-content;
             }
 

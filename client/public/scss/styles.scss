@@ -1,13 +1,13 @@
-@import '_base.scss';
 @import '_variables.scss';
+@import '_base.scss';
 @import '_mixins.scss';
 
 // Components
 @import 'components/_header.scss';
-@import 'components/notification.scss';
+@import 'components/_notification.scss';
 
 // Pages
-@import 'pages/_signIn.scss';
-@import 'pages/_signUp.scss';
+@import 'pages/_sign_in.scss';
+@import 'pages/_sign_up.scss';
 @import 'pages/_chat.scss';
-@import 'pages/_userProfile.scss';
+@import 'pages/_user_profile.scss';

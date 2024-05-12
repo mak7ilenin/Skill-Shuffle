@@ -1,0 +1,123 @@
+@mixin form-container {
+    .form-container {
+        width: 550px;
+
+        @media (max-width: 700px) {
+            width: 95%;
+            padding: 70px 70px 70px 70px;
+        }
+
+        @media (max-width: 520px) {
+            padding: 60px 30px 60px 30px;
+            border-radius: 20px;
+        }
+
+        background-color: #fff;
+        box-shadow: 0 7px 12px #00000025;
+        border-radius: 60px;
+        padding: 70px 110px 70px 110px;
+        position: relative;
+
+        hr {
+            color: $dark-gray;
+            border-color: $dark-gray;
+            background-color: $dark-gray;
+            opacity: .5;
+        }
+
+        p {
+            font-family: $third-font;
+            color: $dark-gray;
+            font-weight: 300;
+            font-size: 14px;
+        }
+
+        .arrow-back {
+            top: 40px;
+            left: 40px;
+            position: absolute;
+            outline: none;
+            border: none;
+
+            @media (max-width: 430px) {
+                left: 20px;
+            }
+
+            .arrow-icon {
+                color: $light-gray;
+            }
+
+            &:hover {
+                .arrow-icon {
+                    color: $dark-gray
+                }
+            }
+        }
+
+        &__title h2 {
+            color: $dark-gray;
+            font-size: 3rem;
+            font-weight: 400;
+        }
+    }
+}
+
+@mixin closed-header {
+    &.authorized {
+        min-width: 69px;
+        width: 69px;
+
+        .list-group-item p,
+        .dropdown-container p,
+        .logo-text {
+            display: none;
+        }
+
+        .logo-block {
+            display: flex;
+            justify-content: center;
+            padding-left: 0;
+        }
+    }
+}
+
+@mixin mobile-header {
+    min-width: 100vw !important;
+    height: 75px;
+    border-right: none;
+    border-bottom: 1px solid $light-gray;
+
+    .logo-block {
+        max-width: 1324px;
+        margin: 0 !important;
+        padding-left: 0;
+
+        @media (max-width: 1324px) {
+            // padding-left: 32px !important;
+            padding-left: 16px !important;
+        }
+
+        @media (max-width: 520px) {
+            max-width: 100%;
+            justify-content: space-between !important;
+
+            .burger-menu {
+                display: flex !important;
+            }
+        }
+    }
+
+    @media (max-width: 520px) {
+        &.opened .burger-exit {
+            display: block !important;
+        }
+    }
+
+    .logo-text {
+        display: block !important;
+    }
+
+    .list-group {
+        display: none;
+    }
+}
