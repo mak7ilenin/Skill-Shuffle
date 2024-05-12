@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Row, Col, Tab, Tabs, Button, Image, Container } from 'react-bootstrap';
+import { Row, Col, Button, Image, Container } from 'react-bootstrap';
 
 import { useAuth } from '../components/AuthContext';
 import ProfileAside from '../components/ProfileAside';

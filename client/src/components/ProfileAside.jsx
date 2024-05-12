@@ -81,7 +81,7 @@ function ProfileAside() {
 
             <Col className='profile-aside friend-list d-flex flex-column justify-content-between p-3'>
                 <p className='aside-header'>Friends online <span>3</span></p>
-                <Col className='friends-online d-flex flex-row align-items-center justify-content-start'>
+                <Col className='friends-online d-flex flex-row align-items-center justify-content-between'>
                     <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
                         <Row className='friend-img w-auto'>
                             <Image
@@ -127,7 +127,7 @@ function ProfileAside() {
                 <hr className='my-2' />
 
                 <p className='aside-header'>Friends <span>3</span></p>
-                <Col className='friends d-flex flex-row align-items-center justify-content-start'>
+                <Col className='friends d-flex flex-row align-items-center justify-content-between'>
                     <NavLink href='/' className='friend-container d-flex justify-content-start align-items-center flex-column'>
                         <Row className='friend-img'>
                             <Image
