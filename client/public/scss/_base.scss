@@ -1,8 +1,11 @@
+body {
+    height: 100vh;
+}
+
 #root {
     display: flex;
+    flex-wrap: wrap;
     background-color: $super-light-gray;
-    height: fit-content;
-    position: relative;
 }
 
 h1,
@@ -19,6 +22,7 @@ p {
     width: 1324px;
     margin: 0 auto;
     background-color: $super-light-gray;
+    position: relative;
 
     @media (max-width: 1324px) {
         width: 100%;
@@ -26,7 +30,8 @@ p {
 
     &:has(.wrapper-profile),
     &:has(.chat-page) {
-        width: 100%;
+        // width: 100%;
+        flex: 1;
     }
 }
 

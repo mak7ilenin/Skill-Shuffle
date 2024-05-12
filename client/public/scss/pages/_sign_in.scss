@@ -1,7 +1,7 @@
 .sign-in {
     font-family: $secondary-font;
     margin: 0 auto !important;
-    height: 100vh;
+    height: calc(100vh - 75px);
 
     @include form-container;
 

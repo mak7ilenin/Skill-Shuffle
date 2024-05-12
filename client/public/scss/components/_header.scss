@@ -10,7 +10,7 @@
     min-width: 244px;
     border-right: 1px solid $light-gray;
     font-family: $main-font;
-    transition: ease all .2s;
+    transition: ease all .4s;
 
     @media (max-width: 1565px) {
         @include closed-header;
@@ -38,7 +38,6 @@
 
     &.opened {
         height: 100vh;
-        position: fixed;
 
         .logo-block {
             margin-top: 30px !important;
@@ -91,11 +90,11 @@
         height: 75px;
         margin-top: 45px;
         padding-left: 15px;
-        transition: ease all .3s;
+        transition: ease all .5s;
         
         .logo-container {
             width: fit-content;
-            transition: ease all .3s;
+            transition: ease all .5s;
         }
 
         .burger-menu {
@@ -145,12 +144,17 @@
             padding-left: 21px;
             align-items: center;
             justify-content: flex-start;
+            
+            &.active {
+                background-color: $light-purple !important;
+            }
 
             &:hover {
                 background-color: $light-purple;
             }
 
             p {
+                color: $dark-gray;
                 font-weight: 500;
                 font-size: 16px;
                 padding-left: 16px;
@@ -161,12 +165,7 @@
                 margin-bottom: 35px;
 
                 button {
-                    width: 100%;
-                    height: 100%;
                     background-color: transparent;
-                    border: none;
-                    padding: 0;
-                    margin: 0;
 
                     &[aria-expanded="true"] {
                         .more-icon>path {
@@ -178,6 +177,10 @@
                     &::after {
                         display: none;
                     }
+                }
+
+                .dropdown-menu {
+                    inset: auto auto 0px 40px !important;
                 }
             }
         }

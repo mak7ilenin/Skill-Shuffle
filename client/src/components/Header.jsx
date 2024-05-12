@@ -110,9 +110,10 @@ function Header() {
                             <p>Profile</p>
                         </ListGroup.Item>
                         <ListGroup.Item className='more-link'>
-                            <Dropdown className='d-flex justify-content-center align-items-center' drop='end'>
-                                <Dropdown.Toggle title='More' >
+                            <Dropdown className='w-100 h-100 d-flex justify-content-center align-items-center'>
+                                <Dropdown.Toggle className='w-100 h-100 border-0 p-0 d-flex align-items-center flex-row' title='More' >
                                     <More className='more-icon' />
+                                    <p>More</p>
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
                                     <Dropdown.Item href="#/action-1">Saved</Dropdown.Item>
@@ -122,7 +123,6 @@ function Header() {
                                     <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
-                            <p>More</p>
                         </ListGroup.Item>
                     </>
                 )}

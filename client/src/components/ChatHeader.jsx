@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Row, Col, Image, NavLink, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 import ChatSmallMenu from './ChatSmallMenu';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 import { ReactComponent as NetworkIcon } from '../assets/icons/network.svg';
 import { ReactComponent as Menu } from '../assets/icons/post-menu.svg';
+import { IoArrowBack } from "react-icons/io5";
 
 function ChatHeader({ chat, setChat, setChats, handleMenuChange }) {
     const [smallMenuVisibility, setSmallMenuVisibility] = useState(false);
+    const navigate = useNavigate();
 
     const generateLink = () => {
         switch (chat.type) {
@@ -50,8 +53,21 @@ function ChatHeader({ chat, setChat, setChats, handleMenuChange }) {
     }
 
     return (
-        <Row className='chat-header'>
-            <Col className='info-container'>
+        <Row className='chat-header d-flex align-items-center'>
+            <Col className='back-btn-col me-3'>
+                <Button
+                    variant='link'
+                    className='back-btn p-0 d-flex justify-content-center align-items-center rounded-circle'
+                    onClick={() => {
+                        handleMenuChange('DEFAULT');
+                        navigate('/messenger');
+                        setChat(null);
+                    }}
+                >
+                    <IoArrowBack />
+                </Button>
+            </Col>
+            <Col className='info-container pe-5'>
                 {chat.type !== 'group' ? (
                     <NavLink href={generateLink()} className='chat-info d-flex'>
                         <Col className='chat-avatar me-3' role='button'>

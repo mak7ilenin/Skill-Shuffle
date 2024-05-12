@@ -7,7 +7,7 @@ import { AESEncrypt } from '../crypto';
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 import sound from '../assets/sounds/erm-what-the-sigma.mp3';
 
-function MessageNotification({ setMessageNotification, messageNotification, chatId }) {
+function MessageNotification({ setMessageNotification, messageNotification, chat }) {
     const navigate = useNavigate();
     const soundRef = useRef(null);
     const [visible, setVisible] = useState(false);
@@ -17,21 +17,23 @@ function MessageNotification({ setMessageNotification, messageNotification, chat
         if (messageNotification && messageNotification.visible) {
             const msgNotification = messageNotification.notification;
             setNotification(msgNotification);
-            if (msgNotification.type === 'CHAT_MESSAGE' && msgNotification.chat.id !== chatId) {
-                setVisible(true);
+            if (msgNotification.type === 'CHAT_MESSAGE') {
+                if (chat && msgNotification.chat.id !== chat.id) {
+                    setVisible(true);
 
-                // Play notification sound
-                if (!soundRef.current || soundRef.current.paused) {
-                    const notificationSound = new Audio(sound);
-                    notificationSound.play()
-                        .then(() => {
-                            soundRef.current = notificationSound;
-                        })
-                        .catch(/* User didn't interacted with document yet */);
+                    // Play notification sound
+                    if (!soundRef.current || soundRef.current.paused) {
+                        const notificationSound = new Audio(sound);
+                        notificationSound.play()
+                            .then(() => {
+                                soundRef.current = notificationSound;
+                            })
+                            .catch(/* User didn't interacted with document yet */);
+                    }
                 }
             }
         }
-    }, [messageNotification, setMessageNotification, chatId]);
+    }, [messageNotification, setMessageNotification, chat]);
 
     return (
         visible && (
