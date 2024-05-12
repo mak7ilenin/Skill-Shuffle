@@ -36,12 +36,12 @@ function SignIn() {
     return (
 
         <Container className='sign-in d-flex flex-column justify-content-center align-items-center'>
-            <div className="sign-in__container">
+            <div className="form-container">
                 <Row className='logo-container'>
                     <Logo height={90} />
                 </Row>
 
-                <Row className='sign-in__title mt-3 mb-4'>
+                <Row className='form-container__title mt-3 mb-4'>
                     <h2 className='text-uppercase text-center'>Sign in</h2>
                 </Row>
 

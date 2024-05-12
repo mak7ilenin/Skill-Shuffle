@@ -10,19 +10,21 @@
     font-family: $main-font;
 
     @mixin closed-header {
-        min-width: 69px;
-        width: 69px;
+        &.authorized {
+            min-width: 69px;
+            width: 69px;
 
-        .list-group-item p,
-        .dropdown-container p,
-        .logo-text {
-            display: none;
-        }
+            .list-group-item p,
+            .dropdown-container p,
+            .logo-text {
+                display: none;
+            }
 
-        .logo-container {
-            display: flex;
-            justify-content: center;
-            padding-left: 0;
+            .logo-block {
+                display: flex;
+                justify-content: center;
+                padding-left: 0;
+            }
         }
     }
 
@@ -35,12 +37,13 @@
     }
 
     &:not(.authorized) {
+        position: absolute;
         width: 100vw;
         height: 75px;
         border-right: none;
         border-bottom: 1px solid $light-gray;
 
-        .logo-container {
+        .logo-block {
             max-width: 1324px;
             height: 100%;
             margin: 0 auto;
@@ -49,10 +52,6 @@
             @media (max-width: 1324px) {
                 padding-left: 32px;
             }
-
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
         }
 
         .list-group {
@@ -60,9 +59,13 @@
         }
     }
 
-    .logo-container {
+    .logo-block {
         margin-top: 45px;
         padding-left: 15px;
+
+        .logo-container {
+            width: fit-content;
+        }
 
         .logo-text {
             p {

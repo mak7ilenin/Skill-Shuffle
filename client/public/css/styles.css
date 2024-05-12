@@ -75,75 +75,77 @@ p {
   font-family: "Manrope", sans-serif;
 }
 @media (max-width: 1565px) {
-  .header {
+  .header.authorized {
     min-width: 69px;
     width: 69px;
   }
-  .header .list-group-item p,
-  .header .dropdown-container p,
-  .header .logo-text {
+  .header.authorized .list-group-item p,
+  .header.authorized .dropdown-container p,
+  .header.authorized .logo-text {
     display: none;
   }
-  .header .logo-container {
+  .header.authorized .logo-block {
     display: flex;
     justify-content: center;
     padding-left: 0;
   }
 }
-.header.closed {
+.header.closed.authorized {
   min-width: 69px;
   width: 69px;
 }
-.header.closed .list-group-item p,
-.header.closed .dropdown-container p,
-.header.closed .logo-text {
+.header.closed.authorized .list-group-item p,
+.header.closed.authorized .dropdown-container p,
+.header.closed.authorized .logo-text {
   display: none;
 }
-.header.closed .logo-container {
+.header.closed.authorized .logo-block {
   display: flex;
   justify-content: center;
   padding-left: 0;
 }
 .header:not(.authorized) {
+  position: absolute;
   width: 100vw;
   height: 75px;
   border-right: none;
   border-bottom: 1px solid #8F8F8F;
 }
-.header:not(.authorized) .logo-container {
+.header:not(.authorized) .logo-block {
   max-width: 1324px;
   height: 100%;
   margin: 0 auto;
   padding-left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
 }
 @media (max-width: 1324px) {
-  .header:not(.authorized) .logo-container {
+  .header:not(.authorized) .logo-block {
     padding-left: 32px;
   }
 }
 .header:not(.authorized) .list-group {
   display: none;
 }
-.header .logo-container {
+.header .logo-block {
   margin-top: 45px;
   padding-left: 15px;
 }
-.header .logo-container .logo-text p {
+.header .logo-block .logo-container {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.header .logo-block .logo-text p {
   display: flex;
   align-items: center;
   color: #000;
   text-decoration: none;
   font-family: "Russo One", sans-serif;
 }
-.header .logo-container .logo-text p:first-child {
+.header .logo-block .logo-text p:first-child {
   font-size: 28px;
   height: 28px;
   letter-spacing: 6px;
 }
-.header .logo-container .logo-text p:last-child {
+.header .logo-block .logo-text p:last-child {
   font-size: 16px;
   margin-top: 5px;
   height: 19px;
@@ -222,40 +224,57 @@ p {
   margin: 0 auto !important;
   height: 100vh;
 }
-.sign-in__container {
+.sign-in .form-container {
   width: 550px;
   background-color: #fff;
   box-shadow: 0 7px 12px rgba(0, 0, 0, 0.1450980392);
   border-radius: 60px;
   padding: 70px 110px 70px 110px;
-  margin-top: 50px;
   position: relative;
 }
 @media (max-width: 700px) {
-  .sign-in__container {
+  .sign-in .form-container {
     width: 95%;
     padding: 70px 70px 70px 70px;
   }
 }
 @media (max-width: 520px) {
-  .sign-in__container {
+  .sign-in .form-container {
     padding: 60px 30px 60px 30px;
     border-radius: 20px;
   }
 }
-.sign-in__container hr {
+.sign-in .form-container hr {
   color: #373737;
   border-color: #373737;
   background-color: #373737;
   opacity: 0.5;
 }
-.sign-in__container p {
+.sign-in .form-container p {
   font-family: "Lexend", "sans-serif";
   color: #373737;
   font-weight: 300;
   font-size: 14px;
 }
-.sign-in__title h2 {
+.sign-in .form-container .arrow-back {
+  top: 40px;
+  left: 40px;
+  position: absolute;
+  outline: none;
+  border: none;
+}
+@media (max-width: 430px) {
+  .sign-in .form-container .arrow-back {
+    left: 20px;
+  }
+}
+.sign-in .form-container .arrow-back .arrow-icon {
+  color: #8F8F8F;
+}
+.sign-in .form-container .arrow-back:hover .arrow-icon {
+  color: #373737;
+}
+.sign-in .form-container__title h2 {
   color: #373737;
   font-size: 3rem;
   font-weight: 400;
@@ -354,42 +373,59 @@ p {
 .sign-up {
   font-family: "Mitr", sans-serif;
   margin: 0 auto !important;
+  height: 100vh;
 }
-.sign-up__container {
+.sign-up .form-container {
   width: 550px;
   background-color: #fff;
   box-shadow: 0 7px 12px rgba(0, 0, 0, 0.1450980392);
   border-radius: 60px;
   padding: 70px 110px 70px 110px;
-  margin-top: 125px;
   position: relative;
 }
-.sign-up__container hr {
+@media (max-width: 700px) {
+  .sign-up .form-container {
+    width: 95%;
+    padding: 70px 70px 70px 70px;
+  }
+}
+@media (max-width: 520px) {
+  .sign-up .form-container {
+    padding: 60px 30px 60px 30px;
+    border-radius: 20px;
+  }
+}
+.sign-up .form-container hr {
   color: #373737;
   border-color: #373737;
   background-color: #373737;
   opacity: 0.5;
 }
-.sign-up__container p {
+.sign-up .form-container p {
   font-family: "Lexend", "sans-serif";
   color: #373737;
   font-weight: 300;
   font-size: 14px;
 }
-.sign-up__container .arrow-back {
+.sign-up .form-container .arrow-back {
   top: 40px;
   left: 40px;
   position: absolute;
   outline: none;
   border: none;
 }
-.sign-up__container .arrow-back .arrow-icon {
+@media (max-width: 430px) {
+  .sign-up .form-container .arrow-back {
+    left: 20px;
+  }
+}
+.sign-up .form-container .arrow-back .arrow-icon {
   color: #8F8F8F;
 }
-.sign-up__container .arrow-back:hover .arrow-icon {
+.sign-up .form-container .arrow-back:hover .arrow-icon {
   color: #373737;
 }
-.sign-up__title h2 {
+.sign-up .form-container__title h2 {
   color: #373737;
   font-size: 3rem;
   font-weight: 400;
@@ -509,7 +545,8 @@ p {
   width: -moz-fit-content;
   width: fit-content;
 }
-.sign-up__form .avatar-container .left-column, .sign-up__form .avatar-container .right-column {
+.sign-up__form .avatar-container .left-column,
+.sign-up__form .avatar-container .right-column {
   height: -moz-fit-content;
   height: fit-content;
 }

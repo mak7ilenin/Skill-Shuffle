@@ -34,15 +34,17 @@ function Header() {
 
     return (
         <div className={`header d-flex flex-column ${authUser ? 'authorized' : ''}`}>
-            <NavLink href='/' className='logo-container w-100 d-flex align-items-center flex-row'>
-                <div className='logo'>
-                    <Logo width={37.5} height={51} />
-                </div>
-                <div className='logo-text ms-2'>
-                    <p>SKILL</p>
-                    <p>SHUFFLE</p>
-                </div>
-            </NavLink>
+            <div className='logo-block w-100 d-flex'>
+                <NavLink href='/' className="logo-container d-flex flex-row align-items-center">
+                    <div className='logo'>
+                        <Logo width={37.5} height={51} />
+                    </div>
+                    <div className='logo-text ms-2'>
+                        <p>SKILL</p>
+                        <p>SHUFFLE</p>
+                    </div>
+                </NavLink>
+            </div>
             <ListGroup className='flex-grow-1'>
                 <ListGroup.Item>
                     <Home className='home-icon' />

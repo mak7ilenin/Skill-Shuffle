@@ -1,52 +1,17 @@
-.sign-in {
+.sign-up {
     font-family: $secondary-font;
     margin: 0 auto !important;
     height: 100vh;
 
-    @extend .sign-in;
-
-    &__container {
-        width: 550px;
-
-        @media (max-width: 700px) {
-            width: 95%;
-            padding: 70px 70px 70px 70px;
-        }
-
-        @media (max-width: 520px) {
-            padding: 60px 30px 60px 30px;
-            border-radius: 20px;
-        }
-
-        background-color: #fff;
-        box-shadow: 0 7px 12px #00000025;
-        border-radius: 60px;
-        padding: 70px 110px 70px 110px;
-        margin-top: 50px;
-        position: relative;
-
-        hr {
-            color: $dark-gray;
-            border-color: $dark-gray;
-            background-color: $dark-gray;
-            opacity: .5;
-        }
-
-        p {
-            font-family: $third-font;
-            color: $dark-gray;
-            font-weight: 300;
-            font-size: 14px;
-        }
-    }
-
-    &__title h2 {
-        color: $dark-gray;
-        font-size: 3rem;
-        font-weight: 400;
-    }
+    @include form-container;
 
     &__form {
+
+        input.invalid,
+        select.invalid {
+            box-shadow: 0 0 0 .15rem #e6464625 !important;
+        }
+
         .form-text.error-message {
             color: $red;
             font-size: 13px;
@@ -82,7 +47,9 @@
         }
 
         input,
-        label {
+        select,
+        label,
+        textarea {
             font-family: $third-font;
             font-size: 14px;
             font-weight: 400;
@@ -101,22 +68,29 @@
             user-select: none;
         }
 
-        input {
+        input,
+        select,
+        textarea {
+            width: 100%;
             border: none;
             background-color: $light-purple;
             border-radius: 5px;
 
-            &:not([type=checkbox]) {
-                width: 100%;
-            }
-
-            &[type=checkbox]:checked {
-                background-color: $primary-color;
-            }
-
             &:focus {
                 box-shadow: 0 0 .25rem rgb(61, 0, 255, .25);
                 background-color: #f0f0ff9d;
+            }
+        }
+
+        select {
+            color: $dark-gray;
+            font-weight: 300;
+            text-overflow: ellipsis;
+
+            option {
+                &:not(.default) {
+                    color: $dark-gray;
+                }
             }
         }
 
@@ -127,7 +101,7 @@
             color: #000;
         }
 
-        button {
+        .buttons-group button {
             height: 50px;
             border-radius: 7px;
             flex-grow: 1;
@@ -141,6 +115,41 @@
 
             &.btn-primary {
                 background-color: $primary-button;
+            }
+
+            &.btn-secondary {
+                background-color: $secondary-btn;
+            }
+        }
+
+        .avatar-container {
+            cursor: pointer;
+
+            .mid-column {
+                width: fit-content;
+            }
+
+            .left-column,
+            .right-column {
+                height: fit-content;
+            }
+
+            .avatar-decoration {
+                font-family: $third-font;
+                font-weight: 300;
+                font-size: 14px;
+                color: $dark-gray;
+                text-align: center;
+                user-select: none;
+
+                &::after {
+                    content: '';
+                    display: block;
+                    width: 100%;
+                    height: 1px;
+                    background-color: $dark-gray;
+                    margin-top: 5px;
+                }
             }
         }
     }
