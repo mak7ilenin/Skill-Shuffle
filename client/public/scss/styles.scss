@@ -1,10 +1,10 @@
-@import '_base.scss';
 @import '_variables.scss';
+@import '_base.scss';
 @import '_mixins.scss';
 
 // Components
 @import 'components/_header.scss';
-@import 'components/notification.scss';
+@import 'components/_notification.scss';
 
 // Pages
 @import 'pages/_signIn.scss';

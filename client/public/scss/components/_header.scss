@@ -1,14 +1,16 @@
-.default-header {
+.header {
     background-color: #ffffff;
     position: sticky;
     left: 0;
     top: 0;
     height: 100vh;
     width: 244px;
-    border-right: 1px solid #8f8f8f;
+    min-width: 244px;
+    border-right: 1px solid $light-gray;
     font-family: $main-font;
 
-    &.closed {
+    @mixin closed-header {
+        min-width: 69px;
         width: 69px;
 
         .list-group-item p,
@@ -16,11 +18,51 @@
         .logo-text {
             display: none;
         }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            padding-left: 0;
+        }
+    }
+
+    @media (max-width: 1565px) {
+        @include closed-header;
+    }
+
+    &.closed {
+        @include closed-header;
+    }
+
+    &:not(.authorized) {
+        width: 100vw;
+        height: 75px;
+        border-right: none;
+        border-bottom: 1px solid $light-gray;
+
+        .logo-container {
+            max-width: 1324px;
+            height: 100%;
+            margin: 0 auto;
+            padding-left: 0;
+
+            @media (max-width: 1324px) {
+                padding-left: 32px;
+            }
+
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .list-group {
+            display: none;
+        }
     }
 
     .logo-container {
         margin-top: 45px;
-        margin-left: 13px;
+        padding-left: 15px;
 
         .logo-text {
             p {
@@ -62,10 +104,16 @@
             justify-content: flex-start;
 
             &:hover {
-                background-color: #f4f4f4;
+                background-color: $light-purple;
             }
 
-            &.dropdown-container {
+            p {
+                font-weight: 500;
+                font-size: 16px;
+                padding-left: 16px;
+            }
+
+            &.more-link {
                 margin-top: auto;
                 margin-bottom: 35px;
 
@@ -89,13 +137,6 @@
                     }
                 }
             }
-        }
-
-        .list-group-item p,
-        .dropdown-container p {
-            font-weight: 500;
-            font-size: 16px;
-            padding-left: 16px;
         }
     }
 }

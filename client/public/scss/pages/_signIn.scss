@@ -1,17 +1,28 @@
 .sign-in {
     font-family: $secondary-font;
     margin: 0 auto !important;
+    height: 100vh;
 
     @extend .sign-in;
 
     &__container {
         width: 550px;
-        // min-height: 600px;
+
+        @media (max-width: 700px) {
+            width: 95%;
+            padding: 70px 70px 70px 70px;
+        }
+
+        @media (max-width: 520px) {
+            padding: 60px 30px 60px 30px;
+            border-radius: 20px;
+        }
+
         background-color: #fff;
         box-shadow: 0 7px 12px #00000025;
         border-radius: 60px;
         padding: 70px 110px 70px 110px;
-        margin-top: 125px;
+        margin-top: 50px;
         position: relative;
 
         hr {
@@ -58,7 +69,7 @@
             span {
                 font-family: $secondary-font;
             }
-            
+
             input {
                 font-family: $third-font;
                 font-weight: 400;

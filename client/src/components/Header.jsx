@@ -23,19 +23,17 @@ function Header() {
         await axios.post(`${API_SERVER}/auth/logout`, {}, { withCredentials: true });
         navigate('/sign-in');
         setAuthUser(null);
-        document.querySelector('.default-header').classList.add('closed');
     };
 
     useEffect(() => {
-        const currentPathName = window.location.pathname;
         const pathsWithOpenHeader = ['/my-profile'];
-        if (!pathsWithOpenHeader.includes(currentPathName)) {
-            document.querySelector('.default-header').classList.add('closed');
+        if (!pathsWithOpenHeader.includes(window.location.pathname) && authUser) {
+            document.querySelector('.header').classList.add('closed');
         }
-    }, []);
+    }, [authUser]);
 
     return (
-        <div className='default-header d-flex flex-column closed'>
+        <div className={`header d-flex flex-column ${authUser ? 'authorized' : ''}`}>
             <NavLink href='/' className='logo-container w-100 d-flex align-items-center flex-row'>
                 <div className='logo'>
                     <Logo width={37.5} height={51} />
@@ -68,7 +66,7 @@ function Header() {
                 </ListGroup.Item>
                 {authUser && (
                     <>
-                        <ListGroup.Item action href='/my-profile'>
+                        <ListGroup.Item href='/my-profile' className='profile-link' action>
                             <div className='avatar-container d-flex justify-content-center align-items-center flex-column'>
                                 <Image
                                     src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
@@ -82,7 +80,7 @@ function Header() {
                             </div>
                             <p>Profile</p>
                         </ListGroup.Item>
-                        <ListGroup.Item className='dropdown-container'>
+                        <ListGroup.Item className='more-link'>
                             <Dropdown className='d-flex justify-content-center align-items-center' drop='end'>
                                 <Dropdown.Toggle title='More' >
                                     <More className='more-icon' />

@@ -1,20 +1,33 @@
 #root {
     display: flex;
+    background-color: $super-light-gray;
+    height: fit-content;
+    position: relative;
 }
-h1, h2, h3, h4, h5, h6, p {
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
     margin: 0 !important;
 }
 
 .wrapper {
-    // width: 1324px;
-    // margin: 0 auto;
-
-    // &:has(.chat-page) {
-    //     width: 100%;
-    // }
-    width: 100%;
+    width: 1324px;
     margin: 0 auto;
-    background-color: #E8ECEE;
+    background-color: $super-light-gray;
+
+    @media (max-width: 1324px) {
+        width: 100%;
+    }
+
+    &:has(.wrapper-profile),
+    &:has(.chat-page) {
+        width: 100%;
+    }
 }
 
 .container {
@@ -22,7 +35,8 @@ h1, h2, h3, h4, h5, h6, p {
     padding: 0 !important;
 }
 
-.row, .col {
+.row,
+.col {
     margin: auto 0 !important;
     padding: 0 !important;
 }
