@@ -5,6 +5,14 @@
     .profile-banner {
         background-color: #00B3DB;
         height: 389px;
+        position: relative;
+        z-index: 5;
+
+        button {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+        }
     }
 
     .profile-header {
@@ -127,9 +135,11 @@
     .profile-content {
         font-family: $main-font;
         width: 1324px;
+        max-width: 1324px;
         gap: 0 20px;
-        display: flex;
         padding: 0 20px !important;
+        position: relative;
+        z-index: 6;
 
         @media (max-width: 1400px) {
             flex-wrap: wrap;
@@ -326,12 +336,16 @@
         grid-gap: 5px;
         overflow: hidden;
 
+        .col {
+            background-color: rgba(0, 0, 0, .25);
+            border-radius: 3px;
+        }
+
         img {
             max-height: 100px;
             width: 100%;
             object-fit: cover;
             padding: 0;
-            border-radius: 3px;
         }
     }
 

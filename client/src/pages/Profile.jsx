@@ -30,7 +30,7 @@ function Profile() {
     return (
         <div className='wrapper-profile pb-5'>
             <Row className="profile-banner w-100 justify-content-end align-items-end">
-                <Button variant='none' className='profile-btn border-0 p-2 mb-3 me-3 rounded-circle d-flex justify-content-center'>
+                <Button variant='none' className='profile-btn border-0 p-2 rounded-circle'>
                     <EditBanner />
                 </Button>
             </Row>
@@ -109,12 +109,24 @@ function Profile() {
                             </Row>
 
                             <Row className='mt-3 profile-media'>
-                                <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
-                                <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
-                                <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
-                                <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
-                                <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
-                                <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
+                                <Col>
+                                    <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
+                                </Col>
+                                <Col>
+                                    <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
+                                </Col>
+                                <Col>
+                                    <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
+                                </Col>
+                                <Col>
+                                    <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
+                                </Col>
+                                <Col>
+                                    <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
+                                </Col>
+                                <Col>
+                                    <Image src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder} alt='Media' />
+                                </Col>
                             </Row>
                         </div>
                     </Col>

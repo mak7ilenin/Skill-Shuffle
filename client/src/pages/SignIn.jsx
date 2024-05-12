@@ -22,7 +22,7 @@ function SignIn() {
         e.preventDefault();
         await axios.post(`${API_SERVER}/auth/login`, { username, password, rememberMe }, { withCredentials: true })
             .then(response => {
-                setAuthUser(response.data);
+                setAuthUser(response.data.user);
                 navigate('/my-profile');
             })
             .catch(error => {

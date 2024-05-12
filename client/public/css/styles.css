@@ -69,25 +69,13 @@ p {
   left: 0;
   top: 0;
   bottom: 0;
+  z-index: 100;
   height: 100vh;
   width: 244px;
   min-width: 244px;
   border-right: 1px solid #8F8F8F;
   font-family: "Manrope", sans-serif;
-}
-.header.closed.authorized {
-  min-width: 69px;
-  width: 69px;
-}
-.header.closed.authorized .list-group-item p,
-.header.closed.authorized .dropdown-container p,
-.header.closed.authorized .logo-text {
-  display: none;
-}
-.header.closed.authorized .logo-block {
-  display: flex;
-  justify-content: center;
-  padding-left: 0;
+  transition: ease all 0.2s;
 }
 @media (max-width: 1565px) {
   .header.authorized {
@@ -115,20 +103,27 @@ p {
   }
   .header .logo-block {
     max-width: 1324px;
-    height: 100%;
     margin: 0 !important;
     padding-left: 0;
   }
 }
 @media (max-width: 520px) and (max-width: 1324px) {
   .header .logo-block {
-    padding-left: 32px !important;
+    padding-left: 16px !important;
   }
 }
 @media (max-width: 520px) and (max-width: 520px) {
   .header .logo-block {
     max-width: 100%;
-    justify-content: flex-start !important;
+    justify-content: space-between !important;
+  }
+  .header .logo-block .burger-menu {
+    display: flex !important;
+  }
+}
+@media (max-width: 520px) and (max-width: 520px) {
+  .header.opened .burger-exit {
+    display: block !important;
   }
 }
 @media (max-width: 520px) {
@@ -139,6 +134,20 @@ p {
     display: none;
   }
 }
+.header.closed.authorized {
+  min-width: 69px;
+  width: 69px;
+}
+.header.closed.authorized .list-group-item p,
+.header.closed.authorized .dropdown-container p,
+.header.closed.authorized .logo-text {
+  display: none;
+}
+.header.closed.authorized .logo-block {
+  display: flex;
+  justify-content: center;
+  padding-left: 0;
+}
 .header:not(.authorized) {
   position: absolute;
   min-width: 100vw !important;
@@ -148,19 +157,26 @@ p {
 }
 .header:not(.authorized) .logo-block {
   max-width: 1324px;
-  height: 100%;
   margin: 0 !important;
   padding-left: 0;
 }
 @media (max-width: 1324px) {
   .header:not(.authorized) .logo-block {
-    padding-left: 32px !important;
+    padding-left: 16px !important;
   }
 }
 @media (max-width: 520px) {
   .header:not(.authorized) .logo-block {
     max-width: 100%;
-    justify-content: flex-start !important;
+    justify-content: space-between !important;
+  }
+  .header:not(.authorized) .logo-block .burger-menu {
+    display: flex !important;
+  }
+}
+@media (max-width: 520px) {
+  .header:not(.authorized).opened .burger-exit {
+    display: block !important;
   }
 }
 .header:not(.authorized) .logo-text {
@@ -172,13 +188,68 @@ p {
 .header:not(.authorized) .logo-block {
   margin: 0 auto !important;
 }
+.header:not(.authorized) .logo-block .burger-menu {
+  display: none !important;
+}
+.header.opened {
+  height: 100vh;
+  position: fixed;
+}
+.header.opened .logo-block {
+  margin-top: 30px !important;
+  padding-left: 22px !important;
+}
+.header.opened .logo-block .logo-container {
+  transform: scale(1.1);
+}
+.header.opened .burger-menu {
+  display: none !important;
+}
+.header.opened .list-group {
+  width: calc(100% - 60px);
+  display: flex;
+  margin-top: 20px;
+}
+.header.opened .list-group .list-group-item p {
+  display: block;
+}
+.header .burger-exit {
+  display: none;
+  width: 60px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 15;
+}
+.header .burger-exit button {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(217, 217, 217, 0.2);
+  border: none;
+}
+.header .burger-exit button svg {
+  width: 23px;
+  height: 23px;
+}
 .header .logo-block {
+  min-height: 75px;
+  height: 75px;
   margin-top: 45px;
   padding-left: 15px;
+  transition: ease all 0.3s;
 }
 .header .logo-block .logo-container {
   width: -moz-fit-content;
   width: fit-content;
+  transition: ease all 0.3s;
+}
+.header .logo-block .burger-menu {
+  display: none;
+  align-self: center;
+}
+.header .logo-block .burger-menu button:hover {
+  background-color: #E8ECEE;
 }
 .header .logo-block .logo-text p {
   display: flex;
@@ -1612,6 +1683,13 @@ p {
 .wrapper-profile .profile-banner {
   background-color: #00B3DB;
   height: 389px;
+  position: relative;
+  z-index: 5;
+}
+.wrapper-profile .profile-banner button {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
 }
 .wrapper-profile .profile-header {
   height: -moz-fit-content;
@@ -1715,9 +1793,11 @@ p {
 .wrapper-profile .profile-content {
   font-family: "Manrope", sans-serif;
   width: 1324px;
+  max-width: 1324px;
   gap: 0 20px;
-  display: flex;
   padding: 0 20px !important;
+  position: relative;
+  z-index: 6;
 }
 @media (max-width: 1400px) {
   .wrapper-profile .profile-content {
@@ -1886,13 +1966,16 @@ p {
   grid-gap: 5px;
   overflow: hidden;
 }
+.wrapper-profile .profile-media .col {
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+}
 .wrapper-profile .profile-media img {
   max-height: 100px;
   width: 100%;
   -o-object-fit: cover;
      object-fit: cover;
   padding: 0;
-  border-radius: 3px;
 }
 .wrapper-profile .main-block-profile {
   max-width: 624px;
