@@ -33,7 +33,7 @@ function ChatTypeFilter({ setFilteredChats, setSelectedChatType, chats, searchQu
     const existingChatTypes = defaultChatTypes.filter(chatType => chatList.some(chat => chat.type === chatType.type));
 
     return (
-        <Row className='chat-types d-flex'>
+        <Row className='chat-types d-flex flex-wrap justify-content-start'>
             <Col className='chat-type active' onClick={(e) => filterChatsByType('all', e)}>
                 <p>All</p>
             </Col>

@@ -218,6 +218,11 @@
             object-fit: cover;
             outline: 6px solid white;
             outline-offset: -6px;
+
+            @media (max-width: 400px) {
+                width: 200px;
+                height: 200px;
+            }
         }
     }
 
@@ -259,6 +264,10 @@
                 min-width: 100%;
                 width: 100%;
             }
+        }
+
+        @media (max-width: 400px) {
+            margin-top: -180px !important;
         }
 
         hr {
@@ -394,6 +403,7 @@
                 color: $light-gray;
             }
         }
+
         .post-info {
             padding-right: 40px !important;
         }
@@ -567,7 +577,6 @@
             }
 
             .user-container {
-
                 p {
                     font-weight: 400;
                     text-decoration: none;

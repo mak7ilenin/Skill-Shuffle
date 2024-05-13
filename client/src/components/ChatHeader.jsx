@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
-import { Row, Col, Image, NavLink, Button } from 'react-bootstrap';
+import React from 'react';
+import { Row, Col, Image, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 import ChatSmallMenu from './ChatSmallMenu';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 import { ReactComponent as NetworkIcon } from '../assets/icons/network.svg';
-import { ReactComponent as Menu } from '../assets/icons/post-menu.svg';
 import { IoArrowBack } from "react-icons/io5";
 
 function ChatHeader({ chat, setChat, setChats, handleMenuChange }) {
-    const [smallMenuVisibility, setSmallMenuVisibility] = useState(false);
     const navigate = useNavigate();
 
     const generateLink = () => {
@@ -22,11 +20,13 @@ function ChatHeader({ chat, setChat, setChats, handleMenuChange }) {
             default:
                 return '/';
         }
-    }
+    };
 
-    const handeShowSmallMenu = (state) => {
-        setSmallMenuVisibility(state);
-        document.querySelector('.small-menu-col .menu-btn').classList.toggle('active');
+    const handleOpenGroupMenu = () => {
+        // If user is left, then hide group chat information
+        if (chat.members !== null) {
+            handleMenuChange('GROUP_MENU')
+        };
     };
 
     const formatLastSeenTimestamp = (timestamp) => {
@@ -50,10 +50,10 @@ function ChatHeader({ chat, setChat, setChats, handleMenuChange }) {
             // If the message was sent less than 5 minutes ago then return 'Online'
             return 'Online';
         }
-    }
+    };
 
     return (
-        <Row className='chat-header d-flex align-items-center'>
+        <Row className='chat-header d-flex align-items-center justify-content-between'>
             <Col className='back-btn-col me-3'>
                 <Button
                     variant='link'
@@ -67,82 +67,67 @@ function ChatHeader({ chat, setChat, setChats, handleMenuChange }) {
                     <IoArrowBack />
                 </Button>
             </Col>
-            <Col className='info-container pe-5'>
-                {chat.type !== 'group' ? (
-                    <NavLink href={generateLink()} className='chat-info d-flex'>
-                        <Col className='chat-avatar me-3' role='button'>
-                            <Image
-                                src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
-                                alt={chat.name}
-                                width='55'
-                                height='55'
-                                style={{ objectFit: 'cover' }}
-                                roundedCircle
-                            />
-                        </Col>
-                        <Col className='d-flex flex-column'>
-                            <p role='button' className='chat-name'>{chat.name}</p>
+            {chat.type !== 'group' ? (
+                <div className='chat-info'>
+                    <Col className='chat-avatar me-3' role='button'>
+                        <Image
+                            src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
+                            alt={chat.name}
+                            width='55'
+                            height='55'
+                            style={{ objectFit: 'cover' }}
+                            onClick={() => navigate(generateLink())}
+                            roundedCircle
+                        />
+                    </Col>
+                    <Col className='d-flex flex-column'>
+                        <p role='button' className='chat-name' onClick={() => navigate(generateLink())}>
+                            {chat.name}
+                        </p>
 
-                            {chat.type === 'community' ? (
-                                <span className='text-secondary'>Community</span>
-                            ) : (
-                                <div className='user-activity'>
-                                    {formatLastSeenTimestamp(chat.members[0].lastSeen) === 'Online' ? (
-                                        <>
-                                            <div className="online-icon rounded-circle"></div>
-                                            <span>Online</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <NetworkIcon className='network-icon' />
-                                            <span className='text-secondary'>{formatLastSeenTimestamp(chat.members[0].lastSeen)}</span>
-                                        </>
-                                    )}
-                                </div>
-                            )}
-                        </Col>
-                    </NavLink>
-                ) : (
-                    <div
-                        className='chat-info d-flex p-0'
-                        onClick={() => {
-                            // If user is left, then hide group chat information
-                            if (chat.members !== null) {
-                                handleMenuChange('GROUP_MENU')
-                            };
-                        }}
-                    >
-                        <Col className='chat-avatar me-3' role='button'>
-                            <Image
-                                src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
-                                alt={chat.name}
-                                width='55'
-                                height='55'
-                                style={{ objectFit: 'cover' }}
-                                roundedCircle
-                            />
-                        </Col>
-                        <Col className='d-flex flex-column'>
-                            <p role='button' className='chat-name'>{chat.name}</p>
-                            {chat.members !== null && <span role='button' className='text-secondary'>{chat.members.length} members</span>}
-                        </Col>
-                    </div>
-                )}
-            </Col>
-            <Col className='small-menu-col d-flex flex-column justify-content-end position-absolute'
-                onMouseOver={() => handeShowSmallMenu(true)}
-                onMouseOut={() => handeShowSmallMenu(false)}
-            >
-                <Button variant='link' className='menu-btn d-flex justify-content-end py-3'>
-                    <Menu className='menu-icon' />
-                </Button>
-                {smallMenuVisibility && (
-                    <ChatSmallMenu
-                        chat={chat}
-                        setChat={setChat}
-                        setChats={setChats}
-                    />
-                )}
+                        {chat.type === 'community' ? (
+                            <span>Community</span>
+                        ) : (
+                            <div className='user-activity'>
+                                {formatLastSeenTimestamp(chat.members[0].lastSeen) === 'Online' ? (
+                                    <>
+                                        <div className="online-icon rounded-circle"></div>
+                                        <span>Online</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <NetworkIcon className='network-icon' />
+                                        <span>{formatLastSeenTimestamp(chat.members[0].lastSeen)}</span>
+                                    </>
+                                )}
+                            </div>
+                        )}
+                    </Col>
+                </div>
+            ) : (
+                <div className='chat-info'>
+                    <Col className='chat-avatar me-3' role='button' onClick={handleOpenGroupMenu}>
+                        <Image
+                            src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}
+                            alt={chat.name}
+                            width='55'
+                            height='55'
+                            style={{ objectFit: 'cover' }}
+                            roundedCircle
+                        />
+                    </Col>
+                    <Col className='d-flex flex-column'>
+                        <p role='button' className='chat-name' onClick={handleOpenGroupMenu}>{chat.name}</p>
+                        {chat.members !== null && (
+                            <span role='button' onClick={handleOpenGroupMenu}>
+                                {chat.members.length} members
+                            </span>
+                        )}
+                    </Col>
+                </div>
+            )}
+            <Col className='small-menu-col mx-2'>
+                <ChatSmallMenu chat={chat} setChat={setChat} setChats={setChats} />
             </Col>
 
         </Row >

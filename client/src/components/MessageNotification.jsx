@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { AESEncrypt } from '../crypto';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
-import sound from '../assets/sounds/erm-what-the-sigma.mp3';
+// import sound from '../assets/sounds/erm-what-the-sigma.mp3';
+import sound from '../assets/sounds/gta-v-notification.mp3';
 
 function MessageNotification({ setMessageNotification, messageNotification, chat }) {
     const navigate = useNavigate();
@@ -13,24 +14,31 @@ function MessageNotification({ setMessageNotification, messageNotification, chat
     const [visible, setVisible] = useState(false);
     const [notification, setNotification] = useState(null);
 
+    const showNotification = () => {
+        setVisible(true);
+
+        if (!soundRef.current || soundRef.current.paused) {
+            // Play notification sound
+            const notificationSound = new Audio(sound);
+            notificationSound.volume = 0.3;
+            notificationSound.play()
+                .then(() => {
+                    soundRef.current = notificationSound;
+                })
+                .catch(() => console.log("User didn't interacted with document yet")); /* User didn't interacted with document yet */
+        }
+    }
+
     useEffect(() => {
         if (messageNotification && messageNotification.visible) {
             const msgNotification = messageNotification.notification;
             setNotification(msgNotification);
-            if (msgNotification.type === 'CHAT_MESSAGE') {
-                if (chat && msgNotification.chat.id !== chat.id) {
-                    setVisible(true);
-
-                    // Play notification sound
-                    if (!soundRef.current || soundRef.current.paused) {
-                        const notificationSound = new Audio(sound);
-                        notificationSound.play()
-                            .then(() => {
-                                soundRef.current = notificationSound;
-                            })
-                            .catch(/* User didn't interacted with document yet */);
-                    }
-                }
+            if (!chat) {
+                showNotification();
+                return;
+            }
+            if (msgNotification.chat.id !== chat.id) {
+                showNotification();
             }
         }
     }, [messageNotification, setMessageNotification, chat]);

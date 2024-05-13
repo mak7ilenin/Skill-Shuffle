@@ -58,14 +58,14 @@
 
             &::placeholder {
                 color: $light-gray;
-                user-select: none;
+                @include unselectable;
             }
         }
 
         label {
             color: $light-gray;
             font-weight: 300;
-            user-select: none;
+            @include unselectable;
         }
 
         input,
@@ -140,7 +140,7 @@
                 font-size: 14px;
                 color: $dark-gray;
                 text-align: center;
-                user-select: none;
+                @include unselectable;
 
                 &::after {
                     content: '';

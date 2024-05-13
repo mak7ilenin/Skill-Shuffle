@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 import { ReactComponent as NewChatIcon } from '../assets/icons/create-chat.svg';
-import { ReactComponent as Search } from '../assets/icons/search-icon.svg';
-import { ReactComponent as Cross } from '../assets/icons/cross-icon.svg';
+import { IoSearch } from "react-icons/io5";
+import { RxCross2 } from "react-icons/rx";
 
 function ChatMenuHeader({ getSearch, changeMenu, activeMenu, setChat }) {
     const [search, setSearch] = useState('');
@@ -18,6 +18,7 @@ function ChatMenuHeader({ getSearch, changeMenu, activeMenu, setChat }) {
     const handleCross = () => {
         setSearch('');
         getSearch('');
+        document.querySelector('.chat-menu-header').classList.remove('active-search');
     };
 
     return (
@@ -32,16 +33,25 @@ function ChatMenuHeader({ getSearch, changeMenu, activeMenu, setChat }) {
             >
                 Messages
             </Col>
-            <Col className={`search-bar-container mx-3 d-flex w-auto ${activeMenu !== 'DEFAULT' ? 'invisible' : 'visible'}`}>
+            <Col className='search-btn me-2'>
+                <Button
+                    variant='none'
+                    onClick={() => document.querySelector('.chat-menu-header').classList.add('active-search')}
+                >
+                    <IoSearch color='white' size={27} />
+                </Button>
+            </Col>
+            <Col className={`search-bar-container mx-4 d-flex w-auto ${activeMenu !== 'DEFAULT' ? 'invisible' : 'visible'}`}>
                 <div className={`search-bar w-auto d-flex align-items-center ${search !== '' ? 'active' : ''}`}>
-                    <Search className='search-icon' />
+                    <IoSearch color='white' size={18} className='search-icon' />
                     <input
                         type='text'
                         placeholder='Search'
                         value={search}
+                        autoFocus
                         onChange={handleSearch}
                     />
-                    <Cross className='cross-icon' onClick={handleCross} />
+                    <RxCross2 className='cross-icon' onClick={handleCross} />
                 </div>
             </Col>
             <Col className='create-chat'>
@@ -53,7 +63,7 @@ function ChatMenuHeader({ getSearch, changeMenu, activeMenu, setChat }) {
                 ) : (
                     <button className='d-flex align-items-center justify-content-center'
                         onClick={() => changeMenu('DEFAULT')}>
-                        <Cross className='cross-icon' />
+                        <RxCross2 className='cross-icon' />
                     </button>
                 )}
             </Col>
