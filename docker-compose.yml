@@ -2,11 +2,11 @@ version: "3"
 
 services:
   server:
-    image: public.ecr.aws/i2t4w1a3/skill-shuffle:server
-    # build: ./server
+    # image: public.ecr.aws/i2t4w1a3/skill-shuffle:server
+    build: ./server
     container_name: server
     env_file:
-      - .env.production
+      - .env
     ports:
       - "8080:8080"
     restart: always
@@ -14,13 +14,13 @@ services:
       - database
 
   database:
-    image: public.ecr.aws/i2t4w1a3/skill-shuffle:database
-    # image: mariadb
+    # image: public.ecr.aws/i2t4w1a3/skill-shuffle:database
+    image: mariadb
     container_name: database
     volumes:
       - ./database/skill_shuffle.sql:/docker-entrypoint-initdb.d/skill_shuffle.sql
     env_file:
-      - .env.production
+      - .env
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_USER: ${MARIADB_USER}
@@ -30,11 +30,11 @@ services:
       - "3306:3306"
 
   client:
-    image: public.ecr.aws/i2t4w1a3/skill-shuffle:client
-    # build: ./client
+    # image: public.ecr.aws/i2t4w1a3/skill-shuffle:client
+    build: ./client
     container_name: client
     env_file:
-      - .env.production
+      - .env
     ports:
       - "3000:3000"
     depends_on:
