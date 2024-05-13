@@ -14,10 +14,13 @@ services:
       - database
 
   database:
-    image: mariadb
+    image: public.ecr.aws/i2t4w1a3/skill-shuffle:database
+    # image: mariadb
     container_name: database
     volumes:
       - ./database/skill_shuffle.sql:/docker-entrypoint-initdb.d/skill_shuffle.sql
+    env_file:
+      - .env.production
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_USER: ${MARIADB_USER}
