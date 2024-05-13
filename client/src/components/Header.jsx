@@ -38,7 +38,7 @@ function Header() {
             <div className="burger-exit h-100">
                 <Button
                     variant='none'
-                    className='px-3 rounded-0 border-0'
+                    className='px-3 rounded-0 border-0 h-100 w-100'
                     onClick={e => {
                         e.preventDefault();
                         document.querySelector('.header').classList.remove('opened');

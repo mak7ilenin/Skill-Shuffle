@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Button, Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -7,11 +7,12 @@ import { API_SERVER } from '../config';
 import { AESDecrypt } from "../crypto";
 import SmallMenuModal from './SmallMenuModal';
 
-import { ReactComponent as Return } from '../assets/icons/return.svg';
-import { ReactComponent as Cross } from '../assets/icons/cross-icon.svg';
-import { ReactComponent as NoSound } from '../assets/icons/no-sound.svg';
-import { ReactComponent as Sound } from '../assets/icons/sound.svg';
-import { ReactComponent as Trash } from '../assets/icons/trash.svg';
+import { IoMdMore } from "react-icons/io";
+import { FaTrashAlt } from "react-icons/fa";
+import { IoMdVolumeOff } from "react-icons/io";
+import { IoVolumeMediumSharp } from "react-icons/io5";
+import { RxCross2 } from "react-icons/rx";
+import { TbArrowBackUp } from "react-icons/tb";
 
 function ChatSmallMenu({ chat, setChat, setChats }) {
     const navigate = useNavigate();
@@ -103,59 +104,55 @@ function ChatSmallMenu({ chat, setChat, setChats }) {
     };
 
     return (
-        <Container className='small-menu d-flex flex-column py-3 px-4'>
+        <Dropdown autoClose>
+            <Dropdown.Toggle className='d-flex align-items-center flex-row' title='More' >
+                <IoMdMore className='more-btn' />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+                {showModal && (
+                    <SmallMenuModal
+                        showModal={showModal}
+                        closeModal={handleCloseModal}
+                        content={modalContent}
+                        handleActionClick={handleActionClick}
+                    />
+                )}
 
-            {showModal && (
-                <SmallMenuModal
-                    showModal={showModal}
-                    closeModal={handleCloseModal}
-                    content={modalContent}
-                    handleActionClick={handleActionClick}
-                />
-            )}
-
-            {notifications ? (
-                <Row className='menu-option' onClick={() => toggleNotifications(false)}>
-                    <Col className='option-icon'>
-                        <NoSound className='nosound-icon' />
-                    </Col>
-                    <Col className='option-text'>Disable notifications</Col>
-                </Row>
-            ) : (
-                <Row className='menu-option' onClick={() => toggleNotifications(true)}>
-                    <Col className='option-icon'>
-                        <Sound className='sound-icon' />
-                    </Col>
-                    <Col className='option-text'>Enable notifications</Col>
-                </Row>
-            )}
-            <Row className='menu-option' onClick={() => handleShowModal('clear')}>
-                <Col className='option-icon'>
-                    <Trash className='trash-icon' />
-                </Col>
-                <Col className='option-text'>Clear message history</Col>
-            </Row>
-
-            {chat.type === 'group' && (
-                <>
-                    {chat.members == null ? (
-                        <Row className='menu-option' onClick={handleReturnToChat}>
-                            <Col className='option-icon'>
-                                <Return className='return-icon' />
-                            </Col>
-                            <Col className='option-text'>Return to chat</Col>
-                        </Row>
+                <div className="dropdown-menu-container">
+                    {notifications ? (
+                        <Dropdown.Item as={Button} onClick={() => toggleNotifications(false)}>
+                            <IoMdVolumeOff size={16} className='nosound-icon' />
+                            Disable notifications
+                        </Dropdown.Item>
                     ) : (
-                        <Row className='menu-option' onClick={() => handleShowModal('leave')}>
-                            <Col className='option-icon'>
-                                <Cross className='cross-icon' />
-                            </Col>
-                            <Col className='option-text'>Leave chat</Col>
-                        </Row>
+                        <Dropdown.Item as={Button} onClick={() => toggleNotifications(true)}>
+                            <IoVolumeMediumSharp size={16} className='sound-icon' />
+                            Enable notifications
+                        </Dropdown.Item>
                     )}
-                </>
-            )}
-        </Container>
+                    <Dropdown.Item as={Button} onClick={() => handleShowModal('clear')}>
+                        <FaTrashAlt size={16} className='trash-icon' />
+                        Clear message history
+                    </Dropdown.Item>
+
+                    {chat.type === 'group' && (
+                        <>
+                            {chat.members == null ? (
+                                <Dropdown.Item as={Button} onClick={handleReturnToChat}>
+                                    <TbArrowBackUp size={16} className='return-icon' />
+                                    Return to chat
+                                </Dropdown.Item>
+                            ) : (
+                                <Dropdown.Item as={Button} onClick={() => handleShowModal('leave')}>
+                                    <RxCross2 size={16} className='cross-icon' />
+                                    Leave chat
+                                </Dropdown.Item>
+                            )}
+                        </>
+                    )}
+                </div>
+            </Dropdown.Menu>
+        </Dropdown>
     )
 }
 

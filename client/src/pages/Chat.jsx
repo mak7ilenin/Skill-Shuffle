@@ -171,13 +171,21 @@ function Chat() {
 
 
   const overflowBody = useCallback(() => {
-    if (window.innerWidth < 958) {
+    if (window.innerWidth < 958 && chosenChat) {
       document.body.style.overflow = 'hidden';
+    }
+
+    // Remove header if chat chosen
+    if (window.innerWidth < 520 && chosenChat) {
       document.querySelector('.header').classList.add('hidden');
+      document.querySelector('.chat-box').style.height = '100vh';
+      document.querySelector('.chat-menu').style.height = '100vh';
     } else {
       document.querySelector('.header').classList.remove('hidden');
+      document.querySelector('.chat-box').style.height = '100vh';
     }
-  }, []);
+
+  }, [chosenChat]);
 
   window.addEventListener('resize', overflowBody);
 
@@ -288,6 +296,13 @@ function Chat() {
 
   const handleMenuChange = (menuName) => {
     setActiveMenu(menuName);
+    if (chosenChat && menuName === 'DEFAULT') {
+      document.querySelector('.chat-box').classList.remove('non-selected');
+      document.querySelector('.search-btn').classList.remove('invisible');
+    } else {
+      document.querySelector('.chat-box').classList.add('non-selected');
+      document.querySelector('.search-btn').classList.add('invisible');
+    }
   }
 
 
@@ -362,7 +377,7 @@ function Chat() {
       {!chosenChat ? (
         // If no chat is selected, display:
         <div className='chat-box non-selected d-flex justify-content-center align-items-center' style={{ backgroundImage: `url(${ChatBackground})` }}>
-          <p className='no-chat-selected'>Select chat</p>
+          <p>Select chat</p>
         </div>
       ) :
         // If a chat is selected, display:

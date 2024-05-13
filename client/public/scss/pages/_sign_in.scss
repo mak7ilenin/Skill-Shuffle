@@ -50,14 +50,14 @@
 
             &::placeholder {
                 color: $light-gray;
-                user-select: none;
+                @include unselectable;
             }
         }
 
         label {
             color: $light-gray;
             font-weight: 300;
-            user-select: none;
+            @include unselectable;
         }
 
         input {

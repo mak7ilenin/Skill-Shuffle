@@ -228,7 +228,6 @@ function GroupChatMenu({ chat, setChat }) {
 
             {!addMemberVisibility ? (
                 <>
-
                     <Row className='members-filter d-flex justify-content-start align-items-center position-relative ps-3'>
                         {!searchMemberVisibility ? (
                             <>
@@ -317,7 +316,7 @@ function GroupChatMenu({ chat, setChat }) {
                                                 {!isAdminOrCreator() || member.role === 'creator' ? (
                                                     <>
                                                         {member.role === 'creator' || member.role === 'admin' ? (
-                                                            <Col className="w-25 d-flex justify-content-end align-items-center">
+                                                            <Col className="d-flex justify-content-end align-items-center">
                                                                 <span className='member-role'>{member.role === 'creator' ? 'Creator' : 'Administrator'}</span>
                                                             </Col>
                                                         ) : null}
@@ -346,28 +345,30 @@ function GroupChatMenu({ chat, setChat }) {
                                                         <SlArrowDown width={22} />
                                                     </Dropdown.Toggle>
                                                     <Dropdown.Menu align={'end'}>
-                                                        {isOwner() && (
-                                                            <>
-                                                                {member.role === 'admin' ? (
-                                                                    <Dropdown.Item onClick={() => handleChangeMemberRole(member.nickname, 'member')}>
-                                                                        <Grade className='grade-icon downgrade' />
-                                                                        <span>Appoint as member</span>
-                                                                    </Dropdown.Item>
-                                                                ) : (
-                                                                    <Dropdown.Item onClick={() => handleChangeMemberRole(member.nickname, 'admin')}>
-                                                                        <Grade className='grade-icon' />
-                                                                        <span>Appoint as administrator</span>
-                                                                    </Dropdown.Item>
-                                                                )}
-                                                            </>
-                                                        )}
-                                                        <Dropdown.Item onClick={() => handleRemoveMember(member.nickname)}>
-                                                            <RxCross1
-                                                                className='cross-icon'
-                                                                width={12}
-                                                            />
-                                                            <span>Remove from chat</span>
-                                                        </Dropdown.Item>
+                                                        <div className="dropdown-menu-container">
+                                                            {isOwner() && (
+                                                                <>
+                                                                    {member.role === 'admin' ? (
+                                                                        <Dropdown.Item onClick={() => handleChangeMemberRole(member.nickname, 'member')}>
+                                                                            <Grade className='grade-icon downgrade' />
+                                                                            <span>Appoint as member</span>
+                                                                        </Dropdown.Item>
+                                                                    ) : (
+                                                                        <Dropdown.Item onClick={() => handleChangeMemberRole(member.nickname, 'admin')}>
+                                                                            <Grade className='grade-icon' />
+                                                                            <span>Appoint as administrator</span>
+                                                                        </Dropdown.Item>
+                                                                    )}
+                                                                </>
+                                                            )}
+                                                            <Dropdown.Item onClick={() => handleRemoveMember(member.nickname)}>
+                                                                <RxCross1
+                                                                    className='cross-icon'
+                                                                    width={12}
+                                                                />
+                                                                <span>Remove from chat</span>
+                                                            </Dropdown.Item>
+                                                        </div>
                                                     </Dropdown.Menu>
                                                 </Dropdown>
                                             </div>
