@@ -1,6 +1,6 @@
 .chat-page {
     position: relative;
-    
+
     @media (max-width: 958px) {
         width: 100vw;
         overflow-x: hidden;
@@ -146,8 +146,8 @@
         }
 
         .chat-types {
-            height: 58px;
-            padding: 0 25px !important;
+            min-height: 58px;
+            padding: 15px 25px !important;
             gap: 15px;
             border-bottom: 1px solid #8f8f8f25;
 
@@ -683,9 +683,9 @@
         height: 100vh;
         flex: 1;
         background-color: #EFEBFF;
-        transition: ease all .2s;
 
         @media (max-width: 958px) {
+            transition: ease all .2s;
             position: absolute;
             left: 0;
 
@@ -695,7 +695,9 @@
         }
 
         @media (max-width: 520px) {
-            height: calc(100% - 75px);
+            &.non-selected {
+                height: calc(100% - 75px);
+            }
         }
 
         &.non-selected {
@@ -758,8 +760,12 @@
                 flex: 1;
 
                 .chat-name {
+                    max-width: calc(100% - 20px);
                     text-decoration: none;
                     color: #000 !important;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
                 }
             }
 

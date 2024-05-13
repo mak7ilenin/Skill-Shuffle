@@ -83,14 +83,16 @@
 
 @mixin mobile-header {
     min-width: 100vw !important;
-    height: 75px;
+    height: 74px;
     border-right: none;
     border-bottom: 1px solid $light-gray;
 
     .logo-block {
         max-width: 1324px;
         margin: 0 !important;
-        padding-left: 0;
+        padding-top: 0 !important;
+        z-index: 10;
+        background-color: #fff;
 
         @media (max-width: 1324px) {
             // padding-left: 32px !important;
@@ -100,6 +102,7 @@
         @media (max-width: 520px) {
             max-width: 100%;
             justify-content: space-between !important;
+            transition: ease all .4s;
 
             .burger-menu {
                 display: flex !important;
@@ -108,6 +111,8 @@
     }
 
     @media (max-width: 520px) {
+        transition: ease all .4s;
+
         &.opened .burger-exit {
             display: block !important;
         }
@@ -118,6 +123,34 @@
     }
 
     .list-group {
-        display: none;
+        position: absolute;
+        display: flex;
+        height: calc(100vh - 100px);
+        top: -100vh;
+        z-index: 5;
+        transition: ease all .4s;
+    }
+
+    &.opened {
+        height: 100vh;
+
+        .logo-block {
+            padding: 35px 0 0 40px !important;
+            transform: scale(1.15);
+        }
+
+        .burger-menu {
+            display: none !important;
+        }
+
+        .list-group {
+            width: calc(100% - 60px);
+            margin-top: 20px;
+            top: 100px;
+        }
+
+        .list-group-item p {
+            display: block;
+        }
     }
 }

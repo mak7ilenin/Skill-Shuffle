@@ -173,17 +173,19 @@ function Chat() {
   const overflowBody = useCallback(() => {
     if (window.innerWidth < 958) {
       document.body.style.overflow = 'hidden';
+      document.querySelector('.header').classList.add('hidden');
+    } else {
+      document.querySelector('.header').classList.remove('hidden');
     }
   }, []);
 
+  window.addEventListener('resize', overflowBody);
 
   useEffect(() => {
     chatsRef.current = chats;
     overflowBody();
   }, [chats, overflowBody]);
 
-
-  window.addEventListener('resize', overflowBody);
 
   const sendMessage = (gif) => {
     if (messageContent === '' && !gif) return;
