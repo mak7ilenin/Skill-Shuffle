@@ -24,24 +24,18 @@ function Content() {
                 ) : (
                     <Route path="/my-profile" element={<Navigate to="/sign-in" />} />
                 )}
+
+                {/* Authorization routes */}
                 <Route path="/sign-in"
-                    element={
-                        // If user is authenticated, redirect to the Chat page
-                        authUser ? <Navigate to="/my-profile" /> : <SignIn />
-                    }
+                    element={authUser ? <Navigate to="/my-profile" /> : <SignIn />}
                 />
                 <Route path="/sign-up"
-                    element={
-                        // If user is authenticated, redirect to the Chat page
-                        authUser ? <Navigate to="/my-profile" /> : <SignUp />
-                    }
+                    element={authUser ? <Navigate to="/my-profile" /> : <SignUp />}
                 />
 
+                {/* Default route */}
                 <Route path="/"
-                    element={
-                        // If user is authenticated, redirect to the Chat page otherwise redirect to the sign-in page
-                        authUser ? <Navigate to="/my-profile" /> : <Navigate to="/sign-in" />
-                    }
+                    element={authUser ? <Navigate to="/my-profile" /> : <Navigate to="/sign-in" />}
                 />
             </Routes>
         </div>

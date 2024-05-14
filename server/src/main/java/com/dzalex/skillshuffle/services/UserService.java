@@ -1,14 +1,12 @@
 package com.dzalex.skillshuffle.services;
 
-import com.dzalex.skillshuffle.dtos.AuthRequestDTO;
-import com.dzalex.skillshuffle.dtos.ChatMemberDTO;
-import com.dzalex.skillshuffle.dtos.JwtResponseDTO;
-import com.dzalex.skillshuffle.dtos.PublicUserDTO;
+import com.dzalex.skillshuffle.dtos.*;
 import com.dzalex.skillshuffle.entities.ChatMember;
 import com.dzalex.skillshuffle.entities.Friendship;
 import com.dzalex.skillshuffle.entities.RefreshToken;
 import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
+import com.dzalex.skillshuffle.repositories.FriendRequestRepository;
 import com.dzalex.skillshuffle.repositories.FriendshipRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,6 +43,9 @@ public class UserService {
     private UserRepository userRepo;
 
     @Autowired
+    private FriendRequestRepository friendRequestRepository;
+
+    @Autowired
     private RefreshTokenService refreshTokenService;
 
     @Autowired
@@ -64,6 +65,11 @@ public class UserService {
 
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public String exceptionHandler() {
+        return "Credentials Invalid!";
     }
 
     public boolean checkNicknameDuplicate(String nickname) {
@@ -227,6 +233,19 @@ public class UserService {
                 .orElse(null);
     }
 
+    public boolean isFriend(User user, User authUser) {
+        return friendshipRepository.findByUserIdAndFriendId(user.getId(), authUser.getId()) != null ||
+                friendshipRepository.findByUserIdAndFriendId(authUser.getId(), user.getId()) != null;
+    }
+
+    public boolean isFollowed(User user, User authUser) {
+        return friendshipRepository.findByUserIdAndFriendId(authUser.getId(), user.getId()) != null;
+    }
+
+    public boolean isFollower(User user, User authUser) {
+        return friendshipRepository.findByUserIdAndFriendId(user.getId(), authUser.getId()) != null;
+    }
+
     public PublicUserDTO getPublicUserDTO(User user) {
         return PublicUserDTO.builder()
                 .firstName(user.getFirstName())
@@ -234,6 +253,20 @@ public class UserService {
                 .nickname(user.getNickname())
                 .avatarUrl(user.getAvatarUrl())
                 .lastSeen(user.getLastSeen())
+                .isPublic(user.isPublic())
+                .build();
+    }
+
+    private SearchedUserDTO getSearchedUserDTO(User user, User authUser) {
+        return SearchedUserDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .nickname(user.getNickname())
+                .avatarUrl(user.getAvatarUrl())
+                .isFriend(isFriend(user, authUser))
+                .isFollowed(isFollowed(user, authUser))
+                .isFollower(isFollower(user, authUser))
+                .autoFollow(user.isAutoFollow())
                 .build();
     }
 
@@ -248,8 +281,17 @@ public class UserService {
                 .build();
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public String exceptionHandler() {
-        return "Credentials Invalid!";
+    public List<SearchedUserDTO> searchUsers(String query) {
+        List<User> users = userRepo.searchUsers(query);
+        List<SearchedUserDTO> searchedUsers = new ArrayList<>();
+
+        User authUser = getCurrentUser();
+        users.forEach(user -> {
+            if (user.isPublic() && !Objects.equals(user.getId(), authUser.getId())) {
+                searchedUsers.add(getSearchedUserDTO(user, authUser));
+            }
+        });
+
+        return searchedUsers;
     }
 }
