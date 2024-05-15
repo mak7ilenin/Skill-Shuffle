@@ -2,17 +2,19 @@ package com.dzalex.skillshuffle.entities;
 
 import com.dzalex.skillshuffle.enums.FriendRequestStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Timestamp;
 
-@Getter
-@Setter
+@Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "friend_requests")
 public class FriendRequest {
     @Id
@@ -29,12 +31,11 @@ public class FriendRequest {
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
 
-    @ColumnDefault("pending")
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private FriendRequestStatus status;
 
-    @ColumnDefault("current_timestamp()")
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 

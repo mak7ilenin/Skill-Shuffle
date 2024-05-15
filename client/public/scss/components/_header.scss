@@ -231,7 +231,6 @@
 
     &__header {
         padding: 0 20px 10px 20px !important;
-
         border-bottom: 1px solid $light-gray;
     }
 
@@ -279,7 +278,7 @@
     }
 
     &__result {
-        border-bottom: 1px solid $light-gray;
+        border-bottom: 1px solid $super-light-gray;
 
         .col-1, .col-3 {
             width: fit-content;

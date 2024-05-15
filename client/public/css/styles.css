@@ -474,7 +474,7 @@ p {
   flex: 0 !important;
 }
 .search-block__result {
-  border-bottom: 1px solid #8F8F8F;
+  border-bottom: 1px solid #E8ECEE;
 }
 .search-block__result .col-1, .search-block__result .col-3 {
   width: -moz-fit-content;

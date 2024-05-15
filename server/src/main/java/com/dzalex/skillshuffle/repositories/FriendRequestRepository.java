@@ -1,6 +1,7 @@
 package com.dzalex.skillshuffle.repositories;
 
 import com.dzalex.skillshuffle.entities.FriendRequest;
+import com.dzalex.skillshuffle.enums.FriendRequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, In
 
     // Find friend request by sender id and receiver id
     FriendRequest findBySenderIdAndReceiverId(Integer senderId, Integer receiverId);
+
+    FriendRequest findBySenderIdAndReceiverIdAndStatus(Integer id, Integer id1, FriendRequestStatus friendRequestStatus);
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Row, Col, Stack, Image, Button } from 'react-bootstrap';
+import { Form, Row, Col, Stack, Image, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import axios from 'axios';
 
 import { API_SERVER } from '../config';
@@ -7,10 +7,10 @@ import { API_SERVER } from '../config';
 import { IoIosSearch } from "react-icons/io";
 import { VscSearchStop } from "react-icons/vsc";
 import { RxCross2 } from "react-icons/rx";
-import { RiHeartAddLine } from "react-icons/ri"; // Follow
-import { BsPersonAdd } from "react-icons/bs"; // Add friend
-import { FaUserCheck } from "react-icons/fa6"; // Friend
-import { FaHeartCircleCheck } from "react-icons/fa6"; // Followed
+import { RiHeartAddLine } from "react-icons/ri";
+import { FaHeartBroken } from "react-icons/fa";
+import { BsFillPersonDashFill } from "react-icons/bs";
+import { BsPersonAdd } from "react-icons/bs";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function HeaderSearch() {
@@ -20,6 +20,12 @@ function HeaderSearch() {
     const [isInvalid, setIsInvalid] = useState(false);
 
     const validateQuery = (query) => {
+        if (query === '') {
+            setResults([]);
+            setSearchQuery('');
+            return false;
+        }
+
         if (query.match(/^[a-zA-Z0-9\s]*$/)) {
             setSearchQuery(query);
             setIsInvalid(false);
@@ -43,6 +49,25 @@ function HeaderSearch() {
         axios.get(`${API_SERVER}/users/search?q=${query}`, { withCredentials: true })
             .then((res) => {
                 setResults(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
+
+    const handleUserRelationshipChange = (nickname, action) => {
+        const user = {
+            nickname: nickname,
+            action: action
+        };
+        axios.post(`${API_SERVER}/users/relationships`, user, { withCredentials: true })
+            .then((res) => {
+                setResults(results.map(person => {
+                    if (person.nickname === nickname) {
+                        return res.data;
+                    }
+                    return person;
+                }));
             })
             .catch((err) => {
                 console.error(err);
@@ -83,7 +108,7 @@ function HeaderSearch() {
                     )}
                 </div>
             </Row>
-            {results.length > 0 && searchQuery !== '' ? (
+            {results.length > 0 ? (
                 <Stack className='search-block__results border-1'>
                     {results.map(person => {
                         return (
@@ -97,35 +122,58 @@ function HeaderSearch() {
                                 </Col>
                                 <Col className='col-3'>
                                     {/*
-                                        friend: boolean
-                                        following: boolean
-                                        followed: boolean
-                                        autoFollow: boolean
-
-                                        
+                                    * Add the following icons to the right side of the user's name:
+                                    * - RiHeartAddLine (Follow)
+                                    * - FaHeartBroken (Unfollow)
+                                    * - BsFillPersonDashFill (Unfriend)
+                                    * - BsPersonAdd (Add friend)
                                     */}
-                                    {person.friend ? (
-                                        <Button variant='none'>
-                                            <FaUserCheck size={20} />
-                                        </Button>
-                                    ) : (
-                                        person.followed ? (
-                                            <Button variant='none'>
-                                                <FaHeartCircleCheck size={20} />
+                                    {person.relationship === 'friend' ? (
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            overlay={<Tooltip id="tooltip-unfriend">Unfriend</Tooltip>}
+                                        >
+                                            <Button variant='none' onClick={() => handleUserRelationshipChange(person.nickname, 'unfriend')}>
+                                                <BsFillPersonDashFill size={20} />
                                             </Button>
-                                        ) : (
-                                            person.autoFollow ? (
-                                                <Button variant='none'>
-                                                    <RiHeartAddLine size={20} />
-                                                </Button>
-                                            ) : (
-                                                <Button variant='none'>
-                                                    <BsPersonAdd size={20} />
-                                                </Button>
-                                            )
-                                        )
+                                        </OverlayTrigger>
+                                    ) : person.relationship === 'follower' ? (
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            overlay={<Tooltip id="tooltip-add-1">Accept friend request</Tooltip>}
+                                        >
+                                            <Button variant='none' onClick={() => handleUserRelationshipChange(person.nickname, 'add_friend')}>
+                                                <BsPersonAdd size={20} />
+                                            </Button>
+                                        </OverlayTrigger>
+                                    ) : person.relationship === 'following' ? (
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            overlay={<Tooltip id="tooltip-unfollow">Cancel friend request</Tooltip>}
+                                        >
+                                            <Button variant='none' onClick={() => handleUserRelationshipChange(person.nickname, 'unfollow')}>
+                                                <FaHeartBroken size={18} />
+                                            </Button>
+                                        </OverlayTrigger>
+                                    ) : person.relationship === 'none' && person.autoFollow ? (
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            overlay={<Tooltip id="tooltip-follow">Follow</Tooltip>}
+                                        >
+                                            <Button variant='none' onClick={() => handleUserRelationshipChange(person.nickname, 'follow')}>
+                                                <RiHeartAddLine size={20} />
+                                            </Button>
+                                        </OverlayTrigger>
+                                    ) : (
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            overlay={<Tooltip id="tooltip-add-2">Add friend</Tooltip>}
+                                        >
+                                            <Button variant='none' onClick={() => handleUserRelationshipChange(person.nickname, 'add_friend')}>
+                                                <BsPersonAdd size={20} />
+                                            </Button>
+                                        </OverlayTrigger>
                                     )}
-
                                 </Col>
                             </Row>
                         );

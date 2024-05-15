@@ -1,5 +1,6 @@
 package com.dzalex.skillshuffle.dtos;
 
+import com.dzalex.skillshuffle.enums.RelationshipStatus;
 import lombok.*;
 
 @Getter
@@ -12,8 +13,6 @@ public class SearchedUserDTO {
     private String lastName;
     private String nickname;
     private String avatarUrl;
-    private boolean isFriend;
-    private boolean isFollowed;
-    private boolean isFollower;
+    private RelationshipStatus relationship;
     private boolean autoFollow;
 }

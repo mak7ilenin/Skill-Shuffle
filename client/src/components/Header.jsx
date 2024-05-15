@@ -149,9 +149,9 @@ function Header() {
                 </ListGroup>
             </div>
 
-            <NavBlock />
-            {/* {navBlockVisibility && (
-            )} */}
+            {navBlockVisibility && (
+                <NavBlock />
+            )}
         </>
     );
 }

@@ -1,10 +1,9 @@
 package com.dzalex.skillshuffle.services;
 
 import com.dzalex.skillshuffle.dtos.*;
-import com.dzalex.skillshuffle.entities.ChatMember;
-import com.dzalex.skillshuffle.entities.Friendship;
-import com.dzalex.skillshuffle.entities.RefreshToken;
-import com.dzalex.skillshuffle.entities.User;
+import com.dzalex.skillshuffle.entities.*;
+import com.dzalex.skillshuffle.enums.FriendRequestStatus;
+import com.dzalex.skillshuffle.enums.RelationshipStatus;
 import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
 import com.dzalex.skillshuffle.repositories.FriendRequestRepository;
 import com.dzalex.skillshuffle.repositories.FriendshipRepository;
@@ -233,17 +232,36 @@ public class UserService {
                 .orElse(null);
     }
 
+    public Friendship getFriendship(User user, User authUser) {
+        Friendship friendship = friendshipRepository.findByUserIdAndFriendId(user.getId(), authUser.getId());
+        if (friendship == null) {
+            friendship = friendshipRepository.findByUserIdAndFriendId(authUser.getId(), user.getId());
+        }
+        return friendship;
+    }
+
     public boolean isFriend(User user, User authUser) {
-        return friendshipRepository.findByUserIdAndFriendId(user.getId(), authUser.getId()) != null ||
-                friendshipRepository.findByUserIdAndFriendId(authUser.getId(), user.getId()) != null;
+        return getFriendship(user, authUser) != null;
     }
 
     public boolean isFollowed(User user, User authUser) {
-        return friendshipRepository.findByUserIdAndFriendId(authUser.getId(), user.getId()) != null;
+        return friendRequestRepository.findBySenderIdAndReceiverId(authUser.getId(), user.getId()) != null;
     }
 
     public boolean isFollower(User user, User authUser) {
-        return friendshipRepository.findByUserIdAndFriendId(user.getId(), authUser.getId()) != null;
+        return friendRequestRepository.findBySenderIdAndReceiverId(user.getId(), authUser.getId()) != null;
+    }
+
+    private RelationshipStatus getRelationshipStatus(User user, User authUser) {
+        if (isFriend(user, authUser)) {
+            return RelationshipStatus.FRIEND;
+        } else if (isFollowed(user, authUser)) {
+            return RelationshipStatus.FOLLOWING;
+        } else if (isFollower(user, authUser)) {
+            return RelationshipStatus.FOLLOWER;
+        } else {
+            return RelationshipStatus.NONE;
+        }
     }
 
     public PublicUserDTO getPublicUserDTO(User user) {
@@ -263,9 +281,7 @@ public class UserService {
                 .lastName(user.getLastName())
                 .nickname(user.getNickname())
                 .avatarUrl(user.getAvatarUrl())
-                .isFriend(isFriend(user, authUser))
-                .isFollowed(isFollowed(user, authUser))
-                .isFollower(isFollower(user, authUser))
+                .relationship(getRelationshipStatus(user, authUser))
                 .autoFollow(user.isAutoFollow())
                 .build();
     }
@@ -293,5 +309,106 @@ public class UserService {
         });
 
         return searchedUsers;
+    }
+
+    private FriendRequest getAcceptedFriendRequest(User sender, User receiver) {
+        FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverIdAndStatus(sender.getId(), receiver.getId(), FriendRequestStatus.ACCEPTED);
+        if (friendRequest == null) {
+            friendRequest = friendRequestRepository.findBySenderIdAndReceiverIdAndStatus(receiver.getId(), sender.getId(), FriendRequestStatus.ACCEPTED);
+        }
+        return friendRequest;
+    }
+
+    public SearchedUserDTO addUserRelationship(RelationshipActionDTO relationship) {
+        User authUser = getCurrentUser();
+        User user = getUserByNickname(relationship.getNickname());
+        if (user != null) {
+            if (authUser.getId().equals(user.getId())) {
+                return null;
+            }
+
+            switch (relationship.getAction()) {
+                case ADD_FRIEND:
+                    addFriend(authUser, user);
+                    break;
+                case UNFRIEND:
+                    removeFriend(authUser, user);
+                    break;
+                case FOLLOW:
+                    followUser(authUser, user);
+                    break;
+                case UNFOLLOW:
+                    unfollowUser(authUser, user);
+                    break;
+            }
+
+            return getSearchedUserDTO(user, authUser);
+        }
+
+        return null;
+    }
+
+    private void addFriend(User authUser, User user) {
+        if (!isFriend(user, authUser)) {
+            if (isFollower(user, authUser)) {
+                acceptFriendRequest(user, authUser);
+            } else {
+                sendFriendRequest(authUser, user);
+            }
+        }
+    }
+
+    private void sendFriendRequest(User sender, User receiver) {
+        FriendRequest friendRequest = FriendRequest.builder()
+                .sender(sender)
+                .receiver(receiver)
+                .status(FriendRequestStatus.PENDING)
+                .build();
+        friendRequestRepository.save(friendRequest);
+    }
+
+    private void acceptFriendRequest(User sender, User receiver) {
+        FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
+        if (friendRequest != null) {
+            friendRequest.setStatus(FriendRequestStatus.ACCEPTED);
+            friendRequestRepository.save(friendRequest);
+
+            Friendship friendship = Friendship.builder()
+                    .user(sender)
+                    .friend(receiver)
+                    .build();
+            friendshipRepository.save(friendship);
+        }
+    }
+
+    private void removeFriend(User authUser, User user) {
+        Friendship friendship = getFriendship(user, authUser);
+        if (friendship != null) {
+            friendshipRepository.delete(friendship);
+
+            // Remove the accepted friend request if it exists
+            FriendRequest friendRequest = getAcceptedFriendRequest(authUser, user);
+            if (friendRequest != null) {
+                friendRequestRepository.delete(friendRequest);
+            }
+        }
+    }
+
+    private void followUser(User authUser, User user) {
+        if (!isFollowed(user, authUser)) {
+            FriendRequest friendRequest = FriendRequest.builder()
+                    .sender(authUser)
+                    .receiver(user)
+                    .status(FriendRequestStatus.PENDING)
+                    .build();
+            friendRequestRepository.save(friendRequest);
+        }
+    }
+
+    private void unfollowUser(User authUser, User user) {
+        FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(authUser.getId(), user.getId());
+        if (friendRequest != null) {
+            friendRequestRepository.delete(friendRequest);
+        }
     }
 }
