@@ -13,6 +13,7 @@ import com.dzalex.skillshuffle.repositories.ChatRepository;
 import com.dzalex.skillshuffle.repositories.MessageRepository;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +37,13 @@ public class MessageService {
     @Autowired
     private ChatMemberRepository chatMemberRepository;
 
-    @Autowired
     private UserService userService;
+
+    @Autowired
+    @Lazy
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     private SessionService sessionService;
@@ -209,7 +215,7 @@ public class MessageService {
         };
     }
 
-    public int getUnreadMessagesCount(Integer chatId, Integer userId) {
+    public int getChatUnreadMessages(Integer chatId, Integer userId) {
         ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userId);
         if (chatMember == null) {
             throw new IllegalArgumentException("User is not a member of this chat");
@@ -226,6 +232,13 @@ public class MessageService {
                 .stream()
                 .filter(message -> message.getTimestamp().after(chatMember.getClosedAt()))
                 .count();
+    }
+
+    public int getUnreadMessagesCount(Integer userId) {
+        return chatMemberRepository.findChatMembersByMemberId(userId)
+                .stream()
+                .mapToInt(chatMember -> getChatUnreadMessages(chatMember.getChat().getId(), userId))
+                .sum();
     }
 
     public List<MessageDTO> getChatMessages(Integer chatId, ChatMember chatMember, int limit, int offset) {

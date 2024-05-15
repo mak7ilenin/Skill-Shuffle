@@ -16,7 +16,7 @@ import ChatBackground from '../assets/images/chat-background.jpg'
 import { ReactComponent as Send } from '../assets/icons/send.svg';
 
 function Chat() {
-  const { authUser, stompClient, isStompClientInitialized } = useAuth();
+  const { authUser, setAuthUser, stompClient, isStompClientInitialized } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [loadingMessages, setLoadingMessages] = useState(true);
@@ -44,7 +44,7 @@ function Chat() {
         chat.lastMessage = message;
 
         // If the chat is not the chosen chat, increment the unreadMessages
-        if (chosenChat && chatId !== String(chosenChat.id)) {
+        if (!chosenChat || chatId !== String(chosenChat.id)) {
           chat.unreadMessages += 1;
         }
       }
@@ -60,9 +60,16 @@ function Chat() {
         setChosenChat(response.data);
         offsetRef.current = 0;
 
-        // Set the chat unreadMessages to 0
+        // Reset chat unreadMessages and decrease authUser unreadMessages
         const updatedChats = chatsRef.current.map(chat => {
           if (AESDecrypt(chat.id) === String(chatId)) {
+            setAuthUser(prevAuthUser => {
+              return {
+                ...prevAuthUser,
+                unreadMessages: prevAuthUser.unreadMessages - chat.unreadMessages
+              };
+            });
+
             chat.unreadMessages = 0;
           }
           return chat;
@@ -98,21 +105,30 @@ function Chat() {
       if (!currentSubscriptionRef.current) {
         const chatEndpoint = `/user/chat/${chosenChat.id}`;
         const newSubscription = stompClient.subscribe(chatEndpoint, receivedMessage => {
+
           const message = JSON.parse(receivedMessage.body);
           updateChatLastMessage(message);
-          setChosenChat(prevChat => ({
-            ...prevChat,
-            messages: [...prevChat.messages, message]
-          }));
+
+          console.log(message);
+          console.log(chosenChat);
+
+          // Set chosen chat messages
+          setChosenChat(prevChat => {
+            return {
+              ...prevChat,
+              messages: [...prevChat.messages, message]
+            };
+          });
+
           setTimeout(() => {
             if (messagesListRef.current) {
               scrollToPosition(messagesListRef.current.scrollHeight);
             }
           }, 50);
         });
-        newSubscription.chatId = chosenChat.id;
 
         // Update current subscription
+        newSubscription.chatId = chosenChat.id;
         currentSubscriptionRef.current = newSubscription;
 
         // Remove horizontal scrolling in document
@@ -140,10 +156,24 @@ function Chat() {
         // Update chat last message
         updateChatLastMessage(message);
 
-        // Check if received message is not from muted chat (each chat has field isMuted)
         chatsRef.current.forEach(chat => {
+          // Show notification and increment unreadMessages in chat where notification from
           if (AESDecrypt(chat.id) === String(notification.chat.id)) {
-            setMessageNotification({ visible: true, notification: notification });
+
+            // If notification type is message, increase unread messages number
+            if (notification.type === 'CHAT_MESSAGE') {
+              setAuthUser(prevAuthUser => {
+                return {
+                  ...prevAuthUser,
+                  unreadMessages: prevAuthUser.unreadMessages + 1
+                };
+              });
+            }
+
+            // If chat is not muted - show the notification
+            if (!chat.muted) {
+              setMessageNotification({ visible: true, notification: notification });
+            }
           }
         });
       });
@@ -153,7 +183,7 @@ function Chat() {
         newSubscription.unsubscribe();
       };
     }
-  }, [stompClient, isStompClientInitialized, updateChatLastMessage]);
+  }, [stompClient, isStompClientInitialized, updateChatLastMessage, setAuthUser]);
 
 
   useEffect(() => {
@@ -199,9 +229,13 @@ function Chat() {
     if (messageContent === '' && !gif) return;
     setMessageContent('');
 
+    // Assign sender and remove unnecessary property
+    const sender = authUser;
+    delete sender.unreadMessages;
+
     const destination = `/app/chat`;
     const message = {
-      sender: authUser,
+      sender: sender,
       chat: { id: chosenChat.id },
       content: gif ? gif.url : messageContent,
       timestamp: new Date().toISOString()
@@ -261,11 +295,7 @@ function Chat() {
 
   // Group messages by day for better readability
   const messagesByDay = useMemo(() => {
-    if (!chosenChat) {
-      return;
-    }
-
-    if (chosenChat.messages === undefined) {
+    if (!chosenChat || !chosenChat.messages) {
       return [];
     }
 
@@ -370,6 +400,7 @@ function Chat() {
         chats={chats}
         chat={chosenChat}
         setChat={setChosenChat}
+        subscription={currentSubscriptionRef}
         handleMenuChange={handleMenuChange}
         activeMenu={activeMenu}
       />

@@ -30,8 +30,10 @@ function ChatPreview({ chat, chosenChat, navigate }) {
         return chat.lastMessage.sender.nickname === authUser.nickname;
     };
 
+    const isActive = chosenChat && String(chosenChat.id) === AESDecrypt(chat.id);
+
     return (
-        <Row className={`chat-preview d-flex align-items-center flex-nowrap${chosenChat && String(chosenChat.id) === AESDecrypt(chat.id) ? ' active' : ''}`}
+        <Row className={`chat-preview d-flex align-items-center flex-nowrap ${isActive ? ' active' : ''}`}
             key={chat.id}
             role='button'
             onClick={() => navigate(`/messenger?c=${chat.id}`)}

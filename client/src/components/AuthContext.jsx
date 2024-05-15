@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { Client } from '@stomp/stompjs';
 
@@ -11,6 +11,7 @@ const AuthProvider = ({ children }) => {
     const [stompClient, setStompClient] = useState(null);
     const [isStompClientInitialized, setIsStompClientInitialized] = useState(false);
     const [messageNotification, setMessageNotification] = useState({ visible: false, notification: {} });
+    const notificationsSubscription = useRef(null);
     const [authUser, setAuthUser] = useState(() => {
         return JSON.parse(sessionStorage.getItem('auth-user'));
     });
@@ -36,13 +37,31 @@ const AuthProvider = ({ children }) => {
 
     // Subscribe to notifications
     const subscribeToNotifications = useCallback(() => {
-        if (!isStompClientInitialized) return;
+        if (!isStompClientInitialized || notificationsSubscription.current) {
+            return;
+        }
 
-        stompClient.subscribe('/user/notification', receivedNotification => {
+        const newSubscription = stompClient.subscribe('/user/notification', receivedNotification => {
             // Process the received noitification
             const notification = JSON.parse(receivedNotification.body);
             setMessageNotification({ visible: true, notification: notification });
+
+            // If notification is CHAT_MESSAGE, increase unread messages number
+            if (notification.type === 'CHAT_MESSAGE') {
+                setAuthUser(prevAuthUser => {
+                    return {
+                        ...prevAuthUser,
+                        unreadMessages: prevAuthUser.unreadMessages + 1
+                    };
+                });
+            }
         });
+        notificationsSubscription.current = newSubscription;
+
+        return () => {
+            newSubscription.unsubscribe();
+        }
+
     }, [isStompClientInitialized, stompClient]);
 
 

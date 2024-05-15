@@ -32,7 +32,7 @@ function HeaderSearch() {
             return true;
         }
 
-        setIsInvalid(false);
+        setIsInvalid(true);
         return false;
     };
 

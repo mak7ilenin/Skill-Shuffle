@@ -11,6 +11,7 @@ import com.dzalex.skillshuffle.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -62,6 +63,14 @@ public class UserService {
     @Autowired
     private FileService fileService;
 
+    private MessageService messageService;
+
+    @Autowired
+    @Lazy
+    public void setMessageService(MessageService messageService) {
+        this.messageService = messageService;
+    }
+
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -102,7 +111,7 @@ public class UserService {
             return JwtResponseDTO.builder()
                     .username(request.getUsername())
                     .accessToken(accessToken)
-                    .user(getPublicUserDTO(user))
+                    .user(getAuthUserDTO(user))
                     .build();
         }
         return null;
@@ -121,7 +130,7 @@ public class UserService {
                 return JwtResponseDTO.builder()
                         .username(userDetails.getUsername())
                         .accessToken(token)
-                        .user(getPublicUserDTO(user))
+                        .user(getAuthUserDTO(user))
                         .build();
             }
         }
@@ -272,6 +281,16 @@ public class UserService {
                 .avatarUrl(user.getAvatarUrl())
                 .lastSeen(user.getLastSeen())
                 .isPublic(user.isPublic())
+                .build();
+    }
+
+    public AuthUserDTO getAuthUserDTO(User user) {
+        return AuthUserDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .nickname(user.getNickname())
+                .avatarUrl(user.getAvatarUrl())
+                .unreadMessages(messageService.getUnreadMessagesCount(user.getId()))
                 .build();
     }
 

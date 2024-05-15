@@ -102,6 +102,11 @@ function Header() {
                         <p>Search</p>
                     </ListGroup.Item>
                     <ListGroup.Item action href='/messenger'>
+                        {authUser && authUser.unreadMessages > 0 && (
+                            <div className="unread-messages">
+                                <span>{authUser.unreadMessages}</span>
+                            </div>
+                        )}
                         <Chats className='chats-icon' />
                         <p>Messages</p>
                     </ListGroup.Item>

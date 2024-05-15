@@ -104,7 +104,7 @@ public class ChatService {
                     .lastMessage(messageService.findChatLastMessage(chat))
                     .isMuted(isChatMuted(chat.getId(), authedUser.getId()))
                     .isOnline(chatInfo.isOnline())
-                    .unreadMessages(messageService.getUnreadMessagesCount(chat.getId(), authedUser.getId()))
+                    .unreadMessages(messageService.getChatUnreadMessages(chat.getId(), authedUser.getId()))
                     .build();
         }
         return null;

@@ -353,6 +353,23 @@ p {
   -ms-user-select: none;
   -o-user-select: none;
 }
+.header .list-group .list-group-item .unread-messages {
+  position: absolute;
+  left: 32px;
+  top: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background-color: #3D00FF;
+  border-radius: 50%;
+}
+.header .list-group .list-group-item .unread-messages span {
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+}
 .header .list-group .list-group-item.more-link {
   margin-top: auto;
   margin-bottom: 35px;
@@ -386,6 +403,31 @@ p {
   display: flex;
   justify-content: center;
   padding-left: 0;
+}
+
+.toast-notification {
+  width: 255px !important;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  cursor: pointer;
+}
+.toast-notification .toast-header h5 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #373737;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toast-notification .toast-body {
+  font-size: 14px;
+  font-weight: 400;
+  color: #8F8F8F;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nav-block {
@@ -522,31 +564,6 @@ p {
   font-weight: 400;
   text-align: center;
   line-height: 100%;
-}
-
-.toast-notification {
-  width: 255px !important;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-  cursor: pointer;
-}
-.toast-notification .toast-header h5 {
-  font-size: 16px;
-  font-weight: 500;
-  color: #373737;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.toast-notification .toast-body {
-  font-size: 14px;
-  font-weight: 400;
-  color: #8F8F8F;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .sign-in {
