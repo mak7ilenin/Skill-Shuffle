@@ -270,10 +270,6 @@
             margin-top: -180px !important;
         }
 
-        hr {
-            margin-top: 5px !important;
-        }
-
         .profile-info {
             flex-direction: column;
 
@@ -564,15 +560,16 @@
         .profile-aside {
             background-color: #fff;
             border-radius: 5px;
-            gap: 10px 0;
 
             .aside-header {
                 font-size: 20px;
                 font-weight: 700;
+                margin-bottom: 10px !important;
 
                 span {
                     color: $light-gray;
                     font-weight: 500;
+                    margin-left: 5px;
                 }
             }
 
@@ -668,15 +665,35 @@
 
     .friends-online,
     .friends {
-        min-width: 55.25px;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        gap: calc((100% - 240px) / 3);
     }
 
     .friend-container {
-        width: fit-content;
+        max-width: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
 
         .friend-img {
             max-width: 60px;
             max-height: 60px;
+            position: relative;
+        }
+
+        &.online .friend-img::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            right: 2px;
+            width: 18px;
+            height: 18px;
+            background-color: $green;
+            border-radius: 50%;
+            border: 3px solid #fff;
         }
 
         p {
@@ -685,6 +702,7 @@
             font-weight: 700;
             padding: unset;
             margin-top: 5px !important;
+            text-align: center;
         }
     }
 }

@@ -326,7 +326,7 @@ function GroupChatMenu({ chat, setChat }) {
                                             <div className='member-activity d-flex align-items-center justify-content-start flex-row'>
                                                 {formatLastSeenTimestamp(member.lastSeen) === 'Online' ? (
                                                     <>
-                                                        <div className="online-icon rounded-circle"></div>
+                                                        <div className="online-icon"></div>
                                                         <span>Online</span>
                                                     </>
                                                 ) : (

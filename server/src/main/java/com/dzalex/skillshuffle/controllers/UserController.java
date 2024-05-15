@@ -3,6 +3,7 @@ package com.dzalex.skillshuffle.controllers;
 import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.dtos.RelationshipActionDTO;
 import com.dzalex.skillshuffle.dtos.SearchedUserDTO;
+import com.dzalex.skillshuffle.dtos.UserProfileDTO;
 import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,13 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    // Get user by nickname
+    @GetMapping("/users/{nickname}")
+    public UserProfileDTO getUserProfileData(@PathVariable String nickname) {
+        User user = userService.getUserByNickname(nickname);
+        return userService.getUserProfileData(user);
+    }
 
     // Get user friends by nickname
     @GetMapping("/users/{nickname}/friends")

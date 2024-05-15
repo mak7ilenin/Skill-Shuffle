@@ -425,7 +425,7 @@ CREATE TABLE IF NOT EXISTS `friend_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sender_id` int(11) NOT NULL,
   `receiver_id` int(11) NOT NULL,
-  `status` enum('pending','accepted','rejected','ignored') COLLATE utf8mb4_bin NOT NULL DEFAULT 'pending',
+  `status` enum('PENDING','ACCEPTED','REJECTED','IGNORED') COLLATE utf8mb4_bin NOT NULL DEFAULT 'PENDING',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `receiver_id` (`receiver_id`),

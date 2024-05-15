@@ -21,12 +21,10 @@ import java.util.function.Function;
 @Component
 public class JwtHelper {
 
-    public static final long ACCESS_TOKEN_VALIDITY = 2 * 60 * 60; // 2 hours
-    public static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60; // 7 days
     @Value("${jwt.secret}")
     private String SECRET_KEY;
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
+    public static final long ACCESS_TOKEN_VALIDITY = 2 * 60 * 60; // 2 hours
+    public static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60; // 7 days
     private static final String ACCESS_TOKEN_COOKIE_NAME = "skill_shuffle.access_token";
     private static final String REFRESH_TOKEN_COOKIE_NAME = "skill_shuffle.refresh_token";
 

@@ -4,6 +4,7 @@ import { Row, Col, Image } from 'react-bootstrap';
 import { AESDecrypt } from '../crypto';
 import { useAuth } from './AuthContext';
 
+import { RiVolumeMuteFill } from "react-icons/ri";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function ChatPreview({ chat, chosenChat, navigate }) {
@@ -38,6 +39,9 @@ function ChatPreview({ chat, chosenChat, navigate }) {
             role='button'
             onClick={() => navigate(`/messenger?c=${chat.id}`)}
         >
+            <div className="muted-icon">
+                {chat.muted && <RiVolumeMuteFill size={14} />}
+            </div>
             <Col className='chat-avatar d-flex justify-content-center'>
                 <Image
                     src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}

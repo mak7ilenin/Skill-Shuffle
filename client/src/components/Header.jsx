@@ -48,7 +48,7 @@ function Header() {
     };
 
     useEffect(() => {
-        const pathsWithOpenHeader = ['/my-profile'];
+        const pathsWithOpenHeader = ['/me'];
         if (!pathsWithOpenHeader.includes(window.location.pathname) && authUser) {
             setClosed(true);
         }
@@ -120,7 +120,7 @@ function Header() {
                     </ListGroup.Item>
                     {authUser && (
                         <>
-                            <ListGroup.Item href='/my-profile' className='profile-link' action>
+                            <ListGroup.Item href='/me' className='profile-link' action>
                                 <div className='avatar-container d-flex justify-content-center align-items-center flex-column'>
                                     <Image
                                         src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
@@ -141,11 +141,13 @@ function Header() {
                                         <p>More</p>
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                        <Dropdown.Item href="#/action-1">Saved</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-2">Switch appearance</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-3">Report a problem</Dropdown.Item>
-                                        <Dropdown.Divider />
-                                        <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
+                                        <div className="dropdown-menu-container">
+                                            <Dropdown.Item href="#/action-1">Saved</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-2">Switch appearance</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-3">Report a problem</Dropdown.Item>
+                                            <Dropdown.Divider />
+                                            <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
+                                        </div>
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </ListGroup.Item>

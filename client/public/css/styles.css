@@ -1152,6 +1152,7 @@ p {
   padding: 13px 14px !important;
   border-bottom: 1px solid rgba(143, 143, 143, 0.1450980392);
   margin: 0 !important;
+  position: relative;
 }
 .chat-page .chat-menu .chat-preview > * {
   font-family: "Manrope", sans-serif;
@@ -1161,6 +1162,17 @@ p {
 }
 .chat-page .chat-menu .chat-preview.active {
   background-color: #EFEBFF;
+}
+.chat-page .chat-menu .chat-preview .muted-icon {
+  width: -moz-fit-content;
+  width: fit-content;
+  position: absolute;
+  left: -6px;
+  top: -2px;
+}
+.chat-page .chat-menu .chat-preview .muted-icon svg {
+  color: #8F8F8F;
+  opacity: 0.7;
 }
 .chat-page .chat-menu .chat-preview .chat-avatar {
   width: -moz-fit-content;
@@ -2012,11 +2024,12 @@ p {
 }
 
 .dropdown .dropdown-menu {
-  padding: 17px 0 !important;
+  position: fixed !important;
+  z-index: 300;
+  padding: 17px 0;
   background-color: #F0F0FF !important;
   box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.2509803922);
   border-radius: 10px;
-  padding: 17px 0 !important;
 }
 .dropdown .dropdown-menu-container {
   display: flex;
@@ -2048,6 +2061,9 @@ p {
 .dropdown .dropdown-item .cross-icon path {
   fill: #000 !important;
   stroke-width: 1px;
+}
+.dropdown .dropdown-divider {
+  margin: 0;
 }
 
 .upload-modal {
@@ -2329,9 +2345,6 @@ p {
     margin-top: -180px !important;
   }
 }
-.wrapper-profile .profile-info-block hr {
-  margin-top: 5px !important;
-}
 .wrapper-profile .profile-info-block .profile-info {
   flex-direction: column;
 }
@@ -2575,15 +2588,16 @@ p {
 .wrapper-profile .right-block-profile .profile-aside {
   background-color: #fff;
   border-radius: 5px;
-  gap: 10px 0;
 }
 .wrapper-profile .right-block-profile .profile-aside .aside-header {
   font-size: 20px;
   font-weight: 700;
+  margin-bottom: 10px !important;
 }
 .wrapper-profile .right-block-profile .profile-aside .aside-header span {
   color: #8F8F8F;
   font-weight: 500;
+  margin-left: 5px;
 }
 .wrapper-profile .right-block-profile .profile-aside .user-container p {
   font-weight: 400;
@@ -2663,15 +2677,33 @@ p {
 }
 .wrapper-profile .friends-online,
 .wrapper-profile .friends {
-  min-width: 55.25px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: calc((100% - 240px) / 3);
 }
 .wrapper-profile .friend-container {
-  width: -moz-fit-content;
-  width: fit-content;
+  max-width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 .wrapper-profile .friend-container .friend-img {
   max-width: 60px;
   max-height: 60px;
+  position: relative;
+}
+.wrapper-profile .friend-container.online .friend-img::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  background-color: #7FFF31;
+  border-radius: 50%;
+  border: 3px solid #fff;
 }
 .wrapper-profile .friend-container p {
   font-size: 13px;
@@ -2679,4 +2711,82 @@ p {
   font-weight: 700;
   padding: unset;
   margin-top: 5px !important;
+  text-align: center;
+}
+
+.error-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.error-page__left-column {
+  position: relative;
+}
+.error-page__left-column h1 {
+  font-family: "Manrope", sans-serif;
+  font-size: 128px;
+  font-weight: 300;
+  color: #3D00FF;
+  text-align: right;
+}
+.error-page__left-column h1::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 30%;
+  width: 75px;
+  border: 1px solid #3D00FF;
+  transform: rotate(-42deg);
+}
+.error-page__separator {
+  max-width: 2px !important;
+  margin: auto 80px !important;
+}
+.error-page__separator::after {
+  content: "";
+  width: 2px;
+  height: 75px;
+  background-color: #3D00FF;
+  display: block;
+}
+.error-page__right-column h2 {
+  font-family: "Manrope", sans-serif;
+  font-size: 56px;
+  font-weight: 300;
+  color: #26009E;
+  margin: 10px 0 !important;
+}
+.error-page__logo-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-decoration: none;
+}
+.error-page__logo-text p {
+  font-family: "Russo one", "sans-serif";
+  font-size: 24px;
+  font-weight: 500;
+  color: #000;
+}
+.error-page__logo-text p:first-child {
+  font-size: 32px;
+  height: 36px;
+  letter-spacing: 7px;
+}
+.error-page__logo-text p:last-child {
+  font-size: 20px;
+  height: 24;
+}
+.error-page__button.btn {
+  background-color: #5D6BE4;
+  font-family: "Mitr", sans-serif;
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 300;
+  border-radius: 0;
+}
+.error-page__button.btn:hover {
+  background-color: #3D00FF;
 }/*# sourceMappingURL=styles.css.map */

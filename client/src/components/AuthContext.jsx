@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
         if (!isStompClientInitialized) return;
         stompClient.publish({
             destination: '/app/heartbeat',
-            body: JSON.stringify(authUser)
+            body: JSON.stringify(authUser.nickname)
         });
     }, [isStompClientInitialized, stompClient, authUser]);
 
@@ -100,10 +100,10 @@ const AuthProvider = ({ children }) => {
                 setStompClient(client);
             })
             .catch(() => {
-                // console.error('Error while initializing STOMP client:', error);
                 setAuthUser(null);
             });
-    }, [stompClient, subscribeToNotifications]);
+    }, [stompClient, subscribeToNotifications
+    ]);
 
     useEffect(() => {
         initializeStompClient();

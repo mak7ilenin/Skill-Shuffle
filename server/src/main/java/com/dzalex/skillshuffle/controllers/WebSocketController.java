@@ -1,13 +1,11 @@
 package com.dzalex.skillshuffle.controllers;
 
-import com.dzalex.skillshuffle.dtos.PublicUserDTO;
 import com.dzalex.skillshuffle.entities.ChatMessage;
 import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.UserRepository;
 import com.dzalex.skillshuffle.services.ChatService;
 import com.dzalex.skillshuffle.services.MessageService;
 import com.dzalex.skillshuffle.services.SessionService;
-import com.dzalex.skillshuffle.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -35,9 +33,6 @@ public class WebSocketController {
     @Autowired
     private SessionService sessionService;
 
-    @Autowired
-    private UserService userService;
-
     @MessageMapping("/chat")
     public void sendMessage(@Payload ChatMessage message) {
         messageService.sendMessage(message);
@@ -45,9 +40,9 @@ public class WebSocketController {
 
     // Event listener for heartbeat messages
     @MessageMapping("/heartbeat")
-    public void handleHeartbeat(@Payload PublicUserDTO user) {
+    public void handleHeartbeat(@Payload String nickname) {
         // Update the user's last activity timestamp
-        User authUser = userRepository.findByNickname(user.getNickname());
+        User authUser = userRepository.findByNickname(nickname);
         authUser.setLastSeen(new Timestamp(System.currentTimeMillis()));
         userRepository.save(authUser);
     }

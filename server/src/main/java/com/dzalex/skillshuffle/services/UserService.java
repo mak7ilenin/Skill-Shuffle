@@ -66,6 +66,9 @@ public class UserService {
     private MessageService messageService;
 
     @Autowired
+    private PostService postService;
+
+    @Autowired
     @Lazy
     public void setMessageService(MessageService messageService) {
         this.messageService = messageService;
@@ -429,5 +432,34 @@ public class UserService {
         if (friendRequest != null) {
             friendRequestRepository.delete(friendRequest);
         }
+    }
+
+    private List<PublicUserDTO> getUserFollowers(User user) {
+        return friendRequestRepository.findAllBySenderId(user.getId()).stream()
+                .map(friendRequest -> getPublicUserDTO(friendRequest.getSender()))
+                .toList();
+    }
+
+    public UserProfileDTO getUserProfileData(User user) {
+        List<PublicUserDTO> friends = getUserFriends(user);
+        return UserProfileDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .nickname(user.getNickname())
+                .gender(user.getGender())
+                .birthDate(user.getBirthDate())
+                .bio(user.getBio())
+                .points(user.getPoints())
+                .avatarUrl(user.getAvatarUrl())
+                .bannerUrl(user.getBannerUrl())
+                .bannerColor(user.getBannerColor())
+                .isPublic(user.isPublic())
+                .autoFollow(user.isAutoFollow())
+                .lastSeen(user.getLastSeen())
+                .joinedAt(user.getCreatedAt())
+                .followersCount(getUserFollowers(user).size())
+                .friends(friends)
+                .posts(postService.getUserPosts(user))
+                .build();
     }
 }

@@ -27,9 +27,11 @@ function ChatMenuHeader({ getSearch, changeMenu, activeMenu, setChat, subscripti
                 className='header-name'
                 onClick={() => {
                     setChat(null);
-                    subscription.current.unsubscribe();
                     navigate('/messenger');
                     changeMenu('DEFAULT');
+                    if (subscription.current) {
+                        subscription.current.unsubscribe();
+                    }
                 }}
             >
                 Messages

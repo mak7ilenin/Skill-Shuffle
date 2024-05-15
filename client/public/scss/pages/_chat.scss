@@ -253,6 +253,7 @@
             padding: 13px 14px !important;
             border-bottom: 1px solid #8f8f8f25;
             margin: 0 !important;
+            position: relative;
 
             &>* {
                 font-family: $main-font;
@@ -264,6 +265,18 @@
 
             &.active {
                 background-color: #EFEBFF;
+            }
+
+            .muted-icon {
+                width: fit-content;
+                position: absolute;
+                left: -6px;
+                top: -2px;
+
+                svg {
+                    color: $light-gray;
+                    opacity: .7;
+                }
             }
 
             .chat-avatar {

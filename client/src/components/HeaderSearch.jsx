@@ -26,7 +26,8 @@ function HeaderSearch() {
             return false;
         }
 
-        if (query.match(/^[a-zA-Z0-9\s]*$/)) {
+        const regex = /^[a-zA-Zа-яА-ЯёЁ0-9\s]+$/;
+        if (query.match(regex)) {
             setSearchQuery(query);
             setIsInvalid(false);
             return true;

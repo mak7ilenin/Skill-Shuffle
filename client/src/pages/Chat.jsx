@@ -88,7 +88,7 @@ function Chat() {
         navigate('/messenger')
         console.error(error.response?.data.message || error.message);
       });
-  }, [setLoadingMessages, messagesListRef, navigate]);
+  }, [setLoadingMessages, messagesListRef, navigate, setAuthUser]);
 
 
   const subscribeToChat = useCallback(() => {
