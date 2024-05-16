@@ -100,7 +100,7 @@ INSERT INTO `chat_members` (`id`, `chat_id`, `member_id`, `role`, `notifications
 (8, 3, 2, 'MEMBER', b'1', '2024-04-22 09:57:26.000', NULL, b'0', NULL, NULL),
 (9, 5, 1, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL, '2024-05-02 21:47:44.451'),
 (10, 5, 4, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL, '2024-05-02 21:51:29.386'),
-(46, 4, 1, 'MEMBER', b'1', '2024-05-02 16:35:30.901', NULL, b'0', NULL, '2024-05-02 21:47:40.849');
+(11, 4, 1, 'MEMBER', b'1', '2024-05-02 16:35:30.901', NULL, b'0', NULL, '2024-05-02 21:47:40.849');
 
 -- --------------------------------------------------------
 
@@ -133,14 +133,14 @@ INSERT INTO `chat_messages` (`id`, `sender_id`, `chat_id`, `content`, `timestamp
 (7, 1, 1, 'Lebron scored 23 in the last match😬', '2024-04-17 10:21:42.411', 'MESSAGE'),
 (8, 1, 1, '💀💀💀💀💀💀💀💀💀💀💀💀💀💀', '2024-04-17 10:21:53.691', 'MESSAGE'),
 (9, 1, 1, 'LAKERS WON THE NBA FINALS!!!!😎😎🤓🤓🤓', '2024-04-22 10:23:50.524', 'MESSAGE'),
-(544, 1, 1, 'heyyyy', '2024-05-01 18:52:32.725', 'MESSAGE'),
-(545, 4, 1, 'test r u here?', '2024-05-01 20:26:26.119', 'MESSAGE'),
-(546, 4, 1, '??', '2024-05-01 20:27:37.360', 'MESSAGE'),
-(547, 1, 1, 'what do you want nigga', '2024-05-01 20:27:45.252', 'MESSAGE'),
-(548, 4, 1, 'https://media.tenor.com/BG-84cOdq20AAAAC/fr-fr-fr.gif', '2024-05-01 20:27:53.794', 'MESSAGE'),
-(549, 1, 1, 'no shit', '2024-05-02 06:35:13.998', 'MESSAGE'),
-(550, 4, 1, 'hey', '2024-05-02 21:07:04.449', 'MESSAGE'),
-(551, 4, 1, 'huh??', '2024-05-02 21:07:15.662', 'MESSAGE');
+(10, 1, 1, 'heyyyy', '2024-05-01 18:52:32.725', 'MESSAGE'),
+(11, 4, 1, 'test r u here?', '2024-05-01 20:26:26.119', 'MESSAGE'),
+(12, 4, 1, '??', '2024-05-01 20:27:37.360', 'MESSAGE'),
+(13, 1, 1, 'what do you want nigga', '2024-05-01 20:27:45.252', 'MESSAGE'),
+(14, 4, 1, 'https://media.tenor.com/BG-84cOdq20AAAAC/fr-fr-fr.gif', '2024-05-01 20:27:53.794', 'MESSAGE'),
+(15, 1, 1, 'no shit', '2024-05-02 06:35:13.998', 'MESSAGE'),
+(16, 4, 1, 'hey', '2024-05-02 21:07:04.449', 'MESSAGE'),
+(17, 4, 1, 'huh??', '2024-05-02 21:07:15.662', 'MESSAGE');
 
 -- --------------------------------------------------------
 
@@ -548,7 +548,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `points` int(7) NOT NULL DEFAULT 0,
   `avatar_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
   `banner_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `banner_color` varchar(7) COLLATE utf8mb4_bin NOT NULL DEFAULT '#bdbdbd',
+  `banner_color` varchar(7) COLLATE utf8mb4_bin NOT NULL DEFAULT '#00b3db',
   `is_public` bit(1) NOT NULL DEFAULT b'1',
   `auto_follow` bit(1) NOT NULL DEFAULT b'0',
   `last_seen` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -566,10 +566,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `password`, `nickname`, `email`, `gender`, `birth_date`, `bio`, `points`, `avatar_url`, `banner_url`, `banner_color`, `is_public`, `auto_follow`, `last_seen`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Test test', 'The testuser', 'test', '$2a$10$JEg8WMqgkd4mbM20o7vOSu9mlCogeiqA6ECGLza4KBg1gzUV/6iru', 'testuser', 'test@gmail.com', 'OTHER', '2004-12-22', 'Test test', 0, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/user-1/avatar/2023-10-27_183115.png', NULL, '#bdbdbd', b'1', b'0', '2024-05-04 21:09:49', '2024-04-22 09:35:00', '2024-05-04 21:09:49', NULL),
-(2, 'Test test1', 'The test1', 'test1', '$2a$10$sRN8k2KLY8xHO7sec08zOe2/MLjlQgDtkX/jdyadSqfIce1aJEJVq', 'test1', 'test1@gmail.com', 'OTHER', '2004-12-22', 'Test test1', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-01 16:17:42', '2024-04-22 09:40:59', '2024-05-01 16:17:42', NULL),
-(3, 'Test test2', 'The test2', 'test2', '$2a$10$QycMomHz4iW9PrWfHtucX.antDp4iLeHtAS1FVZbO0EBmV1fEok56', 'test2', 'test2@gmail.com', 'OTHER', '2004-12-22', 'Test test2', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-01 16:17:43', '2024-04-22 09:41:14', '2024-05-01 16:17:43', NULL),
-(4, 'Test test3', 'The test3', 'test3', '$2a$10$Yn99CbLOCqoMG5HPXRNkYOm8AImK3.UPS9tUcAyNOlff0MvgaJv1W', 'test3', 'test3@gmail.com', 'OTHER', '2004-12-22', 'Test test3', 0, NULL, NULL, '#bdbdbd', b'1', b'0', '2024-05-03 17:51:54', '2024-04-22 09:42:13', '2024-05-03 17:51:54', NULL);
+(1, 'Test test', 'The testuser', 'test', '$2a$10$JEg8WMqgkd4mbM20o7vOSu9mlCogeiqA6ECGLza4KBg1gzUV/6iru', 'testuser', 'test@gmail.com', 'OTHER', '2004-12-22', 'Test test', 0, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/user-1/avatar/2023-10-27_183115.png', 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/user-1/banner/mak7ilenin-banner.png', '#00b3db', b'1', b'0', '2024-05-04 21:09:49', '2024-04-22 09:35:00', '2024-05-04 21:09:49', NULL),
+(2, 'Test test1', 'The test1', 'test1', '$2a$10$sRN8k2KLY8xHO7sec08zOe2/MLjlQgDtkX/jdyadSqfIce1aJEJVq', 'test1', 'test1@gmail.com', 'OTHER', '2004-12-22', 'Test test1', 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-01 16:17:42', '2024-04-22 09:40:59', '2024-05-01 16:17:42', NULL),
+(3, 'Test test2', 'The test2', 'test2', '$2a$10$QycMomHz4iW9PrWfHtucX.antDp4iLeHtAS1FVZbO0EBmV1fEok56', 'test2', 'test2@gmail.com', 'OTHER', '2004-12-22', 'Test test2', 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-01 16:17:43', '2024-04-22 09:41:14', '2024-05-01 16:17:43', NULL),
+(4, 'Test test3', 'The test3', 'test3', '$2a$10$Yn99CbLOCqoMG5HPXRNkYOm8AImK3.UPS9tUcAyNOlff0MvgaJv1W', 'test3', 'test3@gmail.com', 'OTHER', '2004-12-22', 'Test test3', 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-03 17:51:54', '2024-04-22 09:42:13', '2024-05-03 17:51:54', NULL);
 
 -- --------------------------------------------------------
 

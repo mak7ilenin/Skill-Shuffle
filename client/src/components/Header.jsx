@@ -29,6 +29,8 @@ function Header() {
         await axios.post(`${API_SERVER}/auth/logout`, {}, { withCredentials: true });
         navigate('/sign-in');
         setAuthUser(null);
+        setNavBlockVisibility(false);
+        setOpened(false);
     };
 
     const handleNavClick = () => {

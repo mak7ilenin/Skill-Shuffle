@@ -30,7 +30,13 @@ function Profile() {
         <div className='wrapper-profile pb-5'>
             {user && (
                 <>
-                    <Row className="profile-banner w-100 justify-content-end align-items-end">
+                    <Row
+                        className="profile-banner w-100 justify-content-end align-items-end"
+                        style={
+                            // Check if user has bannerUrl, if not, then take bannerColor
+                            user.bannerUrl ? { backgroundImage: `url(${user.bannerUrl})` } : { backgroundColor: user.bannerColor }
+                        }
+                    >
                         <Button variant='none' className='profile-btn border-0 p-2 rounded-circle'>
                             <EditBanner />
                         </Button>
@@ -53,7 +59,7 @@ function Profile() {
                                 {/* {user.posts && user.posts.map(post => {
                                     return <Post post={post} />
                                 })} */}
-                                <Post post={{id: 1}} />
+                                <Post post={{ id: 1 }} />
                             </Col>
                         </Row>
 

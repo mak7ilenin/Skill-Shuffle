@@ -3,6 +3,7 @@ import { Row, Col, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+import { useAuth } from '../components/AuthContext';
 import ProfileAside from '../components/ProfileAside';
 import ProfileHeader from '../components/ProfileHeader';
 import Post from '../components/Post';
@@ -10,6 +11,7 @@ import ProfileInfo from '../components/ProfileInfo';
 import { API_SERVER } from '../config';
 
 function UserProfile() {
+    const { authUser } = useAuth();
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
@@ -19,17 +21,25 @@ function UserProfile() {
 
         // Get nickname from url params ?nn=nickname
         const nickname = new URLSearchParams(window.location.search).get('nn');
-
-        // Get user information
-        axios.get(`${API_SERVER}/users/${nickname}`, { withCredentials: true })
-            .then((response) => {
-                setUser(response.data);
-            })
-            .catch(() => {
+        if (nickname) {
+            if (authUser.nickname === nickname) {
                 // Redirect to profile page
                 navigate('/me');
-            });
-    }, []);
+                return;
+            }
+
+            // Get user information
+            axios.get(`${API_SERVER}/users/${nickname}`, { withCredentials: true })
+                .then((response) => {
+                    setUser(response.data);
+                })
+                .catch(() => {
+                    // Redirect to profile page
+                    navigate('/me');
+                });
+        }
+
+    }, [navigate, authUser.nickname]);
 
     return (
         <div className='wrapper-profile pb-5'>
@@ -50,7 +60,7 @@ function UserProfile() {
                     <Container className='d-flex mx-auto my-0 profile-content'>
                         <Row className='left-mid-block m-0 p-0'>
 
-                            <ProfileInfo user={user} />
+                            <ProfileInfo user={user} setUser={setUser} />
 
                             <Row className='profile-header w-100'>
                                 <ProfileHeader />

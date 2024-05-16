@@ -61,7 +61,7 @@ public class User {
 
     @Builder.Default
     @Column(name = "banner_color")
-    private String bannerColor = "#bdbdbd";
+    private String bannerColor = "#00b3db";
 
     @Builder.Default
     @Column(name = "is_public")

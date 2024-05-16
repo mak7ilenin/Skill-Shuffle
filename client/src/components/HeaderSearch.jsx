@@ -71,6 +71,7 @@ function HeaderSearch() {
                         onBlur={() => setSearchFocused(false)}
                         onChange={(e) => validateQuery(e.target.value)}
                         onKeyDown={handleSearch}
+                        autoFocus
                     />
                     <Form.Text className="text-muted mt-0">
                         Press Enter to search
@@ -93,7 +94,7 @@ function HeaderSearch() {
                         return (
                             <Row className='search-block__result py-2 px-3' key={person.nickname}>
                                 <Col className='d-flex align-items-center col-1'>
-                                    <Image src={person.avatar || imagePlaceholder} roundedCircle />
+                                    <Image src={person.avatarUrl || imagePlaceholder} roundedCircle />
                                 </Col>
                                 <Col className='col-2'>
                                     <p>{person.firstName} {person.lastName}</p>

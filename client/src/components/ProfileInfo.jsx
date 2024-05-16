@@ -1,6 +1,9 @@
 import React from 'react';
 import { Row, Col, Image, Button } from 'react-bootstrap';
 
+import { useAuth } from './AuthContext';
+import ProfileRelationshipButton from './ProfileRelationshipButton';
+
 import { ReactComponent as Trophy } from '../assets/icons/pointsTrophy.svg';
 import { ReactComponent as BornIn } from '../assets/icons/bornIn.svg';
 import { ReactComponent as Friends } from '../assets/icons/friendsIcon.svg';
@@ -11,7 +14,9 @@ import { ReactComponent as Calendar } from '../assets/icons/calendar.svg';
 import { HiOutlineStatusOnline } from "react-icons/hi";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function ProfileInfo({ user }) {
+function ProfileInfo({ user, setUser }) {
+    const { authUser } = useAuth();
+
     const formatJoinTimestamp = () => {
         const date = new Date(user.joinedAt);
         return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
@@ -56,8 +61,8 @@ function ProfileInfo({ user }) {
                     />
                 </Row>
 
-                <Row className='profile-info mb-4'>
-                    <p className='user-name'>{user.firstName} {user.lastName}</p>
+                <Row className='profile-info mb-3'>
+                    <p className='user-name mt-2'>{user.firstName} {user.lastName}</p>
                     <Col className='d-flex flex-row align-items-center'>
                         <p className='nickname'>@{user.nickname}</p>
                         <Trophy width={18} height={18} className='mx-2' />
@@ -92,12 +97,12 @@ function ProfileInfo({ user }) {
                 <hr className='my-1' />
 
                 <Row className='profile-bio flex-column'>
-                    {user.bio ? (
-                        <p className='p-0'>{user.bio}</p>
+                    {user.bio && <p className='p-0'>{user.bio}</p>}
+                    {authUser.nickname === user.nickname ? (
+                        <Button variant='secondary'>Edit profile</Button>
                     ) : (
-                        <p className='p-0'>User doesn't have biography</p>
+                        <ProfileRelationshipButton user={user} setUser={setUser} />
                     )}
-                    <Button variant="secondary">Edit profile</Button>
                 </Row>
             </div>
 

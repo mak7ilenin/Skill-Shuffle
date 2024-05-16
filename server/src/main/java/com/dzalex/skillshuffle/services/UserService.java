@@ -28,9 +28,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -111,6 +110,7 @@ public class UserService {
             String accessToken = helper.createAccessTokenCookie(response, userDetails);
 
             User user = userRepo.findByUsername(request.getUsername());
+            user.setLastSeen(new Timestamp(System.currentTimeMillis()));
             return JwtResponseDTO.builder()
                     .username(request.getUsername())
                     .accessToken(accessToken)
@@ -337,10 +337,10 @@ public class UserService {
         return searchedUsers;
     }
 
-    private FriendRequest getAcceptedFriendRequest(User sender, User receiver) {
-        FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverIdAndStatus(sender.getId(), receiver.getId(), FriendRequestStatus.ACCEPTED);
+    private FriendRequest getSentFriendRequest(User sender, User receiver) {
+        FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
         if (friendRequest == null) {
-            friendRequest = friendRequestRepository.findBySenderIdAndReceiverIdAndStatus(receiver.getId(), sender.getId(), FriendRequestStatus.ACCEPTED);
+            friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(receiver.getId(), sender.getId());
         }
         return friendRequest;
     }
@@ -396,8 +396,7 @@ public class UserService {
     private void acceptFriendRequest(User sender, User receiver) {
         FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
         if (friendRequest != null) {
-            friendRequest.setStatus(FriendRequestStatus.ACCEPTED);
-            friendRequestRepository.save(friendRequest);
+            friendRequestRepository.delete(friendRequest);
 
             Friendship friendship = Friendship.builder()
                     .user(sender)
@@ -413,7 +412,7 @@ public class UserService {
             friendshipRepository.delete(friendship);
 
             // Remove the accepted friend request if it exists
-            FriendRequest friendRequest = getAcceptedFriendRequest(authUser, user);
+            FriendRequest friendRequest = getSentFriendRequest(authUser, user);
             if (friendRequest != null) {
                 friendRequestRepository.delete(friendRequest);
             }
@@ -439,12 +438,13 @@ public class UserService {
     }
 
     private List<PublicUserDTO> getUserFollowers(User user) {
-        return friendRequestRepository.findAllBySenderId(user.getId()).stream()
+        return friendRequestRepository.findAllByReceiverId(user.getId()).stream()
                 .map(friendRequest -> getPublicUserDTO(friendRequest.getSender()))
                 .toList();
     }
 
     public UserProfileDTO getUserProfileData(User user) {
+        User authUser = getCurrentUser();
         List<PublicUserDTO> friends = getUserFriends(user);
         return UserProfileDTO.builder()
                 .firstName(user.getFirstName())
@@ -461,58 +461,59 @@ public class UserService {
                 .autoFollow(user.isAutoFollow())
                 .lastSeen(user.getLastSeen())
                 .joinedAt(user.getCreatedAt())
+                .relationship(getRelationshipStatus(user, authUser))
                 .followersCount(getUserFollowers(user).size())
                 .friends(friends)
                 .posts(postService.getUserPosts(user))
-                .mightKnow(getMightKnowUsers(user, friends))
-                .mutualFriends(getMutualFriends(user, friends))
+                .mightKnow(Objects.equals(authUser, user) ? getMightKnowUsers() : null)
+                .mutualFriends(!Objects.equals(authUser, user) ? getMutualFriends(user) : null)
                 .build();
     }
 
     // Get might know users for auth user, based on mutual friends and friends of friends
-    private List<SearchedUserDTO> getMightKnowUsers(User user, List<PublicUserDTO> friends) {
+    public List<SearchedUserDTO> getMightKnowUsers() {
         User authUser = getCurrentUser();
-        if (Objects.equals(user.getId(), authUser.getId())) {
-            List<SearchedUserDTO> mightKnow = new ArrayList<>();
-            friends.forEach(friend -> {
-                User friendUser = userRepo.findByNickname(friend.getNickname());
-                if (friendUser != null) {
-                    friendshipRepository.findByUserIdOrFriendId(friendUser.getId(), friendUser.getId())
-                            .forEach(friendship -> {
-                                User mightKnowUser = getFriendFromFriendship(friendship, friendUser);
-//                                if (mightKnowUser != null && !mightKnow.contains(getSearchedUserDTO(mightKnowUser, getCurrentUser()))) {
-//                                    mightKnow.add(getSearchedUserDTO(mightKnowUser, getCurrentUser()));
-//                                }
-                                if (mightKnowUser != null && !Objects.equals(mightKnowUser, authUser)) {
-                                    mightKnow.add(getSearchedUserDTO(mightKnowUser, authUser));
-                                }
-                            });
-                }
-            });
-            return mightKnow;
+        List<User> friends = friendshipRepository.findByUserIdOrFriendId(authUser.getId(), authUser.getId())
+                .stream()
+                .map(friendship -> getFriendFromFriendship(friendship, authUser))
+                .toList();
+
+        Set<User> mightKnow = new HashSet<>();
+        for (User friend : friends) {
+            List<User> friendsOfFriend = friendshipRepository.findByUserIdOrFriendId(friend.getId(), friend.getId())
+                    .stream()
+                    .filter(friendship -> !friends.contains(getFriendFromFriendship(friendship, friend)))
+                    .map(friendship -> getFriendFromFriendship(friendship, authUser))
+                    .toList();
+            mightKnow.addAll(friendsOfFriend);
         }
-        return null;
+
+        mightKnow.removeIf(user -> user.equals(authUser) || friends.contains(user));
+
+        return mightKnow.stream()
+                .map(user -> getSearchedUserDTO(user, authUser))
+                .limit(10)
+                .collect(Collectors.toList());
     }
 
     // Get mutual friends between user and auth user
-    private List<SearchedUserDTO> getMutualFriends(User user, List<PublicUserDTO> friends) {
+    public List<SearchedUserDTO> getMutualFriends(User otherUser) {
         User authUser = getCurrentUser();
-        if (!Objects.equals(user.getId(), authUser.getId())) {
-            List<SearchedUserDTO> mutualFriends = new ArrayList<>();
-            friends.forEach(friend -> {
-                User friendUser = userRepo.findByNickname(friend.getNickname());
-                if (friendUser != null) {
-                    friendshipRepository.findByUserIdOrFriendId(friendUser.getId(), friendUser.getId())
-                            .forEach(friendship -> {
-                                User mutualFriend = getFriendFromFriendship(friendship, friendUser);
-                                if (mutualFriend != null && isFriend(mutualFriend, authUser) && !mutualFriends.contains(getSearchedUserDTO(mutualFriend, getCurrentUser()))) {
-                                    mutualFriends.add(getSearchedUserDTO(mutualFriend, authUser));
-                                }
-                            });
-                }
-            });
-            return mutualFriends;
-        }
-        return null;
+
+        List<User> authUserFriends = friendshipRepository.findByUserIdOrFriendId(authUser.getId(), authUser.getId())
+                .stream()
+                .map(friendship -> getFriendFromFriendship(friendship, authUser))
+                .toList();
+
+        List<User> otherUserFriends = friendshipRepository.findByUserIdOrFriendId(otherUser.getId(), otherUser.getId())
+                .stream()
+                .map(friendship -> getFriendFromFriendship(friendship, otherUser))
+                .toList();
+
+        return authUserFriends.stream()
+                .filter(otherUserFriends::contains)
+                .filter(user -> !user.equals(authUser))
+                .map(user -> getSearchedUserDTO(user, authUser))
+                .collect(Collectors.toList());
     }
 }

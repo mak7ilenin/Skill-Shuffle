@@ -8,6 +8,7 @@ import { RiHeartAddLine } from "react-icons/ri";
 import { FaHeartBroken } from "react-icons/fa";
 import { BsFillPersonDashFill } from "react-icons/bs";
 import { BsPersonAdd } from "react-icons/bs";
+import { FaUserCheck } from "react-icons/fa6";
 
 function RelationshipButton({ user, results, setResults }) {
     const handleUserRelationshipChange = (nickname, action) => {
@@ -37,6 +38,7 @@ function RelationshipButton({ user, results, setResults }) {
             * - FaHeartBroken (Unfollow)
             * - BsFillPersonDashFill (Unfriend)
             * - BsPersonAdd (Add friend)
+            * - FaUserCheck (Accept)
             */}
             {user.relationship === 'friend' ? (
                 <OverlayTrigger
@@ -50,10 +52,10 @@ function RelationshipButton({ user, results, setResults }) {
             ) : user.relationship === 'follower' ? (
                 <OverlayTrigger
                     placement="bottom"
-                    overlay={<Tooltip id="tooltip-add-1">Accept friend request</Tooltip>}
+                    overlay={<Tooltip id="tooltip-accept">Accept friend request</Tooltip>}
                 >
                     <Button variant='none' onClick={() => handleUserRelationshipChange(user.nickname, 'add_friend')}>
-                        <BsPersonAdd size={20} />
+                        <FaUserCheck size={20} />
                     </Button>
                 </OverlayTrigger>
             ) : user.relationship === 'following' ? (
@@ -77,7 +79,7 @@ function RelationshipButton({ user, results, setResults }) {
             ) : (
                 <OverlayTrigger
                     placement="bottom"
-                    overlay={<Tooltip id="tooltip-add-2">Add friend</Tooltip>}
+                    overlay={<Tooltip id="tooltip-add">Add friend</Tooltip>}
                 >
                     <Button variant='none' onClick={() => handleUserRelationshipChange(user.nickname, 'add_friend')}>
                         <BsPersonAdd size={20} />

@@ -1445,35 +1445,35 @@ p {
 .chat-page .chat-menu .group-menu .member-list .member-action .dropdown button::after {
   display: none;
 }
-.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu-container:hover .grade-icon ~ span {
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-item:hover svg.grade-icon ~ span {
   color: #3D00FF;
 }
-.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu-container:hover .grade-icon path {
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-item:hover svg.grade-icon path {
   fill: #3D00FF;
 }
-.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu-container:hover .downgrade ~ span {
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-item:hover svg.downgrade ~ span {
   color: #E64646;
 }
-.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu-container:hover .downgrade path {
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-item:hover svg.downgrade path {
   fill: #E64646;
 }
-.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu-container:hover .cross-icon {
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-item:hover svg.cross-icon {
   color: #E64646;
 }
-.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu-container:hover .cross-icon ~ span {
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-item:hover svg.cross-icon ~ span {
   color: #E64646;
 }
-.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu-container:hover .cross-icon path {
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-item:hover svg.cross-icon path {
   fill: #E64646 !important;
 }
-.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu-container svg {
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-item:hover svg svg {
   margin-right: 7px;
 }
-.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu-container svg.cross-icon path {
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-item:hover svg svg.cross-icon path {
   fill: #000 !important;
   stroke-width: 0.4;
 }
-.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-menu-container svg.downgrade {
+.chat-page .chat-menu .group-menu .member-list .member-action .dropdown-item:hover svg svg.downgrade {
   transform: rotate(180deg);
 }
 .chat-page .chat-menu .group-menu .leave-chat-footer {
@@ -2384,16 +2384,29 @@ p {
   color: #373737;
   font-weight: 600;
 }
-.wrapper-profile .profile-info-block .profile-bio button {
+.wrapper-profile .profile-info-block .profile-bio .dropdown {
+  margin: 0;
+  padding: 0;
+}
+.wrapper-profile .profile-info-block .profile-bio button:not(.dropdown-item) {
+  width: 100%;
   font-family: "Manrope", sans-serif;
   font-weight: bold;
   margin-top: 10px;
   border: none;
-  background-color: #929292;
   color: #fff;
 }
-.wrapper-profile .profile-info-block .profile-bio button:hover {
+.wrapper-profile .profile-info-block .profile-bio button:not(.dropdown-item).btn-secondary {
+  background-color: #929292;
+}
+.wrapper-profile .profile-info-block .profile-bio button:not(.dropdown-item).btn-secondary:hover {
   background-color: #373737;
+}
+.wrapper-profile .profile-info-block .profile-bio button:not(.dropdown-item).btn-primary {
+  background-color: #3D00FF;
+}
+.wrapper-profile .profile-info-block .profile-bio button:not(.dropdown-item).btn-primary:hover {
+  background-color: #5D6BE4;
 }
 .wrapper-profile .profile-info-block .profile-links span {
   color: #373737;
@@ -2600,13 +2613,11 @@ p {
   background-color: #fff;
   border-radius: 5px;
 }
-.wrapper-profile .right-block-profile .profile-aside.might-like {
-  gap: 10px;
-}
 .wrapper-profile .right-block-profile .profile-aside .aside-header {
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 10px !important;
+  padding: 0;
 }
 .wrapper-profile .right-block-profile .profile-aside .aside-header span {
   color: #8F8F8F;
@@ -2651,10 +2662,52 @@ p {
 }
 .wrapper-profile .right-block-profile .profile-aside .user-info .name {
   color: #000;
-  font-weight: 800;
+  font-weight: 600;
+  cursor: pointer;
+}
+.wrapper-profile .right-block-profile .profile-aside .user-info .name:hover {
+  color: #3D00FF;
 }
 .wrapper-profile .right-block-profile .profile-aside .user-info .nickname {
   color: #8F8F8F;
+}
+.wrapper-profile .right-block-profile .profile-aside .friends-preview {
+  flex: 0;
+}
+.wrapper-profile .right-block-profile .profile-aside .friends-preview img,
+.wrapper-profile .right-block-profile .profile-aside .friends-preview .more-friends {
+  width: 42px;
+  height: 42px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 50%;
+  outline: 2px solid #fff;
+  outline-offset: -1px;
+}
+.wrapper-profile .right-block-profile .profile-aside .friends-preview img:nth-child(2), .wrapper-profile .right-block-profile .profile-aside .friends-preview img:nth-child(3),
+.wrapper-profile .right-block-profile .profile-aside .friends-preview .more-friends:nth-child(2),
+.wrapper-profile .right-block-profile .profile-aside .friends-preview .more-friends:nth-child(3) {
+  margin-left: -15px;
+}
+.wrapper-profile .right-block-profile .profile-aside .more-friends {
+  background-color: #8F8F8F;
+  margin-left: -15px;
+}
+.wrapper-profile .right-block-profile .profile-aside .more-friends span {
+  font-family: "Manrope", sans-serif;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+}
+.wrapper-profile .right-block-profile .profile-aside.mutual-friends .friends-info {
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #373737;
 }
 .wrapper-profile .right-block-profile .profile-aside .btn-container {
   width: -moz-fit-content;
@@ -2662,23 +2715,13 @@ p {
   flex: 0;
 }
 .wrapper-profile .right-block-profile .profile-aside .btn-container button {
-  font-family: "Manrope", sans-serif;
-  padding: 0;
-  font-size: 14px;
-  font-weight: 600;
-  min-width: 90px;
-  height: 30px;
-  background-color: #929292;
+  border: none;
 }
-@media (max-width: 1400px) {
-  .wrapper-profile .right-block-profile .profile-aside .btn-container button {
-    font-size: 12px;
-    height: 25px;
-    font-weight: 500;
-  }
+.wrapper-profile .right-block-profile .profile-aside .btn-container button svg {
+  color: #8F8F8F;
 }
-.wrapper-profile .right-block-profile .profile-aside .btn-container button:hover {
-  background-color: #373737;
+.wrapper-profile .right-block-profile .profile-aside .btn-container button:hover svg {
+  color: #3D00FF;
 }
 .wrapper-profile .show-more {
   font-size: 12px;
@@ -2691,13 +2734,11 @@ p {
 }
 .wrapper-profile .friends-online,
 .wrapper-profile .friends {
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  gap: calc((100% - 240px) / 3);
+  gap: 10px calc((100% - 300px) / 3);
+  flex-wrap: wrap;
 }
 .wrapper-profile .friend-container {
-  max-width: 60px;
+  width: 75px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2720,12 +2761,16 @@ p {
   border: 3px solid #fff;
 }
 .wrapper-profile .friend-container p {
+  width: 100%;
   font-size: 13px;
   color: #373737;
-  font-weight: 700;
+  font-weight: 600;
   padding: unset;
   margin-top: 5px !important;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .error-page {

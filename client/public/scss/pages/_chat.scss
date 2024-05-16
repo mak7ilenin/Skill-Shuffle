@@ -590,39 +590,37 @@
                             display: none;
                         }
                     }
-
-                    .dropdown-menu-container {
-                        &:hover {
-                            .grade-icon {
-                                &~span {
-                                    color: $primary-color;
-                                }
-
-                                path {
-                                    fill: $primary-color;
-                                }
+                    
+                    .dropdown-item:hover svg {
+                        &.grade-icon {
+                            &~span {
+                                color: $primary-color;
                             }
 
-                            .downgrade {
-                                &~span {
-                                    color: $red;
-                                }
-
-                                path {
-                                    fill: $red;
-                                }
+                            path {
+                                fill: $primary-color;
                             }
+                        }
 
-                            .cross-icon {
-                                &~span {
-                                    color: $red;
-                                }
-
+                        &.downgrade {
+                            &~span {
                                 color: $red;
+                            }
 
-                                path {
-                                    fill: $red !important;
-                                }
+                            path {
+                                fill: $red;
+                            }
+                        }
+
+                        &.cross-icon {
+                            &~span {
+                                color: $red;
+                            }
+
+                            color: $red;
+
+                            path {
+                                fill: $red !important;
                             }
                         }
 

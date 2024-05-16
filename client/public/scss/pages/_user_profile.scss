@@ -300,7 +300,7 @@
             svg {
                 color: $light-gray;
             }
-            
+
             @include online-icon;
         }
 
@@ -310,16 +310,33 @@
                 font-weight: 600;
             }
 
-            button {
+            .dropdown {
+                margin: 0;
+                padding: 0;
+            }
+
+            button:not(.dropdown-item) {
+                width: 100%;
                 font-family: $main-font;
                 font-weight: bold;
                 margin-top: 10px;
                 border: none;
-                background-color: $secondary-btn;
                 color: #fff;
 
-                &:hover {
-                    background-color: $dark-gray;
+                &.btn-secondary {
+                    background-color: $secondary-btn;
+
+                    &:hover {
+                        background-color: $dark-gray;
+                    }
+                }
+
+                &.btn-primary {
+                    background-color: $primary-color;
+
+                    &:hover {
+                        background-color: $primary-button;
+                    }
                 }
             }
         }
@@ -567,14 +584,11 @@
             background-color: #fff;
             border-radius: 5px;
 
-            &.might-like {
-                gap: 10px;
-            }
-
             .aside-header {
                 font-size: 20px;
                 font-weight: 700;
                 margin-bottom: 10px !important;
+                padding: 0;
 
                 span {
                     color: $light-gray;
@@ -626,7 +640,12 @@
 
                 .name {
                     color: #000;
-                    font-weight: 800;
+                    font-weight: 600;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: $primary-color;
+                    }
                 }
 
                 .nickname {
@@ -634,29 +653,80 @@
                 }
             }
 
+            .friends-preview {
+                flex: 0;
+
+                img,
+                .more-friends {
+                    width: 42px;
+                    height: 42px;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    outline: 2px solid #fff;
+                    outline-offset: -1px;
+
+                    &:nth-child(2),
+                    &:nth-child(3) {
+                        margin-left: -15px;
+                    }
+                }
+            }
+
+            .more-friends {
+                background-color: $light-gray;
+                margin-left: -15px;
+
+                span {
+                    font-family: $main-font;
+                    color: #fff;
+                    font-size: 16px;
+                    font-weight: 500;
+                    @include unselectable;
+                }
+            }
+
+            &.mutual-friends .friends-info {
+                font-family: $main-font;
+                font-size: 12px;
+                font-weight: 700;
+                color: $dark-gray;
+            }
+
             .btn-container {
                 width: fit-content;
                 flex: 0;
 
                 button {
-                    font-family: $main-font;
-                    padding: 0;
-                    font-size: 14px;
-                    font-weight: 600;
-                    min-width: 90px;
-                    height: 30px;
-                    background-color: $secondary-btn;
+                    border: none;
 
-                    @media (max-width: 1400px) {
-                        font-size: 12px;
-                        height: 25px;
-                        font-weight: 500;
+                    svg {
+                        color: $light-gray;
                     }
 
-                    &:hover {
-                        background-color: $dark-gray;
+                    &:hover svg {
+                        color: $primary-color;
                     }
                 }
+
+                // button {
+                //     font-family: $main-font;
+                //     padding: 0;
+                //     font-size: 14px;
+                //     font-weight: 600;
+                //     min-width: 90px;
+                //     height: 30px;
+                //     background-color: $secondary-btn;
+
+                //     @media (max-width: 1400px) {
+                //         font-size: 12px;
+                //         height: 25px;
+                //         font-weight: 500;
+                //     }
+
+                //     &:hover {
+                //         background-color: $dark-gray;
+                //     }
+                // }
             }
 
         }
@@ -675,14 +745,12 @@
 
     .friends-online,
     .friends {
-        display: flex;
-        align-items: center;
-        justify-content: start;
-        gap: calc((100% - 240px) / 3);
+        gap: 10px calc((100% - (75px * 4)) / 3);
+        flex-wrap: wrap;
     }
 
     .friend-container {
-        max-width: 60px;
+        width: 75px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -707,12 +775,16 @@
         }
 
         p {
+            width: 100%;
             font-size: 13px;
             color: $dark-gray;
-            font-weight: 700;
+            font-weight: 600;
             padding: unset;
             margin-top: 5px !important;
             text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     }
 }
