@@ -7,8 +7,6 @@
         height: auto;
         max-height: 420px;
         min-height: 272px;
-        // background-color: #00B3DB;
-        background-image: url('../../static/Снимок\ экрана\ 2021-07-28\ 201159.png');
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
@@ -292,10 +290,18 @@
             }
         }
 
-        .profile-statistics p {
-            color: $light-gray;
-            font-size: 13px;
-            font-weight: 500;
+        .profile-statistics {
+            p {
+                color: $light-gray;
+                font-size: 13px;
+                font-weight: 500;
+            }
+
+            svg {
+                color: $light-gray;
+            }
+            
+            @include online-icon;
         }
 
         .profile-bio {
@@ -560,6 +566,10 @@
         .profile-aside {
             background-color: #fff;
             border-radius: 5px;
+
+            &.might-like {
+                gap: 10px;
+            }
 
             .aside-header {
                 font-size: 20px;

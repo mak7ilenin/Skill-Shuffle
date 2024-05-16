@@ -34,8 +34,11 @@ p {
     width: 100%;
   }
 }
-.wrapper:has(.wrapper-profile), .wrapper:has(.chat-page) {
+.wrapper:has(.wrapper-profile), .wrapper:has(.chat-page), .wrapper:has(.error-page) {
   flex: 1;
+}
+.wrapper:has(.error-page) {
+  height: calc(100vh - 75px);
 }
 
 .container {
@@ -2111,7 +2114,6 @@ p {
   height: auto;
   max-height: 420px;
   min-height: 272px;
-  background-image: url("../../static/Снимок экрана 2021-07-28 201159.png");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -2369,6 +2371,15 @@ p {
   font-size: 13px;
   font-weight: 500;
 }
+.wrapper-profile .profile-info-block .profile-statistics svg {
+  color: #8F8F8F;
+}
+.wrapper-profile .profile-info-block .profile-statistics .online-icon {
+  width: 14px;
+  height: 14px;
+  background-color: #7FFF31;
+  border-radius: 50%;
+}
 .wrapper-profile .profile-info-block .profile-bio p {
   color: #373737;
   font-weight: 600;
@@ -2589,6 +2600,9 @@ p {
   background-color: #fff;
   border-radius: 5px;
 }
+.wrapper-profile .right-block-profile .profile-aside.might-like {
+  gap: 10px;
+}
 .wrapper-profile .right-block-profile .profile-aside .aside-header {
   font-size: 20px;
   font-weight: 700;
@@ -2716,6 +2730,7 @@ p {
 
 .error-page {
   width: 100%;
+  max-width: unset !important;
   height: 100%;
   display: flex;
   justify-content: center;

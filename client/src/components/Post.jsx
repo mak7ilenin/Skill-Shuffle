@@ -16,9 +16,10 @@ function Post({ post }) {
 
     return (
         <Row key={post.id} className='post-block position-relative flex-column p-3'>
-            <div className="post-menu-icon w-auto p-0 position-absolute">
+            {/* <div className="post-menu-icon w-auto p-0 position-absolute">
                 <PostMenu width={19} />
-            </div>
+            </div> */}
+
             <Row className='post-user d-flex justify-content-start align-items-center'>
                 <Col className='post-user-img p-0'>
                     <Image
@@ -52,16 +53,16 @@ function Post({ post }) {
                     <Like className='like-button' />
                     <p>13</p>
                 </Col>
-                <Col>
+                {/* <Col>
                     <Comment className='comment-button' />
                     <p>255</p>
                 </Col>
                 <Col>
                     <Share className='share-button' />
                     <p>400</p>
-                </Col>
+                </Col> */}
             </Row>
-            <Row className='post-input d-flex gap-2 justify-content-start align-items-center flex-row mt-3'>
+            {/* <Row className='post-input d-flex gap-2 justify-content-start align-items-center flex-row mt-3'>
                 <Col className='user-img m-0'>
                     <Image
                         src={authUser.avatarUrl ? authUser.avatarUrl : imagePlaceholder}
@@ -82,7 +83,7 @@ function Post({ post }) {
                         </Button>
                     </Row>
                 </Col>
-            </Row>
+            </Row> */}
         </Row>
     )
 }

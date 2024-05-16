@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { Form, Row, Col, Stack, Image, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Form, Row, Col, Stack, Image } from 'react-bootstrap';
 import axios from 'axios';
 
 import { API_SERVER } from '../config';
+import RelationshipButton from './RelationshipButton';
 
 import { IoIosSearch } from "react-icons/io";
 import { VscSearchStop } from "react-icons/vsc";
 import { RxCross2 } from "react-icons/rx";
-import { RiHeartAddLine } from "react-icons/ri";
-import { FaHeartBroken } from "react-icons/fa";
-import { BsFillPersonDashFill } from "react-icons/bs";
-import { BsPersonAdd } from "react-icons/bs";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function HeaderSearch() {
@@ -50,25 +47,6 @@ function HeaderSearch() {
         axios.get(`${API_SERVER}/users/search?q=${query}`, { withCredentials: true })
             .then((res) => {
                 setResults(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    };
-
-    const handleUserRelationshipChange = (nickname, action) => {
-        const user = {
-            nickname: nickname,
-            action: action
-        };
-        axios.post(`${API_SERVER}/users/relationships`, user, { withCredentials: true })
-            .then((res) => {
-                setResults(results.map(person => {
-                    if (person.nickname === nickname) {
-                        return res.data;
-                    }
-                    return person;
-                }));
             })
             .catch((err) => {
                 console.error(err);
@@ -122,59 +100,7 @@ function HeaderSearch() {
                                     <p>@{person.nickname}</p>
                                 </Col>
                                 <Col className='col-3'>
-                                    {/*
-                                    * Add the following icons to the right side of the user's name:
-                                    * - RiHeartAddLine (Follow)
-                                    * - FaHeartBroken (Unfollow)
-                                    * - BsFillPersonDashFill (Unfriend)
-                                    * - BsPersonAdd (Add friend)
-                                    */}
-                                    {person.relationship === 'friend' ? (
-                                        <OverlayTrigger
-                                            placement="bottom"
-                                            overlay={<Tooltip id="tooltip-unfriend">Unfriend</Tooltip>}
-                                        >
-                                            <Button variant='none' onClick={() => handleUserRelationshipChange(person.nickname, 'unfriend')}>
-                                                <BsFillPersonDashFill size={20} />
-                                            </Button>
-                                        </OverlayTrigger>
-                                    ) : person.relationship === 'follower' ? (
-                                        <OverlayTrigger
-                                            placement="bottom"
-                                            overlay={<Tooltip id="tooltip-add-1">Accept friend request</Tooltip>}
-                                        >
-                                            <Button variant='none' onClick={() => handleUserRelationshipChange(person.nickname, 'add_friend')}>
-                                                <BsPersonAdd size={20} />
-                                            </Button>
-                                        </OverlayTrigger>
-                                    ) : person.relationship === 'following' ? (
-                                        <OverlayTrigger
-                                            placement="bottom"
-                                            overlay={<Tooltip id="tooltip-unfollow">Cancel friend request</Tooltip>}
-                                        >
-                                            <Button variant='none' onClick={() => handleUserRelationshipChange(person.nickname, 'unfollow')}>
-                                                <FaHeartBroken size={18} />
-                                            </Button>
-                                        </OverlayTrigger>
-                                    ) : person.relationship === 'none' && person.autoFollow ? (
-                                        <OverlayTrigger
-                                            placement="bottom"
-                                            overlay={<Tooltip id="tooltip-follow">Follow</Tooltip>}
-                                        >
-                                            <Button variant='none' onClick={() => handleUserRelationshipChange(person.nickname, 'follow')}>
-                                                <RiHeartAddLine size={20} />
-                                            </Button>
-                                        </OverlayTrigger>
-                                    ) : (
-                                        <OverlayTrigger
-                                            placement="bottom"
-                                            overlay={<Tooltip id="tooltip-add-2">Add friend</Tooltip>}
-                                        >
-                                            <Button variant='none' onClick={() => handleUserRelationshipChange(person.nickname, 'add_friend')}>
-                                                <BsPersonAdd size={20} />
-                                            </Button>
-                                        </OverlayTrigger>
-                                    )}
+                                    <RelationshipButton user={person} results={results} setResults={setResults} />
                                 </Col>
                             </Row>
                         );

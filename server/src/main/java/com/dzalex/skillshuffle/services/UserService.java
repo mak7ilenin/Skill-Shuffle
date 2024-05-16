@@ -176,7 +176,11 @@ public class UserService {
     }
 
     public User getUserByNickname(String nickname) {
-        return userRepo.findByNickname(nickname);
+        User user = userRepo.findByNickname(nickname);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found!");
+        }
+        return user;
     }
 
     @Transactional
@@ -460,6 +464,55 @@ public class UserService {
                 .followersCount(getUserFollowers(user).size())
                 .friends(friends)
                 .posts(postService.getUserPosts(user))
+                .mightKnow(getMightKnowUsers(user, friends))
+                .mutualFriends(getMutualFriends(user, friends))
                 .build();
+    }
+
+    // Get might know users for auth user, based on mutual friends and friends of friends
+    private List<SearchedUserDTO> getMightKnowUsers(User user, List<PublicUserDTO> friends) {
+        User authUser = getCurrentUser();
+        if (Objects.equals(user.getId(), authUser.getId())) {
+            List<SearchedUserDTO> mightKnow = new ArrayList<>();
+            friends.forEach(friend -> {
+                User friendUser = userRepo.findByNickname(friend.getNickname());
+                if (friendUser != null) {
+                    friendshipRepository.findByUserIdOrFriendId(friendUser.getId(), friendUser.getId())
+                            .forEach(friendship -> {
+                                User mightKnowUser = getFriendFromFriendship(friendship, friendUser);
+//                                if (mightKnowUser != null && !mightKnow.contains(getSearchedUserDTO(mightKnowUser, getCurrentUser()))) {
+//                                    mightKnow.add(getSearchedUserDTO(mightKnowUser, getCurrentUser()));
+//                                }
+                                if (mightKnowUser != null && !Objects.equals(mightKnowUser, authUser)) {
+                                    mightKnow.add(getSearchedUserDTO(mightKnowUser, authUser));
+                                }
+                            });
+                }
+            });
+            return mightKnow;
+        }
+        return null;
+    }
+
+    // Get mutual friends between user and auth user
+    private List<SearchedUserDTO> getMutualFriends(User user, List<PublicUserDTO> friends) {
+        User authUser = getCurrentUser();
+        if (!Objects.equals(user.getId(), authUser.getId())) {
+            List<SearchedUserDTO> mutualFriends = new ArrayList<>();
+            friends.forEach(friend -> {
+                User friendUser = userRepo.findByNickname(friend.getNickname());
+                if (friendUser != null) {
+                    friendshipRepository.findByUserIdOrFriendId(friendUser.getId(), friendUser.getId())
+                            .forEach(friendship -> {
+                                User mutualFriend = getFriendFromFriendship(friendship, friendUser);
+                                if (mutualFriend != null && isFriend(mutualFriend, authUser) && !mutualFriends.contains(getSearchedUserDTO(mutualFriend, getCurrentUser()))) {
+                                    mutualFriends.add(getSearchedUserDTO(mutualFriend, authUser));
+                                }
+                            });
+                }
+            });
+            return mutualFriends;
+        }
+        return null;
     }
 }

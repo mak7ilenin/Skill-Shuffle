@@ -5,6 +5,7 @@ import Chat from '../pages/Chat';
 import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 import Profile from '../pages/Profile';
+import UserProfile from '../pages/UserProfile';
 import Error from '../pages/Error';
 import { useAuth } from './AuthContext';
 
@@ -14,17 +15,11 @@ function Content() {
     return (
         <div className='wrapper'>
             <Routes>
-                {authUser ? (
-                    <Route path="/messenger" element={<Chat />} />
-                ) : (
-                    <Route path="/messenger" element={<Navigate to="/sign-in" />} />
-                )}
+                <Route path="/messenger" element={authUser ? <Chat /> : <Navigate to="/sign-in" />} />
 
-                {authUser ? (
-                    <Route path="/me" element={<Profile />} />
-                ) : (
-                    <Route path="/me" element={<Navigate to="/sign-in" />} />
-                )}
+                <Route path="/me" element={authUser ? <Profile /> : <Navigate to="/sign-in" />} />
+
+                <Route path="/users" element={authUser ? <UserProfile /> : <Navigate to="/sign-in" />} />
 
                 {/* Authorization routes */}
                 <Route path="/sign-in" element={authUser ? <Navigate to="/me" /> : <SignIn />} />

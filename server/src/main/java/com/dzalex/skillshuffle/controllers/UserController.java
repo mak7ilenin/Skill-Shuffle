@@ -17,7 +17,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // Get user by nickname
+    // Get user info by nickname
     @GetMapping("/users/{nickname}")
     public UserProfileDTO getUserProfileData(@PathVariable String nickname) {
         User user = userService.getUserByNickname(nickname);
