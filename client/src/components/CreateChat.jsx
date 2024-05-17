@@ -86,7 +86,7 @@ function CreateChat({ changeMenu }) {
                         onClick={handleOpenModal}
                     />
                 </Col>
-                <Col xs>
+                <Col className='d-flex align-items-center' xs>
                     <input
                         type='text'
                         placeholder='Enter a chat name'

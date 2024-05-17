@@ -42,6 +42,11 @@
             padding: 0 24px !important;
             flex-wrap: nowrap;
 
+            .col {
+                display: flex;
+                align-items: center;
+            }
+
             .search-btn {
                 width: fit-content;
                 display: none;
@@ -577,7 +582,7 @@
                 .member-action {
                     width: fit-content;
 
-                    .dropdown button {
+                    .custom-primary-dropdown button {
                         border: none;
 
                         &:hover {
@@ -590,7 +595,7 @@
                             display: none;
                         }
                     }
-                    
+
                     .dropdown-item:hover svg {
                         &.grade-icon {
                             &~span {
@@ -1095,18 +1100,18 @@
 
                     svg {
                         &>path {
-                            fill: #ccc;
+                            fill: #d4d4d4;
                         }
 
                         &:hover {
                             &>path {
-                                fill: #b2b2b2;
+                                fill: $light-gray;
                             }
                         }
 
                         &.active {
                             &>path {
-                                fill: #b2b2b2;
+                                fill: $light-gray;
                             }
                         }
                     }

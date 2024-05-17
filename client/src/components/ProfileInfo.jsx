@@ -3,6 +3,7 @@ import { Row, Col, Image, Button } from 'react-bootstrap';
 
 import { useAuth } from './AuthContext';
 import ProfileRelationshipButton from './ProfileRelationshipButton';
+import ProfileAside from './ProfileAside';
 
 import { ReactComponent as Trophy } from '../assets/icons/pointsTrophy.svg';
 import { ReactComponent as BornIn } from '../assets/icons/bornIn.svg';
@@ -14,7 +15,7 @@ import { ReactComponent as Calendar } from '../assets/icons/calendar.svg';
 import { HiOutlineStatusOnline } from "react-icons/hi";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function ProfileInfo({ user, setUser }) {
+function ProfileInfo({ user, setUser, showAside }) {
     const { authUser } = useAuth();
 
     const formatJoinTimestamp = () => {
@@ -156,6 +157,9 @@ function ProfileInfo({ user, setUser }) {
                     </Col>
                 </Row> */}
             </div>
+
+            {showAside && <ProfileAside user={user} />}
+
         </Col>
     )
 }

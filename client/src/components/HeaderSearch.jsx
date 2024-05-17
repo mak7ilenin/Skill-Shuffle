@@ -97,7 +97,7 @@ function HeaderSearch() {
                                     <Image src={person.avatarUrl || imagePlaceholder} roundedCircle />
                                 </Col>
                                 <Col className='col-2'>
-                                    <p>{person.firstName} {person.lastName}</p>
+                                    <a href={`/users?nn=${person.nickname}`}>{person.firstName} {person.lastName}</a>
                                     <p>@{person.nickname}</p>
                                 </Col>
                                 <Col className='col-3'>
@@ -108,11 +108,9 @@ function HeaderSearch() {
                     })}
                 </Stack>
             ) : (
-                <Row className='search-block__no-result align-items-center w-100 flex-column'>
-                    <Col className='d-flex align-items-center justify-content-center flex-column'>
-                        <VscSearchStop size={85} />
-                        <p>No results <br /> found</p>
-                    </Col>
+                <Row className='search-block__no-result justify-content-center h-100 flex-column'>
+                    <VscSearchStop size={85} />
+                    <p>No results <br /> found</p>
                 </Row>
             )}
         </div>

@@ -50,7 +50,6 @@ function ProfileAside({ user }) {
                                                 <p className='nickname'>@{mightKnownUser.nickname}</p>
                                             </Col>
                                             <Col className='btn-container'>
-                                                {/* <Button variant="secondary">Add friend</Button> */}
                                                 <RelationshipButton
                                                     user={mightKnownUser}
                                                     results={mightKnowUsers}
@@ -87,7 +86,7 @@ function ProfileAside({ user }) {
                                 )}
                             </Col>
 
-                            <Col className='friends-info ms-2'>
+                            <Col className='friends-info d-flex align-self-center ms-2'>
                                 <p className='friend-name'>
                                     {user.mutualFriends.slice(0, 3).map((friend, i) => {
                                         return (

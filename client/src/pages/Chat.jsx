@@ -489,7 +489,12 @@ function Chat() {
               </label>
             </div>
 
-            <EmojiGifPicker setMessageContent={setMessageContent} sendMessage={sendMessage} />
+            <EmojiGifPicker
+              setMessageContent={setMessageContent}
+              sendMessage={sendMessage}
+              emojisVisibility={true}
+              gifsVisibility={true}
+            />
 
             <Button variant='primary-outline' className='btn-send' onClick={() => sendMessage(undefined)}>
               <Send />

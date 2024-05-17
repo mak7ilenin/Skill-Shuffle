@@ -10,9 +10,19 @@ import Post from '../components/Post';
 import ProfileInfo from '../components/ProfileInfo';
 import { API_SERVER } from '../config';
 
+function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+        width,
+        height
+    };
+}
+
 function UserProfile() {
-    const { authUser } = useAuth();
+    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+    const [showAside, setShowAside] = useState(false);
     const [user, setUser] = useState(null);
+    const { authUser } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -41,6 +51,21 @@ function UserProfile() {
 
     }, [navigate, authUser.nickname]);
 
+    useEffect(() => {
+        handleResize();
+        function handleResize() {
+            setWindowDimensions(getWindowDimensions());
+            if (windowDimensions.width > 1400 || windowDimensions.width <= 1000) {
+                setShowAside(false);
+            } else {
+                setShowAside(true);
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [windowDimensions.width]);
+
     return (
         <div className='wrapper-profile pb-5'>
             {user && (
@@ -58,23 +83,21 @@ function UserProfile() {
                     </Row>
 
                     <Container className='d-flex mx-auto my-0 profile-content'>
-                        <Row className='left-mid-block m-0 p-0'>
 
-                            <ProfileInfo user={user} setUser={setUser} />
+                        <ProfileInfo user={user} setUser={setUser} showAside={showAside} />
 
-                            <Row className='profile-header w-100'>
-                                <ProfileHeader />
-                            </Row>
-
-                            <Col className="main-block-profile tab-content">
-                                {/* {user.posts && user.posts.map(post => {
-                                    return <Post post={post} />
-                                })} */}
-                                <Post post={{ id: 1 }} />
-                            </Col>
+                        <Row className='profile-header w-100'>
+                            <ProfileHeader />
                         </Row>
 
-                        <ProfileAside user={user} />
+                        <Col className="main-block-profile tab-content">
+                            {/* {user.posts && user.posts.map(post => {
+                                    return <Post post={post} />
+                                })} */}
+                            <Post post={{ id: 1 }} />
+                        </Col>
+
+                        {!showAside && <ProfileAside user={user} />}
 
                     </Container>
                 </>

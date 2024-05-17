@@ -137,19 +137,18 @@ function Header() {
                                 <p>Profile</p>
                             </ListGroup.Item>
                             <ListGroup.Item className='more-link'>
-                                <Dropdown className='w-100 h-100 d-flex justify-content-center align-items-center'>
+                                <Dropdown bsPrefix='custom-primary-dropdown'>
                                     <Dropdown.Toggle className='w-100 h-100 border-0 p-0 d-flex align-items-center flex-row' title='More' >
                                         <More className='more-icon' />
                                         <p>More</p>
                                     </Dropdown.Toggle>
+
                                     <Dropdown.Menu>
-                                        <div className="dropdown-menu-container">
-                                            <Dropdown.Item href="#/action-1">Saved</Dropdown.Item>
+                                        {/* <Dropdown.Item href="#/action-1">Saved</Dropdown.Item>
                                             <Dropdown.Item href="#/action-2">Switch appearance</Dropdown.Item>
                                             <Dropdown.Item href="#/action-3">Report a problem</Dropdown.Item>
-                                            <Dropdown.Divider />
-                                            <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
-                                        </div>
+                                            <Dropdown.Divider /> */}
+                                        <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </ListGroup.Item>

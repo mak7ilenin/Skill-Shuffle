@@ -23,7 +23,7 @@ public class Post {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "text", nullable = false, length = 1024)
+    @Column(name = "text", nullable = false, length = 3000)
     private String text;
 
     @ColumnDefault("0")

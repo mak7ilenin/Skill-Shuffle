@@ -99,7 +99,8 @@
     &__result {
         border-bottom: 1px solid $super-light-gray;
 
-        .col-1, .col-3 {
+        .col-1,
+        .col-3 {
             width: fit-content;
             flex: 0;
             margin-right: 10px !important;
@@ -124,20 +125,22 @@
 
         .col-2 {
             flex: 1;
+            font-family: $main-font;
+
+            a {
+                text-decoration: none;
+                font-size: 16px;
+                font-weight: 500;
+                color: #000;
+
+                &:hover {
+                    color: $primary-color;
+                }
+            }
 
             p {
-                font-family: $main-font;
-
-                &:first-child {
-                    font-size: 16px;
-                    font-weight: 500;
-                    color: #000;
-                }
-
-                &:last-child {
-                    font-size: 14px;
-                    color: $light-gray;
-                }
+                font-size: 14px;
+                color: $light-gray;
             }
         }
 
@@ -147,7 +150,7 @@
         }
     }
 
-    &__no-result .col {
+    &__no-result {
         color: #C8C8C8;
 
         p {

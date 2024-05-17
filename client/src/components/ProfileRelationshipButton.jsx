@@ -32,37 +32,33 @@ function ProfileRelationshipButton({ user, setUser }) {
                     Unfriend
                 </Button>
             ) : user.relationship === 'follower' ? (
-                <Dropdown>
+                <Dropdown bsPrefix='custom-primary-dropdown'>
                     <Dropdown.Toggle variant='primary'>
                         Follows you
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu align={'end'}>
-                        <div className="dropdown-menu-container">
-                            <Dropdown.Item as={Button} onClick={() => handleUserRelationshipChange(user.nickname, 'add_friend')}>
-                                <IoPersonAddSharp size={18} />
-                                <span>Add friend</span>
-                            </Dropdown.Item>
-                            <Dropdown.Item as={Button} onClick={() => handleUserRelationshipChange(user.nickname, 'remove_follower')}>
-                                <IoBanOutline size={18} />
-                                <span>Remove from followers</span>
-                            </Dropdown.Item>
-                        </div>
+                        <Dropdown.Item as={Button} onClick={() => handleUserRelationshipChange(user.nickname, 'add_friend')}>
+                            <IoPersonAddSharp size={18} />
+                            <span>Add friend</span>
+                        </Dropdown.Item>
+                        <Dropdown.Item as={Button} onClick={() => handleUserRelationshipChange(user.nickname, 'remove_follower')}>
+                            <IoBanOutline size={18} />
+                            <span>Remove from followers</span>
+                        </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
             ) : user.relationship === 'following' ? (
-                <Dropdown>
+                <Dropdown bsPrefix='custom-primary-dropdown'>
                     <Dropdown.Toggle variant='secondary'>
                         Request sent
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu align={'end'}>
-                        <div className="dropdown-menu-container">
-                            <Dropdown.Item as={Button} onClick={() => handleUserRelationshipChange(user.nickname, 'unfollow')}>
-                                <IoBanOutline size={18} />
-                                <span>Cancel request</span>
-                            </Dropdown.Item>
-                        </div>
+                        <Dropdown.Item as={Button} onClick={() => handleUserRelationshipChange(user.nickname, 'unfollow')}>
+                            <IoBanOutline size={18} />
+                            <span>Cancel request</span>
+                        </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
             ) : user.relationship === 'none' && user.autoFollow ? (

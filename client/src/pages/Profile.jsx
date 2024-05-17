@@ -12,7 +12,17 @@ import { API_SERVER } from '../config';
 
 import { ReactComponent as EditBanner } from '../assets/icons/edit_Banner.svg';
 
+function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+        width,
+        height
+    };
+}
+
 function Profile() {
+    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+    const [showAside, setShowAside] = useState(false);
     const [user, setUser] = useState(null);
     const { authUser } = useAuth();
 
@@ -26,6 +36,21 @@ function Profile() {
                 setUser(response.data);
             });
     }, [authUser.nickname]);
+
+    useEffect(() => {
+        handleResize();
+        function handleResize() {
+            setWindowDimensions(getWindowDimensions());
+            if (windowDimensions.width > 1400 || windowDimensions.width <= 1000) {
+                setShowAside(false);
+            } else {
+                setShowAside(true);
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [windowDimensions.width]);
 
     return (
         <div className='wrapper-profile pb-5'>
@@ -48,25 +73,22 @@ function Profile() {
                     </Row>
 
                     <Container className='d-flex mx-auto my-0 profile-content'>
-                        <Row className='left-mid-block m-0 p-0'>
+                        <ProfileInfo user={user} showAside={showAside} />
 
-                            <ProfileInfo user={user} />
-
-                            <Row className='profile-header w-100'>
-                                <ProfileHeader />
-                            </Row>
-
-                            <Col className="main-block-profile tab-content">
-                                <PostEditor />
-
-                                {/* {user.posts && user.posts.map(post => {
-                                    return <Post post={post} />
-                                })} */}
-                                <Post post={{ id: 1 }} />
-                            </Col>
+                        <Row className='profile-header w-100'>
+                            <ProfileHeader />
                         </Row>
 
-                        <ProfileAside user={user} />
+                        <Col className="main-block-profile tab-content">
+                            <PostEditor />
+
+                            {/* {user.posts && user.posts.map(post => {
+                                return <Post post={post} />
+                            })} */}
+                            <Post post={{ id: 1 }} />
+                        </Col>
+
+                        {!showAside && <ProfileAside user={user} />}
 
                     </Container>
                 </>

@@ -475,7 +475,7 @@ CREATE TABLE IF NOT EXISTS `photos` (
 CREATE TABLE IF NOT EXISTS `posts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `text` varchar(1024) COLLATE utf8mb4_bin NOT NULL,
+  `text` varchar(3000) COLLATE utf8mb4_bin NOT NULL,
   `likes` int(11) NOT NULL DEFAULT 0,
   `shares` int(11) NOT NULL DEFAULT 0,
   `allow_comments` bit(1) NOT NULL DEFAULT b'1',
