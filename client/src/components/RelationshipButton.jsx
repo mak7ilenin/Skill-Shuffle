@@ -20,7 +20,10 @@ function RelationshipButton({ user, results, setResults }) {
             .then((res) => {
                 setResults(results.map(person => {
                     if (person.nickname === nickname) {
-                        return res.data;
+                        return {
+                            ...person,
+                            relationship: res.data
+                        }
                     }
                     return person;
                 }));

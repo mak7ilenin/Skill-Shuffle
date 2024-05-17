@@ -345,7 +345,7 @@ public class UserService {
         return friendRequest;
     }
 
-    public SearchedUserDTO addUserRelationship(RelationshipActionDTO relationship) {
+    public RelationshipStatus addUserRelationship(RelationshipActionDTO relationship) {
         User authUser = getCurrentUser();
         User user = getUserByNickname(relationship.getNickname());
         if (user != null) {
@@ -354,21 +354,19 @@ public class UserService {
             }
 
             switch (relationship.getAction()) {
-                case ADD_FRIEND:
-                    addFriend(authUser, user);
-                    break;
-                case UNFRIEND:
-                    removeFriend(authUser, user);
-                    break;
-                case FOLLOW:
-                    followUser(authUser, user);
-                    break;
-                case UNFOLLOW:
-                    unfollowUser(authUser, user);
-                    break;
+                case ADD_FRIEND -> addFriend(authUser, user);
+                case UNFRIEND -> removeFriend(authUser, user);
+                case FOLLOW -> followUser(authUser, user);
+                case UNFOLLOW -> unfollowUser(authUser, user);
+                case REMOVE_FOLLOWER -> {
+                    FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(user.getId(), authUser.getId());
+                    if (friendRequest != null) {
+                        friendRequestRepository.delete(friendRequest);
+                    }
+                }
             }
 
-            return getSearchedUserDTO(user, authUser);
+            return getSearchedUserDTO(user, authUser).getRelationship();
         }
 
         return null;
@@ -483,7 +481,7 @@ public class UserService {
             List<User> friendsOfFriend = friendshipRepository.findByUserIdOrFriendId(friend.getId(), friend.getId())
                     .stream()
                     .filter(friendship -> !friends.contains(getFriendFromFriendship(friendship, friend)))
-                    .map(friendship -> getFriendFromFriendship(friendship, authUser))
+                    .map(friendship -> getFriendFromFriendship(friendship, friend))
                     .toList();
             mightKnow.addAll(friendsOfFriend);
         }

@@ -384,7 +384,9 @@
     }
 
     .main-block-profile {
-        max-width: 624px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
         margin-top: 0 !important;
 
         .post-block {
@@ -786,5 +788,19 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+    }
+}
+
+.post-editor {
+    margin-bottom: 16px;
+
+    img {
+        float: left;
+        width: 35px;
+        height: 35px;
+    }
+    
+    textarea {
+        resize: vertical;
     }
 }

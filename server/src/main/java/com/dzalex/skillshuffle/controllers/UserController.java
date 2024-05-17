@@ -5,6 +5,7 @@ import com.dzalex.skillshuffle.dtos.RelationshipActionDTO;
 import com.dzalex.skillshuffle.dtos.SearchedUserDTO;
 import com.dzalex.skillshuffle.dtos.UserProfileDTO;
 import com.dzalex.skillshuffle.entities.User;
+import com.dzalex.skillshuffle.enums.RelationshipStatus;
 import com.dzalex.skillshuffle.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class UserController {
 
     // Add user relationship
     @PostMapping("/users/relationships") // Body has { "nickname": "friendNickname", "action": "add_friend"}
-    public SearchedUserDTO addUserRelationship(@RequestBody RelationshipActionDTO relationship) {
+    public RelationshipStatus addUserRelationship(@RequestBody RelationshipActionDTO relationship) {
         return userService.addUserRelationship(relationship);
     }
 }

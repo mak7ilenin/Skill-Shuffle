@@ -10,5 +10,7 @@ public enum UserRelationshipAction {
     @JsonProperty("add_friend")
     ADD_FRIEND,
     @JsonProperty("unfriend")
-    UNFRIEND
+    UNFRIEND,
+    @JsonProperty("remove_follower")
+    REMOVE_FOLLOWER
 }

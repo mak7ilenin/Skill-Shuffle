@@ -7,6 +7,7 @@ import ProfileAside from '../components/ProfileAside';
 import ProfileHeader from '../components/ProfileHeader';
 import Post from '../components/Post';
 import ProfileInfo from '../components/ProfileInfo';
+import PostEditor from '../components/PostEditor';
 import { API_SERVER } from '../config';
 
 import { ReactComponent as EditBanner } from '../assets/icons/edit_Banner.svg';
@@ -56,6 +57,8 @@ function Profile() {
                             </Row>
 
                             <Col className="main-block-profile tab-content">
+                                <PostEditor />
+
                                 {/* {user.posts && user.posts.map(post => {
                                     return <Post post={post} />
                                 })} */}

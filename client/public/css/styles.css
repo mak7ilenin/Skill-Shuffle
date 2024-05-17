@@ -2442,7 +2442,9 @@ p {
   padding: 0;
 }
 .wrapper-profile .main-block-profile {
-  max-width: 624px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   margin-top: 0 !important;
 }
 .wrapper-profile .main-block-profile .post-block {
@@ -2771,6 +2773,13 @@ p {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.post-editor {
+  max-width: 100%;
+  resize: vertical;
+  margin-bottom: 16px;
+  min-height: 135px;
 }
 
 .error-page {

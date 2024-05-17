@@ -10,13 +10,15 @@ import { IoPersonAddSharp } from "react-icons/io5";
 function ProfileRelationshipButton({ user, setUser }) {
 
     const handleUserRelationshipChange = (nickname, action) => {
-        const user = {
+        const requestUser = {
             nickname: nickname,
             action: action
         };
-        axios.post(`${API_SERVER}/users/relationships`, user, { withCredentials: true })
+        axios.post(`${API_SERVER}/users/relationships`, requestUser, { withCredentials: true })
             .then((res) => {
-                // searchDTO
+                setUser(prevUser => {
+                    return { ...prevUser, relationship: res.data }
+                });
             })
             .catch((err) => {
                 console.error(err);
