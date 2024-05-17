@@ -3,10 +3,10 @@
     overflow: hidden;
 
     .profile-banner {
-        width: 100%;
-        height: auto;
-        max-height: 420px;
-        min-height: 272px;
+        // Calculate div height, so it will automatically set height by window width with ratio 1920px X 324px
+        height: calc(0.1417 * 100vw);
+        // min-height: 272px;
+        min-height: 192px;
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;

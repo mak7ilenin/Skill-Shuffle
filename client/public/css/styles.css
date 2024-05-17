@@ -2110,10 +2110,8 @@ p {
   overflow: hidden;
 }
 .wrapper-profile .profile-banner {
-  width: 100%;
-  height: auto;
-  max-height: 420px;
-  min-height: 272px;
+  height: 14.17vw;
+  min-height: 192px;
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -2776,10 +2774,15 @@ p {
 }
 
 .post-editor {
-  max-width: 100%;
-  resize: vertical;
   margin-bottom: 16px;
-  min-height: 135px;
+}
+.post-editor img {
+  float: left;
+  width: 35px;
+  height: 35px;
+}
+.post-editor textarea {
+  resize: vertical;
 }
 
 .error-page {
