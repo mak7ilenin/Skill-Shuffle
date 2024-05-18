@@ -38,6 +38,7 @@ public class PostService {
         List<Post> posts = postRepository.findPostsByAuthorId(userId);
         return posts.stream()
                 .map(this::getPostDTO)
+                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
                 .toList();
     }
 
@@ -47,7 +48,9 @@ public class PostService {
         Post savedPost = postRepository.save(post);
 
         // Save photos to storage
-        savePostPhotos(savedPost, files);
+        if (files != null) {
+            savePostPhotos(savedPost, files);
+        }
 
         return savedPost;
     }

@@ -14,7 +14,7 @@ import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 import { RxCross1 } from "react-icons/rx";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function PostEditor({ setUser }) {
+function PostEditor({ setUser, setShow }) {
     const { authUser } = useAuth();
     const textareaRef = useRef(null);
     const [text, setText] = useState('');
@@ -85,18 +85,26 @@ function PostEditor({ setUser }) {
 
         axios.post(`${API_SERVER}/posts`, formData, config)
             .then(response => {
-                setUser(prevUser => {
-                    return {
-                        ...prevUser,
-                        posts: [response.data, ...prevUser.posts]
-                    }
-                });
+                // Check if setUser is defined
+                if (setUser) {
+                    setUser(prevUser => {
+                        return {
+                            ...prevUser,
+                            posts: [response.data, ...prevUser.posts]
+                        }
+                    });
+                }
+
                 setText('');
                 setPrivacy('public');
                 setDisableComments(false);
                 setDisableNotifications(false);
                 setFiles([]);
                 textareaRef.current.style.height = 'inherit';
+
+                if (setShow) {
+                    setShow(false);
+                }
             })
             .catch(error => {
                 console.error(error);
@@ -214,7 +222,11 @@ function PostEditor({ setUser }) {
                             </OverlayTrigger>
                         </Col>
                         <Col md='auto' className='post-editor__submit ms-3'>
-                            <Button variant='primary' type='submit'>
+                            <Button
+                                variant='primary'
+                                type='submit'
+                                disabled={text.length > 3000 || (!text && files.length === 0)}
+                            >
                                 Post
                             </Button>
                         </Col>

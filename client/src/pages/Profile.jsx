@@ -80,7 +80,7 @@ function Profile() {
                             <PostEditor setUser={setUser} />
 
                             {user.posts.length > 0 && user.posts.map(post => {
-                                return <Post post={post} />
+                                return <Post key={post.id} post={post} />
                             })}
                         </Col>
 

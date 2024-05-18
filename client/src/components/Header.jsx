@@ -6,6 +6,7 @@ import axios from 'axios';
 import { API_SERVER } from '../config';
 import { useAuth } from './AuthContext';
 import NavBlock from './NavBlock';
+import HeaderCreate from './HeaderCreate';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 import { ReactComponent as Logo } from '../assets/icons/logo.svg';
@@ -21,6 +22,7 @@ function Header() {
     const { authUser, setAuthUser } = useAuth();
     const navigate = useNavigate();
     const [navBlockVisibility, setNavBlockVisibility] = useState(false);
+    const [createModalVisibility, setCreateModalVisibility] = useState(false);
     const [opened, setOpened] = useState(false);
     const [closed, setClosed] = useState(false);
     const [compacted, setCompacted] = useState(false);
@@ -95,10 +97,10 @@ function Header() {
                     </div>
                 </div>
                 <ListGroup className='flex-grow-1'>
-                    <ListGroup.Item>
+                    {/* <ListGroup.Item>
                         <Home className='home-icon' />
                         <p>Home</p>
-                    </ListGroup.Item>
+                    </ListGroup.Item> */}
                     <ListGroup.Item onClick={handleNavClick}>
                         <Search className='search-icon' />
                         <p>Search</p>
@@ -112,11 +114,11 @@ function Header() {
                         <Chats className='chats-icon' />
                         <p>Messages</p>
                     </ListGroup.Item>
-                    <ListGroup.Item>
+                    {/* <ListGroup.Item>
                         <Notifications className='notifications-icon' />
                         <p>Notifications</p>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
+                    </ListGroup.Item> */}
+                    <ListGroup.Item onClick={() => setCreateModalVisibility(true)}>
                         <Create className='create-icon' />
                         <p>Create</p>
                     </ListGroup.Item>
@@ -157,9 +159,8 @@ function Header() {
                 </ListGroup>
             </div>
 
-            {navBlockVisibility && (
-                <NavBlock />
-            )}
+            {navBlockVisibility && <NavBlock />}
+            {createModalVisibility && <HeaderCreate show={createModalVisibility} setShow={setCreateModalVisibility} />}
         </>
     );
 }
