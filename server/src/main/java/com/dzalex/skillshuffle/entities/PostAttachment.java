@@ -24,9 +24,8 @@ public class PostAttachment {
     @JoinColumn(name = "file_id")
     private File file;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "photo_id")
-    private Photo photo;
+    @Column(name = "photo_url")
+    private String photoUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "video_id")

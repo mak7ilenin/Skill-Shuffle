@@ -32,7 +32,7 @@ public class FileService {
     public String uploadFile(MultipartFile multipartFile, String path) {
         try {
             File file = convertMultiPartFileToFile(multipartFile);
-            String fileName = generateFileName(multipartFile);
+            String fileName = generateFileName();
             uploadFileToS3Bucket(fileName, file, path);
             file.delete();
             return getFileUrlFromS3Bucket(path + fileName);
@@ -95,7 +95,7 @@ public class FileService {
         return convertedFile;
     }
 
-    private String generateFileName(MultipartFile multiPart) {
-        return new Date().getTime() + "-" + UUID.randomUUID() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
+    private String generateFileName() {
+        return new Date().getTime() + "-" + UUID.randomUUID();
     }
 }

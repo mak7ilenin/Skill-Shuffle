@@ -1,11 +1,11 @@
 package com.dzalex.skillshuffle.entities;
 
+import com.dzalex.skillshuffle.enums.PostPrivacy;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.*;
 
 import java.sql.Timestamp;
 
@@ -20,29 +20,27 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
 
     @Column(name = "text", nullable = false, length = 3000)
     private String text;
 
-    @ColumnDefault("0")
-    @Column(name = "likes", nullable = false)
-    private Integer likes;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "privacy", nullable = false)
+    private PostPrivacy privacy;
 
-    @ColumnDefault("0")
-    @Column(name = "shares", nullable = false)
-    private Integer shares;
+    @Column(name = "allow_comments")
+    private boolean allowComments = true;
 
-    @ColumnDefault("1")
-    @Column(name = "allow_comments", nullable = false)
-    private Boolean allowComments;
+    @Column(name = "allow_notifications")
+    private boolean allowNotifications = true;
 
-    @ColumnDefault("current_timestamp()")
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 
-    @ColumnDefault("current_timestamp()")
+    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Timestamp updatedAt;
 

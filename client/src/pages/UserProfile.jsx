@@ -8,6 +8,7 @@ import ProfileAside from '../components/ProfileAside';
 import ProfileHeader from '../components/ProfileHeader';
 import Post from '../components/Post';
 import ProfileInfo from '../components/ProfileInfo';
+import { IoNewspaperOutline } from "react-icons/io5";
 import { API_SERVER } from '../config';
 
 function getWindowDimensions() {
@@ -91,10 +92,14 @@ function UserProfile() {
                         </Row>
 
                         <Col className="main-block-profile tab-content">
-                            {/* {user.posts && user.posts.map(post => {
-                                    return <Post post={post} />
-                                })} */}
-                            <Post post={{ id: 1 }} />
+                            {user.posts.length > 0 ? user.posts.map(post => {
+                                return <Post post={post} />
+                            }) : (
+                                <Row className="no-posts d-flex justify-content-center align-content-center">
+                                    <IoNewspaperOutline size={90} className='no-posts-icon' />
+                                    <p className='text-center mt-1'>There are no posts here yet</p>
+                                </Row>
+                            )}
                         </Col>
 
                         {!showAside && <ProfileAside user={user} />}

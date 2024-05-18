@@ -197,7 +197,7 @@ public class ChatService {
 
     private void saveAvatarIfProvided(MultipartFile avatarBlob, Chat newChat) {
         if (avatarBlob != null) {
-            String avatarFilePath = "chats/chat-" + newChat.getId() + "/avatar/";
+            String avatarFilePath = "chats/" + newChat.getId() + "/avatar/";
             String avatarUrl = fileService.uploadFile(avatarBlob, avatarFilePath);
             if (avatarUrl != null) {
                 newChat.setAvatarUrl(avatarUrl);

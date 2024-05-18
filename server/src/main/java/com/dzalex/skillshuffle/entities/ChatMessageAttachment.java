@@ -21,9 +21,8 @@ public class ChatMessageAttachment {
     @JoinColumn(name = "message_id", nullable = false)
     private ChatMessage message;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "photo_id")
-    private Photo photo;
+    @Column(name = "photo_url")
+    private String photoUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")

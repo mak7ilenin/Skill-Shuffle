@@ -8,7 +8,7 @@ import ProfileAside from './ProfileAside';
 import { ReactComponent as Trophy } from '../assets/icons/pointsTrophy.svg';
 import { ReactComponent as BornIn } from '../assets/icons/bornIn.svg';
 import { ReactComponent as Friends } from '../assets/icons/friendsIcon.svg';
-import { ReactComponent as Subscriptions } from '../assets/icons/subscriptionsIcon.svg';
+// import { ReactComponent as Subscriptions } from '../assets/icons/subscriptionsIcon.svg';
 import { ReactComponent as Photos } from '../assets/icons/photosIcon.svg';
 import { ReactComponent as Favorite } from '../assets/icons/favorite.svg';
 import { ReactComponent as Calendar } from '../assets/icons/calendar.svg';
@@ -97,7 +97,7 @@ function ProfileInfo({ user, setUser, showAside }) {
 
                 <hr className='my-1' />
 
-                <Row className='profile-bio flex-column'>
+                <Row className='profile-bio flex-column mb-2'>
                     {user.bio && <p className='p-0'>{user.bio}</p>}
                     {authUser.nickname === user.nickname ? (
                         <Button variant='secondary'>Edit profile</Button>
@@ -109,7 +109,7 @@ function ProfileInfo({ user, setUser, showAside }) {
 
 
             <div className="second-col">
-                <Row className='profile-links flex-column mt-2'>
+                <Row className='profile-links flex-column'>
                     <Col className='d-flex flex-row mb-1 align-items-center'>
                         <Friends className='me-2' />
                         <p>
@@ -127,16 +127,16 @@ function ProfileInfo({ user, setUser, showAside }) {
                         <p>
                             <span>34</span> • <a href="/">subscriptions</a>
                         </p>
-                    </Col>
+                    </Col> */}
                     <Col className='d-flex flex-row mt-1 align-items-center'>
                         <Photos className='me-2' />
                         <p>
                             <span>7</span> • <a href="/">photos and videos</a>
                         </p>
-                    </Col> */}
+                    </Col>
                 </Row>
 
-                {/* <Row className='mt-3 profile-media'>
+                <Row className='mt-3 profile-media'>
                     <Col>
                         <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
                     </Col>
@@ -155,7 +155,7 @@ function ProfileInfo({ user, setUser, showAside }) {
                     <Col>
                         <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
                     </Col>
-                </Row> */}
+                </Row>
             </div>
 
             {showAside && <ProfileAside user={user} />}

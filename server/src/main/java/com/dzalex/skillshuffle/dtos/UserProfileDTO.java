@@ -1,6 +1,5 @@
 package com.dzalex.skillshuffle.dtos;
 
-import com.dzalex.skillshuffle.entities.Post;
 import com.dzalex.skillshuffle.enums.Gender;
 import com.dzalex.skillshuffle.enums.RelationshipStatus;
 import lombok.*;
@@ -32,7 +31,7 @@ public class UserProfileDTO {
     private Timestamp joinedAt;
     private int followersCount;
     private List<PublicUserDTO> friends;
-    private List<Post> posts;
+    private List<PostDTO> posts;
     private List<SearchedUserDTO> mightKnow;
     private List<SearchedUserDTO> mutualFriends;
 }

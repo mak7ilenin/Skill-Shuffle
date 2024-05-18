@@ -14,10 +14,7 @@ import { ReactComponent as EditBanner } from '../assets/icons/edit_Banner.svg';
 
 function getWindowDimensions() {
     const { innerWidth: width, innerHeight: height } = window;
-    return {
-        width,
-        height
-    };
+    return { width, height };
 }
 
 function Profile() {
@@ -80,12 +77,11 @@ function Profile() {
                         </Row>
 
                         <Col className="main-block-profile tab-content">
-                            <PostEditor />
+                            <PostEditor setUser={setUser} />
 
-                            {/* {user.posts && user.posts.map(post => {
+                            {user.posts.length > 0 && user.posts.map(post => {
                                 return <Post post={post} />
-                            })} */}
-                            <Post post={{ id: 1 }} />
+                            })}
                         </Col>
 
                         {!showAside && <ProfileAside user={user} />}
