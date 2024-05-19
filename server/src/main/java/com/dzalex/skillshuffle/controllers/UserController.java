@@ -41,6 +41,6 @@ public class UserController {
     // Add user relationship
     @PostMapping("/users/relationships") // Body has { "nickname": "friendNickname", "action": "add_friend"}
     public RelationshipStatus addUserRelationship(@RequestBody RelationshipActionDTO relationship) {
-        return userService.addUserRelationship(relationship);
+        return userService.changeUserRelationship(relationship);
     }
 }

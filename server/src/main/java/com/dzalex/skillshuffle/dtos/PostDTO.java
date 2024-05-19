@@ -17,6 +17,9 @@ public class PostDTO {
     private PublicUserDTO author;
     private String text;
     private PostPrivacy privacy;
+    private int likesCount;
+    private int commentsCount;
+    private int sharesCount;
     private boolean allowComments;
     private boolean allowNotifications;
     private List<PostAttachment> attachments;

@@ -3,9 +3,9 @@ package com.dzalex.skillshuffle.services;
 import com.dzalex.skillshuffle.dtos.PostDTO;
 import com.dzalex.skillshuffle.entities.Post;
 import com.dzalex.skillshuffle.entities.PostAttachment;
-import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.repositories.PostAttachmentRepository;
 import com.dzalex.skillshuffle.repositories.PostRepository;
+import com.dzalex.skillshuffle.repositories.UserPostInteractionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,9 @@ public class PostService {
 
     @Autowired
     private PostAttachmentRepository postAttachmentRepository;
+
+    @Autowired
+    private UserPostInteractionRepository userPostInteractionRepository;
 
     @Autowired
     private FileService fileService;
@@ -75,6 +78,24 @@ public class PostService {
         }
     }
 
+    // Like post
+    public void likePost(Integer postId, boolean like) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post != null) {
+            post.setLikesCount(post.getLikesCount() + 1);
+            postRepository.save(post);
+        }
+    }
+
+    // Share post
+    public void sharePost(Integer postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post != null) {
+            post.setSharesCount(post.getSharesCount() + 1);
+            postRepository.save(post);
+        }
+    }
+
     // Convert post to DTO
     public PostDTO getPostDTO(Post post) {
         List<PostAttachment> attachments = postAttachmentRepository.findPostAttachmentsByPostId(post.getId());
@@ -83,6 +104,9 @@ public class PostService {
                 .author(userService.getPublicUserDTO(post.getAuthor()))
                 .text(post.getText())
                 .privacy(post.getPrivacy())
+                .likesCount(post.getLikesCount())
+                .commentsCount(post.getCommentsCount())
+                .sharesCount(post.getSharesCount())
                 .allowComments(post.isAllowComments())
                 .allowNotifications(post.isAllowNotifications())
                 .attachments(attachments)

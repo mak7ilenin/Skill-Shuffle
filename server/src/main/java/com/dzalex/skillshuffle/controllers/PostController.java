@@ -30,4 +30,17 @@ public class PostController {
 
         return postService.createPost(post, files);
     }
+
+    // Like/unlike post
+    @PostMapping("/posts/{postId}/like")
+    public void likePost(@PathVariable Integer postId,
+                         @RequestParam(name = "like") boolean like) {
+        postService.likePost(postId, like);
+    }
+
+    // Share post
+    @PostMapping("/posts/{postId}/share")
+    public void sharePost(@PathVariable Integer postId) {
+        postService.sharePost(postId);
+    }
 }

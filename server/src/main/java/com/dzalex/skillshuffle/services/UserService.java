@@ -4,10 +4,7 @@ import com.dzalex.skillshuffle.dtos.*;
 import com.dzalex.skillshuffle.entities.*;
 import com.dzalex.skillshuffle.enums.FriendRequestStatus;
 import com.dzalex.skillshuffle.enums.RelationshipStatus;
-import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
-import com.dzalex.skillshuffle.repositories.FriendRequestRepository;
-import com.dzalex.skillshuffle.repositories.FriendshipRepository;
-import com.dzalex.skillshuffle.repositories.UserRepository;
+import com.dzalex.skillshuffle.repositories.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,12 +57,15 @@ public class UserService {
     private FriendshipRepository friendshipRepository;
 
     @Autowired
-    private FileService fileService;
+    private UserFollowerRepository userFollowerRepository;
 
-    private MessageService messageService;
+    @Autowired
+    private FileService fileService;
 
     @Autowired
     private PostService postService;
+
+    private MessageService messageService;
 
     @Autowired
     @Lazy
@@ -261,11 +261,11 @@ public class UserService {
     }
 
     public boolean isFollowed(User user, User authUser) {
-        return friendRequestRepository.findBySenderIdAndReceiverId(authUser.getId(), user.getId()) != null;
+        return userFollowerRepository.findByUserIdAndFollowerId(authUser.getId(), user.getId()) != null;
     }
 
     public boolean isFollower(User user, User authUser) {
-        return friendRequestRepository.findBySenderIdAndReceiverId(user.getId(), authUser.getId()) != null;
+        return userFollowerRepository.findByUserIdAndFollowerId(user.getId(), authUser.getId()) != null;
     }
 
     private RelationshipStatus getRelationshipStatus(User user, User authUser) {
@@ -337,15 +337,20 @@ public class UserService {
         return searchedUsers;
     }
 
-    private FriendRequest getSentFriendRequest(User sender, User receiver) {
+    private FriendRequest getFriendRequest(User sender, User receiver) {
         FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
         if (friendRequest == null) {
             friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(receiver.getId(), sender.getId());
         }
+
+        if (friendRequest == null) {
+            throw new IllegalArgumentException("Friend request not found!");
+        }
+
         return friendRequest;
     }
 
-    public RelationshipStatus addUserRelationship(RelationshipActionDTO relationship) {
+    public RelationshipStatus changeUserRelationship(RelationshipActionDTO relationship) {
         User authUser = getCurrentUser();
         User user = getUserByNickname(relationship.getNickname());
         if (user != null) {
@@ -358,12 +363,8 @@ public class UserService {
                 case UNFRIEND -> removeFriend(authUser, user);
                 case FOLLOW -> followUser(authUser, user);
                 case UNFOLLOW -> unfollowUser(authUser, user);
-                case REMOVE_FOLLOWER -> {
-                    FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(user.getId(), authUser.getId());
-                    if (friendRequest != null) {
-                        friendRequestRepository.delete(friendRequest);
-                    }
-                }
+                case REMOVE_FOLLOWER -> removeFollower(authUser, user);
+                case IGNORE -> ignoreFriendRequest(user, authUser);
             }
 
             return getSearchedUserDTO(user, authUser).getRelationship();
@@ -392,53 +393,74 @@ public class UserService {
     }
 
     private void acceptFriendRequest(User sender, User receiver) {
-        FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
-        if (friendRequest != null) {
-            friendRequestRepository.delete(friendRequest);
+        // Remove the friend request
+        friendRequestRepository.delete(getFriendRequest(sender, receiver));
 
-            Friendship friendship = Friendship.builder()
-                    .user(sender)
-                    .friend(receiver)
-                    .build();
-            friendshipRepository.save(friendship);
+        // Remove the follower from the user's followers
+        UserFollower userFollower = userFollowerRepository.findByUserIdAndFollowerId(receiver.getId(), sender.getId());
+        if (userFollower != null) {
+            userFollowerRepository.delete(userFollower);
         }
+
+        // Create the friendship
+        Friendship friendship = Friendship.builder()
+                .user(sender)
+                .friend(receiver)
+                .build();
+        friendshipRepository.save(friendship);
+    }
+
+    private void ignoreFriendRequest(User sender, User receiver) {
+        FriendRequest friendRequest = getFriendRequest(sender, receiver);
+        friendRequest.setStatus(FriendRequestStatus.IGNORED);
+        friendRequestRepository.save(friendRequest);
     }
 
     private void removeFriend(User authUser, User user) {
+        // Remove the friendship
         Friendship friendship = getFriendship(user, authUser);
         if (friendship != null) {
             friendshipRepository.delete(friendship);
-
-            // Remove the accepted friend request if it exists
-            FriendRequest friendRequest = getSentFriendRequest(authUser, user);
-            if (friendRequest != null) {
-                friendRequestRepository.delete(friendRequest);
-            }
         }
     }
 
     private void followUser(User authUser, User user) {
         if (!isFollowed(user, authUser)) {
-            FriendRequest friendRequest = FriendRequest.builder()
-                    .sender(authUser)
-                    .receiver(user)
-                    .status(FriendRequestStatus.PENDING)
-                    .build();
-            friendRequestRepository.save(friendRequest);
+            userFollowerRepository.save(UserFollower.builder()
+                    .user(user)
+                    .follower(authUser)
+                    .build());
+        }
+
+        if (!user.isAutoFollow()) {
+            sendFriendRequest(authUser, user);
         }
     }
 
     private void unfollowUser(User authUser, User user) {
-        FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(authUser.getId(), user.getId());
-        if (friendRequest != null) {
-            friendRequestRepository.delete(friendRequest);
+        // Remove sent friend request
+        friendRequestRepository.delete(getFriendRequest(authUser, user));
+
+        // Remove the follower from the user's followers
+        UserFollower userFollower = userFollowerRepository.findByUserIdAndFollowerId(user.getId(), authUser.getId());
+        if (userFollower != null) {
+            userFollowerRepository.delete(userFollower);
+        }
+    }
+
+    private void removeFollower(User authUser, User user) {
+        // Remove the follower from the user's followers
+        UserFollower userFollower = userFollowerRepository.findByUserIdAndFollowerId(authUser.getId(), user.getId());
+        if (userFollower != null) {
+            userFollowerRepository.delete(userFollower);
         }
     }
 
     private List<PublicUserDTO> getUserFollowers(User user) {
-        return friendRequestRepository.findAllByReceiverId(user.getId()).stream()
-                .map(friendRequest -> getPublicUserDTO(friendRequest.getSender()))
-                .toList();
+        return userFollowerRepository.findAllByUserId(user.getId())
+                .stream()
+                .map(userFollower -> getPublicUserDTO(userFollower.getFollower()))
+                .collect(Collectors.toList());
     }
 
     public UserProfileDTO getUserProfileData(User user) {

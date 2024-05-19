@@ -30,6 +30,15 @@ public class Post {
     @Column(name = "privacy", nullable = false)
     private PostPrivacy privacy;
 
+    @Column(name = "likes_count", length = 7)
+    private int likesCount = 0;
+
+    @Column(name = "comments_count", length = 7)
+    private int commentsCount = 0;
+
+    @Column(name = "shares_count", length = 7)
+    private int sharesCount = 0;
+
     @Column(name = "allow_comments")
     private boolean allowComments = true;
 

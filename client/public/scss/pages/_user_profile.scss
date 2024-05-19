@@ -428,10 +428,17 @@
         .post-info {
             padding-right: 40px !important;
 
-            a {
+            p {
                 font-weight: 700;
-                color: #000;
-                text-decoration: none;
+
+                a {
+                    text-decoration: none;
+                    color: #000;
+
+                    &:hover {
+                        color: $primary-color;
+                    }
+                }
 
                 span {
                     color: $light-gray;
@@ -466,8 +473,6 @@
     }
 
     .post-content {
-        width: fit-content;
-
         p {
             padding: 0;
             color: $dark-gray;
@@ -477,10 +482,10 @@
 
         &:not(:has(p)) .post-attachments {
             margin-top: 0;
-            
+
             &[data-size='1'] {
                 display: unset !important;
-                
+
                 .post-attachment {
                     width: 100%;
                     object-fit: cover;
@@ -494,6 +499,12 @@
             margin-top: 10px;
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: auto;
+            position: relative;
+
+            &:has(.post-attachments-loading) {
+                width: 100%;
+                display: unset !important;
+            }
 
             @media (max-width: 800px) {
                 grid-template-columns: repeat(1, 1fr);
@@ -515,12 +526,10 @@
         justify-content: flex-start;
         gap: 22px;
 
-        div {
+        .col {
             flex: 0;
             width: fit-content;
             display: flex;
-            justify-content: flex-start;
-            cursor: pointer;
 
             p {
                 margin-left: 6px !important;
@@ -532,10 +541,9 @@
     .like-button {
         cursor: pointer;
         padding: 0;
-        transition: transform 0.2s ease-in-out;
     }
 
-    .like-button:active {
+    .like-button:active svg {
         animation: pulse 0.3s ease-in-out;
         fill: $primary-color;
 
