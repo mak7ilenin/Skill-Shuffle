@@ -13,7 +13,6 @@ import com.dzalex.skillshuffle.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -56,6 +55,12 @@ public class PostService {
 
         // Convert posts to DTOs and set reposted flag
         return posts.stream()
+                .peek(post -> {
+                    UserPostInteraction interaction = userPostInteractionService.getPostWithRepostedInteraction(user.getId(), post.getId());
+                    if (interaction != null) {
+                        post.setCreatedAt(interaction.getCreatedAt());
+                    }
+                })
                 .map(this::getPostDTO)
                 .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
                 .toList();
@@ -180,6 +185,7 @@ public class PostService {
 
     // Convert post to DTO
     public PostDTO getPostDTO(Post post) {
+        User user = userService.getCurrentUser();
         List<PostAttachment> attachments = postAttachmentRepository.findPostAttachmentsByPostId(post.getId());
         return PostDTO.builder()
                 .id(post.getId())
@@ -189,9 +195,9 @@ public class PostService {
                 .likesCount(post.getLikesCount())
                 .commentsCount(post.getCommentsCount())
                 .sharesCount(post.getSharesCount())
-                .liked(userPostInteractionService.isPostLikedByUser(post.getId(), userService.getCurrentUser().getId()))
-                .reposted(userPostInteractionService.isPostRepostedByUser(post.getId(), userService.getCurrentUser().getId()))
-                .bookmarked(userPostInteractionService.isPostSavedByUser(post.getId(), userService.getCurrentUser().getId()))
+                .liked(userPostInteractionService.isPostLikedByUser(post.getId(), user.getId()))
+                .reposted(userPostInteractionService.isPostRepostedByUser(post.getId(), user.getId()) && !post.getAuthor().equals(user))
+                .bookmarked(userPostInteractionService.isPostSavedByUser(post.getId(), user.getId()))
                 .allowComments(post.isAllowComments())
                 .allowNotifications(post.isAllowNotifications())
                 .attachments(attachments.stream()

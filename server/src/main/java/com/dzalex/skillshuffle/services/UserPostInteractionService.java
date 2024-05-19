@@ -22,7 +22,7 @@ public class UserPostInteractionService {
         UserPostInteraction userPostInteraction = new UserPostInteraction();
         userPostInteraction.setUser(user);
         userPostInteraction.setPost(post);
-        userPostInteraction.setInteractionType(InteractionType.LIKED);
+        userPostInteraction.setInteractionType(interactionType);
         userPostInteractionRepository.save(userPostInteraction);
     }
 

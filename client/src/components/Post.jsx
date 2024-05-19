@@ -14,7 +14,7 @@ import { ReactComponent as Calendar } from '../assets/icons/calendar.svg';
 import { BiRepost } from "react-icons/bi";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg'
 
-function Post({ post, setPosts }) {
+function Post({ post, setPosts, setUser }) {
     const { authUser } = useAuth();
     const [loadedImages, setLoadedImages] = useState(0);
     const [liked, setLiked] = useState(post.liked);
@@ -44,6 +44,15 @@ function Post({ post, setPosts }) {
         return date.toLocaleDateString('en-GB', { year: 'numeric', day: 'numeric', month: 'long' });
     };
 
+    const formatText = () => {
+        return post.text.split('\n').map((line, index) => (
+            <React.Fragment key={index}>
+                {line}
+                <br />
+            </React.Fragment>
+        ));
+    };
+
     const handlePostLike = (post) => {
         axios.post(`${API_SERVER}/posts/${post.id}/like`, {}, { withCredentials: true })
             .then(() => {
@@ -59,6 +68,15 @@ function Post({ post, setPosts }) {
                     return prevPost;
                 }));
                 setLiked(!liked);
+
+                if (setUser) {
+                    setUser(prevUser => {
+                        return {
+                            ...prevUser,
+                            likedPostsCount: liked ? prevUser.likedPostsCount - 1 : prevUser.likedPostsCount + 1
+                        };
+                    });
+                }
             })
             .catch((error) => {
                 console.error(error);
@@ -72,6 +90,18 @@ function Post({ post, setPosts }) {
 
     const handlePostShare = () => {
         axios.post(`${API_SERVER}/posts/${post.id}/share`, {}, { withCredentials: true })
+            .then(() => {
+                // Update shares count on post
+                setPosts(prevPosts => prevPosts.map(prevPost => {
+                    if (prevPost.id === post.id) {
+                        return {
+                            ...prevPost,
+                            sharesCount: prevPost.sharesCount + 1
+                        };
+                    }
+                    return prevPost;
+                }));
+            })
             .catch((error) => {
                 console.error(error);
             });
@@ -113,7 +143,7 @@ function Post({ post, setPosts }) {
                 </Col>
             </Row>
             <Row className='post-content p-0'>
-                {post.text && <p>{post.text}</p>}
+                <p>{formatText()}</p>
 
                 {post.attachments && post.attachments.length > 0 && (
                     <Stack data-size={post.attachments.length} className='post-attachments d-grid' gap={2}>

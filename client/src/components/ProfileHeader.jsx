@@ -63,7 +63,7 @@ function ProfileHeader({ type, user, setPosts }) {
                     title={
                         <>
                             <p className='tab-name'>Bookmarks</p>
-                            <p className='tab-counter'>13</p>
+                            <p className='tab-counter'>{user.bookmarkedPostsCount}</p>
                         </>
                     }
                 />

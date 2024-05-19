@@ -14,7 +14,7 @@ import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 import { RxCross1 } from "react-icons/rx";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function PostEditor({ setUser, setShow }) {
+function PostEditor({ setPosts, setUser, setShow }) {
     const { authUser } = useAuth();
     const textareaRef = useRef(null);
     const [text, setText] = useState('');
@@ -23,10 +23,19 @@ function PostEditor({ setUser, setShow }) {
     const [disableNotification, setDisableNotifications] = useState(false);
     const [files, setFiles] = useState([]);
 
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            setText(prevText => `${prevText}\n`);
+            textareaRef.current.style.height = "inherit";
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+        }
+    }
+
     const handleChange = (e) => {
         setText(e.target.value)
-        e.target.style.height = "inherit";
-        e.target.style.height = `${e.target.scrollHeight}px`;
+        textareaRef.current.style.height = "inherit";
+        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     };
 
     const onDrop = useCallback(acceptedFiles => {
@@ -85,12 +94,15 @@ function PostEditor({ setUser, setShow }) {
 
         axios.post(`${API_SERVER}/posts`, formData, config)
             .then(response => {
-                // Check if setUser is defined
+                if (setPosts) {
+                    setPosts(prevPosts => [response.data, ...prevPosts]);
+                }
+
                 if (setUser) {
                     setUser(prevUser => {
                         return {
                             ...prevUser,
-                            posts: [response.data, ...prevUser.posts]
+                            postsCount: prevUser.postsCount + 1
                         }
                     });
                 }
@@ -149,6 +161,7 @@ function PostEditor({ setUser, setShow }) {
                         as="textarea"
                         placeholder="What's new?"
                         onChange={handleChange}
+                        onKeyDown={handleKeyPress}
                         value={text}
                         maxLength={3000}
                         ref={textareaRef}

@@ -83,10 +83,10 @@ function Profile() {
                         )}
 
                         <Col className="main-block-profile tab-content">
-                            <PostEditor setUser={setUser} />
+                            <PostEditor setPosts={setPosts} setUser={setUser} />
 
                             {posts && posts.length > 0 && posts.map(post => {
-                                return <Post key={post.id} post={post} setPosts={setPosts} />
+                                return <Post key={post.id} post={post} setPosts={setPosts} setUser={setUser} />
                             })}
                         </Col>
 
