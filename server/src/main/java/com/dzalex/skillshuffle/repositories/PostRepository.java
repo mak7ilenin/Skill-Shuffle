@@ -9,4 +9,5 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Post findPostById(Integer id);
     void deletePostById(Integer id);
     List<Post> findAllPostsByAuthorId(Integer userId);
+    int countPostsByAuthorId(Integer id);
 }

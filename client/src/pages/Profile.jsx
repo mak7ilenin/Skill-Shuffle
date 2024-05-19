@@ -67,21 +67,25 @@ function Profile() {
                         </Button>
                     </Row>
 
-                    <Row className='profile-header native w-100'>
-                        <ProfileHeader />
-                    </Row>
+                    {windowDimensions.width > 1000 && (
+                        <Row className='profile-header native w-100'>
+                            <ProfileHeader type={'MY_PROFILE'} user={user} setPosts={setPosts} />
+                        </Row>
+                    )}
 
                     <Container className='d-flex mx-auto my-0 profile-content'>
                         <ProfileInfo user={user} showAside={showAside} />
 
-                        <Row className='profile-header w-100'>
-                            <ProfileHeader />
-                        </Row>
+                        {windowDimensions.width <= 1000 && (
+                            <Row className='profile-header w-100'>
+                                <ProfileHeader type={'MY_PROFILE'} user={user} setPosts={setPosts} />
+                            </Row>
+                        )}
 
                         <Col className="main-block-profile tab-content">
                             <PostEditor setUser={setUser} />
 
-                            {posts.length > 0 && posts.map(post => {
+                            {posts && posts.length > 0 && posts.map(post => {
                                 return <Post key={post.id} post={post} setPosts={setPosts} />
                             })}
                         </Col>

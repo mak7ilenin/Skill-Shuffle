@@ -81,20 +81,24 @@ function UserProfile() {
                         }
                     />
 
-                    <Row className='profile-header native w-100'>
-                        <ProfileHeader />
-                    </Row>
+                    {windowDimensions.width > 1000 && (
+                        <Row className='profile-header native w-100'>
+                            <ProfileHeader type={'USER_PROFILE'} user={user} setPosts={setPosts} />
+                        </Row>
+                    )}
 
                     <Container className='d-flex mx-auto my-0 profile-content'>
 
                         <ProfileInfo user={user} setUser={setUser} showAside={showAside} />
 
-                        <Row className='profile-header w-100'>
-                            <ProfileHeader />
-                        </Row>
+                        {windowDimensions.width <= 1000 && (
+                            <Row className='profile-header w-100'>
+                                <ProfileHeader type={'USER_PROFILE'} user={user} setPosts={setPosts} />
+                            </Row>
+                        )}
 
                         <Col className="main-block-profile tab-content">
-                            {posts.length > 0 ? posts.map(post => {
+                            {posts && posts.length > 0 ? posts.map(post => {
                                 return <Post key={post.id} post={post} setPosts={setPosts} />
                             }) : (
                                 <Row className="no-posts d-flex justify-content-center align-content-center">

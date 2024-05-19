@@ -484,7 +484,8 @@ public class UserService {
                 .relationship(getRelationshipStatus(user, authUser))
                 .followersCount(getUserFollowers(user).size())
                 .friends(friends)
-                .posts(postService.getUserPosts(user.getId()))
+                .postsCount(postService.getUserPostsCount(user))
+                .likedPostsCount(postService.getUserLikedPostsCount(user))
                 .mightKnow(Objects.equals(authUser, user) ? getMightKnowUsers() : null)
                 .mutualFriends(!Objects.equals(authUser, user) ? getMutualFriends(user) : null)
                 .build();

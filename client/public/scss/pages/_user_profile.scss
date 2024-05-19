@@ -1,11 +1,8 @@
 .wrapper-profile {
     height: fit-content;
-    // overflow: hidden;
 
     .profile-banner {
-        // Calculate div height, so it will automatically set height by window width with ratio 1920px X 324px
         height: calc(0.1417 * 100vw);
-        // min-height: 272px;
         min-height: 192px;
         background-position: center;
         background-size: cover;
@@ -30,7 +27,6 @@
         }
 
         &:not(.native) {
-            display: none;
             margin: 20px 0 !important;
 
             @media (max-width: 520px) {

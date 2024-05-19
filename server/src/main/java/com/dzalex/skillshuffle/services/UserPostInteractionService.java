@@ -32,7 +32,6 @@ public class UserPostInteractionService {
     }
 
     // Get reposted posts
-    @Transactional
     public List<Post> getRepostedPosts(Integer userId) {
         List<UserPostInteraction> interactions = userPostInteractionRepository.findAllByUserIdAndInteractionType(userId, InteractionType.REPOSTED);
         return interactions.stream()
@@ -51,18 +50,23 @@ public class UserPostInteractionService {
     }
 
     // Get post with LIKED interaction
-    public UserPostInteraction getPostLikedInteraction(Integer userId, Integer postId) {
+    public UserPostInteraction getPostWithLikedInteraction(Integer userId, Integer postId) {
         return getUserPostInteractions(userId, postId).stream()
                 .filter(interaction -> interaction.getInteractionType() == InteractionType.LIKED)
                 .findFirst()
                 .orElse(null);
     }
 
-    // Get post with REPOSTED interaction
-    public UserPostInteraction getPostRepostedInteraction(Integer userId, Integer postId) {
-        return getUserPostInteractions(userId, postId).stream()
-                .filter(interaction -> interaction.getInteractionType() == InteractionType.REPOSTED)
-                .findFirst()
-                .orElse(null);
+    // Get all posts liked by user
+    public List<Post> getPostsWithLikedInteraction(Integer userId) {
+        List<UserPostInteraction> interactions = userPostInteractionRepository.findAllByUserIdAndInteractionType(userId, InteractionType.LIKED);
+        return interactions.stream()
+                .map(UserPostInteraction::getPost)
+                .toList();
+    }
+
+    // Get liked posts count
+    public int getPostsCountWithLikedInteraction(Integer userId) {
+        return userPostInteractionRepository.countAllByUserIdAndInteractionType(userId, InteractionType.LIKED);
     }
 }

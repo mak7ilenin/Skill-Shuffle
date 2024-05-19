@@ -31,7 +31,8 @@ public class UserProfileDTO {
     private Timestamp joinedAt;
     private int followersCount;
     private List<PublicUserDTO> friends;
-    private List<PostDTO> posts;
+    private int postsCount;
+    private int likedPostsCount;
     private List<SearchedUserDTO> mightKnow;
     private List<SearchedUserDTO> mutualFriends;
 }

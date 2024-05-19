@@ -10,4 +10,5 @@ public interface UserPostInteractionRepository extends JpaRepository<UserPostInt
     List<UserPostInteraction> findAllByPostIdAndUserId(Integer postId, Integer userId);
     boolean existsByPostIdAndUserIdAndInteractionType(Integer postId, Integer userId, InteractionType type);
     List<UserPostInteraction> findAllByUserIdAndInteractionType(Integer userId, InteractionType interactionType);
+    int countAllByUserIdAndInteractionType(Integer userId, InteractionType interactionType);
 }

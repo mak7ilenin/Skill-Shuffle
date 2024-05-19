@@ -1,7 +1,9 @@
 package com.dzalex.skillshuffle.controllers;
 
+import com.dzalex.skillshuffle.dtos.PostDTO;
 import com.dzalex.skillshuffle.entities.Post;
 import com.dzalex.skillshuffle.services.PostService;
+import com.dzalex.skillshuffle.services.UserPostInteractionService;
 import com.dzalex.skillshuffle.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +21,12 @@ public class PostController {
 
     @Autowired
     private UserService userService;
+
+    // Get user posts
+    @GetMapping("/posts")
+    public List<PostDTO> getUserPosts(@RequestParam("nickname") String nickname) {
+        return postService.getUserPosts(nickname);
+    }
 
     // Create post
     @PostMapping("/posts")
@@ -41,5 +49,11 @@ public class PostController {
     @PostMapping("/posts/{postId}/share")
     public void sharePost(@PathVariable Integer postId) {
         postService.sharePost(postId);
+    }
+
+    // Get liked posts
+    @GetMapping("/posts/liked")
+    public List<PostDTO> getLikedPosts(@RequestParam("nickname") String nickname) {
+        return postService.getLikedPosts(nickname);
     }
 }

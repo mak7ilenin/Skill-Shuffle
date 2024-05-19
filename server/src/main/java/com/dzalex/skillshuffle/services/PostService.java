@@ -42,13 +42,14 @@ public class PostService {
     }
 
     // Get user posts
-    @Transactional
-    public List<PostDTO> getUserPosts(Integer userId) {
+    public List<PostDTO> getUserPosts(String nickname) {
+        User user = userService.getUserByNickname(nickname);
+
         // Get all posts by user
-        List<Post> posts = postRepository.findAllPostsByAuthorId(userId);
+        List<Post> posts = postRepository.findAllPostsByAuthorId(user.getId());
 
         // Get posts that reposted by user
-        List<Post> repostedPosts = userPostInteractionService.getRepostedPosts(userId);
+        List<Post> repostedPosts = userPostInteractionService.getRepostedPosts(user.getId());
 
         // Add reposted posts to user posts
         posts.addAll(repostedPosts);
@@ -103,7 +104,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
-        UserPostInteraction interaction = userPostInteractionService.getPostLikedInteraction(user.getId(), postId);
+        UserPostInteraction interaction = userPostInteractionService.getPostWithLikedInteraction(user.getId(), postId);
         if (interaction == null) {
             // Like post
             userPostInteractionService.createUserPostInteraction(user, post, InteractionType.LIKED);
@@ -134,6 +135,22 @@ public class PostService {
 
         // Set post as REPOSTED
         userPostInteractionService.createUserPostInteraction(user, post, InteractionType.REPOSTED);
+    }
+
+    // Get liked posts
+    public List<PostDTO> getLikedPosts(String nickname) {
+        User user = userService.getUserByNickname(nickname);
+        return userPostInteractionService.getPostsWithLikedInteraction(user.getId()).stream()
+                .map(this::getPostDTO)
+                .toList();
+    }
+
+    public int getUserPostsCount(User user) {
+        return postRepository.countPostsByAuthorId(user.getId());
+    }
+
+    public int getUserLikedPostsCount(User user) {
+        return userPostInteractionService.getPostsCountWithLikedInteraction(user.getId());
     }
 
     // Convert post to DTO
