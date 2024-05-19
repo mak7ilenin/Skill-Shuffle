@@ -456,6 +456,18 @@
             .date {
                 font-size: 14px;
             }
+
+            .reposted {
+                margin-left: 12px;
+                color: $primary-color;
+                display: flex;
+                align-items: center;
+
+                span {
+                    font-size: 16px;
+                    font-weight: 500;
+                }
+            }
         }
     }
 
@@ -538,16 +550,16 @@
         }
     }
 
-    .like-button {
+    .like-button, .share-button {
         cursor: pointer;
         padding: 0;
     }
 
-    .like-button:active svg {
-        animation: pulse 0.3s ease-in-out;
-        fill: $primary-color;
-
+    .like-button.active svg {
+        animation: pulse .3s ease-in-out;
+        
         path {
+            fill: $primary-color;
             stroke: $primary-color;
         }
     }

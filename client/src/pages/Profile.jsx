@@ -21,6 +21,7 @@ function Profile() {
     const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
     const [showAside, setShowAside] = useState(false);
     const [user, setUser] = useState(null);
+    const [posts, setPosts] = useState([]);
     const { authUser } = useAuth();
 
     useEffect(() => {
@@ -31,6 +32,7 @@ function Profile() {
         axios.get(`${API_SERVER}/users/${authUser.nickname}`, { withCredentials: true })
             .then((response) => {
                 setUser(response.data);
+                setPosts(response.data.posts)
             });
     }, [authUser.nickname]);
 
@@ -79,8 +81,8 @@ function Profile() {
                         <Col className="main-block-profile tab-content">
                             <PostEditor setUser={setUser} />
 
-                            {user.posts.length > 0 && user.posts.map(post => {
-                                return <Post key={post.id} post={post} />
+                            {posts.length > 0 && posts.map(post => {
+                                return <Post key={post.id} post={post} setPosts={setPosts} />
                             })}
                         </Col>
 

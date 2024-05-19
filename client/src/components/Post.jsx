@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Row, Col, Image, Button, Stack, Spinner } from 'react-bootstrap';
+import axios from 'axios';
 
 import { useAuth } from '../components/AuthContext';
+import { API_SERVER } from '../config';
 
 // import { ReactComponent as PostMenu } from '../assets/icons/post-menu.svg';
 import { ReactComponent as Like } from '../assets/icons/like.svg';
@@ -9,12 +11,14 @@ import { ReactComponent as Comment } from '../assets/icons/comment.svg';
 import { ReactComponent as Share } from '../assets/icons/share.svg';
 import { ReactComponent as Send } from '../assets/icons/send.svg';
 import { ReactComponent as Calendar } from '../assets/icons/calendar.svg';
+import { BiRepost } from "react-icons/bi";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg'
 
 
-function Post({ post }) {
+function Post({ post, setPosts }) {
     const { authUser } = useAuth();
     const [loadedImages, setLoadedImages] = useState(0);
+    const [liked, setLiked] = useState(post.liked);
 
     const formatCreationTimestamp = () => {
         const date = new Date(post.createdAt);
@@ -41,9 +45,25 @@ function Post({ post }) {
         return date.toLocaleDateString('en-GB', { year: 'numeric', day: 'numeric', month: 'long' });
     };
 
-    const handlePostLike = (e, post) => {
-        // TODO: Implement like functionality
-        // e.target.classList.add('active')
+    const handlePostLike = (post) => {
+        axios.post(`${API_SERVER}/posts/${post.id}/like`, {}, { withCredentials: true })
+            .then(() => {
+                // Update post with new like status
+                setPosts(prevPosts => prevPosts.map(prevPost => {
+                    if (prevPost.id === post.id) {
+                        return {
+                            ...prevPost,
+                            liked: !liked,
+                            likesCount: liked ? prevPost.likesCount - 1 : prevPost.likesCount + 1
+                        };
+                    }
+                    return prevPost;
+                }));
+                setLiked(!liked);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
 
     const handlePostComment = () => {
@@ -52,8 +72,10 @@ function Post({ post }) {
     };
 
     const handlePostShare = () => {
-        // TODO: Implement share functionality
-
+        axios.post(`${API_SERVER}/posts/${post.id}/share`, {}, { withCredentials: true })
+            .catch((error) => {
+                console.error(error);
+            });
     };
 
     return (
@@ -81,13 +103,20 @@ function Post({ post }) {
                     <div className='d-flex align-items-center p-0'>
                         <Calendar className='me-2' />
                         <span className='date'>{formatCreationTimestamp()}</span>
+
+                        {post.reposted && (
+                            <div className='reposted'>
+                                <BiRepost size={22} />
+                                <span className='ms-1'>Reposted</span>
+                            </div>
+                        )}
                     </div>
                 </Col>
             </Row>
             <Row className='post-content p-0'>
                 {post.text && <p>{post.text}</p>}
 
-                {post.attachments.length > 0 && (
+                {post.attachments && post.attachments.length > 0 && (
                     <Stack data-size={post.attachments.length} className='post-attachments d-grid' gap={2}>
                         {loadedImages < post.attachments.length ? (
                             <div className='post-attachments-loading d-flex justify-content-center align-items-center'>
@@ -96,8 +125,8 @@ function Post({ post }) {
                         ) : null}
                         {post.attachments.map(attachment => (
                             <Image
-                                key={attachment.id}
-                                src={attachment.photoUrl}
+                                key={attachment.url}
+                                src={attachment.url}
                                 onLoad={() => setLoadedImages(prevState => prevState + 1)}
                                 className='post-attachment'
                             />
@@ -106,20 +135,31 @@ function Post({ post }) {
                 )}
             </Row>
             <Row className='post-interactions'>
-                <Col className='like-button' onClick={(e) => handlePostLike(e, post)}>
+                <Col
+                    className={`like-button ${liked ? 'active' : ''}`}
+                    onClick={() => handlePostLike(post)}
+                >
                     <Like />
                     <p>{post.likesCount}</p>
                 </Col>
-                <Col className='comment-button'>
+
+                {/* <Col className='comment-button'>
                     <Comment />
                     <p>{post.commentsCount}</p>
-                </Col>
-                <Col className='share-button'>
-                    <Share />
-                    <p>{post.sharesCount}</p>
-                </Col>
+                </Col> */}
+
+                {authUser.nickname !== post.author.nickname && (
+                    <Col
+                        className='share-button'
+                        onClick={() => handlePostShare(post)}
+                    >
+                        <Share />
+                        <p>{post.sharesCount}</p>
+                    </Col>
+                )}
+
             </Row>
-            <Row className='post-input d-flex gap-2 justify-content-start align-items-center flex-row mt-3'>
+            {/* <Row className='post-input d-flex gap-2 justify-content-start align-items-center flex-row mt-3'>
                 <Col className='user-img m-0'>
                     <Image
                         src={authUser.avatarUrl || imagePlaceholder}
@@ -143,7 +183,7 @@ function Post({ post }) {
                         </Button>
                     </Row>
                 </Col>
-            </Row>
+            </Row> */}
         </Row>
     )
 }

@@ -23,6 +23,7 @@ function UserProfile() {
     const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
     const [showAside, setShowAside] = useState(false);
     const [user, setUser] = useState(null);
+    const [posts, setPosts] = useState([]);
     const { authUser } = useAuth();
     const navigate = useNavigate();
 
@@ -43,6 +44,7 @@ function UserProfile() {
             axios.get(`${API_SERVER}/users/${nickname}`, { withCredentials: true })
                 .then((response) => {
                     setUser(response.data);
+                    setPosts(response.data.posts);
                 })
                 .catch(() => {
                     // Redirect to profile page
@@ -92,8 +94,8 @@ function UserProfile() {
                         </Row>
 
                         <Col className="main-block-profile tab-content">
-                            {user.posts.length > 0 ? user.posts.map(post => {
-                                return <Post post={post} />
+                            {posts.length > 0 ? posts.map(post => {
+                                return <Post key={post.id} post={post} setPosts={setPosts} />
                             }) : (
                                 <Row className="no-posts d-flex justify-content-center align-content-center">
                                     <IoNewspaperOutline size={90} className='no-posts-icon' />

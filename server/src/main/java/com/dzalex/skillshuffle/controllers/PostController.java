@@ -33,9 +33,8 @@ public class PostController {
 
     // Like/unlike post
     @PostMapping("/posts/{postId}/like")
-    public void likePost(@PathVariable Integer postId,
-                         @RequestParam(name = "like") boolean like) {
-        postService.likePost(postId, like);
+    public void likePost(@PathVariable Integer postId) {
+        postService.likePost(postId);
     }
 
     // Share post

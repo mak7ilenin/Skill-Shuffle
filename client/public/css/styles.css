@@ -2765,6 +2765,16 @@ p {
 .wrapper-profile .post-user .post-info .date {
   font-size: 14px;
 }
+.wrapper-profile .post-user .post-info .reposted {
+  margin-left: 12px;
+  color: #3D00FF;
+  display: flex;
+  align-items: center;
+}
+.wrapper-profile .post-user .post-info .reposted span {
+  font-size: 16px;
+  font-weight: 500;
+}
 .wrapper-profile .post-user-img {
   max-width: 60px;
   min-width: 60px;
@@ -2835,15 +2845,15 @@ p {
   margin-left: 6px !important;
   color: #8F8F8F;
 }
-.wrapper-profile .like-button {
+.wrapper-profile .like-button, .wrapper-profile .share-button {
   cursor: pointer;
   padding: 0;
 }
-.wrapper-profile .like-button:active svg {
+.wrapper-profile .like-button.active svg {
   animation: pulse 0.3s ease-in-out;
-  fill: #3D00FF;
 }
-.wrapper-profile .like-button:active svg path {
+.wrapper-profile .like-button.active svg path {
+  fill: #3D00FF;
   stroke: #3D00FF;
 }
 @keyframes pulse {

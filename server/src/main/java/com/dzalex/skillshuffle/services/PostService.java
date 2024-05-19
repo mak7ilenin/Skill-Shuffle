@@ -1,14 +1,19 @@
 package com.dzalex.skillshuffle.services;
 
+import com.dzalex.skillshuffle.dtos.PostAttachmentDTO;
 import com.dzalex.skillshuffle.dtos.PostDTO;
 import com.dzalex.skillshuffle.entities.Post;
 import com.dzalex.skillshuffle.entities.PostAttachment;
+import com.dzalex.skillshuffle.entities.User;
+import com.dzalex.skillshuffle.entities.UserPostInteraction;
+import com.dzalex.skillshuffle.enums.AttachmentType;
+import com.dzalex.skillshuffle.enums.InteractionType;
 import com.dzalex.skillshuffle.repositories.PostAttachmentRepository;
 import com.dzalex.skillshuffle.repositories.PostRepository;
-import com.dzalex.skillshuffle.repositories.UserPostInteractionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,10 +28,10 @@ public class PostService {
     private PostAttachmentRepository postAttachmentRepository;
 
     @Autowired
-    private UserPostInteractionRepository userPostInteractionRepository;
+    private FileService fileService;
 
     @Autowired
-    private FileService fileService;
+    private UserPostInteractionService userPostInteractionService;
 
     private UserService userService;
 
@@ -37,10 +42,24 @@ public class PostService {
     }
 
     // Get user posts
+    @Transactional
     public List<PostDTO> getUserPosts(Integer userId) {
-        List<Post> posts = postRepository.findPostsByAuthorId(userId);
+        // Get all posts by user
+        List<Post> posts = postRepository.findAllPostsByAuthorId(userId);
+
+        // Get posts that reposted by user
+        List<Post> repostedPosts = userPostInteractionService.getRepostedPosts(userId);
+
+        // Add reposted posts to user posts
+        posts.addAll(repostedPosts);
+
+        // Convert posts to DTOs and set reposted flag
         return posts.stream()
-                .map(this::getPostDTO)
+                .map(post -> {
+                    PostDTO postDTO = getPostDTO(post);
+                    postDTO.setReposted(repostedPosts.contains(post));
+                    return postDTO;
+                })
                 .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
                 .toList();
     }
@@ -59,7 +78,7 @@ public class PostService {
     }
 
     // Save post photos to storage
-    public void savePostPhotos(Post post, List<MultipartFile> files) {
+    private void savePostPhotos(Post post, List<MultipartFile> files) {
         for (MultipartFile file : files) {
             if (file.isEmpty()) {
                 continue;
@@ -78,22 +97,43 @@ public class PostService {
         }
     }
 
-    // Like post
-    public void likePost(Integer postId, boolean like) {
-        Post post = postRepository.findById(postId).orElse(null);
-        if (post != null) {
+    // Like/unlike post
+    public void likePost(Integer postId) {
+        User user = userService.getCurrentUser();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        UserPostInteraction interaction = userPostInteractionService.getPostLikedInteraction(user.getId(), postId);
+        if (interaction == null) {
+            // Like post
+            userPostInteractionService.createUserPostInteraction(user, post, InteractionType.LIKED);
+
+            // Update post likes count
             post.setLikesCount(post.getLikesCount() + 1);
             postRepository.save(post);
+
+            return;
         }
+
+        // Unlike post
+        userPostInteractionService.deleteUserPostInteraction(interaction);
+
+        post.setLikesCount(post.getLikesCount() - 1);
+        postRepository.save(post);
     }
 
     // Share post
     public void sharePost(Integer postId) {
-        Post post = postRepository.findById(postId).orElse(null);
-        if (post != null) {
-            post.setSharesCount(post.getSharesCount() + 1);
-            postRepository.save(post);
-        }
+        User user = userService.getCurrentUser();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        // Update post shares count
+        post.setSharesCount(post.getSharesCount() + 1);
+        postRepository.save(post);
+
+        // Set post as REPOSTED
+        userPostInteractionService.createUserPostInteraction(user, post, InteractionType.REPOSTED);
     }
 
     // Convert post to DTO
@@ -107,9 +147,16 @@ public class PostService {
                 .likesCount(post.getLikesCount())
                 .commentsCount(post.getCommentsCount())
                 .sharesCount(post.getSharesCount())
+                .liked(userPostInteractionService.isPostLikedByUser(post.getId(), userService.getCurrentUser().getId()))
+                .reposted(false)
                 .allowComments(post.isAllowComments())
                 .allowNotifications(post.isAllowNotifications())
-                .attachments(attachments)
+                .attachments(attachments.stream()
+                        .map(postAttachment -> PostAttachmentDTO.builder()
+                                .url(postAttachment.getPhotoUrl())
+                                .type(AttachmentType.IMAGE)
+                                .build())
+                        .toList())
                 .createdAt(post.getCreatedAt().toString())
                 .updatedAt(post.getUpdatedAt().toString())
                 .build();
