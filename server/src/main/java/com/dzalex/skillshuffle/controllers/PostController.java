@@ -39,7 +39,7 @@ public class PostController {
         return postService.createPost(post, files);
     }
 
-    // Like/unlike post
+    // Like post
     @PostMapping("/posts/{postId}/like")
     public void likePost(@PathVariable Integer postId) {
         postService.likePost(postId);
@@ -51,9 +51,21 @@ public class PostController {
         postService.sharePost(postId);
     }
 
+    // Bookmark post
+    @PostMapping("/posts/{postId}/bookmark")
+    public void bookmarkPost(@PathVariable Integer postId) {
+        postService.bookmarkPost(postId);
+    }
+
     // Get liked posts
     @GetMapping("/posts/liked")
     public List<PostDTO> getLikedPosts(@RequestParam("nickname") String nickname) {
         return postService.getLikedPosts(nickname);
+    }
+
+    // Get bookmarked posts
+    @GetMapping("/posts/bookmarked")
+    public List<PostDTO> getBookmarkedPosts(@RequestParam("nickname") String nickname) {
+        return postService.getBookmarkedPosts(nickname);
     }
 }

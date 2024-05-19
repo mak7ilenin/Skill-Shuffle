@@ -486,6 +486,7 @@ public class UserService {
                 .friends(friends)
                 .postsCount(postService.getUserPostsCount(user))
                 .likedPostsCount(postService.getUserLikedPostsCount(user))
+                .bookmarkedPostsCount(postService.getUserBookmarkedPostsCount(user))
                 .mightKnow(Objects.equals(authUser, user) ? getMightKnowUsers() : null)
                 .mutualFriends(!Objects.equals(authUser, user) ? getMutualFriends(user) : null)
                 .build();

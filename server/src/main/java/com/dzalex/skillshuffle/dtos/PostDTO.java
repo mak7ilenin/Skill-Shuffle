@@ -21,6 +21,7 @@ public class PostDTO {
     private int sharesCount;
     private boolean liked;
     private boolean reposted;
+    private boolean bookmarked;
     private boolean allowComments;
     private boolean allowNotifications;
     private List<PostAttachmentDTO> attachments;

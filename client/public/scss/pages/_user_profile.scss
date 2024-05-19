@@ -391,11 +391,23 @@
             background-color: #fff;
             margin-bottom: 16px;
             border-radius: 5px;
+        }
 
-            .post-menu-icon {
-                top: 15px;
-                right: 19px;
-                height: fit-content !important;
+        .post-menu-icon {
+            top: 15px;
+            right: 19px;
+            height: fit-content !important;
+
+            button {
+                padding: 7px;
+
+                &::after {
+                    display: none;
+                }
+            }
+
+            .dropdown-menu {
+                position: absolute !important;
             }
         }
     }

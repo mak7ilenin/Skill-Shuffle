@@ -56,11 +56,7 @@ public class PostService {
 
         // Convert posts to DTOs and set reposted flag
         return posts.stream()
-                .map(post -> {
-                    PostDTO postDTO = getPostDTO(post);
-                    postDTO.setReposted(repostedPosts.contains(post));
-                    return postDTO;
-                })
+                .map(this::getPostDTO)
                 .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
                 .toList();
     }
@@ -137,10 +133,35 @@ public class PostService {
         userPostInteractionService.createUserPostInteraction(user, post, InteractionType.REPOSTED);
     }
 
+    // Bookmark post
+    public void bookmarkPost(Integer postId) {
+        User user = userService.getCurrentUser();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        UserPostInteraction interaction = userPostInteractionService.getPostWithRepostedInteraction(user.getId(), postId);
+        if (interaction == null) {
+            // Bookmark post
+            userPostInteractionService.createUserPostInteraction(user, post, InteractionType.BOOKMARKED);
+            return;
+        }
+
+        // Remove from bookmarks
+        userPostInteractionService.deleteUserPostInteraction(interaction);
+    }
+
     // Get liked posts
     public List<PostDTO> getLikedPosts(String nickname) {
         User user = userService.getUserByNickname(nickname);
         return userPostInteractionService.getPostsWithLikedInteraction(user.getId()).stream()
+                .map(this::getPostDTO)
+                .toList();
+    }
+
+    // Get bookmarked posts
+    public List<PostDTO> getBookmarkedPosts(String nickname) {
+        User user = userService.getUserByNickname(nickname);
+        return userPostInteractionService.getPostsWithBookmarkedInteraction(user.getId()).stream()
                 .map(this::getPostDTO)
                 .toList();
     }
@@ -151,6 +172,10 @@ public class PostService {
 
     public int getUserLikedPostsCount(User user) {
         return userPostInteractionService.getPostsCountWithLikedInteraction(user.getId());
+    }
+
+    public int getUserBookmarkedPostsCount(User user) {
+        return userPostInteractionService.getPostsCountWithBookmarkedInteraction(user.getId());
     }
 
     // Convert post to DTO
@@ -165,7 +190,8 @@ public class PostService {
                 .commentsCount(post.getCommentsCount())
                 .sharesCount(post.getSharesCount())
                 .liked(userPostInteractionService.isPostLikedByUser(post.getId(), userService.getCurrentUser().getId()))
-                .reposted(false)
+                .reposted(userPostInteractionService.isPostRepostedByUser(post.getId(), userService.getCurrentUser().getId()))
+                .bookmarked(userPostInteractionService.isPostSavedByUser(post.getId(), userService.getCurrentUser().getId()))
                 .allowComments(post.isAllowComments())
                 .allowNotifications(post.isAllowNotifications())
                 .attachments(attachments.stream()

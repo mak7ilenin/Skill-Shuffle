@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Row, Col, Image, Button, Stack, Spinner } from 'react-bootstrap';
 import axios from 'axios';
 
+import PostMenu from './PostMenu';
 import { useAuth } from '../components/AuthContext';
 import { API_SERVER } from '../config';
 
-// import { ReactComponent as PostMenu } from '../assets/icons/post-menu.svg';
 import { ReactComponent as Like } from '../assets/icons/like.svg';
 import { ReactComponent as Comment } from '../assets/icons/comment.svg';
 import { ReactComponent as Share } from '../assets/icons/share.svg';
@@ -13,7 +13,6 @@ import { ReactComponent as Send } from '../assets/icons/send.svg';
 import { ReactComponent as Calendar } from '../assets/icons/calendar.svg';
 import { BiRepost } from "react-icons/bi";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg'
-
 
 function Post({ post, setPosts }) {
     const { authUser } = useAuth();
@@ -80,9 +79,9 @@ function Post({ post, setPosts }) {
 
     return (
         <Row className='post-block position-relative flex-column p-3'>
-            {/* <div className="post-menu-icon w-auto p-0 position-absolute">
-                <PostMenu width={19} />
-            </div> */}
+            <div className="post-menu-icon w-auto p-0 position-absolute">
+                <PostMenu post={post} setPosts={setPosts} />
+            </div>
 
             <Row className='post-user d-flex justify-content-start align-items-center'>
                 <Col className='post-user-img p-0'>

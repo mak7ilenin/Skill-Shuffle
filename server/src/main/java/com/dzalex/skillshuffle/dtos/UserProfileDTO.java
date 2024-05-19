@@ -33,6 +33,7 @@ public class UserProfileDTO {
     private List<PublicUserDTO> friends;
     private int postsCount;
     private int likedPostsCount;
+    private int bookmarkedPostsCount;
     private List<SearchedUserDTO> mightKnow;
     private List<SearchedUserDTO> mutualFriends;
 }

@@ -2710,11 +2710,20 @@ p {
   margin-bottom: 16px;
   border-radius: 5px;
 }
-.wrapper-profile .main-block-profile .post-block .post-menu-icon {
+.wrapper-profile .main-block-profile .post-menu-icon {
   top: 15px;
   right: 19px;
   height: -moz-fit-content !important;
   height: fit-content !important;
+}
+.wrapper-profile .main-block-profile .post-menu-icon button {
+  padding: 7px;
+}
+.wrapper-profile .main-block-profile .post-menu-icon button::after {
+  display: none;
+}
+.wrapper-profile .main-block-profile .post-menu-icon .dropdown-menu {
+  position: absolute !important;
 }
 .wrapper-profile .no-posts {
   height: 200px;

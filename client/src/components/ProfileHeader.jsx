@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import axios from 'axios';
 
-import { useAuth } from './AuthContext';
 import { API_SERVER } from '../config';
 
 function ProfileHeader({ type, user, setPosts }) {
@@ -23,7 +22,10 @@ function ProfileHeader({ type, user, setPosts }) {
                     });
                 break;
             case 'bookmarks':
-                // Get bookmarks
+                axios.get(`${API_SERVER}/posts/bookmarked?nickname=${user.nickname}`, { withCredentials: true })
+                    .then((response) => {
+                        setPosts(response.data);
+                    });
                 break;
             default:
                 break;
@@ -55,7 +57,7 @@ function ProfileHeader({ type, user, setPosts }) {
                     </>
                 }
             />
-            {/* {type === 'MY_PROFILE' && (
+            {type === 'MY_PROFILE' && (
                 <Tab
                     eventKey='bookmarks'
                     title={
@@ -65,7 +67,7 @@ function ProfileHeader({ type, user, setPosts }) {
                         </>
                     }
                 />
-            )} */}
+            )}
         </Tabs>
     )
 }

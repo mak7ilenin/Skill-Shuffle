@@ -49,10 +49,28 @@ public class UserPostInteractionService {
         return userPostInteractionRepository.existsByPostIdAndUserIdAndInteractionType(postId, userId, InteractionType.LIKED);
     }
 
+    // Is post reposted by user
+    public boolean isPostRepostedByUser(Integer postId, Integer userId) {
+        return userPostInteractionRepository.existsByPostIdAndUserIdAndInteractionType(postId, userId, InteractionType.REPOSTED);
+    }
+
+    // Is post bookmarked by user
+    public boolean isPostSavedByUser(Integer postId, Integer userId) {
+        return userPostInteractionRepository.existsByPostIdAndUserIdAndInteractionType(postId, userId, InteractionType.BOOKMARKED);
+    }
+
     // Get post with LIKED interaction
     public UserPostInteraction getPostWithLikedInteraction(Integer userId, Integer postId) {
         return getUserPostInteractions(userId, postId).stream()
                 .filter(interaction -> interaction.getInteractionType() == InteractionType.LIKED)
+                .findFirst()
+                .orElse(null);
+    }
+
+    // Get post with REPOSTED interaction
+    public UserPostInteraction getPostWithRepostedInteraction(Integer userId, Integer postId) {
+        return getUserPostInteractions(userId, postId).stream()
+                .filter(interaction -> interaction.getInteractionType() == InteractionType.REPOSTED)
                 .findFirst()
                 .orElse(null);
     }
@@ -65,8 +83,20 @@ public class UserPostInteractionService {
                 .toList();
     }
 
+    // Get all posts bookmarked by user
+    public List<Post> getPostsWithBookmarkedInteraction(Integer userId) {
+        List<UserPostInteraction> interactions = userPostInteractionRepository.findAllByUserIdAndInteractionType(userId, InteractionType.BOOKMARKED);
+        return interactions.stream()
+                .map(UserPostInteraction::getPost)
+                .toList();
+    }
+
     // Get liked posts count
     public int getPostsCountWithLikedInteraction(Integer userId) {
         return userPostInteractionRepository.countAllByUserIdAndInteractionType(userId, InteractionType.LIKED);
+    }
+
+    public int getPostsCountWithBookmarkedInteraction(Integer id) {
+        return userPostInteractionRepository.countAllByUserIdAndInteractionType(id, InteractionType.BOOKMARKED);
     }
 }
