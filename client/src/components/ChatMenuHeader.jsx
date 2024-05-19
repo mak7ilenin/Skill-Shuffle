@@ -6,7 +6,7 @@ import { ReactComponent as NewChatIcon } from '../assets/icons/create-chat.svg';
 import { IoSearch } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 
-function ChatMenuHeader({ getSearch, changeMenu, activeMenu, setChat }) {
+function ChatMenuHeader({ getSearch, changeMenu, activeMenu, setChat, subscription }) {
     const [search, setSearch] = useState('');
     const navigate = useNavigate();
 
@@ -29,6 +29,9 @@ function ChatMenuHeader({ getSearch, changeMenu, activeMenu, setChat }) {
                     setChat(null);
                     navigate('/messenger');
                     changeMenu('DEFAULT');
+                    if (subscription.current) {
+                        subscription.current.unsubscribe();
+                    }
                 }}
             >
                 Messages

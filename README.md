@@ -96,7 +96,7 @@ Import .sql dump from /database to the phpMyAdmin or any other database manageme
 
 ### Test user 2
 
-- Login: test1
+- Login: test3
 - Password: 123
 
 ## Authors

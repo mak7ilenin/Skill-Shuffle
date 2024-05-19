@@ -163,7 +163,7 @@
 
         .list-group {
             height: calc(100vh - 140px);
-            width: calc(100% - 60px);
+            width: calc(100% - 65px);
             margin-top: 0;
             top: 140px;
         }
@@ -175,19 +175,21 @@
 }
 
 @mixin dropdown-menu {
-    .dropdown {
+    .custom-primary-dropdown {
+        padding: 0 !important;
+
         .dropdown-menu {
-            padding: 17px 0 !important;
+            position: fixed !important;
+            z-index: 300;
+            padding: 17px 0;
             background-color: $light-purple !important;
             box-shadow: 1px 2px 4px #00000040;
             border-radius: 10px;
-            padding: 17px 0 !important;
-        }
 
-        .dropdown-menu-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            &.show {
+                display: grid;
+                gap: 12px;
+            }
         }
 
         .dropdown-item {
@@ -216,6 +218,85 @@
                 fill: #000 !important;
                 stroke-width: 1px;
             }
+        }
+
+        .dropdown-divider {
+            margin: 0;
+        }
+    }
+}
+
+@mixin custom-seconday-dropdown {
+    .custom-secondary-dropdown {
+        padding: 0 !important;
+        font-family: $main-font;
+
+        .dropdown-toggle {
+            background-color: transparent !important;
+            color: $light-gray !important;
+            font-size: 14px;
+            font-weight: 400;
+            border: none;
+            padding: 0;
+        }
+
+        .dropdown-menu {
+            z-index: 300;
+            box-shadow: 1px 2px 4px #00000040;
+            border-radius: 0 10px 10px 10px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .dropdown-item {
+            font-size: 14px;
+            font-weight: 600;
+            color: $dark-gray;
+            padding: 8px 12px;
+            background-color: $super-light-gray !important;
+            border-radius: 0;
+
+            &:hover {
+                background-color: $light-gray !important;
+                color: #fff;
+            }
+
+            &[aria-selected=true] {
+                background-color: $light-gray !important;
+                color: #fff;
+            }
+
+            @include unselectable;
+        }
+    }
+}
+
+@mixin secondary-popover {
+    .secondary-popover {
+        background-color: $gray !important;
+        border: 1px solid $light-gray !important;
+        border-radius: 5px !important;
+
+        .popover-body {
+            padding: 10px 12px;
+            font-family: $main-font;
+            color: $dark-gray;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-check {
+            margin: 0;
+        }
+
+        input:focus {
+            box-shadow: 0 0 0 .25rem $gray;
+            border-color: $dark-gray;
+        }
+
+        .form-check-input:checked {
+            background-color: $dark-gray;
+            border-color: $dark-gray;
         }
     }
 }

@@ -74,7 +74,7 @@
     .logo-block {
         padding-top: 45px;
         padding-left: 15px;
-        
+
         .logo-container {
             width: fit-content;
         }
@@ -126,7 +126,7 @@
             padding-left: 21px;
             align-items: center;
             justify-content: flex-start;
-            
+
             &.active {
                 background-color: $light-purple !important;
             }
@@ -142,9 +142,37 @@
                 padding-left: 16px;
             }
 
+            img {
+                @include unselectable;
+            }
+
+            .unread-messages {
+                position: absolute;
+                left: 32px;
+                top: 7px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 20px;
+                height: 20px;
+                background-color: $primary-color;
+                border-radius: 50%;
+
+                span {
+                    color: #fff;
+                    font-size: 11px;
+                    font-weight: 500;
+                }
+            }
+
             &.more-link {
                 margin-top: auto;
                 margin-bottom: 35px;
+
+                .custom-primary-dropdown {
+                    width: 100%;
+                    height: 100%;
+                }
 
                 button {
                     background-color: transparent;
@@ -163,8 +191,47 @@
 
                 .dropdown-menu {
                     inset: auto auto 0px 40px !important;
+                    transform: translate(10px, -93px) !important;
                 }
             }
+        }
+    }
+
+    &.compacted {
+        // margin-right: 350px;
+        transition: ease all .4s;
+        @include closed-header;
+    }
+}
+
+.create-post-modal {
+    --bs-modal-width: 525px !important;
+    font-family: $main-font;
+
+    .modal-title {
+        width: 100%;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 700;
+        color: $dark-gray;
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .post-editor {
+        padding: 0;
+        // border: 1px solid $light-gray;
+        margin-bottom: 0;
+
+        &__avatar {
+            display: none;
+        }
+
+        &__textarea textarea {
+            padding-left: 0;
+            max-height: 400px;
         }
     }
 }

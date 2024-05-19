@@ -4,7 +4,9 @@ import com.dzalex.skillshuffle.enums.InteractionType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -13,6 +15,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "user_post_interactions")
 public class UserPostInteraction {
     @Id
@@ -24,7 +27,7 @@ public class UserPostInteraction {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
@@ -33,7 +36,7 @@ public class UserPostInteraction {
     @Column(name = "interaction_type", nullable = false)
     private InteractionType interactionType;
 
-    @ColumnDefault("current_timestamp()")
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 

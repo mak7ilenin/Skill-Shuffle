@@ -220,7 +220,7 @@ function GroupChatMenu({ chat, setChat }) {
                         className='rounded-circle object-fit-cover'
                     />
                 </Col>
-                <Col>
+                <Col className='d-flex align-self-center flex-column'>
                     <p className='chat-name'>{chat.name}</p>
                     <p className='members-count'>{chat.members.length} members</p>
                 </Col>
@@ -326,7 +326,7 @@ function GroupChatMenu({ chat, setChat }) {
                                             <div className='member-activity d-flex align-items-center justify-content-start flex-row'>
                                                 {formatLastSeenTimestamp(member.lastSeen) === 'Online' ? (
                                                     <>
-                                                        <div className="online-icon rounded-circle"></div>
+                                                        <div className="online-icon"></div>
                                                         <span>Online</span>
                                                     </>
                                                 ) : (
@@ -340,35 +340,34 @@ function GroupChatMenu({ chat, setChat }) {
 
                                         {isAdminOrCreator() && member.role !== 'creator' && member.nickname !== authUser.nickname && (
                                             <div className="member-action d-flex align-items-center justify-content-center flex-row">
-                                                <Dropdown autoClose>
+                                                <Dropdown bsPrefix='custom-primary-dropdown' autoClose>
                                                     <Dropdown.Toggle variant='none'>
                                                         <SlArrowDown width={22} />
                                                     </Dropdown.Toggle>
+
                                                     <Dropdown.Menu align={'end'}>
-                                                        <div className="dropdown-menu-container">
-                                                            {isOwner() && (
-                                                                <>
-                                                                    {member.role === 'admin' ? (
-                                                                        <Dropdown.Item onClick={() => handleChangeMemberRole(member.nickname, 'member')}>
-                                                                            <Grade className='grade-icon downgrade' />
-                                                                            <span>Appoint as member</span>
-                                                                        </Dropdown.Item>
-                                                                    ) : (
-                                                                        <Dropdown.Item onClick={() => handleChangeMemberRole(member.nickname, 'admin')}>
-                                                                            <Grade className='grade-icon' />
-                                                                            <span>Appoint as administrator</span>
-                                                                        </Dropdown.Item>
-                                                                    )}
-                                                                </>
-                                                            )}
-                                                            <Dropdown.Item onClick={() => handleRemoveMember(member.nickname)}>
-                                                                <RxCross1
-                                                                    className='cross-icon'
-                                                                    width={12}
-                                                                />
-                                                                <span>Remove from chat</span>
-                                                            </Dropdown.Item>
-                                                        </div>
+                                                        {isOwner() && (
+                                                            <>
+                                                                {member.role === 'admin' ? (
+                                                                    <Dropdown.Item onClick={() => handleChangeMemberRole(member.nickname, 'member')}>
+                                                                        <Grade className='grade-icon downgrade' />
+                                                                        <span>Appoint as member</span>
+                                                                    </Dropdown.Item>
+                                                                ) : (
+                                                                    <Dropdown.Item onClick={() => handleChangeMemberRole(member.nickname, 'admin')}>
+                                                                        <Grade className='grade-icon' />
+                                                                        <span>Appoint as administrator</span>
+                                                                    </Dropdown.Item>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                        <Dropdown.Item onClick={() => handleRemoveMember(member.nickname)}>
+                                                            <RxCross1
+                                                                className='cross-icon'
+                                                                width={12}
+                                                            />
+                                                            <span>Remove from chat</span>
+                                                        </Dropdown.Item>
                                                     </Dropdown.Menu>
                                                 </Dropdown>
                                             </div>

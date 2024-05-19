@@ -1,19 +1,14 @@
 package com.dzalex.skillshuffle.services;
 
-import com.dzalex.skillshuffle.dtos.AuthRequestDTO;
-import com.dzalex.skillshuffle.dtos.ChatMemberDTO;
-import com.dzalex.skillshuffle.dtos.JwtResponseDTO;
-import com.dzalex.skillshuffle.dtos.PublicUserDTO;
-import com.dzalex.skillshuffle.entities.ChatMember;
-import com.dzalex.skillshuffle.entities.Friendship;
-import com.dzalex.skillshuffle.entities.RefreshToken;
-import com.dzalex.skillshuffle.entities.User;
-import com.dzalex.skillshuffle.repositories.ChatMemberRepository;
-import com.dzalex.skillshuffle.repositories.FriendshipRepository;
-import com.dzalex.skillshuffle.repositories.UserRepository;
+import com.dzalex.skillshuffle.dtos.*;
+import com.dzalex.skillshuffle.entities.*;
+import com.dzalex.skillshuffle.enums.FriendRequestStatus;
+import com.dzalex.skillshuffle.enums.RelationshipStatus;
+import com.dzalex.skillshuffle.repositories.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,9 +25,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -43,6 +37,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private FriendRequestRepository friendRequestRepository;
 
     @Autowired
     private RefreshTokenService refreshTokenService;
@@ -60,10 +57,29 @@ public class UserService {
     private FriendshipRepository friendshipRepository;
 
     @Autowired
+    private UserFollowerRepository userFollowerRepository;
+
+    @Autowired
     private FileService fileService;
+
+    @Autowired
+    private PostService postService;
+
+    private MessageService messageService;
+
+    @Autowired
+    @Lazy
+    public void setMessageService(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public String exceptionHandler() {
+        return "Credentials Invalid!";
     }
 
     public boolean checkNicknameDuplicate(String nickname) {
@@ -94,10 +110,11 @@ public class UserService {
             String accessToken = helper.createAccessTokenCookie(response, userDetails);
 
             User user = userRepo.findByUsername(request.getUsername());
+            user.setLastSeen(new Timestamp(System.currentTimeMillis()));
             return JwtResponseDTO.builder()
                     .username(request.getUsername())
                     .accessToken(accessToken)
-                    .user(getPublicUserDTO(user))
+                    .user(getAuthUserDTO(user))
                     .build();
         }
         return null;
@@ -116,7 +133,7 @@ public class UserService {
                 return JwtResponseDTO.builder()
                         .username(userDetails.getUsername())
                         .accessToken(token)
-                        .user(getPublicUserDTO(user))
+                        .user(getAuthUserDTO(user))
                         .build();
             }
         }
@@ -159,7 +176,11 @@ public class UserService {
     }
 
     public User getUserByNickname(String nickname) {
-        return userRepo.findByNickname(nickname);
+        User user = userRepo.findByNickname(nickname);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found!");
+        }
+        return user;
     }
 
     @Transactional
@@ -227,6 +248,38 @@ public class UserService {
                 .orElse(null);
     }
 
+    public Friendship getFriendship(User user, User authUser) {
+        Friendship friendship = friendshipRepository.findByUserIdAndFriendId(user.getId(), authUser.getId());
+        if (friendship == null) {
+            friendship = friendshipRepository.findByUserIdAndFriendId(authUser.getId(), user.getId());
+        }
+        return friendship;
+    }
+
+    public boolean isFriend(User user, User authUser) {
+        return getFriendship(user, authUser) != null;
+    }
+
+    public boolean isFollowed(User user, User authUser) {
+        return userFollowerRepository.findByUserIdAndFollowerId(authUser.getId(), user.getId()) != null;
+    }
+
+    public boolean isFollower(User user, User authUser) {
+        return userFollowerRepository.findByUserIdAndFollowerId(user.getId(), authUser.getId()) != null;
+    }
+
+    private RelationshipStatus getRelationshipStatus(User user, User authUser) {
+        if (isFriend(user, authUser)) {
+            return RelationshipStatus.FRIEND;
+        } else if (isFollowed(user, authUser)) {
+            return RelationshipStatus.FOLLOWING;
+        } else if (isFollower(user, authUser)) {
+            return RelationshipStatus.FOLLOWER;
+        } else {
+            return RelationshipStatus.NONE;
+        }
+    }
+
     public PublicUserDTO getPublicUserDTO(User user) {
         return PublicUserDTO.builder()
                 .firstName(user.getFirstName())
@@ -234,6 +287,28 @@ public class UserService {
                 .nickname(user.getNickname())
                 .avatarUrl(user.getAvatarUrl())
                 .lastSeen(user.getLastSeen())
+                .isPublic(user.isPublic())
+                .build();
+    }
+
+    public AuthUserDTO getAuthUserDTO(User user) {
+        return AuthUserDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .nickname(user.getNickname())
+                .avatarUrl(user.getAvatarUrl())
+                .unreadMessages(messageService.getUnreadMessagesCount(user.getId()))
+                .build();
+    }
+
+    private SearchedUserDTO getSearchedUserDTO(User user, User authUser) {
+        return SearchedUserDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .nickname(user.getNickname())
+                .avatarUrl(user.getAvatarUrl())
+                .relationship(getRelationshipStatus(user, authUser))
+                .autoFollow(user.isAutoFollow())
                 .build();
     }
 
@@ -248,8 +323,219 @@ public class UserService {
                 .build();
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public String exceptionHandler() {
-        return "Credentials Invalid!";
+    public List<SearchedUserDTO> searchUsers(String query) {
+        List<User> users = userRepo.searchUsers(query);
+        List<SearchedUserDTO> searchedUsers = new ArrayList<>();
+
+        User authUser = getCurrentUser();
+        users.forEach(user -> {
+            if (user.isPublic() && !Objects.equals(user.getId(), authUser.getId())) {
+                searchedUsers.add(getSearchedUserDTO(user, authUser));
+            }
+        });
+
+        return searchedUsers;
+    }
+
+    private FriendRequest getFriendRequest(User sender, User receiver) {
+        FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
+        if (friendRequest == null) {
+            friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(receiver.getId(), sender.getId());
+        }
+
+        if (friendRequest == null) {
+            throw new IllegalArgumentException("Friend request not found!");
+        }
+
+        return friendRequest;
+    }
+
+    public RelationshipStatus changeUserRelationship(RelationshipActionDTO relationship) {
+        User authUser = getCurrentUser();
+        User user = getUserByNickname(relationship.getNickname());
+        if (user != null) {
+            if (authUser.getId().equals(user.getId())) {
+                return null;
+            }
+
+            switch (relationship.getAction()) {
+                case ADD_FRIEND -> addFriend(authUser, user);
+                case UNFRIEND -> removeFriend(authUser, user);
+                case FOLLOW -> followUser(authUser, user);
+                case UNFOLLOW -> unfollowUser(authUser, user);
+                case REMOVE_FOLLOWER -> removeFollower(authUser, user);
+                case IGNORE -> ignoreFriendRequest(user, authUser);
+            }
+
+            return getSearchedUserDTO(user, authUser).getRelationship();
+        }
+
+        return null;
+    }
+
+    private void addFriend(User authUser, User user) {
+        if (!isFriend(user, authUser)) {
+            if (isFollower(user, authUser)) {
+                acceptFriendRequest(user, authUser);
+            } else {
+                sendFriendRequest(authUser, user);
+            }
+        }
+    }
+
+    private void sendFriendRequest(User sender, User receiver) {
+        FriendRequest friendRequest = FriendRequest.builder()
+                .sender(sender)
+                .receiver(receiver)
+                .status(FriendRequestStatus.PENDING)
+                .build();
+        friendRequestRepository.save(friendRequest);
+    }
+
+    private void acceptFriendRequest(User sender, User receiver) {
+        // Remove the friend request
+        friendRequestRepository.delete(getFriendRequest(sender, receiver));
+
+        // Remove the follower from the user's followers
+        UserFollower userFollower = userFollowerRepository.findByUserIdAndFollowerId(receiver.getId(), sender.getId());
+        if (userFollower != null) {
+            userFollowerRepository.delete(userFollower);
+        }
+
+        // Create the friendship
+        Friendship friendship = Friendship.builder()
+                .user(sender)
+                .friend(receiver)
+                .build();
+        friendshipRepository.save(friendship);
+    }
+
+    private void ignoreFriendRequest(User sender, User receiver) {
+        FriendRequest friendRequest = getFriendRequest(sender, receiver);
+        friendRequest.setStatus(FriendRequestStatus.IGNORED);
+        friendRequestRepository.save(friendRequest);
+    }
+
+    private void removeFriend(User authUser, User user) {
+        // Remove the friendship
+        Friendship friendship = getFriendship(user, authUser);
+        if (friendship != null) {
+            friendshipRepository.delete(friendship);
+        }
+    }
+
+    private void followUser(User authUser, User user) {
+        if (!isFollowed(user, authUser)) {
+            userFollowerRepository.save(UserFollower.builder()
+                    .user(user)
+                    .follower(authUser)
+                    .build());
+        }
+
+        if (!user.isAutoFollow()) {
+            sendFriendRequest(authUser, user);
+        }
+    }
+
+    private void unfollowUser(User authUser, User user) {
+        // Remove sent friend request
+        friendRequestRepository.delete(getFriendRequest(authUser, user));
+
+        // Remove the follower from the user's followers
+        UserFollower userFollower = userFollowerRepository.findByUserIdAndFollowerId(user.getId(), authUser.getId());
+        if (userFollower != null) {
+            userFollowerRepository.delete(userFollower);
+        }
+    }
+
+    private void removeFollower(User authUser, User user) {
+        // Remove the follower from the user's followers
+        UserFollower userFollower = userFollowerRepository.findByUserIdAndFollowerId(authUser.getId(), user.getId());
+        if (userFollower != null) {
+            userFollowerRepository.delete(userFollower);
+        }
+    }
+
+    private List<PublicUserDTO> getUserFollowers(User user) {
+        return userFollowerRepository.findAllByUserId(user.getId())
+                .stream()
+                .map(userFollower -> getPublicUserDTO(userFollower.getFollower()))
+                .collect(Collectors.toList());
+    }
+
+    public UserProfileDTO getUserProfileData(User user) {
+        User authUser = getCurrentUser();
+        List<PublicUserDTO> friends = getUserFriends(user);
+        return UserProfileDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .nickname(user.getNickname())
+                .gender(user.getGender())
+                .birthDate(user.getBirthDate())
+                .bio(user.getBio())
+                .points(user.getPoints())
+                .avatarUrl(user.getAvatarUrl())
+                .bannerUrl(user.getBannerUrl())
+                .bannerColor(user.getBannerColor())
+                .isPublic(user.isPublic())
+                .autoFollow(user.isAutoFollow())
+                .lastSeen(user.getLastSeen())
+                .joinedAt(user.getCreatedAt())
+                .relationship(getRelationshipStatus(user, authUser))
+                .followersCount(getUserFollowers(user).size())
+                .friends(friends)
+                .postsCount(postService.getUserPostsCount(user))
+                .likedPostsCount(postService.getUserLikedPostsCount(user))
+                .bookmarkedPostsCount(postService.getUserBookmarkedPostsCount(user))
+                .mightKnow(Objects.equals(authUser, user) ? getMightKnowUsers() : null)
+                .mutualFriends(!Objects.equals(authUser, user) ? getMutualFriends(user) : null)
+                .build();
+    }
+
+    // Get might know users for auth user, based on mutual friends and friends of friends
+    public List<SearchedUserDTO> getMightKnowUsers() {
+        User authUser = getCurrentUser();
+        List<User> friends = friendshipRepository.findByUserIdOrFriendId(authUser.getId(), authUser.getId())
+                .stream()
+                .map(friendship -> getFriendFromFriendship(friendship, authUser))
+                .toList();
+
+        Set<User> mightKnow = new HashSet<>();
+        for (User friend : friends) {
+            List<User> friendsOfFriend = friendshipRepository.findByUserIdOrFriendId(friend.getId(), friend.getId())
+                    .stream()
+                    .filter(friendship -> !friends.contains(getFriendFromFriendship(friendship, friend)))
+                    .map(friendship -> getFriendFromFriendship(friendship, friend))
+                    .toList();
+            mightKnow.addAll(friendsOfFriend);
+        }
+
+        mightKnow.removeIf(user -> user.equals(authUser) || friends.contains(user));
+
+        return mightKnow.stream()
+                .map(user -> getSearchedUserDTO(user, authUser))
+                .limit(10)
+                .collect(Collectors.toList());
+    }
+
+    // Get mutual friends between user and auth user
+    public List<SearchedUserDTO> getMutualFriends(User otherUser) {
+        User authUser = getCurrentUser();
+
+        List<User> authUserFriends = friendshipRepository.findByUserIdOrFriendId(authUser.getId(), authUser.getId())
+                .stream()
+                .map(friendship -> getFriendFromFriendship(friendship, authUser))
+                .toList();
+
+        List<User> otherUserFriends = friendshipRepository.findByUserIdOrFriendId(otherUser.getId(), otherUser.getId())
+                .stream()
+                .map(friendship -> getFriendFromFriendship(friendship, otherUser))
+                .toList();
+
+        return authUserFriends.stream()
+                .filter(otherUserFriends::contains)
+                .filter(user -> !user.equals(authUser))
+                .map(user -> getSearchedUserDTO(user, authUser))
+                .collect(Collectors.toList());
     }
 }

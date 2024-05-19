@@ -4,6 +4,7 @@ import { Row, Col, Image } from 'react-bootstrap';
 import { AESDecrypt } from '../crypto';
 import { useAuth } from './AuthContext';
 
+import { RiVolumeMuteFill } from "react-icons/ri";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function ChatPreview({ chat, chosenChat, navigate }) {
@@ -30,12 +31,17 @@ function ChatPreview({ chat, chosenChat, navigate }) {
         return chat.lastMessage.sender.nickname === authUser.nickname;
     };
 
+    const isActive = chosenChat && String(chosenChat.id) === AESDecrypt(chat.id);
+
     return (
-        <Row className={`chat-preview d-flex align-items-center flex-nowrap${chosenChat && String(chosenChat.id) === AESDecrypt(chat.id) ? ' active' : ''}`}
+        <Row className={`chat-preview d-flex align-items-center flex-nowrap ${isActive ? ' active' : ''}`}
             key={chat.id}
             role='button'
             onClick={() => navigate(`/messenger?c=${chat.id}`)}
         >
+            <div className="muted-icon">
+                {chat.muted && <RiVolumeMuteFill size={14} />}
+            </div>
             <Col className='chat-avatar d-flex justify-content-center'>
                 <Image
                     src={chat.avatarUrl !== null ? chat.avatarUrl : imagePlaceholder}

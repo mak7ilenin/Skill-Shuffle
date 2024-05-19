@@ -5,9 +5,12 @@
 // Components
 @import 'components/_header.scss';
 @import 'components/_notification.scss';
+@import 'components/_nav_block.scss';
+@import 'components/_post_editor.scss';
 
 // Pages
 @import 'pages/_sign_in.scss';
 @import 'pages/_sign_up.scss';
 @import 'pages/_chat.scss';
 @import 'pages/_user_profile.scss';
+@import 'pages/_error.scss';

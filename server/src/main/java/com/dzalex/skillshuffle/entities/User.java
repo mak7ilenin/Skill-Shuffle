@@ -27,16 +27,16 @@ public class User {
     @Column(name = "last_name", nullable = false, length = 30)
     private String lastName;
 
-    @Column(name = "username", nullable = false, length = 75)
+    @Column(name = "username", nullable = false, length = 75, unique = true)
     private String username;
 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "nickname", nullable = false, length = 40)
+    @Column(name = "nickname", nullable = false, length = 40, unique = true)
     private String nickname;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -61,7 +61,7 @@ public class User {
 
     @Builder.Default
     @Column(name = "banner_color")
-    private String bannerColor = "#bdbdbd";
+    private String bannerColor = "#00b3db";
 
     @Builder.Default
     @Column(name = "is_public")

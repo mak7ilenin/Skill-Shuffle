@@ -4,8 +4,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Chat from '../pages/Chat';
 import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
-import { useAuth } from './AuthContext';
 import Profile from '../pages/Profile';
+import UserProfile from '../pages/UserProfile';
+import Error from '../pages/Error';
+import { useAuth } from './AuthContext';
 
 function Content() {
     const { authUser } = useAuth();
@@ -13,36 +15,21 @@ function Content() {
     return (
         <div className='wrapper'>
             <Routes>
-                {authUser ? (
-                    <Route path="/messenger" element={<Chat />} />
-                ) : (
-                    <Route path="/messenger" element={<Navigate to="/sign-in" />} />
-                )}
+                <Route path="/messenger" element={authUser ? <Chat /> : <Navigate to="/sign-in" />} />
 
-                {authUser ? (
-                    <Route path="/my-profile" element={<Profile />} />
-                ) : (
-                    <Route path="/my-profile" element={<Navigate to="/sign-in" />} />
-                )}
-                <Route path="/sign-in"
-                    element={
-                        // If user is authenticated, redirect to the Chat page
-                        authUser ? <Navigate to="/my-profile" /> : <SignIn />
-                    }
-                />
-                <Route path="/sign-up"
-                    element={
-                        // If user is authenticated, redirect to the Chat page
-                        authUser ? <Navigate to="/my-profile" /> : <SignUp />
-                    }
-                />
+                <Route path="/me" element={authUser ? <Profile /> : <Navigate to="/sign-in" />} />
 
-                <Route path="/"
-                    element={
-                        // If user is authenticated, redirect to the Chat page otherwise redirect to the sign-in page
-                        authUser ? <Navigate to="/my-profile" /> : <Navigate to="/sign-in" />
-                    }
-                />
+                <Route path="/users" element={authUser ? <UserProfile /> : <Navigate to="/sign-in" />} />
+
+                {/* Authorization routes */}
+                <Route path="/sign-in" element={authUser ? <Navigate to="/me" /> : <SignIn />} />
+                <Route path="/sign-up" element={authUser ? <Navigate to="/me" /> : <SignUp />} />
+
+                {/* Default route */}
+                <Route path="/" element={authUser ? <Navigate to="/me" /> : <Navigate to="/sign-in" />} />
+
+                {/* Invalid route - send to error page */}
+                <Route path="*" element={<Error />} />
             </Routes>
         </div>
     )

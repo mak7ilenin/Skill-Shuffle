@@ -29,10 +29,28 @@ p {
     }
 
     &:has(.wrapper-profile),
-    &:has(.chat-page) {
-        // width: 100%;
+    &:has(.chat-page),
+    &:has(.error-page) {
         flex: 1;
     }
+
+    &:has(.error-page) {
+        height: calc(100vh - 75px);
+    }
+}
+
+*::-webkit-scrollbar {
+    width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+    background: white;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: rgb(0, 0, 0);
+    border-radius: 20px;
+    border: 3px solid #5D6BE4;
 }
 
 .container {
@@ -42,7 +60,7 @@ p {
 
 .row,
 .col {
-    margin: auto 0 !important;
+    margin: 0 !important;
     padding: 0 !important;
 }
 

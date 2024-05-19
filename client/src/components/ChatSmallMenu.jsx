@@ -104,7 +104,7 @@ function ChatSmallMenu({ chat, setChat, setChats }) {
     };
 
     return (
-        <Dropdown autoClose>
+        <Dropdown bsPrefix='custom-primary-dropdown' autoClose>
             <Dropdown.Toggle className='d-flex align-items-center flex-row' title='More' >
                 <IoMdMore className='more-btn' />
             </Dropdown.Toggle>
@@ -118,39 +118,37 @@ function ChatSmallMenu({ chat, setChat, setChats }) {
                     />
                 )}
 
-                <div className="dropdown-menu-container">
-                    {notifications ? (
-                        <Dropdown.Item as={Button} onClick={() => toggleNotifications(false)}>
-                            <IoMdVolumeOff size={16} className='nosound-icon' />
-                            Disable notifications
-                        </Dropdown.Item>
-                    ) : (
-                        <Dropdown.Item as={Button} onClick={() => toggleNotifications(true)}>
-                            <IoVolumeMediumSharp size={16} className='sound-icon' />
-                            Enable notifications
-                        </Dropdown.Item>
-                    )}
-                    <Dropdown.Item as={Button} onClick={() => handleShowModal('clear')}>
-                        <FaTrashAlt size={16} className='trash-icon' />
-                        Clear message history
+                {notifications ? (
+                    <Dropdown.Item as={Button} onClick={() => toggleNotifications(false)}>
+                        <IoMdVolumeOff size={16} className='nosound-icon' />
+                        Disable notifications
                     </Dropdown.Item>
+                ) : (
+                    <Dropdown.Item as={Button} onClick={() => toggleNotifications(true)}>
+                        <IoVolumeMediumSharp size={16} className='sound-icon' />
+                        Enable notifications
+                    </Dropdown.Item>
+                )}
+                <Dropdown.Item as={Button} onClick={() => handleShowModal('clear')}>
+                    <FaTrashAlt size={16} className='trash-icon' />
+                    Clear message history
+                </Dropdown.Item>
 
-                    {chat.type === 'group' && (
-                        <>
-                            {chat.members == null ? (
-                                <Dropdown.Item as={Button} onClick={handleReturnToChat}>
-                                    <TbArrowBackUp size={16} className='return-icon' />
-                                    Return to chat
-                                </Dropdown.Item>
-                            ) : (
-                                <Dropdown.Item as={Button} onClick={() => handleShowModal('leave')}>
-                                    <RxCross2 size={16} className='cross-icon' />
-                                    Leave chat
-                                </Dropdown.Item>
-                            )}
-                        </>
-                    )}
-                </div>
+                {chat.type === 'group' && (
+                    <>
+                        {chat.members == null ? (
+                            <Dropdown.Item as={Button} onClick={handleReturnToChat}>
+                                <TbArrowBackUp size={16} className='return-icon' />
+                                Return to chat
+                            </Dropdown.Item>
+                        ) : (
+                            <Dropdown.Item as={Button} onClick={() => handleShowModal('leave')}>
+                                <RxCross2 size={16} className='cross-icon' />
+                                Leave chat
+                            </Dropdown.Item>
+                        )}
+                    </>
+                )}
             </Dropdown.Menu>
         </Dropdown>
     )

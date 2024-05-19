@@ -8,7 +8,7 @@ import ChatTypeFilter from './ChatTypeFilter';
 import CreateChat from './CreateChat';
 import GroupChatMenu from './GroupChatMenu';
 
-function ChatMenu({ chats, chat, setChat, handleMenuChange, activeMenu }) {
+function ChatMenu({ chats, chat, setChat, subscription, handleMenuChange, activeMenu }) {
     const navigate = useNavigate();
     const [filteredChats, setFilteredChats] = useState([]);
     const [selectedChatType, setSelectedChatType] = useState('all');
@@ -40,6 +40,7 @@ function ChatMenu({ chats, chat, setChat, handleMenuChange, activeMenu }) {
                 changeMenu={handleMenuChange}
                 activeMenu={activeMenu}
                 setChat={setChat}
+                subscription={subscription}
             />
 
             {activeMenu === 'DEFAULT' ? (

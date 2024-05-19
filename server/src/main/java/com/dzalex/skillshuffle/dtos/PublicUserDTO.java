@@ -15,4 +15,5 @@ public class PublicUserDTO {
     private String nickname;
     private String avatarUrl;
     private Timestamp lastSeen;
+    private boolean isPublic;
 }

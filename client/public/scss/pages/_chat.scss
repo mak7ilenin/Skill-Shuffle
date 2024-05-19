@@ -42,6 +42,11 @@
             padding: 0 24px !important;
             flex-wrap: nowrap;
 
+            .col {
+                display: flex;
+                align-items: center;
+            }
+
             .search-btn {
                 width: fit-content;
                 display: none;
@@ -253,6 +258,7 @@
             padding: 13px 14px !important;
             border-bottom: 1px solid #8f8f8f25;
             margin: 0 !important;
+            position: relative;
 
             &>* {
                 font-family: $main-font;
@@ -264,6 +270,18 @@
 
             &.active {
                 background-color: #EFEBFF;
+            }
+
+            .muted-icon {
+                width: fit-content;
+                position: absolute;
+                left: -6px;
+                top: -2px;
+
+                svg {
+                    color: $light-gray;
+                    opacity: .7;
+                }
             }
 
             .chat-avatar {
@@ -564,7 +582,7 @@
                 .member-action {
                     width: fit-content;
 
-                    .dropdown button {
+                    .custom-primary-dropdown button {
                         border: none;
 
                         &:hover {
@@ -578,38 +596,36 @@
                         }
                     }
 
-                    .dropdown-menu-container {
-                        &:hover {
-                            .grade-icon {
-                                &~span {
-                                    color: $primary-color;
-                                }
-
-                                path {
-                                    fill: $primary-color;
-                                }
+                    .dropdown-item:hover svg {
+                        &.grade-icon {
+                            &~span {
+                                color: $primary-color;
                             }
 
-                            .downgrade {
-                                &~span {
-                                    color: $red;
-                                }
-
-                                path {
-                                    fill: $red;
-                                }
+                            path {
+                                fill: $primary-color;
                             }
+                        }
 
-                            .cross-icon {
-                                &~span {
-                                    color: $red;
-                                }
-
+                        &.downgrade {
+                            &~span {
                                 color: $red;
+                            }
 
-                                path {
-                                    fill: $red !important;
-                                }
+                            path {
+                                fill: $red;
+                            }
+                        }
+
+                        &.cross-icon {
+                            &~span {
+                                color: $red;
+                            }
+
+                            color: $red;
+
+                            path {
+                                fill: $red !important;
                             }
                         }
 
@@ -1084,18 +1100,18 @@
 
                     svg {
                         &>path {
-                            fill: #ccc;
+                            fill: #d4d4d4;
                         }
 
                         &:hover {
                             &>path {
-                                fill: #b2b2b2;
+                                fill: $light-gray;
                             }
                         }
 
                         &.active {
                             &>path {
-                                fill: #b2b2b2;
+                                fill: $light-gray;
                             }
                         }
                     }

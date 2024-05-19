@@ -7,4 +7,6 @@ public enum InteractionType {
     BOOKMARKED,
     @JsonProperty("liked")
     LIKED,
+    @JsonProperty("reposted")
+    REPOSTED
 }

@@ -12,6 +12,8 @@ services:
     restart: always
     depends_on:
       - database
+    networks:
+      - app-network
 
   database:
     # image: public.ecr.aws/i2t4w1a3/skill-shuffle:database
@@ -28,6 +30,8 @@ services:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
     ports:
       - "3306:3306"
+    networks:
+      - app-network
 
   client:
     # image: public.ecr.aws/i2t4w1a3/skill-shuffle:client
@@ -39,14 +43,41 @@ services:
       - "3000:3000"
     depends_on:
       - server
+    networks:
+      - app-network
 
   proxy:
     build: ./nginx
     container_name: proxy
     restart: always
+    environment:
+      - ADMIN_PATH=${ADMIN_PATH}
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
       - /tmp/acme_challenge:/tmp/acme_challenge
+    depends_on:
+      - server
+      - client
+      - phpmyadmin
+    networks:
+      - app-network
+
+  phpmyadmin:
+    build: ./phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: ${MARIADB_USER}
+      PMA_PASSWORD: ${MARIADB_PASSWORD}
+    depends_on:
+      - database
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
