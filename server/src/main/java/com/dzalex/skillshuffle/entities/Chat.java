@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Entity
 @Builder
@@ -29,6 +31,10 @@ public class Chat {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id")
     private Community community;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
+    private List<ChatMember> members;
 
     @JsonIgnore
     public boolean isPrivate() {

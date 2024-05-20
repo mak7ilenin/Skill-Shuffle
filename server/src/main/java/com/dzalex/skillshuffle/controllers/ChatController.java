@@ -59,6 +59,13 @@ public class ChatController {
         }
     }
 
+    // Open chat or create new one
+    @PostMapping("/chats/open/{nickname}")
+    public Integer openChat(@PathVariable("nickname") String nickname) {
+        User user = userService.getUserByNickname(nickname);
+        return chatService.openChat(user);
+    }
+
     // Get chat info with messages and members
     @GetMapping("/chats/{id}")
     public ChatDTO getChat(@PathVariable("id") Integer id) {

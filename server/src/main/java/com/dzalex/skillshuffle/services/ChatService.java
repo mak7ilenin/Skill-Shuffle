@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
@@ -428,5 +429,39 @@ public class ChatService {
             chatMember.setRole(MemberRole.valueOf(role.toUpperCase()));
             chatMemberRepository.save(chatMember);
         }
+    }
+
+    public Integer openChat(User user) {
+        User currentUser = userService.getCurrentUser();
+
+        // Get all chats where the current user is a member
+        List<Chat> chats = chatMemberRepository.findAllByMemberId(currentUser.getId())
+                .stream()
+                .map(ChatMember::getChat)
+                .toList();
+
+        // Find a private chat where the other member is the specified user
+        for (Chat chat : chats) {
+            if (chat.isPrivate()) {
+                List<User> members = chat.getMembers()
+                        .stream()
+                        .map(ChatMember::getMember)
+                        .toList();
+
+                if (members.size() == 2 && members.contains(user)) {
+                    // Found the chat, return its ID
+                    return chat.getId();
+                }
+            }
+        }
+
+        // No such chat found, create a new one
+        Chat newChat = createChat(NewChatDTO.builder()
+                .name("")
+                .type(ChatType.PRIVATE)
+                .members(new String[]{user.getUsername()})
+                .build(), null);
+
+        return newChat.getId();
     }
 }

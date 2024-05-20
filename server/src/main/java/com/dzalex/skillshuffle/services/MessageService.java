@@ -224,12 +224,15 @@ public class MessageService {
         if (chatMember.getClosedAt() == null) {
             return messageRepository.findMessagesByChatId(chatId)
                     .stream()
+                    // Don't count entry messages
+                    .filter(message -> message.getType() != MessageType.ENTRY)
                     .mapToInt(message -> 1)
                     .sum();
         }
 
         return (int) messageRepository.findMessagesByChatId(chatId)
                 .stream()
+                .filter(message -> message.getType() != MessageType.ENTRY)
                 .filter(message -> message.getTimestamp().after(chatMember.getClosedAt()))
                 .count();
     }

@@ -15,4 +15,5 @@ public interface ChatMemberRepository extends JpaRepository<ChatMember, Integer>
     ChatMember findFirstByChatIdAndMemberNickname(Integer id, String nickname);
     ChatMember findFirstByChatIdAndRole(Integer id, MemberRole memberRole);
     List<ChatMember> findChatMembersByMemberId(Integer userId);
+    List<ChatMember> findAllByMemberId(Integer id);
 }

@@ -24,6 +24,7 @@ function UserProfile() {
     const [showAside, setShowAside] = useState(false);
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
+    const [currentTab, setCurrentTab] = useState('posts');
     const { authUser } = useAuth();
     const navigate = useNavigate();
 
@@ -83,17 +84,29 @@ function UserProfile() {
 
                     {windowDimensions.width > 1000 && (
                         <Row className='profile-header native w-100'>
-                            <ProfileHeader type={'USER_PROFILE'} user={user} setPosts={setPosts} />
+                            <ProfileHeader
+                                type={'USER_PROFILE'}
+                                user={user}
+                                setPosts={setPosts}
+                                tab={currentTab}
+                                setTab={setCurrentTab}
+                            />
                         </Row>
                     )}
 
-                    <Container className='d-flex mx-auto my-0 profile-content'>
+                    <Container className='d-flex mx-auto mt-3 profile-content'>
 
                         <ProfileInfo user={user} setUser={setUser} showAside={showAside} compacted={false} />
 
                         {windowDimensions.width <= 1000 && (
                             <Row className='profile-header w-100'>
-                                <ProfileHeader type={'USER_PROFILE'} user={user} setPosts={setPosts} />
+                                <ProfileHeader
+                                    type={'USER_PROFILE'}
+                                    user={user}
+                                    setPosts={setPosts}
+                                    tab={currentTab}
+                                    setTab={setCurrentTab}
+                                />
                             </Row>
                         )}
 

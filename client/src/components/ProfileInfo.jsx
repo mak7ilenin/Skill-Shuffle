@@ -4,6 +4,7 @@ import { Row, Col, Image, Button } from 'react-bootstrap';
 import { useAuth } from './AuthContext';
 import ProfileRelationshipButton from './ProfileRelationshipButton';
 import ProfileAside from './ProfileAside';
+import { formatLastSeenTimestamp } from '../utils/helpers';
 
 import { ReactComponent as Trophy } from '../assets/icons/pointsTrophy.svg';
 import { ReactComponent as BornIn } from '../assets/icons/bornIn.svg';
@@ -26,29 +27,6 @@ function ProfileInfo({ user, setUser, showAside, compacted }) {
     const formatBirthdayTimestamp = () => {
         const date = new Date(user.birthDate);
         return date.toLocaleString('en-US', { month: 'long', day: 'numeric' });
-    };
-
-    const formatLastSeenTimestamp = () => {
-        const date = new Date(user.lastSeen);
-        const currentDate = new Date();
-        const difference = currentDate - date;
-
-        if (difference > 31536000000) {
-            // dd/mmm/yyyy if the message was sent more than a year ago
-            return `Last seen ${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`;
-        } else if (difference > 86400000) {
-            // dd/mmm if the message was sent less than a year ago but more than a day ago
-            return `Last seen ${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
-        } else if (difference > 3600000) {
-            // hh:mm if the message was sent less than a day ago and more than an hour ago
-            return `Last seen at ${date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' })}`;
-        } else if (difference > 300000) {
-            // mm ago if message was sent more than 5 minutes
-            return `Last seen ${Math.floor(difference / 60000)} minutes ago`;
-        } else {
-            // If the message was sent less than 5 minutes ago then return 'Online'
-            return 'Online';
-        }
     };
 
     return (
@@ -117,7 +95,7 @@ function ProfileInfo({ user, setUser, showAside, compacted }) {
                         <Col className='d-flex flex-row mb-1 align-items-center'>
                             <Friends className='me-2' />
                             <p>
-                                <span>{user.friends.length}</span> • <a href="/">friends</a>
+                                <span>{user.friends.length}</span> • <a href={`/friends?nn=${user.nickname}`}>friends</a>
                             </p>
                         </Col>
                         <Col className='d-flex flex-row my-1 align-items-center'>

@@ -6,14 +6,13 @@ import RelationshipButton from './RelationshipButton';
 
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
-function ProfileAside({ user }) {
+function ProfileAside({ user, interactionType, setInteractionType }) {
     const navigate = useNavigate();
     const [friendsOnline, setFriendsOnline] = useState([]);
     const [mightKnowUsers, setMightKnowUsers] = useState([]);
 
     useEffect(() => {
         const friendsOnline = user.friends.filter(friend => {
-            // lastSeen is a sql.timestamp, need to check if it's not older than 5 minutes from now time
             const lastSeen = new Date(friend.lastSeen).getTime();
             const now = new Date().getTime();
             const fiveMinutes = 5 * 60 * 1000;

@@ -22,6 +22,7 @@ function Profile() {
     const [showAside, setShowAside] = useState(false);
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
+    const tab = useState(new URLSearchParams(window.location.search).get('tab') || 'posts');
     const { authUser } = useAuth();
 
     useEffect(() => {
@@ -62,28 +63,37 @@ function Profile() {
                             user.bannerUrl ? { backgroundImage: `url(${user.bannerUrl})` } : { backgroundColor: user.bannerColor }
                         }
                     >
-                        <Button variant='none' className='profile-btn border-0 p-2 rounded-circle'>
+                        <Button variant='none' className='border-0 p-2 rounded-circle'>
                             <EditBanner />
                         </Button>
                     </Row>
 
                     {windowDimensions.width > 1000 && (
                         <Row className='profile-header native w-100'>
-                            <ProfileHeader type={'MY_PROFILE'} user={user} setPosts={setPosts} />
+                            <ProfileHeader
+                                type={'MY_PROFILE'}
+                                user={user}
+                                setPosts={setPosts}
+                            />
                         </Row>
                     )}
 
-                    <Container className='d-flex mx-auto my-0 profile-content'>
+                    <Container className='d-flex mx-auto mt-3 profile-content'>
                         <ProfileInfo user={user} showAside={showAside} compacted={false} />
 
                         {windowDimensions.width <= 1000 && (
                             <Row className='profile-header w-100'>
-                                <ProfileHeader type={'MY_PROFILE'} user={user} setPosts={setPosts} />
+                                <ProfileHeader
+                                    type={'MY_PROFILE'}
+                                    user={user}
+                                    setPosts={setPosts}
+                                />
                             </Row>
                         )}
 
                         <Col className="main-block-profile tab-content">
-                            <PostEditor setPosts={setPosts} setUser={setUser} />
+
+                            {tab === 'posts' && <PostEditor setPosts={setPosts} setUser={setUser} />}
 
                             {posts && posts.length > 0 && posts.map(post => {
                                 return <Post key={post.id} post={post} setPosts={setPosts} setUser={setUser} />

@@ -64,18 +64,18 @@ function PostMenu({ post, setPosts, setUser }) {
                 <Dropdown.Item onClick={handlePostBookmark}>
                     {bookmarked ? (
                         <>
-                            <IoBookmark size={24} /> Remove from bookmarks
+                            <IoBookmark size={18} /> Remove from bookmarks
                         </>
                     ) : (
                         <>
-                            <IoBookmarkOutline size={24} /> Add to bookmarks
+                            <IoBookmarkOutline size={18} /> Add to bookmarks
                         </>
                     )}
                 </Dropdown.Item>
                 {/* Delete dropdown item */}
                 {post.author.nickname === authUser.nickname && (
                     <Dropdown.Item onClick={handlePostDelete}>
-                        <FaTrashAlt size={24} /> Delete post
+                        <FaTrashAlt size={18} color='#E64646' /> Delete post
                     </Dropdown.Item>
                 )}
             </Dropdown.Menu>

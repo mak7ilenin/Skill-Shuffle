@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import axios from 'axios';
-import { navigate, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../components/AuthContext';
 import ProfileAside from '../components/ProfileAside';
 import ProfileInfo from '../components/ProfileInfo';
+import FriendsBlock from '../components/FriendsBlock';
 import { API_SERVER } from '../config';
 
 import { ReactComponent as EditBanner } from '../assets/icons/edit_Banner.svg';
@@ -16,12 +16,11 @@ function getWindowDimensions() {
 }
 
 function UserInteractions() {
+    const { authUser } = useAuth();
     const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
     const [user, setUser] = useState(null);
     const [showAside, setShowAside] = useState(false);
-    const { authUser } = useAuth();
-    const navigate = useNavigate();
-    const [friends, setFriends] = useState([]);
+    const [interactionType, setInteractionType] = useState('');
 
     useEffect(() => {
         // Get nickname from url param
@@ -32,27 +31,52 @@ function UserInteractions() {
                 .then((response) => {
                     setUser(response.data);
                 })
+        } else {
+            // Get authed user information
+            axios.get(`${API_SERVER}/users/${authUser.nickname}`, { withCredentials: true })
+                .then((response) => {
+                    setUser(response.data);
+                })
         }
-    }, []);
+    }, [authUser.nickname]);
+
+    useEffect(() => {
+        if (user) {
+            const urlPath = window.location.pathname;
+            switch (urlPath) {
+                case '/friends':
+                    setInteractionType('FRIENDS');
+                    break;
+                case '/followers':
+                    setInteractionType('FOLLOWERS');
+                    // TODO: Get followers
+                    break;
+                case '/friend-requests':
+                    setInteractionType('FRIEND_REQUESTS');
+                    // TODO: Get friend requests
+                    break;
+                case '/communities':
+                    setInteractionType('COMMUNITIES');
+                    // TODO: Get communities
+                    break;
+                case 'photos':
+                    setInteractionType('PHOTOS');
+                    // TODO: Get photos
+                    break;
+                case 'blocked':
+                    setInteractionType('BLOCKED');
+                    // TODO: Get blocked users
+                    break;
+                default:
+                    break;
+            }
+        }
+    }, [user]);
 
     useEffect(() => {
         // Close header
         document.querySelector('.header').classList.remove('closed');
 
-        // If url path is /friends, /requests, get needed data from server
-        const urlPath = window.location.pathname;
-        switch (urlPath) {
-            case '/friends':
-                // Get user friends
-                break;
-        
-            default:
-                break;
-        }
-
-    }, [navigate, authUser.nickname]);
-
-    useEffect(() => {
         handleResize();
         function handleResize() {
             setWindowDimensions(getWindowDimensions());
@@ -78,16 +102,19 @@ function UserInteractions() {
                             user.bannerUrl ? { backgroundImage: `url(${user.bannerUrl})` } : { backgroundColor: user.bannerColor }
                         }
                     >
-                        <Button variant='none' className='profile-btn border-0 p-2 rounded-circle'>
-                            <EditBanner />
-                        </Button>
+                        {authUser.nickname === user.nickname && (
+                            <Button variant='none' className='border-0 p-2 rounded-circle'>
+                                <EditBanner />
+                            </Button>
+                        )}
                     </Row>
 
-                    <Container className='d-flex mx-auto my-0 profile-content'>
+                    <Container className='d-flex mx-auto mt-3 profile-content'>
                         <ProfileInfo user={user} showAside={showAside} compacted={true} />
 
                         <Col className="main-block-profile tab-content">
                             {/* TODO: implement interactions block */}
+                            {interactionType === 'FRIENDS' && <FriendsBlock friends={user.friends} />}
                         </Col>
 
                         {!showAside && <ProfileAside user={user} />}
