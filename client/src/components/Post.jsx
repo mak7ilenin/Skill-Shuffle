@@ -110,7 +110,7 @@ function Post({ post, setPosts, setUser }) {
     return (
         <Row className='post-block position-relative flex-column p-3'>
             <div className="post-menu-icon w-auto p-0 position-absolute">
-                <PostMenu post={post} setPosts={setPosts} />
+                <PostMenu post={post} setPosts={setPosts} setUser={setUser} />
             </div>
 
             <Row className='post-user d-flex justify-content-start align-items-center'>

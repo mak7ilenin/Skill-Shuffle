@@ -24,6 +24,7 @@ function ProfileHeader({ type, user, setPosts }) {
             case 'bookmarks':
                 axios.get(`${API_SERVER}/posts/bookmarked?nickname=${user.nickname}`, { withCredentials: true })
                     .then((response) => {
+                        console.log(response);
                         setPosts(response.data);
                     });
                 break;

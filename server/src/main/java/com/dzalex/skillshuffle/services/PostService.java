@@ -144,7 +144,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
-        UserPostInteraction interaction = userPostInteractionService.getPostWithRepostedInteraction(user.getId(), postId);
+        UserPostInteraction interaction = userPostInteractionService.getPostWithBookmarkedInteraction(user.getId(), postId);
         if (interaction == null) {
             // Bookmark post
             userPostInteractionService.createUserPostInteraction(user, post, InteractionType.BOOKMARKED);
@@ -160,6 +160,7 @@ public class PostService {
         User user = userService.getUserByNickname(nickname);
         return userPostInteractionService.getPostsWithLikedInteraction(user.getId()).stream()
                 .map(this::getPostDTO)
+                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
                 .toList();
     }
 
@@ -168,6 +169,7 @@ public class PostService {
         User user = userService.getUserByNickname(nickname);
         return userPostInteractionService.getPostsWithBookmarkedInteraction(user.getId()).stream()
                 .map(this::getPostDTO)
+                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
                 .toList();
     }
 

@@ -2805,10 +2805,10 @@ p {
 .wrapper-profile .post-content:not(:has(p)) .post-attachments {
   margin-top: 0;
 }
-.wrapper-profile .post-content:not(:has(p)) .post-attachments[data-size="1"] {
+.wrapper-profile .post-content .post-attachments[data-size="1"] {
   display: unset !important;
 }
-.wrapper-profile .post-content:not(:has(p)) .post-attachments[data-size="1"] .post-attachment {
+.wrapper-profile .post-content .post-attachments[data-size="1"] .post-attachment {
   width: 100%;
   -o-object-fit: cover;
      object-fit: cover;

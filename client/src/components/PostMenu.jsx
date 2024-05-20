@@ -9,7 +9,7 @@ import { IoBookmarkOutline } from "react-icons/io5";
 import { IoBookmark } from "react-icons/io5";
 import { ReactComponent as MenuIcon } from '../assets/icons/post-menu.svg';
 
-function PostMenu({ post, setPosts }) {
+function PostMenu({ post, setPosts, setUser }) {
     const { authUser } = useAuth();
     const [bookmarked, setBookmarked] = useState(post.bookmarked);
 
@@ -26,6 +26,14 @@ function PostMenu({ post, setPosts }) {
                     return prevPost;
                 }));
                 setBookmarked(!bookmarked);
+                
+                // Increase user bookmarkedPostsCount
+                setUser(prevUser => {
+                    return {
+                        ...prevUser,
+                        bookmarkedPostsCount: bookmarked ? prevUser.bookmarkedPostsCount - 1 : prevUser.bookmarkedPostsCount + 1
+                    };
+                });
             });
     };
 

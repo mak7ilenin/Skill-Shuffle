@@ -503,18 +503,17 @@
 
         &:not(:has(p)) .post-attachments {
             margin-top: 0;
+        }
+        
+        .post-attachments[data-size='1'] {
+            display: unset !important;
 
-            &[data-size='1'] {
-                display: unset !important;
-
-                .post-attachment {
-                    width: 100%;
-                    object-fit: cover;
-                    border-radius: 5px;
-                }
+            .post-attachment {
+                width: 100%;
+                object-fit: cover;
+                border-radius: 5px;
             }
         }
-
         .post-attachments {
             padding: 0;
             margin-top: 10px;
