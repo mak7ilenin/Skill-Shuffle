@@ -67,7 +67,7 @@ public class PostService {
     }
 
     // Create post
-    public Post createPost(Post post, List<MultipartFile> files) {
+    public PostDTO createPost(Post post, List<MultipartFile> files) {
         // Save post to database
         Post savedPost = postRepository.save(post);
 
@@ -76,7 +76,7 @@ public class PostService {
             savePostPhotos(savedPost, files);
         }
 
-        return savedPost;
+        return getPostDTO(savedPost);
     }
 
     // Save post photos to storage
@@ -96,6 +96,31 @@ public class PostService {
                 postAttachment.setPhotoUrl(fileUrl);
                 postAttachmentRepository.save(postAttachment);
             }
+        }
+    }
+
+    // Delete post
+    public void deletePost(Integer postId) {
+        User user = userService.getCurrentUser();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        if (!post.getAuthor().equals(user)) {
+            throw new IllegalArgumentException("You can't delete this post");
+        }
+
+        // Delete post attachments
+        deletePostAttachments(postId);
+
+        // Delete post
+        postRepository.deleteById(postId);
+    }
+
+    // Delete attachments from storage
+    private void deletePostAttachments(Integer postId) {
+        List<PostAttachment> attachments = postAttachmentRepository.findPostAttachmentsByPostId(postId);
+        for (PostAttachment attachment : attachments) {
+            fileService.deleteFileFromS3Bucket(attachment.getPhotoUrl());
         }
     }
 
@@ -144,7 +169,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
-        UserPostInteraction interaction = userPostInteractionService.getPostWithRepostedInteraction(user.getId(), postId);
+        UserPostInteraction interaction = userPostInteractionService.getPostWithBookmarkedInteraction(user.getId(), postId);
         if (interaction == null) {
             // Bookmark post
             userPostInteractionService.createUserPostInteraction(user, post, InteractionType.BOOKMARKED);
@@ -160,6 +185,7 @@ public class PostService {
         User user = userService.getUserByNickname(nickname);
         return userPostInteractionService.getPostsWithLikedInteraction(user.getId()).stream()
                 .map(this::getPostDTO)
+                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
                 .toList();
     }
 
@@ -168,6 +194,7 @@ public class PostService {
         User user = userService.getUserByNickname(nickname);
         return userPostInteractionService.getPostsWithBookmarkedInteraction(user.getId()).stream()
                 .map(this::getPostDTO)
+                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
                 .toList();
     }
 

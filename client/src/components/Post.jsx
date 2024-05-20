@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import PostMenu from './PostMenu';
 import { useAuth } from '../components/AuthContext';
+import { formatCreationTimestamp } from '../utils/helpers'
 import { API_SERVER } from '../config';
 
 import { ReactComponent as Like } from '../assets/icons/like.svg';
@@ -18,32 +19,7 @@ function Post({ post, setPosts, setUser }) {
     const { authUser } = useAuth();
     const [loadedImages, setLoadedImages] = useState(0);
     const [liked, setLiked] = useState(post.liked);
-
-    const formatCreationTimestamp = () => {
-        const date = new Date(post.createdAt);
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-
-        const isToday = date.getDate() === today.getDate()
-            && date.getMonth() === today.getMonth()
-            && date.getFullYear() === today.getFullYear();
-
-        const isYesterday = date.getDate() === yesterday.getDate()
-            && date.getMonth() === yesterday.getMonth()
-            && date.getFullYear() === yesterday.getFullYear();
-
-        if (isToday) {
-            return `Today at ${date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' })}`;
-        } else if (isYesterday) {
-            return `Yesterday at ${date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' })}`;
-        } else if (date.getFullYear() === today.getFullYear()) {
-            return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
-        }
-
-        return date.toLocaleDateString('en-GB', { year: 'numeric', day: 'numeric', month: 'long' });
-    };
-
+    
     const formatText = () => {
         return post.text.split('\n').map((line, index) => (
             <React.Fragment key={index}>
@@ -110,7 +86,7 @@ function Post({ post, setPosts, setUser }) {
     return (
         <Row className='post-block position-relative flex-column p-3'>
             <div className="post-menu-icon w-auto p-0 position-absolute">
-                <PostMenu post={post} setPosts={setPosts} />
+                <PostMenu post={post} setPosts={setPosts} setUser={setUser} />
             </div>
 
             <Row className='post-user d-flex justify-content-start align-items-center'>
@@ -131,7 +107,7 @@ function Post({ post, setPosts, setUser }) {
                     </p>
                     <div className='d-flex align-items-center p-0'>
                         <Calendar className='me-2' />
-                        <span className='date'>{formatCreationTimestamp()}</span>
+                        <span className='date'>{formatCreationTimestamp(post.createdAt)}</span>
 
                         {post.reposted && (
                             <div className='reposted'>

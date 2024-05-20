@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
@@ -176,12 +177,24 @@ public class ChatService {
 
     private void setChatNameIfEmpty(NewChatDTO chat) {
         if (chat.getName().isEmpty() && chat.isGroup()) {
-            List<String> firstNames = userService.getUsersFirstNameInChat(chat.getMembers());
-            if (firstNames.size() > 3) {
-                firstNames = firstNames.subList(0, 3);
-                firstNames.add("and " + (firstNames.size() - 3) + " more");
+            StringBuilder name = new StringBuilder();
+
+            // Append the current user's name and the first two members' names
+            name.append(userService.getCurrentUser().getFirstName()).append(", ");
+
+            // Append the first two members' names and the number of other members
+            Arrays.stream(chat.getMembers())
+                  .limit(2)
+                  .forEach(user -> name.append(userService.getUserByNickname(user).getFirstName()).append(", "));
+            if (chat.getMembers().length > 2) {
+                name.append("and ").append(chat.getMembers().length - 2).append(" more");
             }
-            chat.setName(String.join(", ", firstNames));
+
+            // Remove the last comma if it's the last character
+            if (name.charAt(name.length() - 2) == ',') {
+                name.deleteCharAt(name.length() - 2);
+            }
+            chat.setName(name.toString());
         }
     }
 
@@ -330,7 +343,7 @@ public class ChatService {
 
     // Patch method to update chat avatar
     public Chat updateChatAvatar(Chat chat, MultipartFile avatarBlob) {
-        String avatarFilePath = "chats/chat-" + chat.getId() + "/avatar/";
+        String avatarFilePath = "chats/" + chat.getId() + "/avatar/";
         String avatarUrl;
         if (chat.getAvatarUrl() == null) {
             avatarUrl = fileService.uploadFile(avatarBlob, avatarFilePath);
@@ -416,5 +429,39 @@ public class ChatService {
             chatMember.setRole(MemberRole.valueOf(role.toUpperCase()));
             chatMemberRepository.save(chatMember);
         }
+    }
+
+    public Integer openChat(User user) {
+        User currentUser = userService.getCurrentUser();
+
+        // Get all chats where the current user is a member
+        List<Chat> chats = chatMemberRepository.findAllByMemberId(currentUser.getId())
+                .stream()
+                .map(ChatMember::getChat)
+                .toList();
+
+        // Find a private chat where the other member is the specified user
+        for (Chat chat : chats) {
+            if (chat.isPrivate()) {
+                List<User> members = chat.getMembers()
+                        .stream()
+                        .map(ChatMember::getMember)
+                        .toList();
+
+                if (members.size() == 2 && members.contains(user)) {
+                    // Found the chat, return its ID
+                    return chat.getId();
+                }
+            }
+        }
+
+        // No such chat found, create a new one
+        Chat newChat = createChat(NewChatDTO.builder()
+                .name("")
+                .type(ChatType.PRIVATE)
+                .members(new String[]{user.getUsername()})
+                .build(), null);
+
+        return newChat.getId();
     }
 }

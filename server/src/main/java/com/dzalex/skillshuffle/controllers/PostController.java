@@ -30,13 +30,19 @@ public class PostController {
 
     // Create post
     @PostMapping("/posts")
-    public Post createPost(@RequestParam("post") String postObject,
+    public PostDTO createPost(@RequestParam("post") String postObject,
                            @RequestParam(required = false, name = "files") List<MultipartFile> files) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Post post = mapper.readValue(postObject, Post.class);
         post.setAuthor(userService.getCurrentUser());
 
         return postService.createPost(post, files);
+    }
+
+    // Delete post
+    @DeleteMapping("/posts/{postId}")
+    public void deletePost(@PathVariable Integer postId) {
+        postService.deletePost(postId);
     }
 
     // Like post

@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useAuth } from './AuthContext';
 import UploadChatAvatarModal from './UploadChatAvatarModal';
 import AddFriends from './AddFriends';
+import { formatLastSeenTimestamp } from '../utils/helpers';
 import { API_SERVER } from '../config';
 
 import { ReactComponent as NetworkIcon } from '../assets/icons/network.svg';
@@ -111,29 +112,6 @@ function GroupChatMenu({ chat, setChat }) {
                 console.error(error);
             });
     };
-
-    const formatLastSeenTimestamp = (timestamp) => {
-        const date = new Date(timestamp);
-        const currentDate = new Date();
-        const difference = currentDate - date;
-
-        if (difference > 31536000000) {
-            // dd/mmm/yyyy if the message was sent more than a year ago
-            return `last seen ${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`;
-        } else if (difference > 86400000) {
-            // dd/mmm if the message was sent less than a year ago but more than a day ago
-            return `last seen ${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
-        } else if (difference > 3600000) {
-            // hh:mm if the message was sent less than a day ago and more than an hour ago
-            return `last seen at ${date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' })}`;
-        } else if (difference > 300000) {
-            // mm ago if message was sent more than 5 minutes
-            return `last seen ${Math.floor(difference / 60000)} minutes ago`;
-        } else {
-            // If the message was sent less than 5 minutes ago then return 'Online'
-            return 'Online';
-        }
-    }
 
     const isAdminOrCreator = () => {
         const isAdmin = chat.members.find(member => member.nickname === authUser.nickname && member.role === 'admin');

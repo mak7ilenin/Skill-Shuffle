@@ -29,6 +29,7 @@ p {
     }
 
     &:has(.wrapper-profile),
+    &:has(.wrapper-user-interactions),
     &:has(.chat-page),
     &:has(.error-page) {
         flex: 1;

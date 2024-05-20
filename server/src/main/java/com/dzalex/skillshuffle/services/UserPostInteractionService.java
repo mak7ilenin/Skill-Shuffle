@@ -75,6 +75,14 @@ public class UserPostInteractionService {
                 .orElse(null);
     }
 
+    // Get post with BOOKMARKED interaction
+    public UserPostInteraction getPostWithBookmarkedInteraction(Integer userId, Integer postId) {
+        return getUserPostInteractions(userId, postId).stream()
+                .filter(interaction -> interaction.getInteractionType() == InteractionType.BOOKMARKED)
+                .findFirst()
+                .orElse(null);
+    }
+
     // Get all posts liked by user
     public List<Post> getPostsWithLikedInteraction(Integer userId) {
         List<UserPostInteraction> interactions = userPostInteractionRepository.findAllByUserIdAndInteractionType(userId, InteractionType.LIKED);
@@ -98,5 +106,9 @@ public class UserPostInteractionService {
 
     public int getPostsCountWithBookmarkedInteraction(Integer id) {
         return userPostInteractionRepository.countAllByUserIdAndInteractionType(id, InteractionType.BOOKMARKED);
+    }
+
+    public void deleteUserPostInteractionsByPostId(Integer postId) {
+        userPostInteractionRepository.deleteAllByPostId(postId);
     }
 }

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2024 at 07:16 PM
--- Server version: 10.4.22-MariaDB
--- PHP Version: 8.1.0
+-- Generation Time: May 20, 2024 at 12:33 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -47,9 +47,9 @@ CREATE TABLE IF NOT EXISTS `blocked_users` (
 
 CREATE TABLE IF NOT EXISTS `chats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(75) COLLATE utf8mb4_bin DEFAULT NULL,
-  `type` enum('PRIVATE','COMMUNITY','GROUP') COLLATE utf8mb4_bin NOT NULL,
-  `avatar_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(75) DEFAULT NULL,
+  `type` enum('PRIVATE','COMMUNITY','GROUP') NOT NULL,
+  `avatar_url` varchar(255) DEFAULT NULL,
   `community_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `community_id` (`community_id`)
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `chat_members` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `chat_id` int(11) NOT NULL,
   `member_id` int(11) NOT NULL,
-  `role` enum('CREATOR','ADMIN','MEMBER') COLLATE utf8mb4_bin NOT NULL,
+  `role` enum('CREATOR','ADMIN','MEMBER') NOT NULL,
   `notifications` bit(1) NOT NULL DEFAULT b'1',
   `joined_at` timestamp(3) NOT NULL DEFAULT current_timestamp(3),
   `left_at` timestamp(3) NULL DEFAULT NULL,
@@ -109,14 +109,14 @@ CREATE TABLE IF NOT EXISTS `chat_members` (
 
 INSERT INTO `chat_members` (`id`, `chat_id`, `member_id`, `role`, `notifications`, `joined_at`, `left_at`, `is_kicked`, `cleared_at`, `closed_at`) VALUES
 (1, 1, 1, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0', '2024-05-01 18:52:38.818', '2024-05-18 20:43:31.219'),
-(2, 1, 4, 'CREATOR', b'1', '2024-04-22 09:45:49.000', NULL, b'0', NULL, '2024-05-16 21:38:24.311'),
+(2, 1, 4, 'CREATOR', b'1', '2024-04-22 09:45:49.000', NULL, b'0', NULL, '2024-05-20 10:30:16.270'),
 (3, 1, 2, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0', NULL, NULL),
 (6, 3, 1, 'CREATOR', b'1', '2024-04-22 09:57:26.000', NULL, b'0', '2024-05-01 17:55:41.050', '2024-05-17 21:10:43.676'),
 (7, 3, 4, 'MEMBER', b'0', '2024-04-22 09:57:26.000', NULL, b'0', NULL, '2024-05-16 15:26:22.535'),
 (8, 3, 2, 'MEMBER', b'1', '2024-04-22 09:57:26.000', NULL, b'0', NULL, '2024-05-18 20:44:49.808'),
-(9, 5, 1, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL, '2024-05-18 18:29:00.054'),
+(9, 5, 1, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL, '2024-05-20 10:33:01.399'),
 (10, 5, 4, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL, '2024-05-02 21:51:29.386'),
-(11, 4, 1, 'MEMBER', b'1', '2024-05-02 16:35:30.901', NULL, b'0', NULL, '2024-05-18 20:43:33.568');
+(11, 4, 1, 'MEMBER', b'1', '2024-05-02 16:35:30.901', NULL, b'0', NULL, '2024-05-20 10:32:59.759');
 
 -- --------------------------------------------------------
 
@@ -128,14 +128,14 @@ CREATE TABLE IF NOT EXISTS `chat_messages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sender_id` int(11) NOT NULL,
   `chat_id` int(11) NOT NULL,
-  `content` varchar(1024) COLLATE utf8mb4_bin NOT NULL,
+  `content` varchar(1024) NOT NULL,
   `timestamp` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3),
-  `type` enum('MESSAGE','ANNOUNCEMENT','ENTRY') COLLATE utf8mb4_bin NOT NULL,
-  `status` enum('SENT','SEEN') COLLATE utf8mb4_bin NOT NULL,
+  `type` enum('MESSAGE','ANNOUNCEMENT','ENTRY') NOT NULL,
+  `status` enum('SENT','SEEN') NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`sender_id`),
   KEY `chat_id` (`chat_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=611 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=612 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `chat_messages`
@@ -158,7 +158,8 @@ INSERT INTO `chat_messages` (`id`, `sender_id`, `chat_id`, `content`, `timestamp
 (15, 1, 1, 'no shit', '2024-05-02 06:35:13.998', 'MESSAGE', 'SENT'),
 (16, 4, 1, 'hey', '2024-05-02 21:07:04.449', 'MESSAGE', 'SENT'),
 (17, 4, 1, 'huh??', '2024-05-02 21:07:15.662', 'MESSAGE', 'SENT'),
-(610, 2, 3, 'What\'s up men', '2024-05-18 20:44:45.243', 'MESSAGE', 'SENT');
+(610, 2, 3, 'What\'s up men', '2024-05-18 20:44:45.243', 'MESSAGE', 'SENT'),
+(611, 4, 1, 'gsdfgdsfg', '2024-05-20 10:30:05.329', 'MESSAGE', 'SENT');
 
 -- --------------------------------------------------------
 
@@ -169,7 +170,7 @@ INSERT INTO `chat_messages` (`id`, `sender_id`, `chat_id`, `content`, `timestamp
 CREATE TABLE IF NOT EXISTS `chat_message_attachments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `message_id` int(11) NOT NULL,
-  `photo_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `photo_url` varchar(255) DEFAULT NULL,
   `file_id` int(11) DEFAULT NULL,
   `video_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -189,7 +190,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `user_id` int(11) NOT NULL,
   `post_id` int(11) NOT NULL,
   `likes` int(11) NOT NULL,
-  `content` varchar(512) COLLATE utf8mb4_bin NOT NULL,
+  `content` varchar(512) NOT NULL,
   `parent_id` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
@@ -208,7 +209,7 @@ CREATE TABLE IF NOT EXISTS `comment_attachments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `comment_id` int(11) NOT NULL,
   `file_id` int(11) DEFAULT NULL,
-  `photo_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `photo_url` varchar(255) DEFAULT NULL,
   `video_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `comment_attachments_ibfk_2` (`comment_id`),
@@ -224,15 +225,15 @@ CREATE TABLE IF NOT EXISTS `comment_attachments` (
 
 CREATE TABLE IF NOT EXISTS `communities` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(75) COLLATE utf8mb4_bin NOT NULL,
-  `nickname` varchar(50) COLLATE utf8mb4_bin NOT NULL,
-  `description` varchar(275) COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(75) NOT NULL,
+  `nickname` varchar(50) NOT NULL,
+  `description` varchar(275) DEFAULT NULL,
   `subject_id` int(11) NOT NULL,
-  `avatar_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `banner_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `banner_color` varchar(7) COLLATE utf8mb4_bin NOT NULL DEFAULT '#bdbdbd',
+  `avatar_url` varchar(255) DEFAULT NULL,
+  `banner_url` varchar(255) DEFAULT NULL,
+  `banner_color` varchar(7) NOT NULL DEFAULT '#bdbdbd',
   `creator_id` int(11) NOT NULL,
-  `privacy` enum('OPEN','CLOSED','PRIVATE') COLLATE utf8mb4_bin NOT NULL DEFAULT 'OPEN',
+  `privacy` enum('OPEN','CLOSED','PRIVATE') NOT NULL DEFAULT 'OPEN',
   `allow_comments` bit(1) NOT NULL DEFAULT b'1',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
@@ -246,7 +247,7 @@ CREATE TABLE IF NOT EXISTS `communities` (
 --
 
 INSERT INTO `communities` (`id`, `name`, `nickname`, `description`, `subject_id`, `avatar_url`, `banner_url`, `banner_color`, `creator_id`, `privacy`, `allow_comments`, `created_at`) VALUES
-(1, 'Quantum Hub', 'quantumhub', 'Explore the mysteries of quantum cognition and neural mechanics in the Quantum Minds Hub. Connect with fellow enthusiasts.', 1, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/communities/community-1/avatar/diguyewhuyt39jkdnifnoisdjgfosdjoi.jpg', NULL, '#bdbdbd', 3, 'OPEN', b'1', '2024-04-22 10:09:04');
+(1, 'Quantum Hub', 'quantumhub', 'Explore the mysteries of quantum cognition and neural mechanics in the Quantum Minds Hub. Connect with fellow enthusiasts.', 1, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/communities/1/avatar/diguyewhuyt39jkdnifnoisdjgfosdjoi.jpg', NULL, '#bdbdbd', 3, 'OPEN', b'1', '2024-04-22 10:09:04');
 
 -- --------------------------------------------------------
 
@@ -306,7 +307,7 @@ CREATE TABLE IF NOT EXISTS `community_members` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `community_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `role` enum('admin','moderator','member','creator') COLLATE utf8mb4_bin NOT NULL,
+  `role` enum('admin','moderator','member','creator') NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `community_id` (`community_id`) USING BTREE
@@ -335,7 +336,7 @@ CREATE TABLE IF NOT EXISTS `community_posts` (
 
 CREATE TABLE IF NOT EXISTS `community_subjects` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(75) COLLATE utf8mb4_bin NOT NULL,
+  `name` varchar(75) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -355,7 +356,7 @@ INSERT INTO `community_subjects` (`id`, `name`) VALUES
 CREATE TABLE IF NOT EXISTS `confirmation_code` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `reset_code` varchar(5) COLLATE utf8mb4_bin NOT NULL,
+  `reset_code` varchar(5) NOT NULL,
   `expires_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
@@ -369,10 +370,10 @@ CREATE TABLE IF NOT EXISTS `confirmation_code` (
 
 CREATE TABLE IF NOT EXISTS `events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` enum('WEBINAR','COMPETITION') COLLATE utf8mb4_bin NOT NULL,
-  `title` varchar(75) COLLATE utf8mb4_bin NOT NULL,
-  `description` varchar(1024) COLLATE utf8mb4_bin NOT NULL,
-  `banner_url` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `type` enum('WEBINAR','COMPETITION') NOT NULL,
+  `title` varchar(75) NOT NULL,
+  `description` varchar(1024) NOT NULL,
+  `banner_url` varchar(255) NOT NULL,
   `starts_at` datetime NOT NULL,
   `ends_at` datetime NOT NULL,
   `community_id` int(11) NOT NULL,
@@ -404,7 +405,7 @@ CREATE TABLE IF NOT EXISTS `event_participants` (
 CREATE TABLE IF NOT EXISTS `event_topics` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `event_id` int(11) NOT NULL,
-  `topic` varchar(50) COLLATE utf8mb4_bin NOT NULL,
+  `topic` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `event_id` (`event_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -418,10 +419,10 @@ CREATE TABLE IF NOT EXISTS `event_topics` (
 CREATE TABLE IF NOT EXISTS `files` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `data` mediumblob NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  `type` varchar(50) COLLATE utf8mb4_bin NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `type` varchar(50) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `file_path` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `file_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -438,7 +439,7 @@ CREATE TABLE IF NOT EXISTS `friendships` (
   PRIMARY KEY (`id`),
   KEY `friend_id` (`friend_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `friendships`
@@ -448,7 +449,6 @@ INSERT INTO `friendships` (`id`, `user_id`, `friend_id`) VALUES
 (1, 1, 2),
 (2, 1, 4),
 (3, 4, 2),
-(4, 4, 3),
 (5, 1, 3),
 (8, 15, 4),
 (10, 1, 15),
@@ -465,21 +465,12 @@ CREATE TABLE IF NOT EXISTS `friend_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sender_id` int(11) NOT NULL,
   `receiver_id` int(11) NOT NULL,
-  `status` enum('PENDING','IGNORED') COLLATE utf8mb4_bin NOT NULL DEFAULT 'PENDING',
+  `status` enum('PENDING','IGNORED') NOT NULL DEFAULT 'PENDING',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `receiver_id` (`receiver_id`),
   KEY `sender_id` (`sender_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
---
--- Dumping data for table `friend_requests`
---
-
-INSERT INTO `friend_requests` (`id`, `sender_id`, `receiver_id`, `status`, `created_at`) VALUES
-(18, 16, 15, 'PENDING', '2024-05-16 19:46:48'),
-(20, 15, 3, 'PENDING', '2024-05-16 21:49:39'),
-(21, 3, 2, 'PENDING', '2024-05-16 21:54:30');
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- --------------------------------------------------------
 
@@ -491,8 +482,8 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `receiver_id` int(11) NOT NULL,
   `sender_id` int(11) NOT NULL,
-  `message` varchar(155) COLLATE utf8mb4_bin NOT NULL,
-  `type` enum('like','comment','friend-request') COLLATE utf8mb4_bin NOT NULL,
+  `message` varchar(155) NOT NULL,
+  `type` enum('like','comment','friend-request') NOT NULL,
   `is_read` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
@@ -509,8 +500,8 @@ CREATE TABLE IF NOT EXISTS `notifications` (
 CREATE TABLE IF NOT EXISTS `posts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `author_id` int(11) NOT NULL,
-  `text` text COLLATE utf8mb4_bin NOT NULL,
-  `privacy` enum('PUBLIC','FRIENDS') COLLATE utf8mb4_bin NOT NULL,
+  `text` text NOT NULL,
+  `privacy` enum('PUBLIC','FRIENDS') NOT NULL,
   `likes_count` int(7) NOT NULL DEFAULT 0,
   `shares_count` int(7) NOT NULL DEFAULT 0,
   `comments_count` int(7) NOT NULL DEFAULT 0,
@@ -520,7 +511,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `FK6xvn0811tkyo3nfjk2xvqx6ns` (`author_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `posts`
@@ -532,10 +523,12 @@ INSERT INTO `posts` (`id`, `author_id`, `text`, `privacy`, `likes_count`, `share
 (5, 1, 'ahhaahahahha😂😂😂😂😭😭😭', 'PUBLIC', 0, 0, 0, b'1', b'1', '2021-05-14 20:03:51', '2024-05-18 22:32:09'),
 (6, 1, 'ahhaahahahha😂😂😂😂😭😭😭', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-18 20:04:55', '2024-05-18 20:04:55'),
 (7, 1, 'ahhaahahahha😂😂😂😂😭😭😭', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-17 20:05:29', '2024-05-18 22:25:27'),
-(9, 1, 'Wait what💀💀', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-18 22:38:10', '2024-05-18 22:38:10'),
-(10, 1, 'xxDDDDDDDD', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-18 22:39:18', '2024-05-18 22:39:18'),
-(11, 4, 'She\'s a ten\n\n\n\n\n\n\n\nten tonne', 'PUBLIC', 1, 0, 0, b'1', b'1', '2024-05-19 13:11:02', '2024-05-19 13:16:32'),
-(12, 4, 'Yo guys', 'PUBLIC', 2, 1, 0, b'1', b'1', '2024-05-19 13:12:34', '2024-05-19 13:26:40');
+(9, 1, 'Wait what💀💀', 'PUBLIC', 1, 0, 0, b'1', b'1', '2024-05-18 22:38:10', '2024-05-20 09:48:47'),
+(10, 1, 'xxDDDDDDDD', 'PUBLIC', 1, 1, 0, b'1', b'1', '2024-05-18 22:39:18', '2024-05-20 09:49:17'),
+(11, 4, 'She\'s a ten\n\n\n\n\n\n\n\nten tonne', 'PUBLIC', 1, 14, 0, b'1', b'1', '2024-05-19 13:11:02', '2024-05-20 09:49:13'),
+(12, 4, 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww', 'PUBLIC', 3, 1, 0, b'1', b'1', '2024-05-19 13:12:34', '2024-05-20 10:28:18'),
+(13, 3, 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-20 09:50:22', '2024-05-20 09:50:22'),
+(14, 3, 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-20 09:50:36', '2024-05-20 09:50:36');
 
 -- --------------------------------------------------------
 
@@ -547,13 +540,13 @@ CREATE TABLE IF NOT EXISTS `post_attachments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `post_id` int(11) NOT NULL,
   `file_id` int(11) DEFAULT NULL,
-  `photo_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `photo_url` varchar(255) DEFAULT NULL,
   `video_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `file_id` (`file_id`),
   KEY `post_id` (`post_id`),
   KEY `video_id` (`video_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `post_attachments`
@@ -561,7 +554,8 @@ CREATE TABLE IF NOT EXISTS `post_attachments` (
 
 INSERT INTO `post_attachments` (`id`, `post_id`, `file_id`, `photo_url`, `video_id`) VALUES
 (4, 2, NULL, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/posts/2/1716050071815-b42d02cd-6139-4e16-a9f5-aa0e52e0a840', NULL),
-(5, 2, NULL, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/posts/2/1716050072252-19499882-57ce-4e5f-a1f3-cf492c94f338', NULL);
+(5, 2, NULL, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/posts/2/1716050072252-19499882-57ce-4e5f-a1f3-cf492c94f338', NULL),
+(10, 14, NULL, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/3/posts/14/1716198636289-424dafe2-9caf-451a-ab07-f897eef71f7b', NULL);
 
 -- --------------------------------------------------------
 
@@ -571,7 +565,7 @@ INSERT INTO `post_attachments` (`id`, `post_id`, `file_id`, `photo_url`, `video_
 
 CREATE TABLE IF NOT EXISTS `refresh_token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `token` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `token` varchar(255) NOT NULL,
   `expires_at` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3),
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
@@ -596,19 +590,19 @@ INSERT INTO `refresh_token` (`id`, `token`, `expires_at`, `user_id`) VALUES
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(30) COLLATE utf8mb4_bin NOT NULL,
-  `last_name` varchar(30) COLLATE utf8mb4_bin NOT NULL,
-  `username` varchar(75) COLLATE utf8mb4_bin NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  `nickname` varchar(40) COLLATE utf8mb4_bin NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `gender` enum('MALE','FEMALE','OTHER') COLLATE utf8mb4_bin NOT NULL,
+  `first_name` varchar(30) NOT NULL,
+  `last_name` varchar(30) NOT NULL,
+  `username` varchar(75) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `nickname` varchar(40) NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `gender` enum('MALE','FEMALE','OTHER') NOT NULL,
   `birth_date` date DEFAULT NULL,
-  `bio` varchar(275) COLLATE utf8mb4_bin DEFAULT NULL,
+  `bio` varchar(275) DEFAULT NULL,
   `points` int(7) NOT NULL DEFAULT 0,
-  `avatar_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `banner_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `banner_color` varchar(7) COLLATE utf8mb4_bin NOT NULL DEFAULT '#00b3db',
+  `avatar_url` varchar(255) DEFAULT NULL,
+  `banner_url` varchar(255) DEFAULT NULL,
+  `banner_color` varchar(7) NOT NULL DEFAULT '#00b3db',
   `is_public` bit(1) NOT NULL DEFAULT b'1',
   `auto_follow` bit(1) NOT NULL DEFAULT b'0',
   `last_seen` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -626,10 +620,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `password`, `nickname`, `email`, `gender`, `birth_date`, `bio`, `points`, `avatar_url`, `banner_url`, `banner_color`, `is_public`, `auto_follow`, `last_seen`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Test test', 'The testuser', 'test', '$2a$10$JEg8WMqgkd4mbM20o7vOSu9mlCogeiqA6ECGLza4KBg1gzUV/6iru', 'testuser', 'test@gmail.com', 'OTHER', '2004-12-22', 'Test test', 0, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/avatar/2023-10-27_183115.png', 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/banner/mak7ilenin-banner.png', '#00b3db', b'1', b'0', '2024-05-19 14:25:23', '2024-04-22 09:35:00', '2024-05-19 14:25:23', NULL),
+(1, 'Test test', 'The testuser', 'test', '$2a$10$JEg8WMqgkd4mbM20o7vOSu9mlCogeiqA6ECGLza4KBg1gzUV/6iru', 'testuser', 'test@gmail.com', 'OTHER', '2004-12-22', 'Test test', 0, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/avatar/2023-10-27_183115.png', 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/banner/mak7ilenin-banner.png', '#00b3db', b'1', b'0', '2024-05-20 10:33:02', '2024-04-22 09:35:00', '2024-05-20 10:33:02', NULL),
 (2, 'Test test1', 'The test1', 'test1', '$2a$10$sRN8k2KLY8xHO7sec08zOe2/MLjlQgDtkX/jdyadSqfIce1aJEJVq', 'test1', 'test1@gmail.com', 'OTHER', '2004-12-22', 'Test test1', 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-18 20:44:24', '2024-04-22 09:40:59', '2024-05-18 20:44:24', NULL),
-(3, 'Test test2', 'The test2', 'test2', '$2a$10$QycMomHz4iW9PrWfHtucX.antDp4iLeHtAS1FVZbO0EBmV1fEok56', 'test2', 'test2@gmail.com', 'OTHER', '2004-12-22', 'Test test2', 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-17 20:21:41', '2024-04-22 09:41:14', '2024-05-17 20:21:41', NULL),
-(4, 'Test test3', 'The test3', 'test3', '$2a$10$Yn99CbLOCqoMG5HPXRNkYOm8AImK3.UPS9tUcAyNOlff0MvgaJv1W', 'test3', 'test3@gmail.com', 'OTHER', '2004-12-22', 'Test test3', 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-19 14:27:34', '2024-04-22 09:42:13', '2024-05-19 14:27:34', NULL),
+(3, 'Test test2', 'The test2', 'test2', '$2a$10$QycMomHz4iW9PrWfHtucX.antDp4iLeHtAS1FVZbO0EBmV1fEok56', 'test2', 'test2@gmail.com', 'OTHER', '2004-12-22', 'Test test2', 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-20 10:02:07', '2024-04-22 09:41:14', '2024-05-20 10:02:07', NULL),
+(4, 'Test test3', 'The test3', 'test3', '$2a$10$Yn99CbLOCqoMG5HPXRNkYOm8AImK3.UPS9tUcAyNOlff0MvgaJv1W', 'test3', 'test3@gmail.com', 'OTHER', '2004-12-22', 'Test test3', 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-20 10:29:59', '2024-04-22 09:42:13', '2024-05-20 10:29:59', NULL),
 (15, 'Test4', 'Testovich', 'test4', '$2a$10$2hxjn9WN.zpbnGb5FNwMOu4AZi3IEanhHrru.B3c4i6LyUIQ79whC', 'test4', NULL, 'MALE', '1993-01-16', NULL, 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-17 20:56:06', '2024-05-16 18:50:57', '2024-05-17 20:56:06', NULL),
 (16, 'Test5', 'Testina', 'test5', '$2a$10$xrqUZCY2JG20oY7EI4LOguqEQ4GJUWoCjlUQnQ54gOMJ1hM3viLki', 'test5', NULL, 'FEMALE', '1992-02-16', NULL, 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-16 21:39:03', '2024-05-16 19:10:33', '2024-05-16 21:39:03', NULL);
 
@@ -662,7 +656,7 @@ CREATE TABLE IF NOT EXISTS `user_followers` (
   PRIMARY KEY (`id`),
   KEY `follower_id` (`follower_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `user_followers`
@@ -670,7 +664,6 @@ CREATE TABLE IF NOT EXISTS `user_followers` (
 
 INSERT INTO `user_followers` (`id`, `user_id`, `follower_id`) VALUES
 (1, 15, 16),
-(2, 3, 15),
 (3, 2, 3);
 
 -- --------------------------------------------------------
@@ -702,7 +695,7 @@ CREATE TABLE IF NOT EXISTS `user_notifications` (
 CREATE TABLE IF NOT EXISTS `user_photos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `photo_url` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `photo_url` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `user_photos_ibfk_1` (`user_id`)
@@ -718,23 +711,20 @@ CREATE TABLE IF NOT EXISTS `user_post_interactions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `post_id` int(11) NOT NULL,
-  `interaction_type` enum('BOOKMARKED','LIKED','REPOSTED') COLLATE utf8mb4_bin NOT NULL,
+  `interaction_type` enum('BOOKMARKED','LIKED','REPOSTED') NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `post_id` (`post_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `user_post_interactions`
 --
 
 INSERT INTO `user_post_interactions` (`id`, `user_id`, `post_id`, `interaction_type`, `created_at`) VALUES
-(4, 1, 2, 'LIKED', '2024-05-19 13:08:40'),
-(5, 4, 12, 'LIKED', '2024-05-19 13:12:42'),
-(6, 1, 12, 'LIKED', '2024-05-19 13:12:50'),
-(8, 1, 11, 'LIKED', '2024-05-19 13:16:32'),
-(10, 1, 12, 'REPOSTED', '2024-05-19 13:26:40');
+(42, 1, 12, 'LIKED', '2024-05-20 10:28:18'),
+(43, 1, 12, 'BOOKMARKED', '2024-05-20 10:28:25');
 
 -- --------------------------------------------------------
 
@@ -759,16 +749,16 @@ CREATE TABLE IF NOT EXISTS `user_privacy` (
 
 CREATE TABLE IF NOT EXISTS `user_privacy_options` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `view_main_information` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
-  `view_followings` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
-  `view_photos_videos` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
-  `view_friends` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
-  `birthday_settings` enum('do not show','month and day','full birthday') COLLATE utf8mb4_bin NOT NULL DEFAULT 'full birthday',
-  `view_post_comments` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
-  `comment_on_posts` enum('all users','friends only','only me') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
-  `send_private_messages` enum('all users','friends only','no one') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
-  `add_to_chats` enum('all users','friends only','no one') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
-  `invite_to_communities` enum('all users','friends only','no one') COLLATE utf8mb4_bin NOT NULL DEFAULT 'all users',
+  `view_main_information` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
+  `view_followings` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
+  `view_photos_videos` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
+  `view_friends` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
+  `birthday_settings` enum('do not show','month and day','full birthday') NOT NULL DEFAULT 'full birthday',
+  `view_post_comments` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
+  `comment_on_posts` enum('all users','friends only','only me') NOT NULL DEFAULT 'all users',
+  `send_private_messages` enum('all users','friends only','no one') NOT NULL DEFAULT 'all users',
+  `add_to_chats` enum('all users','friends only','no one') NOT NULL DEFAULT 'all users',
+  `invite_to_communities` enum('all users','friends only','no one') NOT NULL DEFAULT 'all users',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -796,17 +786,17 @@ CREATE TABLE IF NOT EXISTS `user_videos` (
 CREATE TABLE IF NOT EXISTS `videos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `creator_id` int(11) NOT NULL,
-  `file_name` varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  `file_path` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
   `duration` time NOT NULL,
-  `resolution` varchar(50) COLLATE utf8mb4_bin NOT NULL,
-  `title` varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  `description` mediumtext COLLATE utf8mb4_bin DEFAULT NULL,
-  `thumbnail_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `resolution` varchar(50) NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `description` mediumtext DEFAULT NULL,
+  `thumbnail_url` varchar(255) DEFAULT NULL,
   `views` int(11) NOT NULL DEFAULT 0,
   `created_at` datetime(6) NOT NULL DEFAULT current_timestamp(6),
-  `name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `type` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `creator_id` (`creator_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

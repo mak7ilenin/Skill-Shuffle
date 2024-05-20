@@ -6,6 +6,7 @@ import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 import Profile from '../pages/Profile';
 import UserProfile from '../pages/UserProfile';
+import UserInteractions from '../pages/UserInteractions';
 import Error from '../pages/Error';
 import { useAuth } from './AuthContext';
 
@@ -20,6 +21,9 @@ function Content() {
                 <Route path="/me" element={authUser ? <Profile /> : <Navigate to="/sign-in" />} />
 
                 <Route path="/users" element={authUser ? <UserProfile /> : <Navigate to="/sign-in" />} />
+
+                {/* User interactions routes */}
+                <Route path='/friends' element={authUser ? <UserInteractions /> : <Navigate to="/sign-in" />} />
 
                 {/* Authorization routes */}
                 <Route path="/sign-in" element={authUser ? <Navigate to="/me" /> : <SignIn />} />

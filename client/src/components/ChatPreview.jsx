@@ -3,29 +3,13 @@ import { Row, Col, Image } from 'react-bootstrap';
 
 import { AESDecrypt } from '../crypto';
 import { useAuth } from './AuthContext';
+import { formatTimestampForChatContainer } from '../utils/helpers';
 
 import { RiVolumeMuteFill } from "react-icons/ri";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function ChatPreview({ chat, chosenChat, navigate }) {
     const { authUser } = useAuth();
-
-    const formatTimestampForChatContainer = (timestamp) => {
-        const date = new Date(timestamp);
-        const currentDate = new Date();
-        const difference = currentDate - date;
-
-        if (difference > 31536000000) {
-            // dd/mmm/yyyy if the message was sent more than a year ago
-            return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-        } else if (difference > 86400000) {
-            // dd/mmm if the message was sent less than a year ago but more than a day ago
-            return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-        } else {
-            // hh:mm if the message was sent less than a day ago
-            return date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' });
-        }
-    };
 
     const isMessageOwner = () => {
         return chat.lastMessage.sender.nickname === authUser.nickname;
@@ -67,13 +51,13 @@ function ChatPreview({ chat, chosenChat, navigate }) {
                         {chat.lastMessage.type === 'announcement' ? (
                             // Remove the HTML tags from the announcement message
                             <p className='last-message text-truncate'>{chat.lastMessage.content.replace(/<[^>]*>/g, '')}</p>
-                        ) : (
+                        ) : chat.lastMessage.type === 'message' && (
                             <p className='last-message text-truncate'>
                                 {isMessageOwner() ? (<span className='me'>You: </span>) : null}
                                 {chat.lastMessage.content}
                             </p>
                         )}
-                        {chat.unreadMessages > 0 && (
+                        {chat.unreadMessages > 0 && chat.lastMessage.type !== 'entry' && (
                             <div className={`unread-messages p-0 rounded-circle d-flex justify-content-center align-items-center ${chat.muted ? 'muted' : ''}`}>
                                 {chat.unreadMessages}
                             </div>

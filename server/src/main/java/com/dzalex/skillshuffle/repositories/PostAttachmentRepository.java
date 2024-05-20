@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PostAttachmentRepository extends JpaRepository<PostAttachment, Integer> {
     List<PostAttachment> findPostAttachmentsByPostId(Integer postId);
+    void deletePostAttachmentsByPostId(Integer postId);
 }

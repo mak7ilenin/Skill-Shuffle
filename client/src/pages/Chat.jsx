@@ -303,21 +303,23 @@ function Chat() {
     let currentDay = null;
 
     chosenChat.messages.forEach((message) => {
-      // Format date to display in the message list as 'Today', 'Yesterday', or the date itself
-      const today = getFormattedDate(new Date());
-      const messageDate = getFormattedDate(message.timestamp);
-      let messageDay = messageDate === today ? 'Today' : messageDate;
+      if (chosenChat.messages.length > 1 && message.type !== 'entry') {
+        // Format date to display in the message list as 'Today', 'Yesterday', or the date itself
+        const today = getFormattedDate(new Date());
+        const messageDate = getFormattedDate(message.timestamp);
+        let messageDay = messageDate === today ? 'Today' : messageDate;
 
-      if (messageDay === getFormattedDate(new Date(new Date().setDate(new Date().getDate() - 1)))) {
-        messageDay = 'Yesterday';
+        if (messageDay === getFormattedDate(new Date(new Date().setDate(new Date().getDate() - 1)))) {
+          messageDay = 'Yesterday';
+        }
+
+        if (messageDay !== currentDay) {
+          groupedMessages.push({ day: messageDay, messages: [] });
+          currentDay = messageDay;
+        }
+
+        groupedMessages[groupedMessages.length - 1].messages.push(message);
       }
-
-      if (messageDay !== currentDay) {
-        groupedMessages.push({ day: messageDay, messages: [] });
-        currentDay = messageDay;
-      }
-
-      groupedMessages[groupedMessages.length - 1].messages.push(message);
     });
 
     return groupedMessages;

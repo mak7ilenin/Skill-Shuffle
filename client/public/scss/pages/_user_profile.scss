@@ -1,571 +1,15 @@
 .wrapper-profile {
     height: fit-content;
 
-    .profile-banner {
-        height: calc(0.1417 * 100vw);
-        min-height: 192px;
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-        position: relative;
-        z-index: 5;
-
-        button {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
-        }
-    }
-
-    .profile-header {
-        height: fit-content;
-        min-height: 70px;
-
-        &.native {
-            background-color: #fff;
-            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-        }
-
-        &:not(.native) {
-            margin: 20px 0 !important;
-
-            @media (max-width: 520px) {
-                background-color: #fff;
-                box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-
-                .nav-item {
-                    width: 90px;
-
-                    button p {
-                        font-size: 16px;
-                    }
-                }
-            }
-
-            .nav-item {
-                border-right: 1px solid $light-gray;
-
-                &:last-child {
-                    border-right: none;
-                }
-
-                button.active {
-                    border: none !important;
-
-                    .tab-name {
-                        color: $primary-color;
-                    }
-                }
-            }
-        }
-
-        @media (max-width: 1000px) {
-            &.native .nav-tabs {
-                display: none !important;
-            }
-
-            &:not(.native) {
-                display: block;
-            }
-        }
-
-        .nav-tabs {
-            flex-wrap: wrap;
-            list-style: none;
-            padding: 0;
-
-            .nav-item {
-                width: 115px;
-                height: 70px;
-                padding: 0;
-                font-family: $third-font;
-
-                button {
-                    width: 100%;
-                    height: calc(100% + 1px);
-                    display: flex;
-                    justify-content: center;
-                    flex-direction: column;
-                    padding: 0;
-                    border: none;
-                    border-radius: 0;
-                    transition: ease all .1s;
-
-                    &:hover {
-                        background-color: $super-light-gray;
-                        border-bottom: 5px solid #000;
-                    }
-
-                    &.active {
-                        background-color: transparent;
-                        border-bottom: 5px solid #000;
-
-                        .tab-name {
-                            color: $primary-color;
-                        }
-                    }
-                }
-
-                p {
-                    width: 100%;
-                    font-size: 18px;
-                }
-
-                .tab-name {
-                    color: $light-gray;
-                    font-weight: 500;
-                }
-
-                .tab-counter {
-                    color: $dark-gray;
-                    font-weight: 600;
-                }
-            }
-        }
-    }
-
-    .profile-btn {
-        width: fit-content;
-        height: fit-content;
-        background-color: rgba(255, 255, 255, 0.4);
-
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-    }
-
-    .profile-content {
-        font-family: $main-font;
-        width: 1324px;
-        max-width: 1324px;
-        gap: 0 20px;
-        margin-top: 20px !important;
-        padding: 0 20px !important;
-
-        @media (max-width: 1400px) {
-            flex-wrap: wrap;
-            max-width: unset;
-            width: 100%;
-
-            .main-block-profile {
-                max-width: unset;
-            }
-
-            .right-block-profile {
-                max-width: 310px;
-                min-width: 310px;
-                margin-top: 20px !important;
-
-                img {
-                    width: 40px;
-                    height: 40px;
-                }
-            }
-
-            .profile-info-block {
-                display: unset !important;
-            }
-        }
-
-        @media (max-width: 1000px) {
-            width: 100%;
-
-            .profile-info-block {
-                min-width: 100%;
-            }
-
-            .main-block-profile {
-                margin-top: 0 !important;
-            }
-
-            .right-block-profile {
-                display: none !important;
-            }
-        }
-
-        @media (max-width: 520px) {
-            padding: 0 !important;
-
-            .profile-info-block {
-                padding: 0 20px !important;
-            }
-        }
-    }
-
-    .profile-avatar {
-        flex: 0;
-
-        img {
-            width: 280px;
-            height: 280px;
-            padding: 0;
-            object-fit: cover;
-            outline: 6px solid white;
-            outline-offset: -6px;
-
-            @media (max-width: 400px) {
-                width: 200px;
-                height: 200px;
-            }
-        }
-    }
-
-    .profile-info-block {
-        min-width: 310px;
-        max-width: 310px;
-        margin-top: -250px !important;
-        z-index: 10;
-
-        @media (max-width: 1000px) {
-            max-width: 100%;
-            display: flex !important;
-            gap: 0 20px;
-            flex-direction: row !important;
-
-            .first-col,
-            .second-col {
-                flex: 1;
-            }
-
-            .second-col {
-                display: flex;
-                justify-content: flex-end;
-                flex-direction: column;
-                gap: 7px 0;
-
-                .row {
-                    margin: 0 !important;
-                }
-            }
-        }
-
-        @media (max-width: 710px) {
-            gap: 20px;
-            flex-direction: column !important;
-
-            .first-col,
-            .second-col {
-                flex: 0;
-                min-width: 100%;
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 400px) {
-            margin-top: -180px !important;
-        }
-
-        .profile-info {
-            flex-direction: column;
-
-            .user-name {
-                padding: unset !important;
-                width: fit-content;
-                font-size: 32px;
-                font-weight: 700;
-            }
-
-            .nickname {
-                color: $light-gray;
-                font-size: 18px;
-                font-weight: 400;
-            }
-
-            .points {
-                color: $primary-color;
-                font-size: 18px;
-            }
-        }
-
-        .profile-statistics {
-            p {
-                color: $light-gray;
-                font-size: 13px;
-                font-weight: 500;
-            }
-
-            svg {
-                color: $light-gray;
-            }
-
-            @include online-icon;
-        }
-
-        .profile-bio {
-            p {
-                color: $dark-gray;
-                font-weight: 600;
-            }
-
-            .dropdown {
-                margin: 0;
-                padding: 0;
-            }
-
-            button:not(.dropdown-item) {
-                width: 100%;
-                font-family: $main-font;
-                font-weight: bold;
-                margin-top: 10px;
-                border: none;
-                color: #fff;
-
-                &.btn-secondary {
-                    background-color: $secondary-btn;
-
-                    &:hover {
-                        background-color: $dark-gray;
-                    }
-                }
-
-                &.btn-primary {
-                    background-color: $primary-color;
-
-                    &:hover {
-                        background-color: $primary-button;
-                    }
-                }
-            }
-        }
-
-        .profile-links {
-            span {
-                color: $dark-gray;
-            }
-
-            p {
-                color: $light-gray;
-                font-weight: 500;
-            }
-
-            a {
-                color: $light-gray;
-                transition: ease-in-out .1s;
-
-                &:hover {
-                    color: $primary-color;
-                }
-            }
-        }
-    }
-
-    .profile-media {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        grid-auto-rows: 1fr;
-        max-height: 205px;
-        grid-gap: 5px;
-        overflow: hidden;
-
-        .col {
-            background-color: rgba(0, 0, 0, .25);
-            border-radius: 3px;
-        }
-
-        img {
-            // max-height: 100px;
-            width: 100%;
-            object-fit: cover;
-            padding: 0;
-        }
-
-        @media (max-width: 1000px) {
-            max-height: unset;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        }
-
-        @media (max-width: 570px) {
-            // show only two rows
-            grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
-            max-height: 310px;
-        }
-    }
-
-    .main-block-profile {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-
-        .post-block {
-            background-color: #fff;
-            margin-bottom: 16px;
-            border-radius: 5px;
-        }
-
-        .post-menu-icon {
-            top: 15px;
-            right: 19px;
-            height: fit-content !important;
-
-            button {
-                padding: 7px;
-
-                &::after {
-                    display: none;
-                }
-            }
-
-            .dropdown-menu {
-                position: absolute !important;
-            }
-        }
-    }
-
-    .no-posts {
-        height: 200px;
-        background-color: #fff;
-        border-radius: 5px;
-        font-family: $main-font;
-        font-size: 16px;
-        font-weight: 500;
-        color: $light-gray;
-
-        p {
-            color: $dark-gray;
-            @include unselectable;
-        }
-    }
-
-    .post-user {
-        gap: 10px;
-        margin-bottom: 16px !important;
-        color: $light-gray;
-        font-weight: 400;
-
-        .post-info {
-            padding-right: 40px !important;
-
-            p {
-                font-weight: 700;
-
-                a {
-                    text-decoration: none;
-                    color: #000;
-
-                    &:hover {
-                        color: $primary-color;
-                    }
-                }
-
-                span {
-                    color: $light-gray;
-                    font-weight: 500;
-                }
-
-                i {
-                    margin: 0 3px;
-                    font-size: 18px;
-                    color: $light-gray;
-                    font-style: normal;
-                }
-            }
-
-            .date {
-                font-size: 14px;
-            }
-
-            .reposted {
-                margin-left: 12px;
-                color: $primary-color;
-                display: flex;
-                align-items: center;
-
-                span {
-                    font-size: 16px;
-                    font-weight: 500;
-                }
-            }
-        }
-    }
-
-    .post-user-img {
-        max-width: 60px;
-        min-width: 60px;
-        height: 60px;
-
-        img {
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-    }
-
-    .post-content {
-        p {
-            padding: 0;
-            color: $dark-gray;
-            font-weight: 600;
-            text-align: justify;
-        }
-
-        &:not(:has(p)) .post-attachments {
-            margin-top: 0;
-
-            &[data-size='1'] {
-                display: unset !important;
-
-                .post-attachment {
-                    width: 100%;
-                    object-fit: cover;
-                    border-radius: 5px;
-                }
-            }
-        }
-
-        .post-attachments {
-            padding: 0;
-            margin-top: 10px;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: auto;
-            position: relative;
-
-            &:has(.post-attachments-loading) {
-                width: 100%;
-                display: unset !important;
-            }
-
-            @media (max-width: 800px) {
-                grid-template-columns: repeat(1, 1fr);
-                grid-template-rows: auto;
-            }
-
-            .post-attachment {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                border-radius: 5px;
-            }
-        }
-    }
-
-    .post-interactions {
-        margin-top: 16px !important;
-        display: flex;
-        justify-content: flex-start;
-        gap: 22px;
-
-        .col {
-            flex: 0;
-            width: fit-content;
-            display: flex;
-
-            p {
-                margin-left: 6px !important;
-                color: $light-gray;
-            }
-        }
-    }
-
-    .like-button, .share-button {
+    .like-button,
+    .share-button {
         cursor: pointer;
         padding: 0;
     }
 
     .like-button.active svg {
         animation: pulse .3s ease-in-out;
-        
+
         path {
             fill: $primary-color;
             stroke: $primary-color;
@@ -585,293 +29,831 @@
             transform: scale(1);
         }
     }
+}
 
-    .post-input {
-        .user-img {
-            min-width: 60px;
-            max-width: 60px;
+.profile-banner {
+    height: calc(0.1417 * 100vw);
+    min-height: 192px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+    z-index: 5;
 
-            img {
-                width: 100%;
-            }
-        }
-
-        .input-container {
-            p {
-                color: #000;
-                font-weight: 800;
-                font-size: 16px;
-                padding: 0;
-
-                span {
-                    color: $light-gray;
-                    font-weight: 400;
-                }
-            }
-
-            input {
-                flex: 1;
-                height: 33px;
-                font-size: 14px;
-                border-radius: 5px;
-                outline: none;
-                border: 1px solid rgb(143, 143, 143, .3);
-                color: $dark-gray;
-                font-weight: 500;
-
-                &::placeholder {
-                    color: $light-gray;
-                    font-weight: 400;
-                }
-
-                &:focus {
-                    box-shadow: 0 0 .25rem rgb(61, 0, 255, .25);
-                }
-            }
-
-            button {
-                width: 33px;
-                height: 33px;
-                background-color: $primary-color;
-                border-color: $primary-color;
-                border-radius: 5px;
-                margin-left: 10px;
-                padding: 0;
-
-                svg {
-                    margin-left: 1px;
-
-                    path {
-                        fill: #fff;
-                    }
-                }
-
-                &:hover {
-                    background-color: #fff;
-
-                    svg path {
-                        fill: $primary-color;
-                    }
-                }
-            }
-        }
-    }
-
-    .right-block-profile {
-        min-width: 350px;
-        max-width: 350px;
-        position: sticky;
-        top: 10px;
-        align-self: flex-start;
-        gap: 10px 0;
-
-        .profile-aside {
-            background-color: #fff;
-            border-radius: 5px;
-            flex: 0;
-            margin: 0 !important;
-
-            .aside-header {
-                font-size: 20px;
-                font-weight: 700;
-                margin-bottom: 10px !important;
-                padding: 0;
-
-                span {
-                    color: $light-gray;
-                    font-weight: 500;
-                    margin-left: 5px;
-                }
-            }
-
-            .user-container {
-                p {
-                    font-weight: 400;
-                    text-decoration: none;
-                    color: $light-gray;
-                }
-
-                p,
-                span {
-                    margin: 0;
-                    font-size: 14px;
-                    padding: 0
-                }
-            }
-
-            .user-img img,
-            .friend-img img {
-                width: 100%;
-                height: 100%;
-                padding: 0;
-                object-fit: cover;
-            }
-
-            .user-img {
-                max-width: 45px;
-                max-height: 45px;
-                object-fit: cover;
-            }
-
-            .user-info {
-                flex: 1;
-                flex-grow: 1;
-                overflow: hidden;
-
-                p {
-                    width: calc(100% - 10px);
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                    overflow: hidden;
-                }
-
-                .name {
-                    color: #000;
-                    font-weight: 600;
-                    cursor: pointer;
-
-                    &:hover {
-                        color: $primary-color;
-                    }
-                }
-
-                .nickname {
-                    color: $light-gray;
-                }
-            }
-
-            .friends-preview {
-                flex: 0;
-
-                img,
-                .more-friends {
-                    width: 42px;
-                    height: 42px;
-                    object-fit: cover;
-                    border-radius: 50%;
-                    outline: 2px solid #fff;
-                    outline-offset: -1px;
-
-                    &:nth-child(2),
-                    &:nth-child(3) {
-                        margin-left: -15px;
-                    }
-                }
-            }
-
-            .more-friends {
-                background-color: $light-gray;
-                margin-left: -15px;
-
-                span {
-                    font-family: $main-font;
-                    color: #fff;
-                    font-size: 16px;
-                    font-weight: 500;
-                    @include unselectable;
-                }
-            }
-
-            &.mutual-friends .friends-info {
-                font-family: $main-font;
-                font-size: 12px;
-                font-weight: 700;
-                color: $dark-gray;
-            }
-
-            .btn-container {
-                width: fit-content;
-                flex: 0;
-
-                button {
-                    border: none;
-
-                    svg {
-                        color: $light-gray;
-                    }
-
-                    &:hover svg {
-                        color: $primary-color;
-                    }
-                }
-
-                // button {
-                //     font-family: $main-font;
-                //     padding: 0;
-                //     font-size: 14px;
-                //     font-weight: 600;
-                //     min-width: 90px;
-                //     height: 30px;
-                //     background-color: $secondary-btn;
-
-                //     @media (max-width: 1400px) {
-                //         font-size: 12px;
-                //         height: 25px;
-                //         font-weight: 500;
-                //     }
-
-                //     &:hover {
-                //         background-color: $dark-gray;
-                //     }
-                // }
-            }
-
-        }
-    }
-
-    .show-more {
-        font-size: 12px;
-        color: $primary-color;
-        font-weight: 600;
-        cursor: pointer;
+    button {
+        width: fit-content;
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        background-color: rgba(255, 255, 255, 0.3);
 
         &:hover {
-            color: $primary-button;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+    }
+}
+
+.profile-header {
+    height: fit-content;
+    min-height: 70px;
+
+    &.native {
+        background-color: #fff;
+        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    &:not(.native) {
+        margin: 20px 0 !important;
+
+        @media (max-width: 520px) {
+            background-color: #fff;
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+
+            .nav-item {
+                width: 90px;
+
+                button p {
+                    font-size: 16px;
+                }
+            }
+        }
+
+        .nav-item {
+            border-right: 1px solid $light-gray;
+
+            &:last-child {
+                border-right: none;
+            }
+
+            button.active {
+                border: none !important;
+
+                .tab-name {
+                    color: $primary-color;
+                }
+            }
         }
     }
 
-    .friends-online,
-    .friends {
-        gap: 10px calc((100% - (75px * 4)) / 3);
-        flex-wrap: wrap;
+    @media (max-width: 1000px) {
+        &.native .nav-tabs {
+            display: none !important;
+        }
+
+        &:not(.native) {
+            display: block;
+        }
     }
 
-    .friend-container {
-        width: 75px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .nav-tabs {
+        flex-wrap: wrap;
+        list-style: none;
+        padding: 0;
+
+        .nav-item {
+            width: 115px;
+            height: 70px;
+            padding: 0;
+            font-family: $third-font;
+
+            button {
+                width: 100%;
+                height: calc(100% + 1px);
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                padding: 0;
+                border: none;
+                border-radius: 0;
+                transition: ease all .1s;
+
+                &:hover {
+                    background-color: $super-light-gray;
+                    border-bottom: 5px solid #000;
+                }
+
+                &.active {
+                    background-color: transparent;
+                    border-bottom: 5px solid #000;
+
+                    .tab-name {
+                        color: $primary-color;
+                    }
+                }
+            }
+
+            p {
+                width: 100%;
+                font-size: 18px;
+            }
+
+            .tab-name {
+                color: $light-gray;
+                font-weight: 500;
+            }
+
+            .tab-counter {
+                color: $dark-gray;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+.profile-content {
+    font-family: $main-font;
+    width: 1324px;
+    max-width: 1324px;
+    gap: 0 20px;
+    padding: 0 20px !important;
+
+    @media (max-width: 1400px) {
+        flex-wrap: wrap;
+        max-width: unset;
+        width: 100%;
+
+        .main-block-profile {
+            max-width: unset;
+        }
+
+        .right-block-profile {
+            max-width: 310px;
+            min-width: 310px;
+            margin-top: 20px !important;
+
+            img {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        .profile-info-block {
+            display: unset !important;
+        }
+    }
+
+    @media (max-width: 1000px) {
+        width: 100%;
+
+        .profile-info-block {
+            min-width: 100%;
+        }
+
+        .main-block-profile {
+            margin-top: 0 !important;
+        }
+
+        .right-block-profile {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 520px) {
+        padding: 0 !important;
+
+        .profile-info-block {
+            padding: 0 20px !important;
+        }
+    }
+}
+
+.profile-avatar {
+    flex: 0;
+
+    @media (max-width: 1000px) {
+        margin-top: 45px !important;
+
+        img {
+            width: 240px !important;
+            height: 240px !important;
+        }
+    }
+
+    img {
+        width: 280px;
+        height: 280px;
+        padding: 0;
+        object-fit: cover;
+        outline: 6px solid white;
+        outline-offset: -6px;
+
+        @media (max-width: 400px) {
+            width: 200px;
+            height: 200px;
+        }
+    }
+}
+
+.profile-info-block {
+    min-width: 310px;
+    max-width: 310px;
+    margin-top: -250px !important;
+    z-index: 10;
+
+    @media (max-width: 1000px) {
+        max-width: 100%;
+        display: flex !important;
+        gap: 0 20px;
+        flex-direction: row !important;
+
+        .first-col,
+        .second-col {
+            flex: 1;
+        }
+
+        .second-col {
+            display: flex;
+            justify-content: flex-end;
+            flex-direction: column;
+            gap: 7px 0;
+
+            .row {
+                margin: 0 !important;
+            }
+        }
+    }
+
+    @media (max-width: 710px) {
+        gap: 20px;
+        flex-direction: column !important;
+
+        .first-col,
+        .second-col {
+            flex: 0;
+            min-width: 100%;
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 400px) {
+        margin-top: -180px !important;
+    }
+
+    .profile-info {
         flex-direction: column;
 
-        .friend-img {
-            max-width: 60px;
-            max-height: 60px;
-            position: relative;
+        .user-name {
+            padding: unset !important;
+            width: fit-content;
+            font-size: 32px;
+            font-weight: 700;
         }
 
-        &.online .friend-img::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            right: 2px;
-            width: 18px;
-            height: 18px;
-            background-color: $green;
-            border-radius: 50%;
-            border: 3px solid #fff;
+        .nickname {
+            color: $light-gray;
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        .points {
+            color: $primary-color;
+            font-size: 18px;
+        }
+    }
+
+    .profile-statistics {
+        p {
+            color: $light-gray;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        svg {
+            color: $light-gray;
+        }
+
+        @include online-icon;
+    }
+
+    .profile-bio {
+        p {
+            color: $dark-gray;
+            font-weight: 600;
+        }
+
+        .dropdown {
+            margin: 0;
+            padding: 0;
+        }
+
+        button:not(.dropdown-item) {
+            width: 100%;
+            font-family: $main-font;
+            font-weight: bold;
+            margin-top: 10px;
+            border: none;
+            color: #fff;
+
+            &.btn-secondary {
+                background-color: $secondary-btn;
+
+                &:hover {
+                    background-color: $dark-gray;
+                }
+            }
+
+            &.btn-primary {
+                background-color: $primary-color;
+
+                &:hover {
+                    background-color: $primary-button;
+                }
+            }
+        }
+    }
+
+    .profile-links {
+        span {
+            color: $dark-gray;
         }
 
         p {
-            width: 100%;
-            font-size: 13px;
-            color: $dark-gray;
-            font-weight: 600;
-            padding: unset;
-            margin-top: 5px !important;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            color: $light-gray;
+            font-weight: 500;
         }
+
+        a {
+            color: $light-gray;
+            transition: ease-in-out .1s;
+
+            &:hover {
+                color: $primary-color;
+            }
+        }
+    }
+}
+
+.profile-media {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-auto-rows: 1fr;
+    max-height: 205px;
+    grid-gap: 5px;
+    overflow: hidden;
+
+    .col {
+        background-color: rgba(0, 0, 0, .25);
+        border-radius: 3px;
+    }
+
+    img {
+        width: 100%;
+        object-fit: cover;
+        padding: 0;
+    }
+
+    @media (max-width: 1000px) {
+        max-height: unset;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    @media (max-width: 570px) {
+        // show only two rows
+        grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+        max-height: 310px;
+    }
+}
+
+.main-block-profile {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    .post-block {
+        background-color: #fff;
+        margin-bottom: 16px;
+        border-radius: 5px;
+    }
+
+    .post-menu-icon {
+        top: 15px;
+        right: 19px;
+        height: fit-content !important;
+
+        button {
+            padding: 7px;
+
+            &::after {
+                display: none;
+            }
+        }
+
+        .dropdown-menu {
+            position: absolute !important;
+        }
+    }
+}
+
+.no-posts {
+    height: 200px;
+    background-color: #fff;
+    border-radius: 5px;
+    font-family: $main-font;
+    font-size: 16px;
+    font-weight: 500;
+    color: $light-gray;
+
+    p {
+        color: $dark-gray;
+        @include unselectable;
+    }
+}
+
+.post-user {
+    gap: 10px;
+    margin-bottom: 16px !important;
+    color: $light-gray;
+    font-weight: 400;
+
+    .post-info {
+        padding-right: 40px !important;
+
+        p {
+            font-weight: 700;
+
+            a {
+                text-decoration: none;
+                color: #000;
+
+                &:hover {
+                    color: $primary-color;
+                }
+            }
+
+            span {
+                color: $light-gray;
+                font-weight: 500;
+            }
+
+            i {
+                margin: 0 3px;
+                font-size: 18px;
+                color: $light-gray;
+                font-style: normal;
+            }
+        }
+
+        .date {
+            font-size: 14px;
+        }
+
+        .reposted {
+            margin-left: 12px;
+            color: $primary-color;
+            display: flex;
+            align-items: center;
+
+            span {
+                font-size: 16px;
+                font-weight: 500;
+            }
+        }
+    }
+}
+
+.post-user-img {
+    flex: 0 !important;
+
+    img {
+        padding: 0;
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+    }
+}
+
+.post-content {
+    p {
+        padding: 0;
+        color: $dark-gray;
+        font-weight: 600;
+        text-align: justify;
+        word-break: break-all;
+    }
+
+    &:not(:has(p)) .post-attachments {
+        margin-top: 0;
+    }
+
+    .post-attachments[data-size='1'] {
+        display: unset !important;
+
+        .post-attachment {
+            width: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    }
+
+    .post-attachments {
+        padding: 0;
+        margin-top: 10px;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: auto;
+        position: relative;
+
+        &:has(.post-attachments-loading) {
+            width: 100%;
+            display: unset !important;
+        }
+
+        @media (max-width: 800px) {
+            grid-template-columns: repeat(1, 1fr);
+            grid-template-rows: auto;
+        }
+
+        .post-attachment {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    }
+}
+
+.post-interactions {
+    margin-top: 16px !important;
+    display: flex;
+    justify-content: flex-start;
+    gap: 22px;
+
+    .col {
+        flex: 0;
+        width: fit-content;
+        display: flex;
+
+        p {
+            margin-left: 6px !important;
+            color: $light-gray;
+        }
+    }
+}
+
+.post-input {
+    .user-img {
+        min-width: 60px;
+        max-width: 60px;
+
+        img {
+            width: 100%;
+        }
+    }
+
+    .input-container {
+        p {
+            color: #000;
+            font-weight: 800;
+            font-size: 16px;
+            padding: 0;
+
+            span {
+                color: $light-gray;
+                font-weight: 400;
+            }
+        }
+
+        input {
+            flex: 1;
+            height: 33px;
+            font-size: 14px;
+            border-radius: 5px;
+            outline: none;
+            border: 1px solid rgb(143, 143, 143, .3);
+            color: $dark-gray;
+            font-weight: 500;
+
+            &::placeholder {
+                color: $light-gray;
+                font-weight: 400;
+            }
+
+            &:focus {
+                box-shadow: 0 0 .25rem rgb(61, 0, 255, .25);
+            }
+        }
+
+        button {
+            width: 33px;
+            height: 33px;
+            background-color: $primary-color;
+            border-color: $primary-color;
+            border-radius: 5px;
+            margin-left: 10px;
+            padding: 0;
+
+            svg {
+                margin-left: 1px;
+
+                path {
+                    fill: #fff;
+                }
+            }
+
+            &:hover {
+                background-color: #fff;
+
+                svg path {
+                    fill: $primary-color;
+                }
+            }
+        }
+    }
+}
+
+.right-block-profile {
+    min-width: 350px;
+    max-width: 350px;
+    position: sticky;
+    top: 10px;
+    align-self: flex-start;
+    gap: 10px 0;
+}
+
+.profile-aside {
+    background-color: #fff;
+    border-radius: 5px;
+    flex: 0;
+    margin: 0 !important;
+
+    .aside-header {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 10px !important;
+        padding: 0;
+
+        span {
+            color: $light-gray;
+            font-weight: 500;
+            margin-left: 5px;
+        }
+    }
+
+    .user-container {
+        p {
+            font-weight: 400;
+            text-decoration: none;
+            color: $light-gray;
+        }
+
+        p,
+        span {
+            margin: 0;
+            font-size: 14px;
+            padding: 0
+        }
+    }
+
+    .user-img img {
+        width: 45px;
+        height: 45px;
+        padding: 0;
+        object-fit: cover;
+    }
+
+    .user-info {
+        flex: 1;
+        flex-grow: 1;
+        overflow: hidden;
+
+        p {
+            width: calc(100% - 10px);
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .name {
+            color: #000;
+            font-weight: 600;
+            cursor: pointer;
+
+            &:hover {
+                color: $primary-color;
+            }
+        }
+
+        .nickname {
+            color: $light-gray;
+        }
+    }
+
+    .friends-preview {
+        flex: 0;
+
+        img,
+        .more-friends {
+            width: 42px;
+            height: 42px;
+            object-fit: cover;
+            border-radius: 50%;
+            outline: 2px solid #fff;
+            outline-offset: -1px;
+
+            &:nth-child(2),
+            &:nth-child(3) {
+                margin-left: -15px;
+            }
+        }
+    }
+
+    .more-friends {
+        background-color: $light-gray;
+        margin-left: -15px;
+
+        span {
+            font-family: $main-font;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            @include unselectable;
+        }
+    }
+
+    &.mutual-friends .friends-info {
+        font-family: $main-font;
+        font-size: 12px;
+        font-weight: 700;
+        color: $dark-gray;
+    }
+
+    .btn-container {
+        width: fit-content;
+        flex: 0;
+
+        button {
+            border: none;
+
+            svg {
+                color: $light-gray;
+            }
+
+            &:hover svg {
+                color: $primary-color;
+            }
+        }
+    }
+}
+
+.show-more {
+    font-size: 12px;
+    color: $primary-color;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+        color: $primary-button;
+    }
+}
+
+.friends-online,
+.friends {
+    gap: 10px calc((100% - (75px * 4)) / 3);
+    flex-wrap: wrap;
+}
+
+.friend-container {
+    width: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .friend-img {
+        display: flex;
+        justify-content: center;
+        position: relative;
+
+        img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            padding: 0;
+        }
+    }
+
+    &.online .friend-img::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        right: 2px;
+        width: 18px;
+        height: 18px;
+        background-color: $green;
+        border-radius: 50%;
+        border: 3px solid #fff;
+    }
+
+    p {
+        width: 100%;
+        font-size: 13px;
+        color: $dark-gray;
+        font-weight: 600;
+        padding: unset;
+        margin-top: 5px !important;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
