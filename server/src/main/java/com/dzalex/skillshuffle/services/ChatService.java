@@ -176,12 +176,24 @@ public class ChatService {
 
     private void setChatNameIfEmpty(NewChatDTO chat) {
         if (chat.getName().isEmpty() && chat.isGroup()) {
-            List<String> firstNames = userService.getUsersFirstNameInChat(chat.getMembers());
-            if (firstNames.size() > 3) {
-                firstNames = firstNames.subList(0, 3);
-                firstNames.add("and " + (firstNames.size() - 3) + " more");
+            StringBuilder name = new StringBuilder();
+
+            // Append the current user's name and the first two members' names
+            name.append(userService.getCurrentUser().getFirstName()).append(", ");
+
+            // Append the first two members' names and the number of other members
+            Arrays.stream(chat.getMembers())
+                  .limit(2)
+                  .forEach(user -> name.append(userService.getUserByNickname(user).getFirstName()).append(", "));
+            if (chat.getMembers().length > 2) {
+                name.append("and ").append(chat.getMembers().length - 2).append(" more");
             }
-            chat.setName(String.join(", ", firstNames));
+
+            // Remove the last comma if it's the last character
+            if (name.charAt(name.length() - 2) == ',') {
+                name.deleteCharAt(name.length() - 2);
+            }
+            chat.setName(name.toString());
         }
     }
 

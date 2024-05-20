@@ -207,18 +207,6 @@ public class UserService {
         return usernames;
     }
 
-    public List<String> getUsersFirstNameInChat(String[] members) {
-        List<String> firstNames = new ArrayList<>();
-        firstNames.add(getCurrentUser().getFirstName());
-        for (String member : members) {
-            User user = getUserByNickname(member);
-            if (user != null) {
-                firstNames.add(user.getFirstName());
-            }
-        }
-        return firstNames;
-    }
-
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {

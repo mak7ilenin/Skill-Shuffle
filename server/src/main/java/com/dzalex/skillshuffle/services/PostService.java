@@ -67,7 +67,7 @@ public class PostService {
     }
 
     // Create post
-    public Post createPost(Post post, List<MultipartFile> files) {
+    public PostDTO createPost(Post post, List<MultipartFile> files) {
         // Save post to database
         Post savedPost = postRepository.save(post);
 
@@ -76,7 +76,7 @@ public class PostService {
             savePostPhotos(savedPost, files);
         }
 
-        return savedPost;
+        return getPostDTO(savedPost);
     }
 
     // Save post photos to storage
@@ -112,9 +112,6 @@ public class PostService {
         // Delete post attachments
         deletePostAttachments(postId);
 
-        // Delete post interactions
-//        userPostInteractionService.deleteUserPostInteractionsByPostId(postId);
-
         // Delete post
         postRepository.deleteById(postId);
     }
@@ -124,7 +121,6 @@ public class PostService {
         List<PostAttachment> attachments = postAttachmentRepository.findPostAttachmentsByPostId(postId);
         for (PostAttachment attachment : attachments) {
             fileService.deleteFileFromS3Bucket(attachment.getPhotoUrl());
-            postAttachmentRepository.delete(attachment);
         }
     }
 
