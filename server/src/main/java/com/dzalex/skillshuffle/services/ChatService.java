@@ -330,7 +330,7 @@ public class ChatService {
 
     // Patch method to update chat avatar
     public Chat updateChatAvatar(Chat chat, MultipartFile avatarBlob) {
-        String avatarFilePath = "chats/chat-" + chat.getId() + "/avatar/";
+        String avatarFilePath = "chats/" + chat.getId() + "/avatar/";
         String avatarUrl;
         if (chat.getAvatarUrl() == null) {
             avatarUrl = fileService.uploadFile(avatarBlob, avatarFilePath);

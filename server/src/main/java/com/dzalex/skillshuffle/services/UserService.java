@@ -165,7 +165,7 @@ public class UserService {
 
     private User saveAvatar(User user, MultipartFile avatarBlob) {
         if (avatarBlob != null) {
-            String avatarFilePath = "users/user-" + user.getId() + "/avatar/";
+            String avatarFilePath = "users/" + user.getId() + "/avatar/";
             String avatarUrl = fileService.uploadFile(avatarBlob, avatarFilePath);
             if (avatarUrl != null) {
                 user.setAvatarUrl(avatarUrl);
@@ -340,11 +340,7 @@ public class UserService {
     private FriendRequest getFriendRequest(User sender, User receiver) {
         FriendRequest friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
         if (friendRequest == null) {
-            friendRequest = friendRequestRepository.findBySenderIdAndReceiverId(receiver.getId(), sender.getId());
-        }
-
-        if (friendRequest == null) {
-            throw new IllegalArgumentException("Friend request not found!");
+            return friendRequestRepository.findBySenderIdAndReceiverId(receiver.getId(), sender.getId());
         }
 
         return friendRequest;
@@ -384,17 +380,25 @@ public class UserService {
     }
 
     private void sendFriendRequest(User sender, User receiver) {
-        FriendRequest friendRequest = FriendRequest.builder()
-                .sender(sender)
-                .receiver(receiver)
-                .status(FriendRequestStatus.PENDING)
-                .build();
+        // Create the friend request
+        FriendRequest friendRequest = new FriendRequest();
+        friendRequest.setSender(sender);
+        friendRequest.setReceiver(receiver);
+        friendRequest.setStatus(FriendRequestStatus.PENDING);
         friendRequestRepository.save(friendRequest);
+
+        // Create a user follower
+        UserFollower userFollower = new UserFollower();
+        userFollower.setUser(receiver);
+        userFollower.setFollower(sender);
+        userFollowerRepository.save(userFollower);
     }
 
     private void acceptFriendRequest(User sender, User receiver) {
         // Remove the friend request
-        friendRequestRepository.delete(getFriendRequest(sender, receiver));
+        if (getFriendRequest(sender, receiver) != null) {
+            friendRequestRepository.delete(getFriendRequest(sender, receiver));
+        }
 
         // Remove the follower from the user's followers
         UserFollower userFollower = userFollowerRepository.findByUserIdAndFollowerId(receiver.getId(), sender.getId());
@@ -403,17 +407,19 @@ public class UserService {
         }
 
         // Create the friendship
-        Friendship friendship = Friendship.builder()
-                .user(sender)
-                .friend(receiver)
-                .build();
+        Friendship friendship = new Friendship();
+        friendship.setUser(sender);
+        friendship.setFriend(receiver);
+
         friendshipRepository.save(friendship);
     }
 
     private void ignoreFriendRequest(User sender, User receiver) {
         FriendRequest friendRequest = getFriendRequest(sender, receiver);
-        friendRequest.setStatus(FriendRequestStatus.IGNORED);
-        friendRequestRepository.save(friendRequest);
+        if (friendRequest != null) {
+            friendRequest.setStatus(FriendRequestStatus.IGNORED);
+            friendRequestRepository.save(friendRequest);
+        }
     }
 
     private void removeFriend(User authUser, User user) {
@@ -426,10 +432,10 @@ public class UserService {
 
     private void followUser(User authUser, User user) {
         if (!isFollowed(user, authUser)) {
-            userFollowerRepository.save(UserFollower.builder()
-                    .user(user)
-                    .follower(authUser)
-                    .build());
+            UserFollower follower = new UserFollower();
+            follower.setUser(user);
+            follower.setFollower(authUser);
+            userFollowerRepository.save(follower);
         }
 
         if (!user.isAutoFollow()) {
