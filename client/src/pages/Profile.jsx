@@ -74,7 +74,7 @@ function Profile() {
                     )}
 
                     <Container className='d-flex mx-auto my-0 profile-content'>
-                        <ProfileInfo user={user} showAside={showAside} />
+                        <ProfileInfo user={user} showAside={showAside} compacted={false} />
 
                         {windowDimensions.width <= 1000 && (
                             <Row className='profile-header w-100'>
