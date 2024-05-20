@@ -43,15 +43,15 @@ public class FileService {
 
     public String changeFile(MultipartFile multipartFile, String path, String oldUrl) {
         try {
-            String oldKey = extractKeyFromUrl(oldUrl);
-            deleteFileFromS3Bucket(oldKey);
+            deleteFileFromS3Bucket(oldUrl);
             return uploadFile(multipartFile, path);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error changing file");
         }
     }
 
-    private void deleteFileFromS3Bucket(String key) {
+    public void deleteFileFromS3Bucket(String url) {
+        String key = extractKeyFromUrl(url);
         try {
             s3Client.deleteObject(builder -> builder.bucket(bucketName).key(key));
         } catch (Exception e) {

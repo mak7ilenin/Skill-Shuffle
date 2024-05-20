@@ -39,6 +39,12 @@ public class PostController {
         return postService.createPost(post, files);
     }
 
+    // Delete post
+    @DeleteMapping("/posts/{postId}")
+    public void deletePost(@PathVariable Integer postId) {
+        postService.deletePost(postId);
+    }
+
     // Like post
     @PostMapping("/posts/{postId}/like")
     public void likePost(@PathVariable Integer postId) {

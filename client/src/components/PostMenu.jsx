@@ -7,6 +7,7 @@ import { useAuth } from './AuthContext';
 
 import { IoBookmarkOutline } from "react-icons/io5";
 import { IoBookmark } from "react-icons/io5";
+import { FaTrashAlt } from "react-icons/fa";
 import { ReactComponent as MenuIcon } from '../assets/icons/post-menu.svg';
 
 function PostMenu({ post, setPosts, setUser }) {
@@ -26,12 +27,28 @@ function PostMenu({ post, setPosts, setUser }) {
                     return prevPost;
                 }));
                 setBookmarked(!bookmarked);
-                
+
                 // Increase user bookmarkedPostsCount
                 setUser(prevUser => {
                     return {
                         ...prevUser,
                         bookmarkedPostsCount: bookmarked ? prevUser.bookmarkedPostsCount - 1 : prevUser.bookmarkedPostsCount + 1
+                    };
+                });
+            });
+    };
+
+    const handlePostDelete = () => {
+        axios.delete(`${API_SERVER}/posts/${post.id}`, { withCredentials: true })
+            .then(() => {
+                // Remove deleted post from posts
+                setPosts(prevPosts => prevPosts.filter(prevPost => prevPost.id !== post.id));
+
+                // Increase user bookmarkedPostsCount
+                setUser(prevUser => {
+                    return {
+                        ...prevUser,
+                        postsCount: prevUser.postsCount - 1
                     };
                 });
             });
@@ -55,6 +72,12 @@ function PostMenu({ post, setPosts, setUser }) {
                         </>
                     )}
                 </Dropdown.Item>
+                {/* Delete dropdown item */}
+                {post.author.nickname === authUser.nickname && (
+                    <Dropdown.Item onClick={handlePostDelete}>
+                        <FaTrashAlt size={24} /> Delete post
+                    </Dropdown.Item>
+                )}
             </Dropdown.Menu>
         </Dropdown>
     )

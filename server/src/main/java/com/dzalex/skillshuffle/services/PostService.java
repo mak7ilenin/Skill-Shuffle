@@ -99,6 +99,35 @@ public class PostService {
         }
     }
 
+    // Delete post
+    public void deletePost(Integer postId) {
+        User user = userService.getCurrentUser();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        if (!post.getAuthor().equals(user)) {
+            throw new IllegalArgumentException("You can't delete this post");
+        }
+
+        // Delete post attachments
+        deletePostAttachments(postId);
+
+        // Delete post interactions
+//        userPostInteractionService.deleteUserPostInteractionsByPostId(postId);
+
+        // Delete post
+        postRepository.deleteById(postId);
+    }
+
+    // Delete attachments from storage
+    private void deletePostAttachments(Integer postId) {
+        List<PostAttachment> attachments = postAttachmentRepository.findPostAttachmentsByPostId(postId);
+        for (PostAttachment attachment : attachments) {
+            fileService.deleteFileFromS3Bucket(attachment.getPhotoUrl());
+            postAttachmentRepository.delete(attachment);
+        }
+    }
+
     // Like/unlike post
     public void likePost(Integer postId) {
         User user = userService.getCurrentUser();

@@ -107,4 +107,8 @@ public class UserPostInteractionService {
     public int getPostsCountWithBookmarkedInteraction(Integer id) {
         return userPostInteractionRepository.countAllByUserIdAndInteractionType(id, InteractionType.BOOKMARKED);
     }
+
+    public void deleteUserPostInteractionsByPostId(Integer postId) {
+        userPostInteractionRepository.deleteAllByPostId(postId);
+    }
 }
