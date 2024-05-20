@@ -261,11 +261,11 @@ public class UserService {
     }
 
     public boolean isFollowed(User user, User authUser) {
-        return userFollowerRepository.findByUserIdAndFollowerId(authUser.getId(), user.getId()) != null;
+        return userFollowerRepository.findByUserIdAndFollowerId(user.getId(), authUser.getId()) != null;
     }
 
     public boolean isFollower(User user, User authUser) {
-        return userFollowerRepository.findByUserIdAndFollowerId(user.getId(), authUser.getId()) != null;
+        return userFollowerRepository.findByUserIdAndFollowerId(authUser.getId(), user.getId()) != null;
     }
 
     private RelationshipStatus getRelationshipStatus(User user, User authUser) {
@@ -445,7 +445,10 @@ public class UserService {
 
     private void unfollowUser(User authUser, User user) {
         // Remove sent friend request
-        friendRequestRepository.delete(getFriendRequest(authUser, user));
+        FriendRequest friendRequest = getFriendRequest(authUser, user);
+        if (friendRequest != null) {
+            friendRequestRepository.delete(friendRequest);
+        }
 
         // Remove the follower from the user's followers
         UserFollower userFollower = userFollowerRepository.findByUserIdAndFollowerId(user.getId(), authUser.getId());

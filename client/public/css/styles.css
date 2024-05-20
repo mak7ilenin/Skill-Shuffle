@@ -2800,6 +2800,7 @@ p {
   color: #373737;
   font-weight: 600;
   text-align: justify;
+  word-break: break-all;
 }
 .wrapper-profile .post-content:not(:has(p)) .post-attachments {
   margin-top: 0;

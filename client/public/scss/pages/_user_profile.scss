@@ -498,6 +498,7 @@
             color: $dark-gray;
             font-weight: 600;
             text-align: justify;
+            word-break: break-all;
         }
 
         &:not(:has(p)) .post-attachments {
