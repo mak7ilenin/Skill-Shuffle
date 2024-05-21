@@ -32,9 +32,6 @@ function Content() {
                 {/* Default route */}
                 <Route path="/" element={authUser ? <Navigate to="/me" /> : <Navigate to="/sign-in" />} />
 
-                {/* Admin path */}
-                <Route path={`${process.env.REACT_APP_ADMIN_PATH}/*`} element={<div />} /> {/* This line ensures React ignores ADMIN_PATH */}
-
                 {/* Invalid route - send to error page */}
                 <Route path="*" element={<Error />} />
             </Routes>
