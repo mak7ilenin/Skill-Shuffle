@@ -66,13 +66,11 @@ services:
       - app-network
 
   phpmyadmin:
+    # image: public.ecr.aws/i2t4w1a3/skill-shuffle:phpmyadmin
     build: ./phpmyadmin
     container_name: phpmyadmin
     environment:
       PMA_HOST: database
-      PMA_PORT: 3306
-      PMA_USER: ${MARIADB_USER}
-      PMA_PASSWORD: ${MARIADB_PASSWORD}
     depends_on:
       - database
     networks:

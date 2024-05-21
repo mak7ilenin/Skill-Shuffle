@@ -8,7 +8,7 @@ function Error() {
     return (
         <Container className='error-page'>
             <Row className='error-page__container'>
-                <Col className='error-page__left-column'>
+                <Col className='error-page__left-column align-self-center'>
                     <h1>404</h1>
                 </Col>
                 <Col className='error-page__separator h-100'/>
