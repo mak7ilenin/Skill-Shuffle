@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Image, Stack, Row } from 'react-bootstrap';
+import { Button, Image, Stack, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
 import { API_SERVER } from '../config';
@@ -102,12 +102,12 @@ function AddFriends({ selectedFriends, setSelectedFriends, chat }) {
                         key={index}
                         variant='light'
                         title='friend'
-                        className="friend-container d-flex align-items-center border-0 py-2 px-4"
+                        className="friend-container d-flex w-100 border-0 py-2 px-4 flex-row"
                         onClick={(e) => handleSelectFriend(e, friend)}
                     >
-                        <div className="friend-info w-75 d-flex align-items-center">
+                        <Col className="friend-info d-flex justify-content-start align-items-center">
                             <Image
-                                src={friend.avatarUrl !== null ? friend.avatarUrl : imagePlaceholder}
+                                src={friend.avatarUrl || imagePlaceholder}
                                 alt={'Friend'}
                                 width='35'
                                 height='35'
@@ -115,8 +115,8 @@ function AddFriends({ selectedFriends, setSelectedFriends, chat }) {
                                 roundedCircle
                             />
                             <span className='friend-name ms-3'>{friend.firstName} {friend.lastName}</span>
-                        </div>
-                        <div className="friend-add w-25 d-flex justify-content-end align-items-center">
+                        </Col>
+                        <Col md='auto' className="friend-add d-flex justify-content-end align-items-center">
                             <label className={`rounded-checkbox-label d-flex align-items-center justify-content-center ${selectedFriends.includes(friend.nickname) ? 'checked' : ''}`}>
                                 <input
                                     title='add-friend'
@@ -127,7 +127,7 @@ function AddFriends({ selectedFriends, setSelectedFriends, chat }) {
                                     onChange={(e) => handleSelectFriend(e, friend)}
                                 />
                             </label>
-                        </div>
+                        </Col>
                     </Button>
                 ))}
             </Stack>

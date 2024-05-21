@@ -22,12 +22,15 @@ function Profile() {
     const [showAside, setShowAside] = useState(false);
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
-    const tab = useState(new URLSearchParams(window.location.search).get('tab') || 'posts');
+    const [tab, setTab] = useState('');
     const { authUser } = useAuth();
 
     useEffect(() => {
-        // Close header
+        document.body.removeAttribute('style');
         document.querySelector('.header').classList.remove('closed');
+
+        const tabParam = new URLSearchParams(window.location.search).get('tab') || 'posts';
+        setTab(tabParam);
 
         // Get user information
         axios.get(`${API_SERVER}/users/${authUser.nickname}`, { withCredentials: true })
@@ -74,6 +77,8 @@ function Profile() {
                                 type={'MY_PROFILE'}
                                 user={user}
                                 setPosts={setPosts}
+                                tab={tab}
+                                setTab={setTab}
                             />
                         </Row>
                     )}
@@ -87,6 +92,8 @@ function Profile() {
                                     type={'MY_PROFILE'}
                                     user={user}
                                     setPosts={setPosts}
+                                    tab={tab}
+                                    setTab={setTab}
                                 />
                             </Row>
                         )}

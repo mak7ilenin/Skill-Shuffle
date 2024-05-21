@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import { API_SERVER } from '../config';
 
-function ProfileHeader({ type, user, setPosts }) {
+function ProfileHeader({ type, user, setPosts, tab, setTab }) {
     const navigate = useNavigate();
-    const [tab, setTab] = useState(new URLSearchParams(window.location.search).get('tab') || 'posts');
 
     useEffect(() => {
         switch (tab) {
