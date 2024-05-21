@@ -24,13 +24,16 @@ function UserProfile() {
     const [showAside, setShowAside] = useState(false);
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
-    const [currentTab, setCurrentTab] = useState('posts');
+    const [tab, setTab] = useState('');
     const { authUser } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Close header
+        document.body.removeAttribute('style');
         document.querySelector('.header').classList.remove('closed');
+
+        const tabParam = new URLSearchParams(window.location.search).get('tab') || 'posts';
+        setTab(tabParam);
 
         // Get nickname from url params ?nn=nickname
         const nickname = new URLSearchParams(window.location.search).get('nn');
@@ -88,8 +91,8 @@ function UserProfile() {
                                 type={'USER_PROFILE'}
                                 user={user}
                                 setPosts={setPosts}
-                                tab={currentTab}
-                                setTab={setCurrentTab}
+                                tab={tab}
+                                setTab={setTab}
                             />
                         </Row>
                     )}
@@ -104,8 +107,8 @@ function UserProfile() {
                                     type={'USER_PROFILE'}
                                     user={user}
                                     setPosts={setPosts}
-                                    tab={currentTab}
-                                    setTab={setCurrentTab}
+                                    tab={tab}
+                                    setTab={setTab}
                                 />
                             </Row>
                         )}
