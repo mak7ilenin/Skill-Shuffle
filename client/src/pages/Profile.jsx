@@ -63,9 +63,9 @@ function Profile() {
                             user.bannerUrl ? { backgroundImage: `url(${user.bannerUrl})` } : { backgroundColor: user.bannerColor }
                         }
                     >
-                        <Button variant='none' className='border-0 p-2 rounded-circle'>
+                        {/* <Button variant='none' className='border-0 p-2 rounded-circle'>
                             <EditBanner />
-                        </Button>
+                        </Button> */}
                     </Row>
 
                     {windowDimensions.width > 1000 && (

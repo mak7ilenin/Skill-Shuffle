@@ -6,12 +6,14 @@ import axios from 'axios';
 import { formatLastSeenTimestamp } from '../utils/helpers';
 import { API_SERVER } from '../config';
 import { AESEncrypt } from '../crypto';
+import { useAuth } from './AuthContext';
 
 import { IoIosMore } from "react-icons/io";
 import { HiOutlineStatusOnline } from "react-icons/hi";
 import imagePlaceholder from '../assets/icons/image-placeholder.svg';
 
 function FriendsBlock({ friends }) {
+    const { authUser } = useAuth();
     const navigate = useNavigate();
     const [tab, setTab] = useState('all');
     const [friendList, setFriendList] = useState(friends);
@@ -117,9 +119,11 @@ function FriendsBlock({ friends }) {
                                             </>
                                         ) : <span>Online</span>}
                                     </div>
-                                    <div>
-                                        <p role='button' onClick={() => openChat(friend)}>Write message</p>
-                                    </div>
+                                    {friend.nickname !== authUser.nickname && (
+                                        <div>
+                                            <p role='button' onClick={() => openChat(friend)}>Write message</p>
+                                        </div>
+                                    )}
                                 </Col>
                                 <Col className='h-100 px-0 align-content-center' xs='auto'>
                                     <Dropdown bsPrefix='custom-primary-dropdown'>
