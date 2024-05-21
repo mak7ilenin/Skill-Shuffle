@@ -810,6 +810,14 @@
 .friends {
     gap: 10px calc((100% - (75px * 4)) / 3);
     flex-wrap: wrap;
+
+    @media (max-width: 1400px) {
+        gap: 10px calc((100% - (80px * 3)) / 2);
+
+        .friend-container {
+            width: 80px;
+        }
+    }
 }
 
 .friend-container {

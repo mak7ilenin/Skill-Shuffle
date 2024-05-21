@@ -35,7 +35,7 @@ function ProfileAside({ user, interactionType, setInteractionType }) {
                                 {mightKnowUsers.map(mightKnownUser => {
                                     return (
                                         <Row key={mightKnownUser.nickname} className='user-container d-flex align-items-center justify-content-between'>
-                                            <Col className='user-img p-0 me-2'>
+                                            <Col className='user-img p-0 me-2' md='auto'>
                                                 <Image
                                                     src={mightKnownUser.avatarUrl || imagePlaceholder}
                                                     alt='User'

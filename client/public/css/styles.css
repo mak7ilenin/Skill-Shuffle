@@ -3086,6 +3086,16 @@ p {
   gap: 10px calc((100% - 300px) / 3);
   flex-wrap: wrap;
 }
+@media (max-width: 1400px) {
+  .friends-online,
+  .friends {
+    gap: 10px calc((100% - 240px) / 2);
+  }
+  .friends-online .friend-container,
+  .friends .friend-container {
+    width: 80px;
+  }
+}
 
 .friend-container {
   width: 75px;

@@ -96,6 +96,8 @@ function PostEditor({ setPosts, setUser, setShow }) {
             .then(response => {
                 if (setPosts) {
                     setPosts(prevPosts => [response.data, ...prevPosts]);
+                } else if (!setPosts && window.location.pathname === '/me') {
+                    window.location.reload();
                 }
 
                 if (setUser) {
