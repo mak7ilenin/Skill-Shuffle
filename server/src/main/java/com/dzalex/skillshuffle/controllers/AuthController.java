@@ -50,7 +50,7 @@ public class AuthController {
             return new ResponseEntity<>(Map.of("message", "Nickname already in use", "reason", "nickname"), HttpStatus.CONFLICT);
         }
 
-        if (userService.checkUserDuplicate(registrationUser.getUsername(), registrationUser.getEmail())) {
+        if (userService.checkUserDuplicate(registrationUser.getUsername())) {
             return new ResponseEntity<>(Map.of("message", "User already exists", "reason", "credentials"), HttpStatus.CONFLICT);
         }
 
