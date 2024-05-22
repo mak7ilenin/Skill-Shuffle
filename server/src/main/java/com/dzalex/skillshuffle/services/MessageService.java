@@ -137,8 +137,7 @@ public class MessageService {
     }
 
     public MessageDTO findChatLastMessage(Chat chat) {
-        User user = userService.getCurrentUser();
-        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), user.getId());
+        ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chat.getId(), userService.getCurrentUser().getId());
         List<MessageDTO> messages = getChatMessages(chat.getId(), chatMember, -1, 0);
 
         // Check if messages list is not empty
@@ -154,9 +153,14 @@ public class MessageService {
             if (chat.isGroup() && chatMember.isLeft()) {
                 // Get last message that sent by authedUser with type ANNOUNCEMENT
                 return messages.stream()
-                        .filter(message -> message.getSender().getNickname().equals(user.getNickname()) && message.isAnnouncement())
+                        .filter(message -> message.getSender().getNickname().equals(chatMember.getMember().getNickname()) && message.isAnnouncement())
                         .findFirst()
                         .orElse(messages.get(0));
+            }
+
+            // If user cleared the chat, and there are no messages after that, don't return a message
+            if (chatMember.getClearedAt() != null && messages.get(0).getTimestamp().before(chatMember.getClearedAt())) {
+                return null;
             }
 
             // Return the last message as a DTO
@@ -222,12 +226,11 @@ public class MessageService {
         }
 
         if (chatMember.getClosedAt() == null) {
-            return messageRepository.findMessagesByChatId(chatId)
+            return (int) messageRepository.findMessagesByChatId(chatId)
                     .stream()
-                    // Don't count entry messages
-                    .filter(message -> message.getType() != MessageType.ENTRY)
-                    .mapToInt(message -> 1)
-                    .sum();
+                    .filter(message -> message.getTimestamp().after(chatMember.getJoinedAt()))
+                    .filter(message -> !message.isEntry())
+                    .count();
         }
 
         return (int) messageRepository.findMessagesByChatId(chatId)
@@ -250,20 +253,14 @@ public class MessageService {
         }
 
         if (chatMember != null) {
-            List<ChatMessage> messages = messageRepository.findMessagesByChatId(chatId)
+            return messageRepository.findMessagesByChatId(chatId)
                     .stream()
                     .filter(message -> !chatMember.isLeft() || message.getTimestamp().before(chatMember.getLeftAt()))
-                    .filter(message -> chatMember.getClearedAt() == null || message.getTimestamp().after(chatMember.getClearedAt()))
+                    .filter(message -> !chatMember.isCleared() || message.getTimestamp().after(chatMember.getClearedAt()))
+                    .sorted(Comparator.comparing(ChatMessage::getTimestamp).reversed())
                     .skip(offset)
-                    .toList();
-
-            if (limit > 0) {
-                messages = messages.stream().limit(limit).toList();
-            }
-
-            return messages.stream()
+                    .limit(limit > 0 ? limit : Long.MAX_VALUE)
                     .map(this::convertToDTO)
-                    .sorted(Comparator.comparing(MessageDTO::getTimestamp))
                     .toList();
         }
 

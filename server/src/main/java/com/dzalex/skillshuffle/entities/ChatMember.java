@@ -84,4 +84,9 @@ public class ChatMember {
     public boolean hasNotifications() {
         return notifications;
     }
+
+    @JsonIgnore
+    public boolean isCleared() {
+        return clearedAt != null;
+    }
 }

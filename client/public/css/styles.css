@@ -461,6 +461,9 @@ p {
   z-index: 1000;
   cursor: pointer;
 }
+.toast-notification .toast-header {
+  background-color: transparent;
+}
 .toast-notification .toast-header h5 {
   font-size: 16px;
   font-weight: 500;
@@ -2975,7 +2978,7 @@ p {
 .profile-aside .aside-header {
   font-size: 20px;
   font-weight: 700;
-  margin-bottom: 10px !important;
+  margin-bottom: 15px !important;
   padding: 0;
 }
 .profile-aside .aside-header span {
@@ -3076,13 +3079,13 @@ p {
   color: #3D00FF;
 }
 
-.show-more {
+.btn.show-more {
   font-size: 12px;
   color: #3D00FF;
   font-weight: 600;
-  cursor: pointer;
+  text-align: left;
 }
-.show-more:hover {
+.btn.show-more:hover {
   color: #5D6BE4;
 }
 
@@ -3202,21 +3205,27 @@ p {
   color: #8F8F8F;
   margin-left: 5px;
 }
-.interaction-block__friends {
+.interaction-block .dropdown-menu {
+  position: absolute !important;
+}
+.interaction-block .dropdown-toggle::after {
+  display: none;
+}
+.interaction-block__content {
   margin-top: 20px;
 }
-.interaction-block__friend-item:not(:last-child) {
+.interaction-block__content-item:not(:last-child) {
   border-bottom: 1px solid #E8ECEE;
 }
-.interaction-block__friend-avatar {
+.interaction-block__avatar {
   position: relative;
 }
 @media (max-width: 768px) {
-  .interaction-block__friend-avatar {
+  .interaction-block__avatar {
     flex: 0;
   }
 }
-.interaction-block__friend-avatar a[data-online=true]::after {
+.interaction-block__avatar a[data-online=true]::after {
   content: "";
   position: absolute;
   bottom: -1px;
@@ -3227,52 +3236,83 @@ p {
   border-radius: 50%;
   border: 3px solid #fff;
 }
-.interaction-block__friend-avatar img {
+.interaction-block__avatar img {
   width: 70px;
   height: 70px;
   -o-object-fit: cover;
      object-fit: cover;
 }
-.interaction-block__friend-info {
+.interaction-block__content-info {
   display: flex;
   flex-direction: column;
   align-self: center;
 }
-.interaction-block__friend-info .friend-name {
+.interaction-block__content-info .user-name {
   font-weight: 600;
   color: #000;
   font-size: 16px;
 }
 @media (max-width: 420px) {
-  .interaction-block__friend-info .friend-nickname,
-  .interaction-block__friend-info strong {
+  .interaction-block__content-info .user-nickname,
+  .interaction-block__content-info strong {
     display: none;
   }
 }
-.interaction-block__friend-info strong,
-.interaction-block__friend-info svg {
+.interaction-block__content-info strong,
+.interaction-block__content-info svg {
   color: #8F8F8F;
 }
-.interaction-block__friend-info span {
+.interaction-block__content-info span {
   font-size: 14px;
   font-weight: 400;
   color: #8F8F8F;
 }
-.interaction-block__friend-info p[role=button] {
+.interaction-block__content-info p[role=button] {
   width: -moz-fit-content;
   width: fit-content;
   font-size: 14px;
   font-weight: 400;
   color: #3D00FF;
 }
-.interaction-block__friend-info p[role=button]:hover {
+.interaction-block__content-info p[role=button]:hover {
   text-decoration: underline;
 }
-.interaction-block .dropdown-menu {
-  position: absolute !important;
+.interaction-block__actions {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-.interaction-block .dropdown-toggle::after {
-  display: none;
+.interaction-block__actions button {
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  max-height: 35px;
+}
+.interaction-block__actions button.btn-primary {
+  background-color: #5D6BE4;
+  border-color: #5D6BE4;
+}
+.interaction-block__actions button.btn-primary:hover {
+  background-color: #3D00FF;
+  border-color: #3D00FF;
+}
+.interaction-block__actions button.btn-secondary {
+  background-color: #929292;
+  border-color: #929292;
+}
+.interaction-block__actions button.btn-secondary:hover {
+  background-color: #373737;
+  border-color: #373737;
+}
+.interaction-block__actions button.btn-none {
+  border: none;
+  font-weight: 400;
+  color: #8F8F8F;
+}
+.interaction-block__actions button.btn-none:hover {
+  text-decoration: underline;
+  color: #373737;
 }
 
 .error-page {

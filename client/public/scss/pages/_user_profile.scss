@@ -679,7 +679,7 @@
     .aside-header {
         font-size: 20px;
         font-weight: 700;
-        margin-bottom: 10px !important;
+        margin-bottom: 15px !important;
         padding: 0;
 
         span {
@@ -795,11 +795,11 @@
     }
 }
 
-.show-more {
+.btn.show-more {
     font-size: 12px;
     color: $primary-color;
     font-weight: 600;
-    cursor: pointer;
+    text-align: left;
 
     &:hover {
         color: $primary-button;

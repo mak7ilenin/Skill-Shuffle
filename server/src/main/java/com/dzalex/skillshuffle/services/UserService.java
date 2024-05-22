@@ -290,8 +290,8 @@ public class UserService {
                 .build();
     }
 
-    private SearchedUserDTO getSearchedUserDTO(User user, User authUser) {
-        return SearchedUserDTO.builder()
+    private RelationshipUserDTO getSearchedUserDTO(User user, User authUser) {
+        return RelationshipUserDTO.builder()
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .nickname(user.getNickname())
@@ -312,9 +312,9 @@ public class UserService {
                 .build();
     }
 
-    public List<SearchedUserDTO> searchUsers(String query) {
+    public List<RelationshipUserDTO> searchUsers(String query) {
         List<User> users = userRepo.searchUsers(query);
-        List<SearchedUserDTO> searchedUsers = new ArrayList<>();
+        List<RelationshipUserDTO> searchedUsers = new ArrayList<>();
 
         User authUser = getCurrentUser();
         users.forEach(user -> {
@@ -452,12 +452,18 @@ public class UserService {
         if (userFollower != null) {
             userFollowerRepository.delete(userFollower);
         }
+
+        // Remove the friend request
+        FriendRequest friendRequest = getFriendRequest(authUser, user);
+        if (friendRequest != null) {
+            friendRequestRepository.delete(friendRequest);
+        }
     }
 
-    private List<PublicUserDTO> getUserFollowers(User user) {
+    public List<RelationshipUserDTO> getUserFollowers(User user) {
         return userFollowerRepository.findAllByUserId(user.getId())
                 .stream()
-                .map(userFollower -> getPublicUserDTO(userFollower.getFollower()))
+                .map(userFollower -> getSearchedUserDTO(userFollower.getFollower(), getCurrentUser()))
                 .collect(Collectors.toList());
     }
 
@@ -491,7 +497,7 @@ public class UserService {
     }
 
     // Get might know users for auth user, based on mutual friends and friends of friends
-    public List<SearchedUserDTO> getMightKnowUsers() {
+    public List<RelationshipUserDTO> getMightKnowUsers() {
         User authUser = getCurrentUser();
         List<User> friends = friendshipRepository.findByUserIdOrFriendId(authUser.getId(), authUser.getId())
                 .stream()
@@ -517,7 +523,7 @@ public class UserService {
     }
 
     // Get mutual friends between user and auth user
-    public List<SearchedUserDTO> getMutualFriends(User otherUser) {
+    public List<RelationshipUserDTO> getMutualFriends(User otherUser) {
         User authUser = getCurrentUser();
 
         List<User> authUserFriends = friendshipRepository.findByUserIdOrFriendId(authUser.getId(), authUser.getId())
@@ -535,5 +541,27 @@ public class UserService {
                 .filter(user -> !user.equals(authUser))
                 .map(user -> getSearchedUserDTO(user, authUser))
                 .collect(Collectors.toList());
+    }
+
+    private List<RelationshipUserDTO> getPendingFriendRequests(User user) {
+        return friendRequestRepository.findAllByReceiverIdAndStatus(user.getId(), FriendRequestStatus.PENDING)
+                .stream()
+                .map(friendRequest -> getSearchedUserDTO(friendRequest.getSender(), user))
+                .collect(Collectors.toList());
+    }
+
+    private List<RelationshipUserDTO> getOutgoingFriendRequests(User user) {
+        return friendRequestRepository.findAllBySenderIdAndStatus(user.getId(), FriendRequestStatus.PENDING)
+                .stream()
+                .map(friendRequest -> getSearchedUserDTO(friendRequest.getReceiver(), user))
+                .collect(Collectors.toList());
+    }
+
+    public UserFollowerDTO getFriendRequests() {
+        User authUser = getCurrentUser();
+        return UserFollowerDTO.builder()
+                .pending(getPendingFriendRequests(authUser))
+                .outgoing(getOutgoingFriendRequests(authUser))
+                .build();
     }
 }

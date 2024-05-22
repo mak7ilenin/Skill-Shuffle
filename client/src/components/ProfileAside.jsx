@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Col, Row, Image, NavLink, Stack } from 'react-bootstrap';
+import { Col, Row, Image, NavLink, Stack, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 import RelationshipButton from './RelationshipButton';
@@ -10,6 +10,7 @@ function ProfileAside({ user, interactionType, setInteractionType }) {
     const navigate = useNavigate();
     const [friendsOnline, setFriendsOnline] = useState([]);
     const [mightKnowUsers, setMightKnowUsers] = useState([]);
+    const [mightKnowUsersToShow, setMightKnowUsersToShow] = useState(3);
 
     useEffect(() => {
         const friendsOnline = user.friends.filter(friend => {
@@ -23,6 +24,31 @@ function ProfileAside({ user, interactionType, setInteractionType }) {
         setFriendsOnline(friendsOnline);
     }, [user]);
 
+    const mightKnownUserContainer = mightKnownUser => (
+        <Row key={mightKnownUser.nickname} className='user-container d-flex align-items-center justify-content-between'>
+            <Col className='user-img p-0 me-2' md='auto'>
+                <Image
+                    src={mightKnownUser.avatarUrl || imagePlaceholder}
+                    alt='User'
+                    roundedCircle
+                />
+            </Col>
+            <Col className='user-info'>
+                <p className='name' onClick={() => navigate(`/users?nn=${mightKnownUser.nickname}`)}>
+                    {mightKnownUser.firstName} {mightKnownUser.lastName}
+                </p>
+                <p className='nickname'>@{mightKnownUser.nickname}</p>
+            </Col>
+            <Col className='btn-container'>
+                <RelationshipButton
+                    user={mightKnownUser}
+                    results={mightKnowUsers}
+                    setResults={setMightKnowUsers}
+                />
+            </Col>
+        </Row>
+    );
+
     return (
         <>
             {user.mightKnow || user.mutualFriends ? (
@@ -31,36 +57,37 @@ function ProfileAside({ user, interactionType, setInteractionType }) {
                         // MIGHT KNOW
                         <Col className='profile-aside might-know d-flex flex-column justify-content-between p-3'>
                             <h3 className='aside-header'>You may know</h3>
-                            <Stack direction='vertical' gap={2}>
-                                {mightKnowUsers.map(mightKnownUser => {
-                                    return (
-                                        <Row key={mightKnownUser.nickname} className='user-container d-flex align-items-center justify-content-between'>
-                                            <Col className='user-img p-0 me-2' md='auto'>
-                                                <Image
-                                                    src={mightKnownUser.avatarUrl || imagePlaceholder}
-                                                    alt='User'
-                                                    roundedCircle
-                                                />
-                                            </Col>
-                                            <Col className='user-info'>
-                                                <p className='name' onClick={() => navigate(`/users?nn=${mightKnownUser.nickname}`)}>
-                                                    {mightKnownUser.firstName} {mightKnownUser.lastName}
-                                                </p>
-                                                <p className='nickname'>@{mightKnownUser.nickname}</p>
-                                            </Col>
-                                            <Col className='btn-container'>
-                                                <RelationshipButton
-                                                    user={mightKnownUser}
-                                                    results={mightKnowUsers}
-                                                    setResults={setMightKnowUsers}
-                                                />
-                                            </Col>
-                                        </Row>
-                                    )
-                                })}
-                            </Stack>
-                            {mightKnowUsers.length > 3 && (
-                                <p className='show-more mt-1'>Show more</p>
+
+                            {mightKnowUsers.length > 3 && mightKnowUsersToShow === 3 ? (
+                                <>
+                                    <Stack direction='vertical' gap={2}>
+                                        {mightKnowUsers.slice(0, mightKnowUsersToShow).map(mightKnownUser => {
+                                            return mightKnownUserContainer(mightKnownUser)
+                                        })}
+                                    </Stack>
+                                    <Button
+                                        variant='none'
+                                        className='show-more mt-3 p-0 border-0'
+                                        onClick={() => setMightKnowUsersToShow(mightKnowUsersToShow.length)}
+                                    >
+                                        Show more
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Stack direction='vertical' gap={2}>
+                                        {mightKnowUsers.map((mightKnownUser, index) => {
+                                            return mightKnownUserContainer(mightKnownUser, index)
+                                        })}
+                                    </Stack>
+                                    <Button
+                                        variant='none'
+                                        className='show-more mt-3 p-0 border-0'
+                                        onClick={() => setMightKnowUsersToShow(3)}
+                                    >
+                                        Show less
+                                    </Button>
+                                </>
                             )}
                         </Col>
                     ) : user.mutualFriends && user.mutualFriends.length > 0 && (

@@ -6,13 +6,17 @@
     z-index: 1000;
     cursor: pointer;
 
-    .toast-header h5 {
-        font-size: 16px;
-        font-weight: 500;
-        color: $dark-gray;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .toast-header {
+        background-color: transparent;
+
+        h5 {
+            font-size: 16px;
+            font-weight: 500;
+            color: $dark-gray;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 
     .toast-body {

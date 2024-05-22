@@ -34,6 +34,6 @@ public class UserProfileDTO {
     private int postsCount;
     private int likedPostsCount;
     private int bookmarkedPostsCount;
-    private List<SearchedUserDTO> mightKnow;
-    private List<SearchedUserDTO> mutualFriends;
+    private List<RelationshipUserDTO> mightKnow;
+    private List<RelationshipUserDTO> mutualFriends;
 }

@@ -74,13 +74,17 @@ function Chat() {
           }
           return chat;
         });
+        console.log(updatedChats);
         setChats(updatedChats);
 
         // Hide loading spinner
         setLoadingMessages(false);
 
-        setTimeout(() => {
-          scrollToPosition(messagesListRef.current.scrollHeight);
+        const interval = setInterval(() => {
+          if (messagesListRef.current) {
+            scrollToPosition(messagesListRef.current.scrollHeight);
+            clearInterval(interval);
+          }
         }, 50);
 
       })
@@ -88,7 +92,7 @@ function Chat() {
         navigate('/messenger')
         console.error(error.response?.data.message || error.message);
       });
-  }, [setLoadingMessages, messagesListRef, navigate, setAuthUser]);
+  }, [setLoadingMessages, messagesListRef, navigate, setAuthUser, chatsRef]);
 
 
   const subscribeToChat = useCallback(() => {
@@ -109,9 +113,6 @@ function Chat() {
           const message = JSON.parse(receivedMessage.body);
           updateChatLastMessage(message);
 
-          console.log(message);
-          console.log(chosenChat);
-
           // Set chosen chat messages
           setChosenChat(prevChat => {
             return {
@@ -120,9 +121,10 @@ function Chat() {
             };
           });
 
-          setTimeout(() => {
+          const interval = setInterval(() => {
             if (messagesListRef.current) {
               scrollToPosition(messagesListRef.current.scrollHeight);
+              clearInterval(interval);
             }
           }, 50);
         });
@@ -201,6 +203,8 @@ function Chat() {
 
 
   const overflowBody = useCallback(() => {
+    document.querySelector('.header').classList.add('closed');
+
     if (window.innerWidth < 958 && chosenChat) {
       document.body.style.overflow = 'hidden';
     }
@@ -277,8 +281,11 @@ function Chat() {
 
       setLoadingMessages(false);
 
-      setTimeout(() => {
-        scrollToPrev(prevScrollTop, prevScrollHeight);
+      const interval = setInterval(() => {
+        if (chatRef.current.scrollTop === 0) {
+          scrollToPrev(prevScrollTop, prevScrollHeight);
+          clearInterval(interval);
+        }
       }, 50);
 
     } catch (error) {
@@ -303,7 +310,7 @@ function Chat() {
     let currentDay = null;
 
     chosenChat.messages.forEach((message) => {
-      if (chosenChat.messages.length > 1 && message.type !== 'entry') {
+      if (chosenChat.messages.length > 0 && message.type !== 'entry') {
         // Format date to display in the message list as 'Today', 'Yesterday', or the date itself
         const today = getFormattedDate(new Date());
         const messageDate = getFormattedDate(message.timestamp);
@@ -434,8 +441,9 @@ function Chat() {
                 <Spinner animation='border' variant='secondary' />
               </div>
             ) : (
-              <Stack direction='vertical' gap={1} ref={messagesListRef}>
+              <Stack direction='vertical' gap={1} className='justify-content-between' ref={messagesListRef}>
                 {messagesByDay.map((dayMessages) => (
+
                   <React.Fragment key={dayMessages.day}>
                     <div className='date-separator my-2'>{dayMessages.day}</div>
 
@@ -450,17 +458,15 @@ function Chat() {
                               messageList={dayMessages}
                             />
                           </div>
-                        ) : null}
-
-                        {message.type === 'announcement' ? (
+                        ) : message.type === 'announcement' ? (
                           <div className='announcement w-100 d-flex justify-content-center my-2'>
                             <span dangerouslySetInnerHTML={{ __html: message.content }} />
                           </div>
                         ) : null}
                       </React.Fragment>
                     ))}
-
                   </React.Fragment>
+
                 ))}
               </Stack>
             )}
@@ -473,6 +479,7 @@ function Chat() {
                 name='message'
                 className='w-100 h-100'
                 placeholder='Type a message...'
+                autoFocus
                 autoComplete='off'
                 value={messageContent}
                 onChange={(event) => setMessageContent(event.target.value)}

@@ -23,7 +23,13 @@ function Content() {
                 <Route path="/users" element={authUser ? <UserProfile /> : <Navigate to="/sign-in" />} />
 
                 {/* User interactions routes */}
-                <Route path='/friends' element={authUser ? <UserInteractions /> : <Navigate to="/sign-in" />} />
+                {['friends', 'followers'].map(path =>
+                    <Route
+                        key={path}
+                        path={path}
+                        element={authUser ? <UserInteractions /> : <Navigate to="/sign-in" />}
+                    />
+                )}
 
                 {/* Authorization routes */}
                 <Route path="/sign-in" element={authUser ? <Navigate to="/me" /> : <SignIn />} />

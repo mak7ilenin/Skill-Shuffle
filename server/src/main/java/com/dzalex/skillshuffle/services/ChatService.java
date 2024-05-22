@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
@@ -57,7 +56,13 @@ public class ChatService {
                 chatPreviewDTOs.add(chatPreviewDTO);
             }
         }
-        return chatPreviewDTOs;
+
+        // return filtered chats list by last message timestamp
+        return chatPreviewDTOs.stream()
+                .sorted(Comparator.comparing(
+                        ChatPreviewDTO::getLastMessageTimestamp,
+                        Comparator.nullsLast(Comparator.naturalOrder())).reversed())
+                .toList();
     }
 
     public ChatDTO getChatWithMessages(Chat chat) {
@@ -97,12 +102,14 @@ public class ChatService {
     private ChatPreviewDTO getChatPreview(Chat chat, User authedUser) {
         if (isUserMemberOfChat(chat.getId(), authedUser.getId())) {
             ChatPreviewDTO chatInfo = getShortChatInfo(chat);
+            MessageDTO lastMessage = messageService.findChatLastMessage(chat);
             return ChatPreviewDTO.builder()
                     .id(chat.getId())
                     .type(chat.getType())
                     .name(chatInfo.getName())
                     .avatarUrl(chatInfo.getAvatarUrl())
-                    .lastMessage(messageService.findChatLastMessage(chat))
+                    .lastMessage(lastMessage)
+                    .lastMessageTimestamp(lastMessage != null ? lastMessage.getTimestamp() : null)
                     .isMuted(isChatMuted(chat.getId(), authedUser.getId()))
                     .isOnline(chatInfo.isOnline())
                     .unreadMessages(messageService.getChatUnreadMessages(chat.getId(), authedUser.getId()))

@@ -1,9 +1,6 @@
 package com.dzalex.skillshuffle.controllers;
 
-import com.dzalex.skillshuffle.dtos.PublicUserDTO;
-import com.dzalex.skillshuffle.dtos.RelationshipActionDTO;
-import com.dzalex.skillshuffle.dtos.SearchedUserDTO;
-import com.dzalex.skillshuffle.dtos.UserProfileDTO;
+import com.dzalex.skillshuffle.dtos.*;
 import com.dzalex.skillshuffle.entities.User;
 import com.dzalex.skillshuffle.enums.RelationshipStatus;
 import com.dzalex.skillshuffle.services.UserService;
@@ -32,14 +29,27 @@ public class UserController {
         return userService.getUserFriends(user);
     }
 
+    // Get user followers by nickname
+    @GetMapping("/users/{nickname}/followers")
+    public List<RelationshipUserDTO> getUserFollowers(@PathVariable String nickname) {
+        User user = userService.getUserByNickname(nickname);
+        return userService.getUserFollowers(user);
+    }
+
+    // Get authorized user friend requests
+    @GetMapping("/users/friend-requests")
+    public UserFollowerDTO getUserFollowersAndFollowing() {
+        return userService.getFriendRequests();
+    }
+
     // Search for users by nickname or name
     @GetMapping("/users/search")
-    public List<SearchedUserDTO> searchUsers(@RequestParam("q") String query) {
+    public List<RelationshipUserDTO> searchUsers(@RequestParam("q") String query) {
         return userService.searchUsers(query);
     }
 
     // Add user relationship
-    @PostMapping("/users/relationships") // Body has { "nickname": "friendNickname", "action": "add_friend"}
+    @PostMapping("/users/relationships")
     public RelationshipStatus addUserRelationship(@RequestBody RelationshipActionDTO relationship) {
         return userService.changeUserRelationship(relationship);
     }
