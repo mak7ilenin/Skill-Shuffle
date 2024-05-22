@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: May 20, 2024 at 12:33 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Host: database
+-- Generation Time: May 22, 2024 at 01:35 PM
+-- Server version: 11.3.2-MariaDB-1:11.3.2+maria~ubu2204
+-- PHP Version: 8.2.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,7 +20,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `skill_shuffle`
 --
-CREATE DATABASE IF NOT EXISTS `skill_shuffle` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE DATABASE IF NOT EXISTS `skill_shuffle` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `skill_shuffle`;
 
 -- --------------------------------------------------------
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `chats` (
   `community_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `community_id` (`community_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `chats`
@@ -63,7 +63,8 @@ INSERT INTO `chats` (`id`, `name`, `type`, `avatar_url`, `community_id`) VALUES
 (1, 'Lebron Fans', 'GROUP', 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/chats/1/avatar/1713779149315-da78f776-e46f-4894-b317-022e000c5c51-2544.webp', NULL),
 (3, 'Test test, Test test3, Test test1', 'GROUP', NULL, NULL),
 (4, 'Quantum Hub', 'COMMUNITY', 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/communities/1/avatar/diguyewhuyt39jkdnifnoisdjgfosdjoi.jpg', 1),
-(5, '', 'PRIVATE', NULL, NULL);
+(5, '', 'PRIVATE', NULL, NULL),
+(8, '', 'PRIVATE', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -101,22 +102,24 @@ CREATE TABLE IF NOT EXISTS `chat_members` (
   PRIMARY KEY (`id`),
   KEY `chat_id` (`chat_id`),
   KEY `member_id` (`member_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `chat_members`
 --
 
 INSERT INTO `chat_members` (`id`, `chat_id`, `member_id`, `role`, `notifications`, `joined_at`, `left_at`, `is_kicked`, `cleared_at`, `closed_at`) VALUES
-(1, 1, 1, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0', '2024-05-01 18:52:38.818', '2024-05-18 20:43:31.219'),
+(1, 1, 1, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0', '2024-05-01 18:52:38.818', '2024-05-22 12:42:08.329'),
 (2, 1, 4, 'CREATOR', b'1', '2024-04-22 09:45:49.000', NULL, b'0', NULL, '2024-05-20 10:30:16.270'),
 (3, 1, 2, 'MEMBER', b'1', '2024-04-22 09:45:49.000', NULL, b'0', NULL, NULL),
-(6, 3, 1, 'CREATOR', b'1', '2024-04-22 09:57:26.000', NULL, b'0', '2024-05-01 17:55:41.050', '2024-05-17 21:10:43.676'),
+(6, 3, 1, 'CREATOR', b'1', '2024-04-22 09:57:26.000', NULL, b'0', '2024-05-01 17:55:41.050', '2024-05-22 12:44:15.187'),
 (7, 3, 4, 'MEMBER', b'0', '2024-04-22 09:57:26.000', NULL, b'0', NULL, '2024-05-16 15:26:22.535'),
 (8, 3, 2, 'MEMBER', b'1', '2024-04-22 09:57:26.000', NULL, b'0', NULL, '2024-05-18 20:44:49.808'),
-(9, 5, 1, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL, '2024-05-20 10:33:01.399'),
+(9, 5, 1, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL, '2024-05-22 12:42:07.171'),
 (10, 5, 4, 'MEMBER', b'1', '2024-04-22 10:20:04.000', NULL, b'0', NULL, '2024-05-02 21:51:29.386'),
-(11, 4, 1, 'MEMBER', b'1', '2024-05-02 16:35:30.901', NULL, b'0', NULL, '2024-05-20 10:32:59.759');
+(11, 4, 1, 'MEMBER', b'1', '2024-05-02 16:35:30.901', NULL, b'0', NULL, '2024-05-22 12:42:37.970'),
+(47, 8, 17, 'MEMBER', b'1', '2024-05-22 12:36:36.344', NULL, b'0', NULL, '2024-05-22 12:40:57.842'),
+(48, 8, 1, 'MEMBER', b'1', '2024-05-22 12:36:36.353', NULL, b'0', NULL, '2024-05-22 12:42:01.648');
 
 -- --------------------------------------------------------
 
@@ -135,7 +138,7 @@ CREATE TABLE IF NOT EXISTS `chat_messages` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`sender_id`),
   KEY `chat_id` (`chat_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=612 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=621 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `chat_messages`
@@ -153,13 +156,20 @@ INSERT INTO `chat_messages` (`id`, `sender_id`, `chat_id`, `content`, `timestamp
 (10, 1, 1, 'heyyyy', '2024-05-01 18:52:32.725', 'MESSAGE', 'SENT'),
 (11, 4, 1, 'test r u here?', '2024-05-01 20:26:26.119', 'MESSAGE', 'SENT'),
 (12, 4, 1, '??', '2024-05-01 20:27:37.360', 'MESSAGE', 'SENT'),
-(13, 1, 1, 'what do you want nigga', '2024-05-01 20:27:45.252', 'MESSAGE', 'SENT'),
+(13, 1, 1, 'what do you want man?', '2024-05-01 20:27:45.252', 'MESSAGE', 'SENT'),
 (14, 4, 1, 'https://media.tenor.com/BG-84cOdq20AAAAC/fr-fr-fr.gif', '2024-05-01 20:27:53.794', 'MESSAGE', 'SENT'),
-(15, 1, 1, 'no shit', '2024-05-02 06:35:13.998', 'MESSAGE', 'SENT'),
+(15, 1, 1, 'naaahhhh😴😴🥱', '2024-05-02 06:35:13.998', 'MESSAGE', 'SENT'),
 (16, 4, 1, 'hey', '2024-05-02 21:07:04.449', 'MESSAGE', 'SENT'),
 (17, 4, 1, 'huh??', '2024-05-02 21:07:15.662', 'MESSAGE', 'SENT'),
 (610, 2, 3, 'What\'s up men', '2024-05-18 20:44:45.243', 'MESSAGE', 'SENT'),
-(611, 4, 1, 'gsdfgdsfg', '2024-05-20 10:30:05.329', 'MESSAGE', 'SENT');
+(612, 17, 8, 'Maksim Dzjubenko has entered the chat', '2024-05-22 12:36:36.356', 'ENTRY', 'SENT'),
+(613, 17, 8, 'hey!', '2024-05-22 12:36:54.880', 'MESSAGE', 'SENT'),
+(614, 17, 8, 'What\'s up', '2024-05-22 12:37:08.956', 'MESSAGE', 'SENT'),
+(615, 1, 8, 'yoo', '2024-05-22 12:37:21.167', 'MESSAGE', 'SENT'),
+(616, 17, 8, 'Hop on basketball tonight?', '2024-05-22 12:38:40.739', 'MESSAGE', 'SENT'),
+(617, 17, 8, 'https://media.tenor.com/me2C31vcfiMAAAAC/stephen-curry-nba-legends.gif', '2024-05-22 12:40:11.975', 'MESSAGE', 'SENT'),
+(618, 17, 8, 'https://media.tenor.com/MpTy4knnxe8AAAAC/lebron-james-king-james.gif', '2024-05-22 12:40:24.229', 'MESSAGE', 'SENT'),
+(620, 1, 8, '\'m gonna me the curry😎', '2024-05-22 12:41:27.450', 'MESSAGE', 'SENT');
 
 -- --------------------------------------------------------
 
@@ -439,7 +449,7 @@ CREATE TABLE IF NOT EXISTS `friendships` (
   PRIMARY KEY (`id`),
   KEY `friend_id` (`friend_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `friendships`
@@ -453,7 +463,8 @@ INSERT INTO `friendships` (`id`, `user_id`, `friend_id`) VALUES
 (8, 15, 4),
 (10, 1, 15),
 (11, 16, 1),
-(12, 16, 4);
+(12, 16, 4),
+(16, 17, 1);
 
 -- --------------------------------------------------------
 
@@ -470,7 +481,7 @@ CREATE TABLE IF NOT EXISTS `friend_requests` (
   PRIMARY KEY (`id`),
   KEY `receiver_id` (`receiver_id`),
   KEY `sender_id` (`sender_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- --------------------------------------------------------
 
@@ -511,24 +522,19 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `FK6xvn0811tkyo3nfjk2xvqx6ns` (`author_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `posts`
 --
 
 INSERT INTO `posts` (`id`, `author_id`, `text`, `privacy`, `likes_count`, `shares_count`, `comments_count`, `allow_comments`, `allow_notifications`, `created_at`, `updated_at`) VALUES
-(2, 1, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.😄😄🙏🏿', 'PUBLIC', 1, 0, 0, b'1', b'0', '2024-05-18 16:34:31', '2024-05-19 13:08:40'),
-(3, 1, 'Тестовый пост, всем привет!🙏🏿', 'FRIENDS', 0, 0, 0, b'0', b'0', '2024-05-18 19:56:13', '2024-05-19 13:16:39'),
-(5, 1, 'ahhaahahahha😂😂😂😂😭😭😭', 'PUBLIC', 0, 0, 0, b'1', b'1', '2021-05-14 20:03:51', '2024-05-18 22:32:09'),
-(6, 1, 'ahhaahahahha😂😂😂😂😭😭😭', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-18 20:04:55', '2024-05-18 20:04:55'),
-(7, 1, 'ahhaahahahha😂😂😂😂😭😭😭', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-17 20:05:29', '2024-05-18 22:25:27'),
-(9, 1, 'Wait what💀💀', 'PUBLIC', 1, 0, 0, b'1', b'1', '2024-05-18 22:38:10', '2024-05-20 09:48:47'),
-(10, 1, 'xxDDDDDDDD', 'PUBLIC', 1, 1, 0, b'1', b'1', '2024-05-18 22:39:18', '2024-05-20 09:49:17'),
-(11, 4, 'She\'s a ten\n\n\n\n\n\n\n\nten tonne', 'PUBLIC', 1, 14, 0, b'1', b'1', '2024-05-19 13:11:02', '2024-05-20 09:49:13'),
-(12, 4, 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww', 'PUBLIC', 3, 1, 0, b'1', b'1', '2024-05-19 13:12:34', '2024-05-20 10:28:18'),
+(2, 1, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.😄😄🙏🏿', 'PUBLIC', 1, 0, 0, b'1', b'0', '2024-05-18 16:34:31', '2024-05-22 13:17:39'),
+(11, 4, 'She\'s a ten\n\n\n\n\n\n\n\nten tonne', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-19 13:11:02', '2024-05-22 12:36:05'),
+(12, 4, 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-19 13:12:34', '2024-05-22 12:36:12'),
 (13, 3, 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-20 09:50:22', '2024-05-20 09:50:22'),
-(14, 3, 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-20 09:50:36', '2024-05-20 09:50:36');
+(14, 3, 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww', 'PUBLIC', 0, 0, 0, b'1', b'1', '2024-05-20 09:50:36', '2024-05-20 09:50:36'),
+(15, 17, '', 'PUBLIC', 1, 0, 0, b'1', b'1', '2024-05-22 12:39:17', '2024-05-22 13:17:14');
 
 -- --------------------------------------------------------
 
@@ -546,7 +552,7 @@ CREATE TABLE IF NOT EXISTS `post_attachments` (
   KEY `file_id` (`file_id`),
   KEY `post_id` (`post_id`),
   KEY `video_id` (`video_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `post_attachments`
@@ -555,7 +561,8 @@ CREATE TABLE IF NOT EXISTS `post_attachments` (
 INSERT INTO `post_attachments` (`id`, `post_id`, `file_id`, `photo_url`, `video_id`) VALUES
 (4, 2, NULL, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/posts/2/1716050071815-b42d02cd-6139-4e16-a9f5-aa0e52e0a840', NULL),
 (5, 2, NULL, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/posts/2/1716050072252-19499882-57ce-4e5f-a1f3-cf492c94f338', NULL),
-(10, 14, NULL, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/3/posts/14/1716198636289-424dafe2-9caf-451a-ab07-f897eef71f7b', NULL);
+(10, 14, NULL, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/3/posts/14/1716198636289-424dafe2-9caf-451a-ab07-f897eef71f7b', NULL),
+(11, 15, NULL, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/17/posts/15/1716381557270-84e3a6ce-2aa4-4763-b440-fb8b30953ead', NULL);
 
 -- --------------------------------------------------------
 
@@ -570,7 +577,7 @@ CREATE TABLE IF NOT EXISTS `refresh_token` (
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `refresh_token`
@@ -580,7 +587,8 @@ INSERT INTO `refresh_token` (`id`, `token`, `expires_at`, `user_id`) VALUES
 (2, '79bf984e-5987-4cc1-8a98-68532e443e2b', '2024-04-29 09:42:16.575', 1),
 (7, '0c4ac0ac-5401-481c-ade0-3cfbd936cc0d', '2024-05-09 05:22:22.220', 1),
 (8, '20fe582f-e36d-4e31-bd28-130ca47aaeb9', '2024-05-09 05:39:06.886', 4),
-(13, '76310d17-c18e-4b7d-a3a6-bd791b59ef95', '2024-05-25 17:44:20.935', 1);
+(13, '76310d17-c18e-4b7d-a3a6-bd791b59ef95', '2024-05-25 17:44:20.935', 1),
+(14, 'b531eee0-759c-44cd-9d16-5b778564627c', '2024-05-29 12:33:22.405', 17);
 
 -- --------------------------------------------------------
 
@@ -613,19 +621,20 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `nickname` (`nickname`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `password`, `nickname`, `email`, `gender`, `birth_date`, `bio`, `points`, `avatar_url`, `banner_url`, `banner_color`, `is_public`, `auto_follow`, `last_seen`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Test test', 'The testuser', 'test', '$2a$10$JEg8WMqgkd4mbM20o7vOSu9mlCogeiqA6ECGLza4KBg1gzUV/6iru', 'testuser', 'test@gmail.com', 'OTHER', '2004-12-22', 'Test test', 0, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/avatar/2023-10-27_183115.png', 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/banner/mak7ilenin-banner.png', '#00b3db', b'1', b'0', '2024-05-20 10:33:02', '2024-04-22 09:35:00', '2024-05-20 10:33:02', NULL),
+(1, 'Test test', 'The testuser', 'test', '$2a$10$JEg8WMqgkd4mbM20o7vOSu9mlCogeiqA6ECGLza4KBg1gzUV/6iru', 'testuser', 'test@gmail.com', 'OTHER', '2004-12-22', 'Test test', 0, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/1/avatar/2023-10-27_183115.png', NULL, '#00b3db', b'1', b'0', '2024-05-22 13:30:41', '2024-04-22 09:35:00', '2024-05-22 13:30:41', NULL),
 (2, 'Test test1', 'The test1', 'test1', '$2a$10$sRN8k2KLY8xHO7sec08zOe2/MLjlQgDtkX/jdyadSqfIce1aJEJVq', 'test1', 'test1@gmail.com', 'OTHER', '2004-12-22', 'Test test1', 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-18 20:44:24', '2024-04-22 09:40:59', '2024-05-18 20:44:24', NULL),
 (3, 'Test test2', 'The test2', 'test2', '$2a$10$QycMomHz4iW9PrWfHtucX.antDp4iLeHtAS1FVZbO0EBmV1fEok56', 'test2', 'test2@gmail.com', 'OTHER', '2004-12-22', 'Test test2', 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-20 10:02:07', '2024-04-22 09:41:14', '2024-05-20 10:02:07', NULL),
 (4, 'Test test3', 'The test3', 'test3', '$2a$10$Yn99CbLOCqoMG5HPXRNkYOm8AImK3.UPS9tUcAyNOlff0MvgaJv1W', 'test3', 'test3@gmail.com', 'OTHER', '2004-12-22', 'Test test3', 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-20 10:29:59', '2024-04-22 09:42:13', '2024-05-20 10:29:59', NULL),
 (15, 'Test4', 'Testovich', 'test4', '$2a$10$2hxjn9WN.zpbnGb5FNwMOu4AZi3IEanhHrru.B3c4i6LyUIQ79whC', 'test4', NULL, 'MALE', '1993-01-16', NULL, 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-17 20:56:06', '2024-05-16 18:50:57', '2024-05-17 20:56:06', NULL),
-(16, 'Test5', 'Testina', 'test5', '$2a$10$xrqUZCY2JG20oY7EI4LOguqEQ4GJUWoCjlUQnQ54gOMJ1hM3viLki', 'test5', NULL, 'FEMALE', '1992-02-16', NULL, 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-16 21:39:03', '2024-05-16 19:10:33', '2024-05-16 21:39:03', NULL);
+(16, 'Test5', 'Testina', 'test5', '$2a$10$xrqUZCY2JG20oY7EI4LOguqEQ4GJUWoCjlUQnQ54gOMJ1hM3viLki', 'test5', NULL, 'FEMALE', '1992-02-16', NULL, 0, NULL, NULL, '#00b3db', b'1', b'0', '2024-05-16 21:39:03', '2024-05-16 19:10:33', '2024-05-16 21:39:03', NULL),
+(17, 'Maksim', 'Dzjubenko', 'mak7ilenin', '$2a$10$cbG1.ucJeq7d4GtLlwviFuHe7MtBF87RHBlqJYf4Oc6EKVOUqODwe', 'mak7ilenin', NULL, 'MALE', '2004-12-22', 'Rizzy man', 0, 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/17/avatar/1716381189446-9791cab7-d207-4a92-b523-f6a212a5a4b8', 'https://skill-shuffle.s3.eu-north-1.amazonaws.com/users/17/banner/mak7ilenin-banner.png', '#00b3db', b'1', b'0', '2024-05-22 13:34:57', '2024-05-22 12:33:09', '2024-05-22 13:34:57', NULL);
 
 -- --------------------------------------------------------
 
@@ -656,7 +665,7 @@ CREATE TABLE IF NOT EXISTS `user_followers` (
   PRIMARY KEY (`id`),
   KEY `follower_id` (`follower_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `user_followers`
@@ -716,15 +725,17 @@ CREATE TABLE IF NOT EXISTS `user_post_interactions` (
   PRIMARY KEY (`id`),
   KEY `post_id` (`post_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `user_post_interactions`
 --
 
 INSERT INTO `user_post_interactions` (`id`, `user_id`, `post_id`, `interaction_type`, `created_at`) VALUES
-(42, 1, 12, 'LIKED', '2024-05-20 10:28:18'),
-(43, 1, 12, 'BOOKMARKED', '2024-05-20 10:28:25');
+(2, 1, 15, 'LIKED', '2024-05-22 12:39:21'),
+(3, 17, 15, 'BOOKMARKED', '2024-05-22 13:13:53'),
+(4, 17, 2, 'BOOKMARKED', '2024-05-22 13:14:05'),
+(9, 17, 2, 'LIKED', '2024-05-22 13:17:39');
 
 -- --------------------------------------------------------
 
