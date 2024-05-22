@@ -376,7 +376,12 @@ function SignUpSteps({ register, currentStep, setCurrentStep, changeStep, error,
                                 aria-label="Nickname"
                                 aria-describedby="at-addon"
                                 value={nickname}
-                                onChange={e => setNickname(e.target.value)}
+                                onChange={e => {
+                                    const validPattern = /^[a-zA-Z0-9_-]*$/;
+                                    if (validPattern.test(e.target.value)) {
+                                        setNickname(e.target.value.toLowerCase())
+                                    }
+                                }}
                             />
                         </InputGroup>
                     )}

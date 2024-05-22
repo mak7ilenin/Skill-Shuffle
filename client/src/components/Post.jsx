@@ -19,7 +19,7 @@ function Post({ post, setPosts, setUser }) {
     const { authUser } = useAuth();
     const [loadedImages, setLoadedImages] = useState(0);
     const [liked, setLiked] = useState(post.liked);
-    
+
     const formatText = () => {
         return post.text.split('\n').map((line, index) => (
             <React.Fragment key={index}>
@@ -65,22 +65,22 @@ function Post({ post, setPosts, setUser }) {
     };
 
     const handlePostShare = () => {
-        axios.post(`${API_SERVER}/posts/${post.id}/share`, {}, { withCredentials: true })
-            .then(() => {
-                // Update shares count on post
-                setPosts(prevPosts => prevPosts.map(prevPost => {
-                    if (prevPost.id === post.id) {
-                        return {
-                            ...prevPost,
-                            sharesCount: prevPost.sharesCount + 1
-                        };
-                    }
-                    return prevPost;
-                }));
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        // axios.post(`${API_SERVER}/posts/${post.id}/share`, {}, { withCredentials: true })
+        //     .then(() => {
+        //         // Update shares count on post
+        //         setPosts(prevPosts => prevPosts.map(prevPost => {
+        //             if (prevPost.id === post.id) {
+        //                 return {
+        //                     ...prevPost,
+        //                     sharesCount: prevPost.sharesCount + 1
+        //                 };
+        //             }
+        //             return prevPost;
+        //         }));
+        //     })
+        //     .catch((error) => {
+        //         console.error(error);
+        //     });
     };
 
     return (
@@ -153,7 +153,7 @@ function Post({ post, setPosts, setUser }) {
                     <p>{post.commentsCount}</p>
                 </Col> */}
 
-                {authUser.nickname !== post.author.nickname && (
+                {/* {authUser.nickname !== post.author.nickname && (
                     <Col
                         className='share-button'
                         onClick={() => handlePostShare(post)}
@@ -161,9 +161,9 @@ function Post({ post, setPosts, setUser }) {
                         <Share />
                         <p>{post.sharesCount}</p>
                     </Col>
-                )}
-
+                )} */}
             </Row>
+
             {/* <Row className='post-input d-flex gap-2 justify-content-start align-items-center flex-row mt-3'>
                 <Col className='user-img m-0'>
                     <Image

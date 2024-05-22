@@ -29,6 +29,9 @@ function Content() {
                 <Route path="/sign-in" element={authUser ? <Navigate to="/me" /> : <SignIn />} />
                 <Route path="/sign-up" element={authUser ? <Navigate to="/me" /> : <SignUp />} />
 
+                {/* Ignore ADMIN_PATH to avoid interference */}
+                <Route path={`${process.env.REACT_APP_ADMIN_PATH}/*`} element={<div />} />
+
                 {/* Default route */}
                 <Route path="/" element={authUser ? <Navigate to="/me" /> : <Navigate to="/sign-in" />} />
 

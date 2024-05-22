@@ -86,12 +86,13 @@ public class UserService {
         return userRepo.findByNickname(nickname) != null;
     }
 
-    public boolean checkUserDuplicate(String username, String email) {
-        return userRepo.findByUsername(username) != null || (email != null && userRepo.findByEmail(email) != null);
+    public boolean checkUserDuplicate(String username) {
+        return userRepo.findByUsername(username) != null;
     }
 
     public User saveUser(User user, MultipartFile avatarBlob) {
         user.setPassword(passwordEncoder().encode(user.getPassword()));
+        user.setNickname(user.getNickname().toLowerCase());
         User savedUser = userRepo.save(user);
         User updatedUser = saveAvatar(savedUser, avatarBlob);
         return updatedUser != null ? updatedUser : savedUser;

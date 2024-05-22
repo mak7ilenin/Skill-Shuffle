@@ -443,7 +443,7 @@ public class ChatService {
         // Find a private chat where the other member is the specified user
         for (Chat chat : chats) {
             if (chat.isPrivate()) {
-                List<User> members = chat.getMembers()
+                List<User> members = chatMemberRepository.findAllByChatId(chat.getId())
                         .stream()
                         .map(ChatMember::getMember)
                         .toList();
@@ -459,7 +459,7 @@ public class ChatService {
         Chat newChat = createChat(NewChatDTO.builder()
                 .name("")
                 .type(ChatType.PRIVATE)
-                .members(new String[]{user.getUsername()})
+                .members(new String[]{user.getNickname()})
                 .build(), null);
 
         return newChat.getId();

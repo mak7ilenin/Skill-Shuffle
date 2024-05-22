@@ -606,6 +606,8 @@ p {
 .search-block__result img {
   width: 45px;
   height: 45px;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .search-block__no-result {
   color: #C8C8C8;
@@ -630,6 +632,9 @@ p {
 }
 .post-editor__avatar img {
   width: 35px;
+  height: 35px;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .post-editor__textarea textarea {
   min-height: 80px !important;
