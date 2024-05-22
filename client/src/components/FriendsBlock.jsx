@@ -58,19 +58,17 @@ function FriendsBlock({ friends }) {
         <Row className='interaction-block flex-column p-3'>
 
             <Row className='interaction-block__header'>
-                <h4 className='mb-2'>Friends</h4>
+                <h4 className='mb-3'>Friends</h4>
             </Row>
 
             <Row className='interaction-block__filters'>
-                <Tabs defaultActiveKey={tab} id='friends-filters' onSelect={(k) => handleTabSelect(k)}>
+                <Tabs defaultActiveKey={tab} onSelect={(k) => handleTabSelect(k)}>
                     <Tab
                         eventKey='all'
-                        className='friends-filter'
                         title={<>All friends <span>{friends.length}</span></>}
                     />
                     <Tab
                         eventKey='online'
-                        className='friends-filter'
                         title={<>Friends online <span>{filterFriendsOnline.length}</span></>}
                     />
                 </Tabs>
@@ -86,12 +84,12 @@ function FriendsBlock({ friends }) {
                 />
             </Row>
 
-            <Stack direction='vertical' className='interaction-block__friends p-0'>
+            <Stack direction='vertical' className='interaction-block__content p-0'>
                 {friendList && friendList.length > 0 ? (
                     friendList.map(friend => {
                         return (
-                            <Row key={friend.nickname} className='interaction-block__friend-item py-2'>
-                                <Col md='auto' className='interaction-block__friend-avatar p-0'>
+                            <Row key={friend.nickname} className='interaction-block__content-item py-2'>
+                                <Col md='auto' className='interaction-block__avatar p-0'>
                                     <Link
                                         data-online={`${formatLastSeenTimestamp(friend.lastSeen) === 'Online'}`}
                                         to={`/users?nn=${friend.nickname}`}
@@ -103,12 +101,12 @@ function FriendsBlock({ friends }) {
                                         />
                                     </Link>
                                 </Col>
-                                <Col className='interaction-block__friend-info ms-3'>
+                                <Col className='interaction-block__content-info ms-3'>
                                     <div>
                                         <Link to={`/users?nn=${friend.nickname}`}>
-                                            <span className='friend-name'>{friend.firstName} {friend.lastName}</span>
+                                            <span className='user-name'>{friend.firstName} {friend.lastName}</span>
                                             <strong className='mx-1'>•</strong>
-                                            <span className='friend-nickname'>@{friend.nickname}</span>
+                                            <span className='user-nickname'>@{friend.nickname}</span>
                                         </Link>
                                     </div>
                                     <div className='d-flex align-items-center gap-2'>
@@ -149,4 +147,4 @@ function FriendsBlock({ friends }) {
     )
 }
 
-export default FriendsBlock
+export default FriendsBlock;

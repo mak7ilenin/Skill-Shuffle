@@ -10,7 +10,7 @@ import { ReactComponent as Trophy } from '../assets/icons/pointsTrophy.svg';
 import { ReactComponent as BornIn } from '../assets/icons/bornIn.svg';
 import { ReactComponent as Friends } from '../assets/icons/friendsIcon.svg';
 // import { ReactComponent as Subscriptions } from '../assets/icons/subscriptionsIcon.svg';
-import { ReactComponent as Photos } from '../assets/icons/photosIcon.svg';
+// import { ReactComponent as Photos } from '../assets/icons/photosIcon.svg';
 import { ReactComponent as Favorite } from '../assets/icons/favorite.svg';
 import { ReactComponent as Calendar } from '../assets/icons/calendar.svg';
 import { HiOutlineStatusOnline } from "react-icons/hi";
@@ -53,7 +53,7 @@ function ProfileInfo({ user, setUser, showAside, compacted }) {
                     <>
                         <Row className="profile-statistics flex-column">
                             <Col className='d-flex flex-row align-items-center mb-2'>
-                                {formatLastSeenTimestamp() === 'Online' ? (
+                                {formatLastSeenTimestamp(user.lastSeen) === 'Online' ? (
                                     <>
                                         <div className="online-icon me-2"></div>
                                         <p>Online</p>
@@ -61,7 +61,7 @@ function ProfileInfo({ user, setUser, showAside, compacted }) {
                                 ) : (
                                     <>
                                         <HiOutlineStatusOnline size={18} className='me-2' />
-                                        <p>{formatLastSeenTimestamp()}</p>
+                                        <p>{formatLastSeenTimestamp(user.lastSeen)}</p>
                                     </>
                                 )}
                             </Col>
@@ -79,9 +79,12 @@ function ProfileInfo({ user, setUser, showAside, compacted }) {
 
                         <Row className='profile-bio flex-column mb-2'>
                             {user.bio && <p className='p-0'>{user.bio}</p>}
-                            {authUser.nickname === user.nickname ? (
+                            {/* {authUser.nickname === user.nickname ? (
                                 <Button variant='secondary'>Edit profile</Button>
                             ) : (
+                                <ProfileRelationshipButton user={user} setUser={setUser} />
+                            )} */}
+                            {authUser.nickname !== user.nickname && (
                                 <ProfileRelationshipButton user={user} setUser={setUser} />
                             )}
                         </Row>
@@ -89,57 +92,57 @@ function ProfileInfo({ user, setUser, showAside, compacted }) {
                 )}
             </div>
 
-            {!compacted && (
-                <div className="second-col">
-                    <Row className='profile-links flex-column'>
-                        <Col className='d-flex flex-row mb-1 align-items-center'>
-                            <Friends className='me-2' />
-                            <p>
-                                <span>{user.friends.length}</span> • <a href={`/friends?nn=${user.nickname}`}>friends</a>
-                            </p>
-                        </Col>
-                        <Col className='d-flex flex-row my-1 align-items-center'>
-                            <Favorite className='me-2' />
-                            <p>
-                                <span>{user.followersCount}</span> • <a href="/">followers</a>
-                            </p>
-                        </Col>
-                        {/* <Col className='d-flex flex-row my-1 align-items-center'>
+            <div className="second-col">
+                <Row className='profile-links flex-column'>
+                    <Col className='d-flex flex-row mb-1 align-items-center'>
+                        <Friends className='me-2' />
+                        <p>
+                            <span>{user.friends.length}</span> • <a href={`/friends?nn=${user.nickname}`}>friends</a>
+                        </p>
+                    </Col>
+                    <Col className='d-flex flex-row my-1 align-items-center'>
+                        <Favorite className='me-2' />
+                        <p>
+                            <span>{user.followersCount}</span> • <a href={`/followers?nn=${user.nickname}`}>followers</a>
+                        </p>
+                    </Col>
+                    {/* <Col className='d-flex flex-row my-1 align-items-center'>
                         <Subscriptions className='me-2' />
                         <p>
                             <span>34</span> • <a href="/">subscriptions</a>
                         </p>
                     </Col> */}
-                        {/* <Col className='d-flex flex-row mt-1 align-items-center'>
+                    {/* <Col className='d-flex flex-row mt-1 align-items-center'>
                         <Photos className='me-2' />
                         <p>
                             <span>7</span> • <a href="/">photos and videos</a>
                         </p>
                     </Col> */}
-                    </Row>
+                </Row>
 
-                    {/* <Row className='mt-3 profile-media'>
-                    <Col>
-                        <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
-                    </Col>
-                    <Col>
-                        <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
-                    </Col>
-                    <Col>
-                        <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
-                    </Col>
-                    <Col>
-                        <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
-                    </Col>
-                    <Col>
-                        <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
-                    </Col>
-                    <Col>
-                        <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
-                    </Col>
-                </Row> */}
-                </div>
-            )}
+                {!compacted && (
+                    <Row className='mt-3 profile-media'>
+                        {/* <Col>
+                            <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
+                        </Col>
+                        <Col>
+                            <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
+                        </Col>
+                        <Col>
+                            <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
+                        </Col>
+                        <Col>
+                            <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
+                        </Col>
+                        <Col>
+                            <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
+                        </Col>
+                        <Col>
+                            <Image src={user.avatarUrl || imagePlaceholder} alt='Media' />
+                        </Col> */}
+                    </Row>
+                )}
+            </div>
 
             {showAside && <ProfileAside user={user} />}
 

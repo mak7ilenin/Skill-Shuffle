@@ -6,6 +6,7 @@ import { useAuth } from '../components/AuthContext';
 import ProfileAside from '../components/ProfileAside';
 import ProfileInfo from '../components/ProfileInfo';
 import FriendsBlock from '../components/FriendsBlock';
+import FollowersBlock from '../components/FollowersBlock';
 import { API_SERVER } from '../config';
 
 import { ReactComponent as EditBanner } from '../assets/icons/edit_Banner.svg';
@@ -25,6 +26,11 @@ function UserInteractions() {
     useEffect(() => {
         // Get nickname from url param
         const nickname = new URLSearchParams(window.location.search).get('nn');
+
+        if (nickname && authUser.nickname === nickname) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
         if (nickname) {
             // Get user information
             axios.get(`${API_SERVER}/users/${nickname}`, { withCredentials: true })
@@ -48,12 +54,7 @@ function UserInteractions() {
                     setInteractionType('FRIENDS');
                     break;
                 case '/followers':
-                    setInteractionType('FOLLOWERS');
-                    // TODO: Get followers
-                    break;
-                case '/friend-requests':
                     setInteractionType('FRIEND_REQUESTS');
-                    // TODO: Get friend requests
                     break;
                 case '/communities':
                     setInteractionType('COMMUNITIES');
@@ -115,6 +116,7 @@ function UserInteractions() {
                         <Col className="main-block-profile tab-content">
                             {/* TODO: implement interactions block */}
                             {interactionType === 'FRIENDS' && <FriendsBlock friends={user.friends} />}
+                            {interactionType === 'FRIEND_REQUESTS' && <FollowersBlock profile={user} />}
                         </Col>
 
                         {!showAside && <ProfileAside user={user} />}

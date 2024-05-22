@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SearchedUserDTO {
+public class RelationshipUserDTO {
     private String firstName;
     private String lastName;
     private String nickname;
