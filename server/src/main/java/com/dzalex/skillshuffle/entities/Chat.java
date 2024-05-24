@@ -32,9 +32,9 @@ public class Chat {
     @JoinColumn(name = "community_id")
     private Community community;
 
-//    @ToString.Exclude
-//    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
-//    private List<ChatMember> members;
+    @ToString.Exclude
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMember> members;
 
     @JsonIgnore
     public boolean isPrivate() {

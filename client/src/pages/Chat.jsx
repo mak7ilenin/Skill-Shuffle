@@ -80,7 +80,6 @@ function Chat() {
           }
           return chat;
         });
-        console.log(updatedChats);
         setChats(updatedChats);
 
         // Hide loading spinner
@@ -263,16 +262,21 @@ function Chat() {
 
 
   const scrollToPrev = (prevScrollTop, prevScrollHeight) => {
-    // Calculate the difference in scroll height
-    const newScrollHeight = messagesListRef.current.scrollHeight;
-    const scrollHeightDifference = newScrollHeight - prevScrollHeight;
+    console.log(messagesListRef.current);
+    if (messagesListRef.current) {
 
-    // Adjust scroll position to maintain the relative position of the first visible message
-    chatRef.current.scrollTop = prevScrollTop + scrollHeightDifference;
-  }
+      // Calculate the difference in scroll height
+      const newScrollHeight = messagesListRef.current.scrollHeight;
+      const scrollHeightDifference = newScrollHeight - prevScrollHeight;
+
+      // Adjust scroll position to maintain the relative position of the first visible message
+      chatRef.current.scrollTop = prevScrollTop + scrollHeightDifference;
+
+    }
+  };
 
 
-  const loadMoreMessages = async () => {
+  const loadMoreMessages = () => {
     const prevScrollHeight = messagesListRef.current.scrollHeight;
     const prevScrollTop = chatRef.current.scrollTop;
     offsetRef.current += limit;
@@ -280,24 +284,31 @@ function Chat() {
     setLoadingMessages(true);
 
     try {
-      const response = await axios.get(`${API_SERVER}/chats/${chosenChat.id}/messages?offset=${offsetRef.current}&limit=${limit}`, { withCredentials: true });
-      const newMessages = response.data;
-      setChosenChat(prevChat => ({
-        ...prevChat,
-        messages: [...newMessages, ...prevChat.messages],
-      }));
+      axios.get(`${API_SERVER}/chats/${chosenChat.id}/messages?offset=${offsetRef.current}&limit=${limit}`, { withCredentials: true })
+        .then(response => {
+          if (response.data.length > 0) {
+            setChosenChat(prevChat => {
+              return {
+                ...prevChat,
+                messages: response.data.concat(prevChat.messages)
+              };
+            });
 
-      setLoadingMessages(false);
+            setLoadingMessages(false);
 
-      const interval = setInterval(() => {
-        if (chatRef.current.scrollTop === 0) {
-          scrollToPrev(prevScrollTop, prevScrollHeight);
-          clearInterval(interval);
-        }
-      }, 50);
-
+            const interval = setInterval(() => {
+              if (chatRef.current.scrollTop === 0) {
+                scrollToPrev(prevScrollTop, prevScrollHeight);
+                clearInterval(interval);
+              }
+            }, 50);
+          } else {
+            setLoadingMessages(false);
+          }
+        });
     } catch (error) {
       console.error('Error loading more messages:', error);
+      setLoadingMessages(false);
     }
   };
 
@@ -449,7 +460,7 @@ function Chat() {
                 <Spinner animation='border' variant='secondary' />
               </div>
             ) : (
-              <Stack direction='vertical' gap={1} className='justify-content-between' ref={messagesListRef}>
+              <Stack direction='vertical' gap={1} ref={messagesListRef}>
                 {messagesByDay.map((dayMessages) => (
 
                   <React.Fragment key={dayMessages.day}>

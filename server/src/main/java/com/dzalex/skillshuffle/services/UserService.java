@@ -183,6 +183,12 @@ public class UserService {
         return user;
     }
 
+    public void saveIfNotExists(User user) {
+        if (user.getId() == null || !userRepo.existsById(user.getId())) {
+            userRepo.save(user);
+        }
+    }
+
     @Transactional
     public List<ChatMemberDTO> getUsersInChat(Integer chatId) {
         List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);

@@ -261,6 +261,7 @@ public class MessageService {
                     .skip(offset)
                     .limit(limit > 0 ? limit : Long.MAX_VALUE)
                     .map(this::convertToDTO)
+                    .sorted(Comparator.comparing(MessageDTO::getTimestamp))
                     .toList();
         }
 
