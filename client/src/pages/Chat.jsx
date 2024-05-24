@@ -15,10 +15,16 @@ import EmojiGifPicker from '../components/EmojiGifPicker';
 import ChatBackground from '../assets/images/chat-background.jpg'
 import { ReactComponent as Send } from '../assets/icons/send.svg';
 
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return { width, height };
+}
+
 function Chat() {
   const { authUser, setAuthUser, stompClient, isStompClientInitialized } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [chats, setChats] = useState([]);
   const [chosenChat, setChosenChat] = useState(null);
@@ -202,31 +208,33 @@ function Chat() {
   }, [subscribeToAllChats]);
 
 
-  const overflowBody = useCallback(() => {
-    document.querySelector('.header').classList.add('closed');
-
-    if (window.innerWidth < 958 && chosenChat) {
-      document.body.style.overflow = 'hidden';
-    }
-
-    // Remove header if chat chosen
-    if (window.innerWidth < 520 && chosenChat) {
-      document.querySelector('.header').classList.add('hidden');
-      document.querySelector('.chat-box').style.height = '100vh';
-      document.querySelector('.chat-menu').style.height = '100vh';
-    } else {
-      document.querySelector('.header').classList.remove('hidden');
-      document.querySelector('.chat-box').style.height = '100vh';
-    }
-
-  }, [chosenChat]);
-
-  window.addEventListener('resize', overflowBody);
-
   useEffect(() => {
     chatsRef.current = chats;
-    overflowBody();
-  }, [chats, overflowBody]);
+    const header = document.querySelector('.header');
+
+    handleResize();
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+
+      header.classList.add('closed');
+
+      if (windowDimensions.width < 958 && chosenChat) {
+        document.body.style.overflow = 'hidden';
+      }
+
+      if (windowDimensions.width < 520 && chosenChat) {
+        header.classList.add('hidden');
+      } else {
+        header.classList.remove('hidden');
+      }
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      header.classList.remove('hidden');
+    }
+  }, [windowDimensions.width, chosenChat, chats]);
 
 
   const sendMessage = (gif) => {

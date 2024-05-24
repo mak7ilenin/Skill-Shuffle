@@ -142,14 +142,14 @@
     .list-group {
         position: absolute;
         display: flex;
-        height: calc(100vh - 100px);
-        top: -100vh;
+        height: calc(100svh - 100px);
+        top: -100svh;
         z-index: 5;
         transition: ease all .4s;
     }
 
     &.opened {
-        height: 100vh;
+        height: 100svh;
 
         .logo-block {
             height: fit-content;
@@ -162,7 +162,7 @@
         }
 
         .list-group {
-            height: calc(100vh - 140px);
+            height: calc(100svh - 140px);
             width: calc(100% - 65px);
             margin-top: 0;
             top: 140px;
@@ -387,7 +387,7 @@
         @media (max-width: 520px) {
             .epr-main {
                 width: 100vw !important;
-                height: 50vh !important;
+                height: 50svh !important;
             }
         }
 
@@ -406,7 +406,7 @@
         @media (max-width: 520px) {
             .gpr-main {
                 width: 100vw !important;
-                height: 50vh !important;
+                height: 50svh !important;
             }
         }
 

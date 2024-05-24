@@ -63,7 +63,7 @@
     }
 
     &:not(.native) {
-        margin: 20px 0 !important;
+        margin-top: 20px !important;
 
         @media (max-width: 520px) {
             background-color: #fff;
@@ -200,7 +200,7 @@
         }
 
         .main-block-profile {
-            margin-top: 0 !important;
+            margin-top: 20px !important;
         }
 
         .right-block-profile {
@@ -816,6 +816,12 @@
 
         .friend-container {
             width: 80px;
+
+
+            .friend-img img {
+                width: 75px;
+                height: 75px;
+            }
         }
     }
 }
@@ -844,7 +850,7 @@
         content: '';
         position: absolute;
         bottom: -1px;
-        right: 2px;
+        right: 10%;
         width: 18px;
         height: 18px;
         background-color: $green;

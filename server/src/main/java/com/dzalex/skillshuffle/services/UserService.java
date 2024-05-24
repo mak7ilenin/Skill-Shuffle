@@ -112,6 +112,8 @@ public class UserService {
 
             User user = userRepo.findByUsername(request.getUsername());
             user.setLastSeen(new Timestamp(System.currentTimeMillis()));
+            userRepo.save(user);
+
             return JwtResponseDTO.builder()
                     .username(request.getUsername())
                     .accessToken(accessToken)
@@ -128,9 +130,6 @@ public class UserService {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (helper.validateToken(token, userDetails)) {
                 User user = userRepo.findByUsername(username);
-                user.setLastSeen(new Timestamp(System.currentTimeMillis()));
-                userRepo.save(user);
-
                 return JwtResponseDTO.builder()
                         .username(userDetails.getUsername())
                         .accessToken(token)
@@ -290,7 +289,7 @@ public class UserService {
                 .build();
     }
 
-    private RelationshipUserDTO getSearchedUserDTO(User user, User authUser) {
+    private RelationshipUserDTO getRelationshipUserDTO(User user, User authUser) {
         return RelationshipUserDTO.builder()
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -298,6 +297,7 @@ public class UserService {
                 .avatarUrl(user.getAvatarUrl())
                 .relationship(getRelationshipStatus(user, authUser))
                 .autoFollow(user.isAutoFollow())
+                .lastSeen(user.getLastSeen())
                 .build();
     }
 
@@ -319,7 +319,7 @@ public class UserService {
         User authUser = getCurrentUser();
         users.forEach(user -> {
             if (user.isPublic() && !Objects.equals(user.getId(), authUser.getId())) {
-                searchedUsers.add(getSearchedUserDTO(user, authUser));
+                searchedUsers.add(getRelationshipUserDTO(user, authUser));
             }
         });
 
@@ -352,7 +352,7 @@ public class UserService {
                 case IGNORE -> ignoreFriendRequest(user, authUser);
             }
 
-            return getSearchedUserDTO(user, authUser).getRelationship();
+            return getRelationshipUserDTO(user, authUser).getRelationship();
         }
 
         return null;
@@ -463,7 +463,7 @@ public class UserService {
     public List<RelationshipUserDTO> getUserFollowers(User user) {
         return userFollowerRepository.findAllByUserId(user.getId())
                 .stream()
-                .map(userFollower -> getSearchedUserDTO(userFollower.getFollower(), getCurrentUser()))
+                .map(userFollower -> getRelationshipUserDTO(userFollower.getFollower(), getCurrentUser()))
                 .collect(Collectors.toList());
     }
 
@@ -517,7 +517,7 @@ public class UserService {
         mightKnow.removeIf(user -> user.equals(authUser) || friends.contains(user));
 
         return mightKnow.stream()
-                .map(user -> getSearchedUserDTO(user, authUser))
+                .map(user -> getRelationshipUserDTO(user, authUser))
                 .limit(10)
                 .collect(Collectors.toList());
     }
@@ -539,21 +539,21 @@ public class UserService {
         return authUserFriends.stream()
                 .filter(otherUserFriends::contains)
                 .filter(user -> !user.equals(authUser))
-                .map(user -> getSearchedUserDTO(user, authUser))
+                .map(user -> getRelationshipUserDTO(user, authUser))
                 .collect(Collectors.toList());
     }
 
     private List<RelationshipUserDTO> getPendingFriendRequests(User user) {
         return friendRequestRepository.findAllByReceiverIdAndStatus(user.getId(), FriendRequestStatus.PENDING)
                 .stream()
-                .map(friendRequest -> getSearchedUserDTO(friendRequest.getSender(), user))
+                .map(friendRequest -> getRelationshipUserDTO(friendRequest.getSender(), user))
                 .collect(Collectors.toList());
     }
 
     private List<RelationshipUserDTO> getOutgoingFriendRequests(User user) {
         return friendRequestRepository.findAllBySenderIdAndStatus(user.getId(), FriendRequestStatus.PENDING)
                 .stream()
-                .map(friendRequest -> getSearchedUserDTO(friendRequest.getReceiver(), user))
+                .map(friendRequest -> getRelationshipUserDTO(friendRequest.getReceiver(), user))
                 .collect(Collectors.toList());
     }
 

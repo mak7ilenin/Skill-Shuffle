@@ -48,22 +48,22 @@ function FollowersBlock({ profile }) {
         }
     };
 
+    const filterUsers = (users, value) => {
+        return users.filter(user => {
+            return user.firstName.toLowerCase().includes(value) ||
+                user.lastName.toLowerCase().includes(value) ||
+                user.nickname.toLowerCase().includes(value);
+        });
+    }
+
     const handleSearch = (e) => {
         const searchValue = e.target.value.toLowerCase();
         if (tab === 'pending') {
-            const filteredUsers = pending.filter(user => {
-                return user.firstName.toLowerCase().includes(searchValue) ||
-                    user.lastName.toLowerCase().includes(searchValue) ||
-                    user.nickname.toLowerCase().includes(searchValue);
-            });
-            setUserList(filteredUsers);
+            setUserList(filterUsers(pending, searchValue));
+        } else if (tab === 'outgoing') {
+            setUserList(filterUsers(outgoing, searchValue));
         } else {
-            const filteredUsers = outgoing.filter(user => {
-                return user.firstName.toLowerCase().includes(searchValue) ||
-                    user.lastName.toLowerCase().includes(searchValue) ||
-                    user.nickname.toLowerCase().includes(searchValue);
-            });
-            setUserList(filteredUsers);
+            setUserList(filterUsers(followers, searchValue));
         }
     };
 
@@ -94,7 +94,9 @@ function FollowersBlock({ profile }) {
             {userList && (
                 <>
                     <Row className='interaction-block__header'>
-                        <h4 className='mb-3'>Friend requests</h4>
+                        <h4 className='mb-3'>
+                            {tab === 'followers' ? 'Followers' : 'Friend requests'}
+                        </h4>
                     </Row>
 
                     <Row className='interaction-block__filters'>
@@ -136,7 +138,7 @@ function FollowersBlock({ profile }) {
                                     <Row key={user.nickname} className='interaction-block__content-item py-2'>
                                         <Col md='auto' className='interaction-block__avatar p-0'>
                                             <Link
-                                                data-online={`${formatLastSeenTimestamp(user.lastSeen) === 'Online'}`}
+                                                data-online={formatLastSeenTimestamp(user.lastSeen) === 'Online'}
                                                 to={`/users?nn=${user.nickname}`}
                                             >
                                                 <Image
