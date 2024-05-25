@@ -60,7 +60,9 @@ function PostEditor({ setPosts, setUser, setShow }) {
         },
         onDrop,
         maxSize: 16 * 1024 * 1024, // 16 MB
-        maxFiles: 10
+        maxFiles: 5,
+        multiple: true,
+        disabled: files.length >= 5,
     });
 
     const removeFile = file => () => {
