@@ -1,7 +1,7 @@
 .sign-up {
     font-family: $secondary-font;
     margin: 0 auto !important;
-    height: calc(100vh - 75px);
+    height: calc(100svh - 75px);
 
     @include form-container;
 

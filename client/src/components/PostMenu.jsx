@@ -29,12 +29,14 @@ function PostMenu({ post, setPosts, setUser }) {
                 setBookmarked(!bookmarked);
 
                 // Increase user bookmarkedPostsCount
-                setUser(prevUser => {
-                    return {
-                        ...prevUser,
-                        bookmarkedPostsCount: bookmarked ? prevUser.bookmarkedPostsCount - 1 : prevUser.bookmarkedPostsCount + 1
-                    };
-                });
+                if (setUser) {
+                    setUser(prevUser => {
+                        return {
+                            ...prevUser,
+                            bookmarkedPostsCount: bookmarked ? prevUser.bookmarkedPostsCount - 1 : prevUser.bookmarkedPostsCount + 1
+                        };
+                    });
+                }
             });
     };
 

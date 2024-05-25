@@ -52,7 +52,7 @@ function Header() {
     };
 
     useEffect(() => {
-        const pathsWithOpenHeader = ['/me', '/users'];
+        const pathsWithOpenHeader = ['/me', '/users', '/followers', '/friends'];
         if (!pathsWithOpenHeader.includes(window.location.pathname) && authUser) {
             setClosed(true);
         }

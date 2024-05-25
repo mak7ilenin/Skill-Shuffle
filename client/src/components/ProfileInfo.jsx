@@ -53,7 +53,7 @@ function ProfileInfo({ user, setUser, showAside, compacted }) {
                     <>
                         <Row className="profile-statistics flex-column">
                             <Col className='d-flex flex-row align-items-center mb-2'>
-                                {formatLastSeenTimestamp(user.lastSeen) === 'Online' ? (
+                                {formatLastSeenTimestamp(user.lastSeen) === 'Online' || authUser.nickname === user.nickname ? (
                                     <>
                                         <div className="online-icon me-2"></div>
                                         <p>Online</p>

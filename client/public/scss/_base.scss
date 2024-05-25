@@ -1,5 +1,5 @@
 body {
-    height: 100vh;
+    height: 100svh;
 }
 
 #root {
@@ -36,7 +36,7 @@ p {
     }
 
     &:has(.error-page) {
-        height: calc(100vh - 75px);
+        height: calc(100svh - 75px);
     }
 }
 

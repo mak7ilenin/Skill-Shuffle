@@ -15,10 +15,16 @@ import EmojiGifPicker from '../components/EmojiGifPicker';
 import ChatBackground from '../assets/images/chat-background.jpg'
 import { ReactComponent as Send } from '../assets/icons/send.svg';
 
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return { width, height };
+}
+
 function Chat() {
   const { authUser, setAuthUser, stompClient, isStompClientInitialized } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [chats, setChats] = useState([]);
   const [chosenChat, setChosenChat] = useState(null);
@@ -74,7 +80,6 @@ function Chat() {
           }
           return chat;
         });
-        console.log(updatedChats);
         setChats(updatedChats);
 
         // Hide loading spinner
@@ -202,31 +207,33 @@ function Chat() {
   }, [subscribeToAllChats]);
 
 
-  const overflowBody = useCallback(() => {
-    document.querySelector('.header').classList.add('closed');
-
-    if (window.innerWidth < 958 && chosenChat) {
-      document.body.style.overflow = 'hidden';
-    }
-
-    // Remove header if chat chosen
-    if (window.innerWidth < 520 && chosenChat) {
-      document.querySelector('.header').classList.add('hidden');
-      document.querySelector('.chat-box').style.height = '100vh';
-      document.querySelector('.chat-menu').style.height = '100vh';
-    } else {
-      document.querySelector('.header').classList.remove('hidden');
-      document.querySelector('.chat-box').style.height = '100vh';
-    }
-
-  }, [chosenChat]);
-
-  window.addEventListener('resize', overflowBody);
-
   useEffect(() => {
     chatsRef.current = chats;
-    overflowBody();
-  }, [chats, overflowBody]);
+    const header = document.querySelector('.header');
+
+    handleResize();
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+
+      header.classList.add('closed');
+
+      if (windowDimensions.width < 958 && chosenChat) {
+        document.body.style.overflow = 'hidden';
+      }
+
+      if (windowDimensions.width < 520 && chosenChat) {
+        header.classList.add('hidden');
+      } else {
+        header.classList.remove('hidden');
+      }
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      header.classList.remove('hidden');
+    }
+  }, [windowDimensions.width, chosenChat, chats]);
 
 
   const sendMessage = (gif) => {
@@ -255,16 +262,21 @@ function Chat() {
 
 
   const scrollToPrev = (prevScrollTop, prevScrollHeight) => {
-    // Calculate the difference in scroll height
-    const newScrollHeight = messagesListRef.current.scrollHeight;
-    const scrollHeightDifference = newScrollHeight - prevScrollHeight;
+    console.log(messagesListRef.current);
+    if (messagesListRef.current) {
 
-    // Adjust scroll position to maintain the relative position of the first visible message
-    chatRef.current.scrollTop = prevScrollTop + scrollHeightDifference;
-  }
+      // Calculate the difference in scroll height
+      const newScrollHeight = messagesListRef.current.scrollHeight;
+      const scrollHeightDifference = newScrollHeight - prevScrollHeight;
+
+      // Adjust scroll position to maintain the relative position of the first visible message
+      chatRef.current.scrollTop = prevScrollTop + scrollHeightDifference;
+
+    }
+  };
 
 
-  const loadMoreMessages = async () => {
+  const loadMoreMessages = () => {
     const prevScrollHeight = messagesListRef.current.scrollHeight;
     const prevScrollTop = chatRef.current.scrollTop;
     offsetRef.current += limit;
@@ -272,24 +284,31 @@ function Chat() {
     setLoadingMessages(true);
 
     try {
-      const response = await axios.get(`${API_SERVER}/chats/${chosenChat.id}/messages?offset=${offsetRef.current}&limit=${limit}`, { withCredentials: true });
-      const newMessages = response.data;
-      setChosenChat(prevChat => ({
-        ...prevChat,
-        messages: [...newMessages, ...prevChat.messages],
-      }));
+      axios.get(`${API_SERVER}/chats/${chosenChat.id}/messages?offset=${offsetRef.current}&limit=${limit}`, { withCredentials: true })
+        .then(response => {
+          if (response.data.length > 0) {
+            setChosenChat(prevChat => {
+              return {
+                ...prevChat,
+                messages: response.data.concat(prevChat.messages)
+              };
+            });
 
-      setLoadingMessages(false);
+            setLoadingMessages(false);
 
-      const interval = setInterval(() => {
-        if (chatRef.current.scrollTop === 0) {
-          scrollToPrev(prevScrollTop, prevScrollHeight);
-          clearInterval(interval);
-        }
-      }, 50);
-
+            const interval = setInterval(() => {
+              if (chatRef.current.scrollTop === 0) {
+                scrollToPrev(prevScrollTop, prevScrollHeight);
+                clearInterval(interval);
+              }
+            }, 50);
+          } else {
+            setLoadingMessages(false);
+          }
+        });
     } catch (error) {
       console.error('Error loading more messages:', error);
+      setLoadingMessages(false);
     }
   };
 
@@ -441,7 +460,7 @@ function Chat() {
                 <Spinner animation='border' variant='secondary' />
               </div>
             ) : (
-              <Stack direction='vertical' gap={1} className='justify-content-between' ref={messagesListRef}>
+              <Stack direction='vertical' gap={1} ref={messagesListRef}>
                 {messagesByDay.map((dayMessages) => (
 
                   <React.Fragment key={dayMessages.day}>

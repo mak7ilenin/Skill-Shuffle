@@ -268,15 +268,16 @@ function GroupChatMenu({ chat, setChat }) {
                                 className="member-container d-flex align-items-center m-0 py-2 px-3"
                             >
                                 <div className="member-info w-100 d-flex align-items-center px-0">
-                                    <Image
-                                        src={member.avatarUrl !== null ? member.avatarUrl : imagePlaceholder}
-                                        alt={'Member'}
-                                        width='55'
-                                        height='55'
-                                        style={{ objectFit: 'cover', cursor: 'pointer' }}
-                                        onClick={() => navigate(`/user?nn=${member.nickname}`)}
-                                        roundedCircle
-                                    />
+                                    <Link to={`/users?nn=${member.nickname}`} className='name'>
+                                        <Image
+                                            src={member.avatarUrl !== null ? member.avatarUrl : imagePlaceholder}
+                                            alt={'Member'}
+                                            width='55'
+                                            height='55'
+                                            style={{ objectFit: 'cover' }}
+                                            roundedCircle
+                                        />
+                                    </Link>
                                     <div className='d-flex flex-row w-100 ms-3'>
                                         <div className='d-flex flex-column w-100'>
                                             <div className='d-flex flex-row'>

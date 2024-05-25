@@ -4,7 +4,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&display=swap");
 body {
-  height: 100vh;
+  height: 100svh;
 }
 
 #root {
@@ -38,7 +38,7 @@ p {
   flex: 1;
 }
 .wrapper:has(.error-page) {
-  height: calc(100vh - 75px);
+  height: calc(100svh - 75px);
 }
 
 *::-webkit-scrollbar {
@@ -90,7 +90,7 @@ p {
   top: 0;
   bottom: 0;
   z-index: 100;
-  height: 100vh;
+  height: 100svh;
   width: 244px;
   min-width: 244px;
   border-right: 1px solid #8F8F8F;
@@ -159,13 +159,13 @@ p {
   .header .list-group {
     position: absolute;
     display: flex;
-    height: calc(100vh - 100px);
-    top: -100vh;
+    height: calc(100svh - 100px);
+    top: -100svh;
     z-index: 5;
     transition: ease all 0.4s;
   }
   .header.opened {
-    height: 100vh;
+    height: 100svh;
   }
   .header.opened .logo-block {
     height: -moz-fit-content;
@@ -177,7 +177,7 @@ p {
     display: none !important;
   }
   .header.opened .list-group {
-    height: calc(100vh - 140px);
+    height: calc(100svh - 140px);
     width: calc(100% - 65px);
     margin-top: 0;
     top: 140px;
@@ -246,13 +246,13 @@ p {
 .header:not(.authorized) .list-group {
   position: absolute;
   display: flex;
-  height: calc(100vh - 100px);
-  top: -100vh;
+  height: calc(100svh - 100px);
+  top: -100svh;
   z-index: 5;
   transition: ease all 0.4s;
 }
 .header:not(.authorized).opened {
-  height: 100vh;
+  height: 100svh;
 }
 .header:not(.authorized).opened .logo-block {
   height: -moz-fit-content;
@@ -264,7 +264,7 @@ p {
   display: none !important;
 }
 .header:not(.authorized).opened .list-group {
-  height: calc(100vh - 140px);
+  height: calc(100svh - 140px);
   width: calc(100% - 65px);
   margin-top: 0;
   top: 140px;
@@ -482,7 +482,7 @@ p {
 }
 
 .nav-block {
-  height: 100vh;
+  height: 100svh;
   width: 350px;
   position: fixed;
   top: 0;
@@ -833,7 +833,7 @@ p {
 .sign-in {
   font-family: "Mitr", sans-serif;
   margin: 0 auto !important;
-  height: calc(100vh - 75px);
+  height: calc(100svh - 75px);
 }
 .sign-in .form-container {
   width: 550px;
@@ -988,7 +988,7 @@ p {
 .sign-up {
   font-family: "Mitr", sans-serif;
   margin: 0 auto !important;
-  height: calc(100vh - 75px);
+  height: calc(100svh - 75px);
 }
 .sign-up .form-container {
   width: 550px;
@@ -1212,7 +1212,7 @@ p {
 }
 .chat-page .chat-menu {
   width: 511px;
-  height: 100vh;
+  height: 100svh;
   background-color: #fff;
   display: flex;
   flex-direction: column;
@@ -1864,7 +1864,7 @@ p {
   border-radius: 7px;
 }
 .chat-page .chat-box {
-  height: 100vh;
+  height: 100svh;
   flex: 1;
   background-color: #EFEBFF;
 }
@@ -2230,7 +2230,7 @@ p {
 @media (max-width: 520px) {
   .emoji-picker .epr-main {
     width: 100vw !important;
-    height: 50vh !important;
+    height: 50svh !important;
   }
 }
 .emoji-picker.closed {
@@ -2252,7 +2252,7 @@ p {
 @media (max-width: 520px) {
   .gif-picker .gpr-main {
     width: 100vw !important;
-    height: 50vh !important;
+    height: 50svh !important;
   }
 }
 .gif-picker.closed {
@@ -2430,7 +2430,7 @@ p {
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 .profile-header:not(.native) {
-  margin: 20px 0 !important;
+  margin-top: 20px !important;
 }
 @media (max-width: 520px) {
   .profile-header:not(.native) {
@@ -2547,7 +2547,7 @@ p {
     min-width: 100%;
   }
   .profile-content .main-block-profile {
-    margin-top: 0 !important;
+    margin-top: 20px !important;
   }
   .profile-content .right-block-profile {
     display: none !important;
@@ -3103,6 +3103,11 @@ p {
   .friends .friend-container {
     width: 80px;
   }
+  .friends-online .friend-container .friend-img img,
+  .friends .friend-container .friend-img img {
+    width: 75px;
+    height: 75px;
+  }
 }
 
 .friend-container {
@@ -3128,7 +3133,7 @@ p {
   content: "";
   position: absolute;
   bottom: -1px;
-  right: 2px;
+  right: 10%;
   width: 18px;
   height: 18px;
   background-color: #7FFF31;

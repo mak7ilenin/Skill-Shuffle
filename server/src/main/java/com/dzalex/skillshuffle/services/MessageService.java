@@ -107,8 +107,8 @@ public class MessageService {
                 }
 
                 // Send notification to user who is currently not subscribed to any chat endpoint
-                ChatMember chatMember = chatMemberRepository.findChatMemberByChatIdAndMemberId(chatId, userRepository.findByUsername(username).getId());
-                if (chatMember.hasNotifications()) {
+                ChatMember chatMember = chatMemberRepository.findFirstByChatIdAndMemberUsername(chatId, username);
+                if (chatMember != null && chatMember.hasNotifications()) {
                     messagingTemplate.convertAndSendToUser(username, "/notification", notification);
                 }
             }
@@ -261,6 +261,7 @@ public class MessageService {
                     .skip(offset)
                     .limit(limit > 0 ? limit : Long.MAX_VALUE)
                     .map(this::convertToDTO)
+                    .sorted(Comparator.comparing(MessageDTO::getTimestamp))
                     .toList();
         }
 

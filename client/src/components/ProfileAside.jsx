@@ -58,36 +58,28 @@ function ProfileAside({ user, interactionType, setInteractionType }) {
                         <Col className='profile-aside might-know d-flex flex-column justify-content-between p-3'>
                             <h3 className='aside-header'>You may know</h3>
 
+                            <Stack direction='vertical' gap={2}>
+                                {mightKnowUsers.slice(0, mightKnowUsersToShow).map(mightKnownUser => {
+                                    return mightKnownUserContainer(mightKnownUser)
+                                })}
+                            </Stack>
+
                             {mightKnowUsers.length > 3 && mightKnowUsersToShow === 3 ? (
-                                <>
-                                    <Stack direction='vertical' gap={2}>
-                                        {mightKnowUsers.slice(0, mightKnowUsersToShow).map(mightKnownUser => {
-                                            return mightKnownUserContainer(mightKnownUser)
-                                        })}
-                                    </Stack>
-                                    <Button
-                                        variant='none'
-                                        className='show-more mt-3 p-0 border-0'
-                                        onClick={() => setMightKnowUsersToShow(mightKnowUsersToShow.length)}
-                                    >
-                                        Show more
-                                    </Button>
-                                </>
-                            ) : (
-                                <>
-                                    <Stack direction='vertical' gap={2}>
-                                        {mightKnowUsers.map((mightKnownUser, index) => {
-                                            return mightKnownUserContainer(mightKnownUser, index)
-                                        })}
-                                    </Stack>
-                                    <Button
-                                        variant='none'
-                                        className='show-more mt-3 p-0 border-0'
-                                        onClick={() => setMightKnowUsersToShow(3)}
-                                    >
-                                        Show less
-                                    </Button>
-                                </>
+                                <Button
+                                    variant='none'
+                                    className='show-more mt-3 p-0 border-0'
+                                    onClick={() => setMightKnowUsersToShow(mightKnowUsers.length)}
+                                >
+                                    Show more
+                                </Button>
+                            ) : mightKnowUsers.length > 3 && mightKnowUsersToShow > 3 && (
+                                <Button
+                                    variant='none'
+                                    className='show-more mt-3 p-0 border-0'
+                                    onClick={() => setMightKnowUsersToShow(3)}
+                                >
+                                    Show less
+                                </Button>
                             )}
                         </Col>
                     ) : user.mutualFriends && user.mutualFriends.length > 0 && (
@@ -144,13 +136,13 @@ function ProfileAside({ user, interactionType, setInteractionType }) {
                                                     href={`/users?nn=${friend.nickname}`}
                                                     className='friend-container online'
                                                 >
-                                                    <Row className='friend-img'>
+                                                    <div className='friend-img'>
                                                         <Image
                                                             src={friend.avatarUrl || imagePlaceholder}
                                                             alt='Friend'
                                                             roundedCircle
                                                         />
-                                                    </Row>
+                                                    </div>
                                                     <p>{friend.firstName}</p>
                                                 </NavLink>
                                             )

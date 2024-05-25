@@ -75,9 +75,6 @@ function UserInteractions() {
     }, [user]);
 
     useEffect(() => {
-        // Close header
-        document.querySelector('.header').classList.remove('closed');
-
         handleResize();
         function handleResize() {
             setWindowDimensions(getWindowDimensions());

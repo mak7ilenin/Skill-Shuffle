@@ -70,6 +70,7 @@ public class WebSocketController {
 
                 // Update the user's last activity timestamp
                 user.setLastSeen(new Timestamp(System.currentTimeMillis()));
+                userRepository.save(user);
             }
         }
     }

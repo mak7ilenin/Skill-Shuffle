@@ -441,34 +441,27 @@ public class ChatService {
     public Integer openChat(User user) {
         User currentUser = userService.getCurrentUser();
 
-        // Get all chats where the current user is a member
-        List<Chat> chats = chatMemberRepository.findAllByMemberId(currentUser.getId())
-                .stream()
-                .map(ChatMember::getChat)
-                .toList();
+        // Ensure users are saved
+        userService.saveIfNotExists(currentUser);
+        userService.saveIfNotExists(user);
 
-        // Find a private chat where the other member is the specified user
-        for (Chat chat : chats) {
-            if (chat.isPrivate()) {
-                List<User> members = chatMemberRepository.findAllByChatId(chat.getId())
-                        .stream()
-                        .map(ChatMember::getMember)
-                        .toList();
+        // Check if the chat already exists
+        Chat chat = chatRepository.findPrivateChatByUserIds(currentUser.getId(), user.getId());
+        if (chat == null) {
+            // Create a new chat
+            chat = Chat.builder().type(ChatType.PRIVATE).build();
+            chat = chatRepository.save(chat); // Save the chat first
 
-                if (members.size() == 2 && members.contains(user)) {
-                    // Found the chat, return its ID
-                    return chat.getId();
-                }
-            }
+            // Create and save ChatMember instances
+            List<ChatMember> members = List.of(
+                    ChatMember.builder().chat(chat).member(currentUser).role(MemberRole.CREATOR).build(),
+                    ChatMember.builder().chat(chat).member(user).role(MemberRole.MEMBER).build()
+            );
+
+            // Save each ChatMember
+            chatMemberRepository.saveAll(members);
         }
 
-        // No such chat found, create a new one
-        Chat newChat = createChat(NewChatDTO.builder()
-                .name("")
-                .type(ChatType.PRIVATE)
-                .members(new String[]{user.getNickname()})
-                .build(), null);
-
-        return newChat.getId();
+        return chat.getId();
     }
 }

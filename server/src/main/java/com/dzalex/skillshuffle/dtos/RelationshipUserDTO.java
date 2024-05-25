@@ -3,6 +3,8 @@ package com.dzalex.skillshuffle.dtos;
 import com.dzalex.skillshuffle.enums.RelationshipStatus;
 import lombok.*;
 
+import java.sql.Timestamp;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,4 +17,5 @@ public class RelationshipUserDTO {
     private String avatarUrl;
     private RelationshipStatus relationship;
     private boolean autoFollow;
+    private Timestamp lastSeen;
 }
