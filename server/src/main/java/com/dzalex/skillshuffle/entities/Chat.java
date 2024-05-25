@@ -33,7 +33,8 @@ public class Chat {
     private Community community;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ChatMember> members;
 
     @JsonIgnore

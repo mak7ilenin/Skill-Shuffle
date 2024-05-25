@@ -66,6 +66,8 @@ public class UserService {
     private PostService postService;
 
     private MessageService messageService;
+    @Autowired
+    private ChatRepository chatRepository;
 
     @Autowired
     @Lazy
@@ -203,14 +205,19 @@ public class UserService {
 
     @Transactional
     public List<String> getUsernamesInChat(Integer chatId) {
-        List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);
-        List<String> usernames = new ArrayList<>();
-        for (ChatMember chatMember : chatMembers) {
-            if (!chatMember.isLeft() && !chatMember.isKicked()) {
-                usernames.add(chatMember.getMember().getUsername());
-            }
-        }
-        return usernames;
+        return chatMemberRepository.findAllByChatId(chatId)
+                .stream()
+                .filter(chatMember -> !chatMember.isLeft() && !chatMember.isKicked())
+                .map(chatMember -> chatMember.getMember().getUsername())
+                .collect(Collectors.toList());
+//        List<ChatMember> chatMembers = chatMemberRepository.findAllByChatId(chatId);
+//        List<String> usernames = new ArrayList<>();
+//        for (ChatMember chatMember : chatMembers) {
+//            if (!chatMember.isLeft() && !chatMember.isKicked()) {
+//                usernames.add(chatMember.getMember().getUsername());
+//            }
+//        }
+//        return usernames;
     }
 
     public User getCurrentUser() {
