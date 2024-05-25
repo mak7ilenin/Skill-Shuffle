@@ -262,7 +262,6 @@ function Chat() {
 
 
   const scrollToPrev = (prevScrollTop, prevScrollHeight) => {
-    console.log(messagesListRef.current);
     if (messagesListRef.current) {
 
       // Calculate the difference in scroll height
