@@ -29,11 +29,9 @@ git clone -b master https://github.com/mak7ilenin/Skill-Shuffle.git
 #### If you don't have a Docker on your machine, then you need to install Docker. Here is the links to the official Docker website:
 
 - #### Windows
-
   [Download and install Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
 
 - #### Linux
-
   [Download and install Docker Engine for Linux](https://docs.docker.com/desktop/install/linux-install/)
 
 - #### Mac
@@ -79,15 +77,12 @@ Import .sql dump from /database to the phpMyAdmin or any other database manageme
 - Login
 - Logout
 - Search for users
-- Messenger based on WebSocket
-- Manage group chats
-- Add new chat
+- Messenger
+- Group chats management
 - User profile
-- User privacy settings
-- Feeds
-- Add new post
+- Post creation
 
-## Credentials
+## Test Credentials
 
 ### Test user 1
 
