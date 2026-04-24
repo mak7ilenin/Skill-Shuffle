@@ -1,100 +1,73 @@
-# Skill Shuffle
+# Skill Shuffle - Social Network
 
 <img src=".github/logo.svg" width="400" alt="skill-shuffle">
 
-## Description
+SkillShuffle is a full-stack social networking platform developed as a graduation project.
 
-The goal of this project is to create a web-based information platform in the form of a social network for communication that brings people together based on common interests, activities or connections, exchange of experiences and joint learning.
+The platform allows users to communicate, share content, create communities, and exchange skills and knowledge.
 
-## Technologies
+## 🚀 Features
 
+- User authentication and authorization (JWT, sessions)
+- Real-time messaging using WebSocket (STOMP)
+- News feed based on subscriptions
+- User profiles with posts, media, and interactions
+- Communities and group chats
+- Notifications system
+- Content creation (posts, comments, media)
+
+## 🛠 Tech Stack
+
+### Backend
+- Java
 - Spring Boot
+- Spring Security
+- JPA / Hibernate
+
+### Frontend
 - React.js
+- SCSS / CSS
 - Bootstrap
-- Mariadb
+
+### Database
+- MariaDB
+
+### Infrastructure
+- AWS (EC2, RDS, S3)
 - Docker
+- Nginx
 
-## Installation Instructions
+### Tools
+- Git
+- Figma
+- Postman
+- Selenium (basic testing)
 
-### Download
+## 🧠 Architecture
 
-```bash
-git clone -b master https://github.com/mak7ilenin/Skill-Shuffle.git
-```
+The application follows a full-stack architecture with REST API communication and real-time updates via WebSocket.
 
-### Run with Docker
+- Backend handles authentication, business logic, and data processing
+- Frontend provides dynamic UI and user interaction
+- WebSocket enables real-time messaging and notifications
+- AWS infrastructure ensures scalability and availability
 
-### Install Docker
+## 🔐 Security
 
-#### If you don't have a Docker on your machine, then you need to install Docker. Here is the links to the official Docker website:
+- Password hashing (BCrypt)
+- JWT authentication
+- Session handling
+- Role-based access control
 
-- #### Windows
-  [Download and install Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
+## 👥 Team
 
-- #### Linux
-  [Download and install Docker Engine for Linux](https://docs.docker.com/desktop/install/linux-install/)
+Developed by a team of 2 developers:
+- Full-stack development
+- UI/UX design
+- Backend architecture
 
-- #### Mac
-  [Download and install Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
+---
 
-#### Build
+## 📌 Notes
 
-```bash
-cd Skill-Shuffle
-docker-compose build
-```
-
-#### Run
-
-```bash
-docker-compose up
-```
-
-### Run without Docker
-
-#### Backend
-
-```bash
-cd Skill-Shuffle/server
-gradlew bootRun
-```
-
-#### Frontend
-
-```bash
-cd Skill-Shuffle/client
-npm install
-npm start
-```
-
-#### Database
-
-Import .sql dump from /database to the phpMyAdmin or any other database management tool.
-
-## Features
-
-- Registration
-- Login
-- Logout
-- Search for users
-- Messenger
-- Group chats management
-- User profile
-- Post creation
-
-## Test Credentials
-
-### Test user 1
-
-- Login: test
-- Password: 123
-
-### Test user 2
-
-- Login: test3
-- Password: 123
-
-## Authors
-
-- [Maksim Dzjubenko](https://github.com/mak7ilenin)
-- [Maksim Grišin](https://github.com/9I6JloKo)
+This project demonstrates full-stack development skills, real-time systems, and scalable architecture design.
