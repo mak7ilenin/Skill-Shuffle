@@ -66,7 +66,12 @@ Developed by a team of 2 developers:
 - UI/UX design
 - Backend architecture
 
----
+## 📄 Documentation
+
+Full graduation thesis (Russian, 67 pages).  
+The project overview is described above in English.
+
+👉 <a href='.github/Documentation.pdf'>[Link to PDF]</a>
 
 ## 📌 Notes
 
